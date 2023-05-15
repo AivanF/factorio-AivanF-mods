@@ -1,7 +1,7 @@
 {
-    "name": "sniper-rifle",
-    "version": "1.0.0",
-    "title": "Sniper Rifle",
+    "name": "sniper-rifle-improved",
+    "version": "1.1.1",
+    "title": "Sniper Rifle improved",
     "author": "AivanF",
     "factorio_version": "1.1",
     "dependencies": [
@@ -9,7 +9,7 @@
         "stdlib >= 1.4.6",
         "? bullet-trails >= 0.6.2"
     ],
-    "description": "A sniper rifle for long-range bug killing. Based on mod by Porkchop13.",
+    "description": "A sniper rifle for long-range bug killing. Based on mod by Porkchop13, I added sound, improved ammo, new graphics, and some rebalance.",
     "package": {
         "no_git_tag": true,
         "no_git_push": true,

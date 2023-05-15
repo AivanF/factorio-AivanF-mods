@@ -13,8 +13,11 @@ local item = {
     order = "a[basic-clips]-c[" .. Constants.rifle .. "]",
     attack_parameters = {
         type = "projectile",
-        ammo_category = Constants.category,
+        ammo_category = Constants.ammoCategory,
         cooldown = 60,
+        sound = {
+            { filename = "__" .. Constants.modName .. "__/SniperRifle.ogg", volume = 1.0 }
+        },
         damage_modifer = 6,
         movement_slow_down_factor = 0.5,
         shell_particle = {
@@ -42,7 +45,7 @@ data:extend({
         enabled = false,
         energy_required = 15,
         ingredients = {
-            {"copper-plate", 10}, {"iron-gear-wheel", 15}, {"iron-plate", 15}
+            {"copper-plate", 10}, {"iron-gear-wheel", 15}, {"steel-plate", 10}
         },
         name = Constants.rifle,
         result = Constants.rifle,

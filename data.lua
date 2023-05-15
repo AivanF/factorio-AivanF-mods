@@ -1,7 +1,7 @@
 local Constants = require("constants")
 
 -- Category --
-data:extend({{type = "ammo-category", name = Constants.category}})
+data:extend({{type = "ammo-category", name = Constants.ammoCategory}})
 
 -- Entities --
 require("prototypes.magazine")
@@ -12,8 +12,8 @@ local function addDamageEffect(technology)
     local effects = data.raw["technology"][technology].effects
     effects[#effects + 1] = {
         type = "ammo-damage",
-        ammo_category = Constants.category,
-        modifier = effects[#effects - (#effects - 1)].modifier
+        ammo_category = Constants.ammoCategory,
+        modifier = effects[#effects - (#effects - 1)].modifier * 1.5
     }
 end
 
@@ -29,7 +29,7 @@ local function addSpeedEffect(technology)
     local effects = data.raw["technology"][technology].effects
     effects[#effects + 1] = {
         type = "gun-speed",
-        ammo_category = Constants.category,
+        ammo_category = Constants.ammoCategory,
         modifier = effects[#effects - (#effects - 1)].modifier
     }
 end
