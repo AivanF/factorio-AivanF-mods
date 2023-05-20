@@ -1,18 +1,14 @@
 {
     "name": "sniper-rifle-improved",
-    "version": "1.1.1",
-    "title": "Sniper Rifle improved",
+    "version": "1.2.0",
+    "title": "Carbine and improved Sniper Rifle",
     "author": "AivanF",
     "factorio_version": "1.1",
     "dependencies": [
         "base >= 1.1",
         "stdlib >= 1.4.6",
-        "? bullet-trails >= 0.6.2"
+        "? bullet-trails >= 0.6.2",
+        "! sniper-rifle"
     ],
-    "description": "A sniper rifle for long-range bug killing. Based on mod by Porkchop13, I added sound, improved ammo, new graphics, and some rebalance.",
-    "package": {
-        "no_git_tag": true,
-        "no_git_push": true,
-        "no_portal_upload": true
-    }
+    "description": "Rifles for long-range killing. Based on mod by Porkchop13, I added:- Rebalance to make it strong enough for modded monsters but not recklessly cheap or expensive\n- Shooting sound, new graphics\n- 2 guns: early Carbine, and later advanced Sniper Rifle.\n- 3 tiers of ammo: basic, piercing and uranium magazines."
 }

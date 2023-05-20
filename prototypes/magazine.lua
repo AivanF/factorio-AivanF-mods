@@ -117,7 +117,7 @@ table.insert(container, item2)
 table.insert(container, item3)
 data:extend(container)
 
--- Recipe --
+-- Recipes --
 data:extend({
     {
         enabled = false,

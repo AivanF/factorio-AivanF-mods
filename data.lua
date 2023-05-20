@@ -8,12 +8,14 @@ require("prototypes.magazine")
 require("prototypes.rifle")
 
 -- Technology --
+damage_gain = settings.startup["af-sniper-damage-gain"].value
+
 local function addDamageEffect(technology)
     local effects = data.raw["technology"][technology].effects
     effects[#effects + 1] = {
         type = "ammo-damage",
         ammo_category = Constants.ammoCategory,
-        modifier = effects[#effects - (#effects - 1)].modifier * 1.5
+        modifier = effects[#effects - (#effects - 1)].modifier * damage_gain
     }
 end
 
