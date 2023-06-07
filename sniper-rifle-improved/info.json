@@ -8,6 +8,7 @@
         "base >= 1.1",
         "stdlib >= 1.4.6",
         "? bullet-trails >= 0.6.2",
+        "? warptorio2",
         "! sniper-rifle"
     ],
     "description": "Rifles for long-range killing. Based on mod by Porkchop13, I added:- Rebalance to make it strong enough for modded monsters but not recklessly cheap or expensive\n- Shooting sound, new graphics\n- 2 guns: early Carbine, and later advanced Sniper Rifle.\n- 3 tiers of ammo: basic, piercing and uranium magazines."
