@@ -1,8 +1,15 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.0
-Date: 2022-03-17
+Version: 1.2.1
+Date: 2023-06-07
   Features:
-    - Initial release by Porkchop13.
+    - A bit updated graphics.
+    - Warptorio2 damage research support.
+---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: 2023-05-15
+  Features:
+    - Added less ranged rifle version Carbine as a step before advanced Sniper Rifle.
+    - Added 3 startup mod settings to adjust max shooting distance, damage gain from research, Sniper Rifle rate modifier.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2023-05-13
@@ -16,8 +23,7 @@ Date: 2023-05-13
   Features:
     - Replaced Sulfur with Explosives (forgot about them initially).
 ---------------------------------------------------------------------------------------------------
-Version: 1.2.0
-Date: 2023-05-15
+Version: 1.0.0
+Date: 2022-03-17
   Features:
-    - Added less ranged rifle version Carbine as a step before advanced Sniper Rifle.
-    - Added 3 startup mod settings to adjust max shooting distance, damage gain from research, Sniper Rifle rate modifier.
+    - Initial release by Porkchop13.
