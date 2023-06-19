@@ -1,9 +1,9 @@
 {
     "name": "Powered-by-Biters",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "title": "Powered by Biters",
     "author": "AivanF",
     "factorio_version": "1.1",
     "dependencies": ["base >= 1.1"],
-    "description": "Take revenge on them! Bite them back, eat, transform to crude oil to power the factory and load your flamethrowers! xD Inspired by davider55 on Reddit, based on Loren1350/Schmendrick mod Biter Bites."
+    "description": "Take revenge on them! Bite them back, eat, transform to crude oil to power the factory and charge your flamethrowers to turn their blood against themselves! xD Inspired by abagofcells on Reddit, based on mod Biter Bites by Loren1350/Schmendrick."
 }
