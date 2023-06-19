@@ -1,0 +1,9 @@
+{
+    "name": "Active-Looter-Chest",
+    "version": "1.0.5",
+    "title": "Active Looter Chest",
+    "author": "AivanF",
+    "factorio_version": "1.1",
+    "dependencies": ["base >= 1.1", "? Powered-by-Biters", "? warptorio2"],
+    "description": "A chest that's able to collect or pickup items on the ground as well as to loot corpses, which is especially useful with mods like Powered by Biters. Search area can be configured with circuit signals, Blueprints included! Supports Warptorio2 teleporations."
+}
