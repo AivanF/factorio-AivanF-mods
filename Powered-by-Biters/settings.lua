@@ -25,4 +25,20 @@ data:extend{
         default_value = 15,
         order = "c",
     },
+    {
+        type = "int-setting",
+        name = "af-meet-stack-size",
+        setting_type = "startup",
+        minimum_value = 10,
+        maximum_value = 10000,
+        default_value = 100,
+        order = "d",
+    },
+    {
+        type = "bool-setting",
+        name = "always-fry",
+        setting_type = "startup",
+        default_value = true,
+        order = "z",
+    },
 }

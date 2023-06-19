@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2023-06-19
+  Changes:
+    - More fun pictures and texts.
+  Features:
+    - Startup setting to enable frying fish recipe. If you don't feel like eating raw ;)
+    - Startup setting to edit meat stack size.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2023-05-29
+  Features:
+    - Code refactoring, more settings.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2023-05-27
+  Features:
+    - Setting to make meat liquefaction earlier (simple or advanced oil processing).
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2023-05-27
+  Info:
+    - Initial release by AivanF!
+  Locale:
+    - English 🇬🇧
+    - Russian / Русский 🇷🇺

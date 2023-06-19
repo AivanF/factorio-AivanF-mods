@@ -1,17 +1,4 @@
-local floor, ceil, sqrt = math.floor, math.ceil, math.sqrt
-
-local pow = math.pow
-
-local fishyield, num, entry, flag = 0, 0
-
-for _, c in pairs(biter_bites_fish_capsules) do
-	fishyield = fishyield + c
-	num = num + 1
-end
-log("PbB_fishyield_1: "..fishyield)
-fishyield = fishyield / num
-fishyield = fishyield * fishyield
-log("PbB_fishyield_2: "..fishyield)
+local ceil = math.ceil
 
 local corpsemine = function(name, yield, difficulty, count)
 	local corpse = data.raw.corpse[name]
@@ -49,7 +36,7 @@ local corpsedrop = {}
 for name, e in pairs(data.raw.unit) do
 	if string.find(name, "biter") then
 		if e.corpse then
-			num = ceil((e.max_health+fishyield)^.6/6)
+			num = ceil((e.max_health+25)^.6/6)
 			if corpsedrop[e.corpse] then
 				if corpsedrop[e.corpse].meat == "raw-meat" then
 					if corpsedrop[e.corpse].amount > num then corpsedrop[e.corpse].amount=num end
@@ -60,7 +47,7 @@ for name, e in pairs(data.raw.unit) do
 		end
 	elseif string.find(name, "spitter") then
 		if e.corpse then
-			num = ceil((e.max_health+fishyield)^.6/5)
+			num = ceil((e.max_health+25)^.6/5)
 			if corpsedrop[e.corpse] then
 				if corpsedrop[e.corpse].meat == "raw-meat" then
 					if corpsedrop[e.corpse].amount > num then corpsedrop[e.corpse].amount=num end

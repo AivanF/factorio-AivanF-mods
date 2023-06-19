@@ -1,5 +1,27 @@
-
 mod_path = "__Powered-by-Biters__"
+
+sounds_eat_fish = {
+  {
+    filename = "__base__/sound/eat.ogg",
+    volume = 0.6
+  },
+  {
+    filename = "__base__/sound/eat-1.ogg",
+    volume = 0.6
+  },
+  {
+    filename = "__base__/sound/eat-2.ogg",
+    volume = 0.6
+  },
+  {
+    filename = "__base__/sound/eat-3.ogg",
+    volume = 0.6
+  },
+  {
+    filename = "__base__/sound/eat-4.ogg",
+    volume = 0.6
+  }
+}
 
 function intify(bool)
   return bool and 1 or 0
