@@ -15,11 +15,13 @@ local second_ups = 60
 -- Ticks per minute
 local minute_ups = second_ups * 60
 -- Lightning calc delay
-local lightning_update_rate = 30
+local lightning_update_rate = 15
 -- Lightning delay per chunk
-local chunk_lightning_rate = minute_ups /2 /set_rate_cf
+local chunk_lightning_rate = minute_ups /10 /set_rate_cf
 -- For stickers
 local entity_update_rate = 120
+
+local chunk_use_prob = 0.025
 
 local MJ = 1000 * 1000
 local chunk_size = 32
@@ -134,8 +136,6 @@ end
 
 function make_damage(surface, position, power_level)
   if power_level >= 2 then
-    surface.create_entity{name="fire-flame", position=position, force="neutral"}
-    surface.create_entity{name="fire-flame-on-tree", position=position, force="neutral"}
   end
 
   -- https://wiki.factorio.com/Data.raw#explosion
@@ -156,6 +156,8 @@ function make_damage(surface, position, power_level)
   if power_level >= 3 then
     -- https://wiki.factorio.com/Data.raw#explosion
     surface.create_entity{name="massive-explosion", position=position, force="neutral"}
+    surface.create_entity{name="fire-flame", position=position, force="neutral"}
+    surface.create_entity{name="fire-flame-on-tree", position=position, force="neutral"}
   else
     surface.create_entity{name="medium-explosion",  position=position, force="neutral"}
   end
@@ -187,7 +189,7 @@ function make_lightning(surface, area, power_level, capture_limit)
   if capture_limit > shared.max_catch_radius then capture_limit = shared.max_catch_radius end
   if capture_limit < shared.min_catch_radius then capture_limit = shared.min_catch_radius end
 
-  lightning_energy = math.floor(math.random(50*power_level, 300*power_level) * set_energy_cf) * MJ
+  lightning_energy = math.floor(math.random(100*power_level, 500*power_level) * set_energy_cf) * MJ
   if power_level >= 4 then
     tint = {1, 0.9, 0.8, 1}
   elseif power_level >= 3 then
@@ -264,7 +266,7 @@ end
 function get_max_power_level(scale, chunk)
   local value = perlin.noise(chunk.x/5, chunk.y/5, 0)
   value = (value+1)/2-0.6
-  value = math.ceil(value *  10 * scale)
+  value = math.ceil(value *  15 * scale)
   value = math.clamp(value, 0, global_max_power_level)
   return value
 end
@@ -280,10 +282,15 @@ end
 local function process_surface(surface, currSurfSettings)
   -- surface: https://lua-api.factorio.com/latest/LuaSurface.html
   -- chunk: https://lua-api.factorio.com/latest/Concepts.html#ChunkPositionAndArea
+  -- TODO: cache chunks if base==0
   chunks = {}
   for chunk in surface.get_chunks() do
-    if not shared.chunk_is_border(surface, chunk) then
-      power_level = get_random_power_level(currSurfSettings, chunk)
+    if not shared.chunk_is_border(surface, chunk, 7) then
+      if math.random() < chunk_use_prob then
+        power_level = get_random_power_level(currSurfSettings, chunk)
+      else
+        power_level = -10
+      end
 
       -- Small chance of higher level
       if math.random() < 0.03 then power_level = power_level + 1 end

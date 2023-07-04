@@ -36,16 +36,17 @@ function shared.spairs(t, order)
     end
 end
 
-function shared.chunk_is_border(surface, chunk)
+function shared.chunk_is_border(surface, chunk, dst)
+  if dst == nil then dst = 3 end
   return (
     false
-    or not surface.is_chunk_generated({chunk.x+1, chunk.y})
-    or not surface.is_chunk_generated({chunk.x, chunk.y+1})
-    or not surface.is_chunk_generated({chunk.x-1, chunk.y})
-    or not surface.is_chunk_generated({chunk.x, chunk.y-1})
+    or not surface.is_chunk_generated({chunk.x+dst, chunk.y})
+    or not surface.is_chunk_generated({chunk.x, chunk.y+dst})
+    or not surface.is_chunk_generated({chunk.x-dst, chunk.y})
+    or not surface.is_chunk_generated({chunk.x, chunk.y-dst})
   )
 end
 
-shared.max_catch_radius = 32
+shared.max_catch_radius = 48
 shared.min_catch_radius = 8
 return shared
