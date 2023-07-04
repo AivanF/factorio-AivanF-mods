@@ -1,0 +1,10 @@
+{
+  "name": "Lightning",
+  "version": "1.0.0",
+  "title": "ThunderStorm: Lightning energy",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": [],
+  "factorio_version": "1.1",
+  "description": "Thunderstorm is coming! Build lightning rods to protect yourself or to tame this mighty element of nature by capturing divine amount of electricity. In progress:\n- SE / Space Exploration support for other planets.\n- Powerful thunder weapons.\n- Better graphics."
+}
