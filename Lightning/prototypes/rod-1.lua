@@ -16,7 +16,7 @@ data:extend({
     name = name,
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
-    subgroup = "logistic-network",
+    subgroup = "energy-pipe-distribution",
     order = "z[lightning-rod-1]",
     place_result = name,
     stack_size = 20,

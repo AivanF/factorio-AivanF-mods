@@ -5,6 +5,7 @@ local name = "lightning-rod-2-accumulator"
 local icon = "__Lightning__/graphics/icons/robot-charge-port.png"
 local icon_size = 64
 local icon_mipmaps = 2
+local acc_capacity = 500
 
 data:extend({  
   {
@@ -12,7 +13,7 @@ data:extend({
     name = name,
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
-    subgroup = "logistic-network",
+    subgroup = "energy-pipe-distribution",
     order = "z[lightning-rod-2]",
     place_result = name,
     stack_size = 10,
@@ -47,7 +48,7 @@ data:extend({
       usage_priority = "primary-output",
       input_flow_limit = "0KW",
       output_flow_limit = "50MW",
-      buffer_capacity = "500MJ"
+      buffer_capacity = acc_capacity.."MJ"
     },
     charge_cooldown = 5,
     discharge_cooldown = 5,

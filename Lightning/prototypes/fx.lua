@@ -92,6 +92,6 @@ data:extend({
       {filename="__Lightning__/sounds/charge-2.wav", min_speed=0.9, max_speed=1.1},
       {filename="__Lightning__/sounds/charge-3.wav", min_speed=0.9, max_speed=1.1},
     },
-    audible_distance_modifier=5,
+    audible_distance_modifier=3,
   },
 })
