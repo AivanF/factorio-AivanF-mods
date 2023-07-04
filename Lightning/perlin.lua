@@ -30,63 +30,49 @@ for i=0,255 do
 end
 
 -- Return range: [-1, 1]
-function perlin.noise(x, y, z)
+function perlin.noise(x, y)
     y = y or 0
-    z = z or 0
 
     -- Calculate the "unit cube" that the point asked will be located in
     local xi = bit32.band(math.floor(x),255)
     local yi = bit32.band(math.floor(y),255)
-    local zi = bit32.band(math.floor(z),255)
 
     -- Next we calculate the location (from 0 to 1) in that cube
     x = x - math.floor(x)
     y = y - math.floor(y)
-    z = z - math.floor(z)
 
     -- We also fade the location to smooth the result
     local u = perlin.fade(x)
     local v = perlin.fade(y)
-    local w = perlin.fade(z)
 
     -- Hash all 8 unit cube coordinates surrounding input coordinate
     local p = perlin.p
     local A, AA, AB, AAA, ABA, AAB, ABB, B, BA, BB, BAA, BBA, BAB, BBB
     A   = p[xi  ] + yi
-    AA  = p[A   ] + zi
-    AB  = p[A+1 ] + zi
+    AA  = p[A   ]
+    AB  = p[A+1 ]
     AAA = p[ AA ]
     ABA = p[ AB ]
     AAB = p[ AA+1 ]
     ABB = p[ AB+1 ]
 
     B   = p[xi+1] + yi
-    BA  = p[B   ] + zi
-    BB  = p[B+1 ] + zi
+    BA  = p[B   ]
+    BB  = p[B+1 ]
     BAA = p[ BA ]
     BBA = p[ BB ]
     BAB = p[ BA+1 ]
     BBB = p[ BB+1 ]
 
     -- Take the weighted average between all 8 unit cube coordinates
-    return perlin.lerp(w,
-        perlin.lerp(v,
-            perlin.lerp(u,
-                perlin.grad(AAA,x,y,z),
-                perlin.grad(BAA,x-1,y,z)
-            ),
-            perlin.lerp(u,
-                perlin.grad(ABA,x,y-1,z),
-                perlin.grad(BBA,x-1,y-1,z)
-            )
+    return perlin.lerp(v,
+        perlin.lerp(u,
+            perlin.grad(AAA,x,y),
+            perlin.grad(BAA,x-1,y)
         ),
-        perlin.lerp(v,
-            perlin.lerp(u,
-                perlin.grad(AAB,x,y,z-1), perlin.grad(BAB,x-1,y,z-1)
-            ),
-            perlin.lerp(u,
-                perlin.grad(ABB,x,y-1,z-1), perlin.grad(BBB,x-1,y-1,z-1)
-            )
+        perlin.lerp(u,
+            perlin.grad(ABA,x,y-1),
+            perlin.grad(BBA,x-1,y-1)
         )
     )
 end
@@ -94,25 +80,26 @@ end
 -- Gradient function finds dot product between pseudorandom gradient vector
 -- and the vector from input coordinate to a unit cube vertex
 perlin.dot_product = {
-    [0x0]=function(x,y,z) return  x + y end,
-    [0x1]=function(x,y,z) return -x + y end,
-    [0x2]=function(x,y,z) return  x - y end,
-    [0x3]=function(x,y,z) return -x - y end,
-    [0x4]=function(x,y,z) return  x + z end,
-    [0x5]=function(x,y,z) return -x + z end,
-    [0x6]=function(x,y,z) return  x - z end,
-    [0x7]=function(x,y,z) return -x - z end,
-    [0x8]=function(x,y,z) return  y + z end,
-    [0x9]=function(x,y,z) return -y + z end,
-    [0xA]=function(x,y,z) return  y - z end,
-    [0xB]=function(x,y,z) return -y - z end,
-    [0xC]=function(x,y,z) return  y + x end,
-    [0xD]=function(x,y,z) return -y + z end,
-    [0xE]=function(x,y,z) return  y - x end,
-    [0xF]=function(x,y,z) return -y - z end
+    [0x0]=function(x,y) return  x + y end,
+    [0x1]=function(x,y) return -x + y end,
+    [0x2]=function(x,y) return  x - y end,
+    [0x3]=function(x,y) return -x - y end,
+    [0x4]=function(x,y) return  x + 0 end,
+    [0x5]=function(x,y) return -x + 0 end,
+    [0x6]=function(x,y) return  x - 0 end,
+    [0x7]=function(x,y) return -x - 0 end,
+    [0x8]=function(x,y) return  y + 0 end,
+    [0x9]=function(x,y) return -y + 0 end,
+    [0xA]=function(x,y) return  y - 0 end,
+    [0xB]=function(x,y) return -y - 0 end,
+    [0xC]=function(x,y) return  y + x end,
+    [0xD]=function(x,y) return -y + 0 end,
+    [0xE]=function(x,y) return  y - x end,
+    [0xF]=function(x,y) return -y - 0 end
 }
-function perlin.grad(hash, x, y, z)
-    return perlin.dot_product[bit32.band(hash,0xF)](x,y,z)
+function perlin.grad(hash, x, y)
+    local i = bit32.band(hash, 0xF)
+    return perlin.dot_product[i](x,y,z)
 end
 
 -- Fade function is used to smooth final output
