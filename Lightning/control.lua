@@ -2,12 +2,13 @@ local perlin = require("perlin")
 local shared = require("shared")
 
 local mod_name = "Lightning"
+local SE = "space-exploration"
 
 local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
-local set_main_debug = false --settings.global["af-tls-debug-main"].value
+local set_main_debug = true --settings.global["af-tls-debug-main"].value
 local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
 
 local global_max_power_level = 4
@@ -60,7 +61,7 @@ local function reset_global()
   debug_print("TLS reset_global")
   -- TODO: add different planetes when SE is on
   script_data.surfSettings = {
-    ["nauvis"] = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, seed=0, zspeed=0 }
+    [1] = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, seed=0, zspeed=0 }
   }
   script_data.rods_by_surface = {}
 end
@@ -73,17 +74,17 @@ local function update_runtime_settings()
   set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
   -- Apply
   chunk_lightning_rate = minute_ups /1 /set_rate_cf
-  script_data.surfSettings["nauvis"].base = set_nauvis_base
-  script_data.surfSettings["nauvis"].scale = set_nauvis_scale
+  script_data.surfSettings[1].base = set_nauvis_base
+  script_data.surfSettings[1].scale = set_nauvis_scale
 end
 
 local function register_rod(entity)
-  local surface_name = entity.surface.name
+  local surface_index = entity.surface.index
   local unit_number = entity.unit_number
-  local surface_bucket = script_data.rods_by_surface[surface_name]
+  local surface_bucket = script_data.rods_by_surface[surface_index]
   if not surface_bucket then
     surface_bucket = {}
-    script_data.rods_by_surface[surface_name] = surface_bucket
+    script_data.rods_by_surface[surface_index] = surface_bucket
   end
   local inner_bucket = surface_bucket[unit_number % entity_update_rate]
   if not inner_bucket then
@@ -329,8 +330,8 @@ local function make_chunks_cache(surface)
       end
     end
   end
-  script_data.surfSettings[surface.name].cache_created = game.ticks_played
-  script_data.surfSettings[surface.name].cache = cache
+  script_data.surfSettings[surface.index].cache_created = game.ticks_played
+  script_data.surfSettings[surface.index].cache = cache
   debug_print("TLS chunks cache: "..active.." of "..total)
 end
 
@@ -354,28 +355,28 @@ local function process_surface(surface, currSurfSettings)
   local todo_number = 0
   local power_level
 
-  if currSurfSettings.base < 1 then
-    local cache_empty = script_data.surfSettings[surface.name].cache == nil
-    local cache_expired = script_data.surfSettings[surface.name].cache_created ~= nil and game.ticks_played - script_data.surfSettings[surface.name].cache_created > chunk_cache_ttl
+  if currSurfSettings.base < 1 and currSurfSettings.speed == 0 then
+    local cache_empty = currSurfSettings.cache == nil
+    local cache_expired = currSurfSettings.cache_created ~= nil and game.ticks_played - currSurfSettings.cache_created > chunk_cache_ttl
     if cache_empty or cache_expired then
       -- perf_print("TLS cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
       make_chunks_cache(surface)
     end
   else
-    script_data.surfSettings[surface.name].cache = nil
+    script_data.surfSettings[surface.index].cache = nil
   end
 
-  if script_data.surfSettings[surface.name].cache ~= nil then
+  if script_data.surfSettings[surface.index].cache ~= nil then
 
     --- Optimise base==0 surfaces with cache of lightning-active regions
     local total = 0
-    for _, chunk_info in pairs(script_data.surfSettings[surface.name].cache) do
+    for _, chunk_info in pairs(script_data.surfSettings[surface.index].cache) do
       total = total + 1
       power_level = math.random(0, chunk_info[2])
       _handle_chunk(chunks_todo, chunk_info[1], power_level)
     end
     todo_number = #chunks_todo
-    perf_print("TLS process_surface with cache: "..total.." chunks, "..#chunks_todo.." todo")
+    -- perf_print("TLS process_surface with cache: "..total.." chunks, "..#chunks_todo.." todo")
 
   else
     --- Optimise other surfaces with chunk usage probability
@@ -384,6 +385,7 @@ local function process_surface(surface, currSurfSettings)
     local border, chunk_use_prob
     --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
     --- More for better distribution
+    -- TODO: set higher reduction by settings / surfaces number
     if #chunks < 2000 then
       border = 3
       chunk_use_prob = 0.1
@@ -405,7 +407,7 @@ local function process_surface(surface, currSurfSettings)
     end
     --- Normalise frequence for further probability calculation
     todo_number = #chunks_todo / chunk_use_prob
-    perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
+    -- perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
   end
 
   local surface_event_number = todo_number * lightning_update_rate / chunk_lightning_rate
