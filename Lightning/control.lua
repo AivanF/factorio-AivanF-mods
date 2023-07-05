@@ -60,7 +60,7 @@ local function reset_global()
   debug_print("TLS reset_global")
   -- TODO: add different planetes when SE is on
   script_data.surfSettings = {
-    ["nauvis"] = { base=set_nauvis_base, scale=set_nauvis_scale }
+    ["nauvis"] = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, seed=0, zspeed=0 }
   }
   script_data.rods_by_surface = {}
 end
@@ -272,9 +272,16 @@ local function make_lightning_inner(surface, chunk_info)
 end
 
 function get_max_power_level(currSurfSettings, chunk)
-  --- TODO: add semi-random offset for different surfaces
-  --- TODO: add offset by time scale
-  local value = perlin.noise(chunk.x/5, chunk.y/5)
+  local value
+  local x = currSurfSettings.size * chunk.x/5 + currSurfSettings.seed*127
+  local y = currSurfSettings.chunk.y/5 - currSurfSettings.seed*271
+  if currSurfSettings.zspeed == 0 then
+    -- It's 18% faster
+    value = perlin.noise2d(x, y)
+  else
+    local z = currSurfSettings.seed*37 + currSurfSettings.zspeed*game.ticks_played/minute_ups
+    value = perlin.noise2d(x, y, z)
+  end
   value = (value+1) /2 -0.6
   value = math.ceil(value *15 *currSurfSettings.scale)
   value = math.clamp(value, 0, global_max_power_level)
