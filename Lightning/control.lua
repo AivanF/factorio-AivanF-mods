@@ -336,13 +336,12 @@ end
 
 local function process_a_rod(currSurfSettings, rod_entity)
   local surface = rod_entity.surface
-  local power_level = currSurfSettings.base
-  power_level = power_level + get_max_power_level(currSurfSettings.scale, {
+  local power_level = currSurfSettings.base + get_max_power_level(currSurfSettings, {
     x=math.floor(rod_entity.position.x / chunk_size),
     y=math.floor(rod_entity.position.y / chunk_size)
   })
-  power_level = math.clamp(power_level, 0, 4)
-  if power_level >= 1 and power_level <= 4 then
+  power_level = math.clamp(power_level, 0, 5)
+  if power_level >= 1 and power_level <= 5 then
     rendering.draw_sprite{
       sprite="tsl-energy-"..power_level, x_scale=1, y_scale=1,
       render_layer="light-effect", only_in_alt_mode=true,

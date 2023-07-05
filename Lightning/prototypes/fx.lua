@@ -69,6 +69,15 @@ data:extend({
     scale=0.5,
     shift=util.by_pixel(0, -16),
   },
+  {
+    type="sprite",
+    name="tsl-energy-5",
+    filename="__Lightning__/graphics/icons/energy-5.png",
+    width=64,
+    height=64,
+    scale=0.5,
+    shift=util.by_pixel(0, -16),
+  },
 
   -- https://wiki.factorio.com/Prototype/Sound
   -- https://lua-api.factorio.com/latest/Concepts.html#SoundPath
