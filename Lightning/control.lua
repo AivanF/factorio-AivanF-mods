@@ -7,6 +7,8 @@ local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
+local set_main_debug = false --settings.global["af-tls-debug-main"].value
+local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
 
 local global_max_power_level = 4
 
@@ -17,11 +19,11 @@ local minute_ups = second_ups * 60
 -- Lightning calc delay
 local lightning_update_rate = 15
 -- Lightning delay per chunk
-local chunk_lightning_rate = minute_ups /10 /set_rate_cf
+local chunk_lightning_rate = minute_ups /1 /set_rate_cf
 -- For stickers
 local entity_update_rate = 120
-
-local chunk_use_prob = 0.025
+-- Used to reduce Perlin noise calc per step
+local chunk_cache_ttl = minute_ups * 1
 
 local MJ = 1000 * 1000
 local chunk_size = 32
@@ -38,17 +40,29 @@ local rod_protos_ordered = {
   [2] = "lightning-rod-1",
 }
 
--- TODO: add different planetes when SE is on
-local surfSettings = {
-  ["nauvis"] = { base=set_nauvis_base, scale=set_nauvis_scale }
-}
+local script_data = {}
 
-local function reset_global()
-  global.rods_by_surface = {}
+local function perf_print(txt)
+  log(txt)
+  if set_perf_debug then
+    game.print(txt)
+  end
 end
 
-local function on_init()
-  if not global.rods_by_surface then reset_global() end
+local function debug_print(txt)
+  log(txt)
+  if set_main_debug then
+    game.print(txt)
+  end
+end
+
+local function reset_global()
+  debug_print("TLS reset_global")
+  -- TODO: add different planetes when SE is on
+  script_data.surfSettings = {
+    ["nauvis"] = { base=set_nauvis_base, scale=set_nauvis_scale }
+  }
+  script_data.rods_by_surface = {}
 end
 
 local function update_runtime_settings()
@@ -58,18 +72,18 @@ local function update_runtime_settings()
   set_nauvis_base = settings.global["af-tls-nauvis-base"].value
   set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
   -- Apply
-  chunk_lightning_rate = minute_ups * 1 / set_rate_cf
-  surfSettings["nauvis"].base = set_nauvis_base
-  surfSettings["nauvis"].scale = set_nauvis_scale
+  chunk_lightning_rate = minute_ups /1 /set_rate_cf
+  script_data.surfSettings["nauvis"].base = set_nauvis_base
+  script_data.surfSettings["nauvis"].scale = set_nauvis_scale
 end
 
 local function register_rod(entity)
   local surface_name = entity.surface.name
   local unit_number = entity.unit_number
-  local surface_bucket = global.rods_by_surface[surface_name]
+  local surface_bucket = script_data.rods_by_surface[surface_name]
   if not surface_bucket then
     surface_bucket = {}
-    global.rods_by_surface[surface_name] = surface_bucket
+    script_data.rods_by_surface[surface_name] = surface_bucket
   end
   local inner_bucket = surface_bucket[unit_number % entity_update_rate]
   if not inner_bucket then
@@ -109,12 +123,6 @@ function rods_reload()
   local txt = "TLS AivanF migration: found "..found.." rods"
   -- game.print(txt)
   log(txt)
-end
-
-local function update_configuration()
-  clean_drawings()
-  reset_global()
-  rods_reload()
 end
 
 
@@ -202,7 +210,7 @@ function make_lightning(surface, area, power_level, capture_limit)
     tint = {0.9, 0.9, 1, 1}
   end
 
-  local capture_prob = math.pow(0.9, power_level)
+  local capture_prob = math.pow(0.95, power_level)
 
   for _, name in pairs(rod_protos_ordered) do
     subtype = rod_protos[name]
@@ -263,75 +271,166 @@ local function make_lightning_inner(surface, chunk_info)
   make_lightning(surface, chunk_info[1].area, chunk_info[2])
 end
 
-function get_max_power_level(scale, chunk)
-  local value = perlin.noise(chunk.x/5, chunk.y/5, 0)
-  value = (value+1)/2-0.6
-  value = math.ceil(value *  15 * scale)
+function get_max_power_level(currSurfSettings, chunk)
+  --- TODO: add semi-random offset for different surfaces
+  --- TODO: add offset by time scale
+  local value = perlin.noise(chunk.x/5, chunk.y/5)
+  value = (value+1) /2 -0.6
+  value = math.ceil(value *15 *currSurfSettings.scale)
   value = math.clamp(value, 0, global_max_power_level)
   return value
 end
 
 function get_random_power_level(currSurfSettings, chunk)
-  if currSurfSettings.scale < 0.1 then
-    return currSurfSettings.base
-  else
-    return currSurfSettings.base + math.random(0, get_max_power_level(currSurfSettings.scale, chunk))
+  if currSurfSettings.scale < 0.1 then return 0 end
+  return math.random(0, get_max_power_level(currSurfSettings, chunk))
+end
+
+local function get_surface_chunks(surface)
+  return shared.Iter2Array(surface.get_chunks())
+end
+
+function chunk_filter_iter(surface, border, ar)
+  if ar == nil then ar = get_surface_chunks(surface) end
+  local i = 0
+  local n = #ar
+  local chunk, use
+  return function()
+    while i < n do
+      i = i + 1
+      chunk = ar[i]
+      --- I hate fcking nasted ifs, where is the continue keyword...
+      use = true
+      if use then use = not shared.chunk_is_border(surface, chunk, border) end
+      -- if use and use_prob > 0 then use = math.random() < chunk_use_prob end
+      if use then return chunk end
+    end
+  end
+end
+
+local function make_chunks_cache(surface)
+  local cache = {}
+  local total = 0
+  local active = 0
+  for chunk in chunk_filter_iter(surface, 5) do
+    total = total + 1
+    power_level = get_max_power_level(currSurfSettings, chunk)
+    if power_level > 0 then
+      active = active + 1
+      if cache ~= nil then
+        cache[#cache+1] = {chunk, power_level}
+      end
+    end
+  end
+  script_data.surfSettings[surface.name].cache_created = game.ticks_played
+  script_data.surfSettings[surface.name].cache = cache
+  debug_print("TLS chunks cache: "..active.." of "..total)
+end
+
+local function _handle_chunk(chunks_todo, chunk, power_level)
+  --- Small chance of higher level
+  if math.random() < 0.03 then power_level = power_level + 1 end
+  if math.random() < 0.03 then power_level = power_level + 1 end
+  if math.random() < 0.03 then power_level = power_level + 1 end
+  power_level = math.clamp(power_level, 0, global_max_power_level)
+  --- Save into todo list with prob according to level
+  for i = 1, power_level do
+    chunks_todo[#chunks_todo + 1] = {chunk, power_level}
   end
 end
 
 local function process_surface(surface, currSurfSettings)
-  -- surface: https://lua-api.factorio.com/latest/LuaSurface.html
-  -- chunk: https://lua-api.factorio.com/latest/Concepts.html#ChunkPositionAndArea
-  -- TODO: cache chunks if base==0
-  chunks = {}
-  for chunk in surface.get_chunks() do
-    if not shared.chunk_is_border(surface, chunk, 7) then
-      if math.random() < chunk_use_prob then
-        power_level = get_random_power_level(currSurfSettings, chunk)
-      else
-        power_level = -10
-      end
+  --- surface: https://lua-api.factorio.com/latest/LuaSurface.html
+  --- chunk: https://lua-api.factorio.com/latest/Concepts.html#ChunkPositionAndArea
 
-      -- Small chance of higher level
-      if math.random() < 0.03 then power_level = power_level + 1 end
-      if math.random() < 0.03 then power_level = power_level + 1 end
-      if math.random() < 0.03 then power_level = power_level + 1 end
-      power_level = math.clamp(power_level, 0, global_max_power_level)
+  local chunks_todo = {}
+  local todo_number = 0
+  local power_level
 
-      for i = 1, power_level do
-        chunks[#chunks + 1] = {chunk, power_level}
-      end
+  if currSurfSettings.base < 1 then
+    local cache_empty = script_data.surfSettings[surface.name].cache == nil
+    local cache_expired = script_data.surfSettings[surface.name].cache_created ~= nil and game.ticks_played - script_data.surfSettings[surface.name].cache_created > chunk_cache_ttl
+    if cache_empty or cache_expired then
+      -- perf_print("TLS cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
+      make_chunks_cache(surface)
     end
+  else
+    script_data.surfSettings[surface.name].cache = nil
   end
 
-  surface_event_number = #chunks * lightning_update_rate / chunk_lightning_rate
-  -- game.print("Lightning count: "..string.format("%0.2f", surface_event_number).." for "..#chunks)
+  if script_data.surfSettings[surface.name].cache ~= nil then
 
+    --- Optimise base==0 surfaces with cache of lightning-active regions
+    local total = 0
+    for _, chunk_info in pairs(script_data.surfSettings[surface.name].cache) do
+      total = total + 1
+      power_level = math.random(0, chunk_info[2])
+      _handle_chunk(chunks_todo, chunk_info[1], power_level)
+    end
+    todo_number = #chunks_todo
+    perf_print("TLS process_surface with cache: "..total.." chunks, "..#chunks_todo.." todo")
+
+  else
+    --- Optimise other surfaces with chunk usage probability
+    --- TODO: maybe also use cache for random power level to reduce noise calc?
+    local chunks = get_surface_chunks(surface)
+    local border, chunk_use_prob
+    --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
+    --- More for better distribution
+    if #chunks < 2000 then
+      border = 3
+      chunk_use_prob = 0.1
+    elseif #chunks < 5000 then
+      border = 5
+      chunk_use_prob = 0.05
+    elseif #chunks < 10000 then
+      border = 7
+      chunk_use_prob = 0.025
+    else
+      border = 10
+      chunk_use_prob = 0.01
+    end
+    for chunk in chunk_filter_iter(surface, border, chunks) do
+      if math.random() < chunk_use_prob then
+        power_level = currSurfSettings.base + get_random_power_level(currSurfSettings, chunk)
+        _handle_chunk(chunks_todo, chunk, power_level)
+      end
+    end
+    --- Normalise frequence for further probability calculation
+    todo_number = #chunks_todo / chunk_use_prob
+    perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
+  end
+
+  local surface_event_number = todo_number * lightning_update_rate / chunk_lightning_rate
+  surface_event_number = math.min(surface_event_number, #chunks_todo)
   if surface_event_number < 1 then
     if math.random() < surface_event_number then
-      make_lightning_inner(surface, chunks[math.random(#chunks)])
+      make_lightning_inner(surface, chunks_todo[math.random(#chunks_todo)])
     end
   end
   surface_event_number = math.floor(surface_event_number + 0.5)
   if surface_event_number == 1 then
-    make_lightning_inner(surface, chunks[math.random(#chunks)])
+    make_lightning_inner(surface, chunks_todo[math.random(#chunks_todo)])
   end
   if surface_event_number > 1 then
-    shared.ShuffleInPlace(chunks)
+    shared.ShuffleInPlace(chunks_todo)
     for i = 1, surface_event_number do
-      make_lightning_inner(surface, chunks[i])
+      make_lightning_inner(surface, chunks_todo[i])
     end
   end
 end
 
 local function process_lightnings()
-  local surface, chunks, surface_event_number, value, power_level
-  for surface_name, currSurfSettings in pairs(surfSettings) do
+  local profiler = set_perf_debug and game.create_profiler() or nil
+  local surface
+  --- TODO: shift surfaces on different calls/ticks; use buckets?
+  for surface_name, currSurfSettings in pairs(script_data.surfSettings) do
     if currSurfSettings.base > 0 or currSurfSettings.scale > 0 then
       surface = game.surfaces[surface_name]
       process_surface(surface, currSurfSettings)
     end
   end
+  if profiler then perf_print{"", "TLS main process: ", profiler, "\n"} end
 end
 
 local function process_a_rod(currSurfSettings, rod_entity)
@@ -351,8 +450,9 @@ local function process_a_rod(currSurfSettings, rod_entity)
 end
 
 local function process_entities(event)
-  for surface_name, surface_bucket in pairs(global.rods_by_surface) do
-    currSurfSettings = surfSettings[surface_name]
+  for surface_name, surface_bucket in pairs(script_data.rods_by_surface) do
+    -- game.print(serpent.line(script_data.surfSettings))
+    currSurfSettings = script_data.surfSettings[surface_name]
     local bucket = surface_bucket[event.tick % entity_update_rate]
     if not bucket then return end
     for unit_number, rod_entity in pairs(bucket) do
@@ -365,9 +465,24 @@ local function process_entities(event)
   end
 end
 
+local function on_init()
+  global.script_data = global.script_data or script_data
+  reset_global()
+end
+
+local function on_load()
+  script_data = global.script_data or script_data
+end
+
+local function update_configuration()
+  global.script_data = script_data
+  clean_drawings()
+  reset_global()
+  rods_reload()
+end
 
 script.on_init(on_init)
-
+script.on_load(on_load)
 script.on_event(defines.events.on_runtime_mod_setting_changed, update_runtime_settings)
 script.on_configuration_changed(update_configuration)
 

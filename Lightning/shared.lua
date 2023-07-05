@@ -47,6 +47,14 @@ function shared.chunk_is_border(surface, chunk, dst)
   )
 end
 
+function shared.Iter2Array(...)
+  local arr = {}
+  for v in ... do
+    arr[#arr + 1] = v
+  end
+  return arr
+end
+
 shared.max_catch_radius = 48
 shared.min_catch_radius = 8
 return shared
