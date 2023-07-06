@@ -35,6 +35,14 @@ data:extend({
   },
   {
     type="sprite",
+    name="tsl-light",
+    filename="__Lightning__/graphics/fx/light.png",
+    width=360,
+    height=360,
+    shift=util.by_pixel(0, 0),
+  },
+  {
+    type="sprite",
     name="tsl-energy-1",
     filename="__Lightning__/graphics/icons/energy-1.png",
     width=64,

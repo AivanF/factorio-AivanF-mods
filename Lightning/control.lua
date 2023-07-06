@@ -200,14 +200,22 @@ function rods_reload()
 end
 
 
-function draw_lightning(surface, position, tint)
+function draw_lightning(surface, position, tint, scale)
   -- game.print("Lightning: [gps="..position[1]..","..position[2]..","..surface.index.."]")
   -- TODO: add small random rotation
   rendering.draw_sprite{
     sprite="tsl-lightning", x_scale=1, y_scale=1, tint=tint,
     render_layer="light-effect", only_in_alt_mode=false,
-    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2
+    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2,
   }
+  rendering.draw_light{
+    sprite="tsl-light", scale=scale/2, intensity=1, minimum_darkness=0, color=tint,
+    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/3,
+  } 
+  rendering.draw_light{
+    sprite="tsl-light", scale=scale, intensity=0.5, minimum_darkness=0, color=tint,
+    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2,
+  } 
   surface.play_sound{path="tsl-lightning", position=position, volume_modifier=1}
 end
 
@@ -274,7 +282,7 @@ function make_lightning(surface, area, power_level, capture_limit)
   lightning_energy = math.floor(math.random(100*power_level, 500*power_level) * set_energy_cf) * MJ
   -- TODO: add extra loud sounds for 3+ level
   if power_level >= 5 then
-    tint = {0.5, 0.5, 0.5, 1}
+    tint = {1, 1, 1, 1}
   elseif power_level >= 4 then
     tint = {1, 0.8, 0.9, 1}
   elseif power_level >= 3 then
@@ -341,7 +349,7 @@ function make_lightning(surface, area, power_level, capture_limit)
     make_damage(surface, position, power_level)
   end
 
-  draw_lightning(surface, position, tint)
+  draw_lightning(surface, position, tint, 1+power_level*3)
 end
 
 local function make_lightning_inner(surface, chunk_info)
