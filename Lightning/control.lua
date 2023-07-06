@@ -12,6 +12,7 @@ local set_nauvis_size = settings.global["af-tls-nauvis-size"].value
 local set_nauvis_zspeed = settings.global["af-tls-nauvis-zspeed"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
+local set_extra_reduct = settings.global["af-tls-extra-reduct"].value
 local set_base_capture_prob = settings.global["af-tls-capture-prob"].value
 local set_main_debug = false --settings.global["af-tls-debug-main"].value
 local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
@@ -185,10 +186,13 @@ end
 
 local function update_runtime_settings(event)
   --- Common values
-  set_base_capture_prob = settings.global["af-tls-capture-prob"].value
-  set_energy_cf = settings.global["af-tls-energy-cf"].value
-  set_rate_cf = settings.global["af-tls-rate-cf"].value
-  chunk_lightning_rate = minute_ticks /1 /set_rate_cf
+  if event.setting:find("af-tls-", 1, true) then
+    set_base_capture_prob = settings.global["af-tls-capture-prob"].value
+    set_energy_cf = settings.global["af-tls-energy-cf"].value
+    set_rate_cf = settings.global["af-tls-rate-cf"].value
+    chunk_lightning_rate = minute_ticks /1 /set_rate_cf
+    set_extra_reduct = settings.global["af-tls-extra-reduct"].value
+  end
 
   --- Homeworld preset
   if event.setting:find("af-tls-nauvis-", 1, true) then
@@ -465,9 +469,7 @@ local function get_reduction_cfs(chunks_number, shift)
     reduction = 4
   end
 
-  reduction = reduction + shift
-  -- TODO: set higher reduction by settings / surfaces number
-  -- reduction = reduction + 1
+  reduction = reduction + shift + set_extra_reduct
 
   local border, chunk_use_prob
   --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust

@@ -1,7 +1,17 @@
-local shared = require("shared")
+local shared = require("shared-pre")
 
 data:extend{
     -- Startup
+    {
+        type = "double-setting",
+        name = "af-tls-rod-catch-radius",
+        setting_type = "startup",
+        minimum_value = 16,
+        default_value = 48,
+        maximum_value = 96,
+        order = "a",
+    },
+
     -- Map/global
     {
         type = "double-setting",
@@ -77,7 +87,7 @@ data:extend{
         minimum_value = 0.01,
         default_value = 1,
         maximum_value = 100,
-        order = "c-1",
+        order = "c-common-1",
     },
     {
         type = "double-setting",
@@ -86,7 +96,16 @@ data:extend{
         minimum_value = 0.01,
         default_value = 1,
         maximum_value = 100,
-        order = "c-2",
+        order = "c-common-2",
+    },
+    {
+        type = "int-setting",
+        name = "af-tls-extra-reduct",
+        setting_type = "runtime-global",
+        minimum_value = -1,
+        default_value = 0,
+        maximum_value = 2,
+        order = "c-common-3",
     },
 
     {
