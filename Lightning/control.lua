@@ -2,29 +2,42 @@ local perlin = require("perlin")
 local shared = require("shared")
 
 local mod_name = "Lightning"
-local SE = "space-exploration"
+local global_max_power_level = 4
+local script_data = {}
 
 local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
-local set_main_debug = true --settings.global["af-tls-debug-main"].value
+local set_main_debug = false --settings.global["af-tls-debug-main"].value
 local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
 
-local global_max_power_level = 4
+local function perf_print(txt)
+  if set_perf_debug then
+    log(txt)
+    game.print(txt)
+  end
+end
+
+local function debug_print(txt)
+  log(txt)
+  if set_main_debug then
+    game.print(txt)
+  end
+end
 
 -- Ticks per second
 local second_ups = 60
 -- Ticks per minute
 local minute_ups = second_ups * 60
 -- Lightning calc delay
-local lightning_update_rate = 15
+local lightning_update_rate = 15 * (set_perf_debug and 6 or 1)
 -- Lightning delay per chunk
 local chunk_lightning_rate = minute_ups /1 /set_rate_cf
 -- For stickers
 local entity_update_rate = 120
 -- Used to reduce Perlin noise calc per step
-local chunk_cache_ttl = minute_ups * 1
+local chunk_cache_ttl = minute_ups * 2
 
 local MJ = 1000 * 1000
 local chunk_size = 32
@@ -41,28 +54,84 @@ local rod_protos_ordered = {
   [2] = "lightning-rod-1",
 }
 
-local script_data = {}
+local PRESET_HOME   = "home"
+local PRESET_MOVING = "move"
+local PRESET_TOTAL  = "total"
 
-local function perf_print(txt)
-  log(txt)
-  if set_perf_debug then
-    game.print(txt)
+local surfPresets = {
+  [PRESET_HOME]   = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, zspeed=0 },
+  [PRESET_MOVING] = { base=0, scale=2, size=2, zspeed=1 },
+  [PRESET_TOTAL]  = { base=1, scale=0, size=1, zspeed=0 },
+}
+
+local SE = "space-exploration"
+local zone_ore_to_preset = {
+  -- Metals
+  ["iron-ore"] = PRESET_TOTAL,
+  ["copper-ore"] = nil,
+  ["uranium-ore"] = nil,
+  ["se-holmium-ore"] = PRESET_TOTAL,
+  ["se-beryllium-ore"] = nil,
+  ["se-iridium-ore"] = nil,
+  -- Other
+  ["stone"] = nil,
+  ["coal"] = nil,
+  ["crude-oil"] = nil,
+  ["se-vitamelange"] = nil,
+  ["se-cryonite"] = PRESET_MOVING,
+  ["se-vulcanite"] = PRESET_MOVING,
+}
+
+local function setupPreset(name, seed)
+  local preset = surfPresets[name]
+  if not preset then
+    error("No preset named "..serpent.line(name))
   end
+  local currSurfSettings = {}
+  -- Instance values
+  currSurfSettings.preset_name = name
+  currSurfSettings.seed = math.fmod(seed, 1000)
+  currSurfSettings.active = true
+  -- Copy preset values
+  currSurfSettings.base = preset.base
+  currSurfSettings.scale = preset.scale
+  currSurfSettings.size = preset.size
+  currSurfSettings.zspeed = preset.zspeed
+  -- TODO: add coefficients for day/night, darkness/daytime?
+  return currSurfSettings
 end
 
-local function debug_print(txt)
-  log(txt)
-  if set_main_debug then
-    game.print(txt)
+local function se_register_zone(surface_index)
+  local zone = remote.call(SE, "get_zone_from_surface_index", {surface_index=surface_index})
+  if zone then
+    local preset_name = zone_ore_to_preset[zone.primary_resource]
+    if zone.is_homeworld then preset_name = PRESET_HOME end
+    -- debug_print("TLS se_register_zone, index: "..surface_index..", type: "..serpent.line(zone.type)..", preset: "..serpent.line(preset_name))
+    if zone.type ~= "planet" and zone.type ~= "moon" then return false end
+    if not preset_name then return false end
+    local currSurfSettings = setupPreset(preset_name, zone.seed)
+    if script_data.surfSettings[surface_index] then
+      shared.tableOverride(script_data.surfSettings[surface_index], currSurfSettings)
+    else
+      script_data.surfSettings[surface_index] = currSurfSettings
+    end
+    return true
   end
+  return false
 end
 
 local function reset_global()
   debug_print("TLS reset_global")
-  -- TODO: add different planetes when SE is on
   script_data.surfSettings = {
-    [1] = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, seed=0, zspeed=0 }
+    [1] = setupPreset("home", 0),
   }
+  if game.active_mods[SE] then
+    local done = 0
+    for _, surface in pairs(game.surfaces) do
+      done = done + (se_register_zone(surface.index) and 1 or 0)
+    end
+    debug_print("TLS+SE added "..done.." surfaces of "..#game.surfaces)
+  end
   script_data.rods_by_surface = {}
 end
 
@@ -74,8 +143,9 @@ local function update_runtime_settings()
   set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
   -- Apply
   chunk_lightning_rate = minute_ups /1 /set_rate_cf
-  script_data.surfSettings[1].base = set_nauvis_base
-  script_data.surfSettings[1].scale = set_nauvis_scale
+  surfPresets["home"].base = set_nauvis_base
+  surfPresets["home"].scale = set_nauvis_scale
+  -- TODO: apply presets to surfSettings by preset_name
 end
 
 local function register_rod(entity)
@@ -275,7 +345,7 @@ end
 function get_max_power_level(currSurfSettings, chunk)
   local value
   local x = currSurfSettings.size * chunk.x/5 + currSurfSettings.seed*127
-  local y = currSurfSettings.chunk.y/5 - currSurfSettings.seed*271
+  local y = currSurfSettings.size * chunk.y/5 - currSurfSettings.seed*271
   if currSurfSettings.zspeed == 0 then
     -- It's 18% faster
     value = perlin.noise2d(x, y)
@@ -316,11 +386,56 @@ function chunk_filter_iter(surface, border, ar)
   end
 end
 
+local function get_reduction_cfs(chunks_number, shift)
+  if shift == nil then shift = 0 end
+  local reduction
+
+  if chunks_number < 2000 then
+    reduction = 1
+  elseif chunks_number < 5000 then
+    reduction = 2
+  elseif chunks_number < 10000 then
+    reduction = 3
+  else
+    reduction = 4
+  end
+
+  reduction = reduction + shift
+  -- TODO: set higher reduction by settings / surfaces number
+  -- reduction = reduction + 1
+
+  local border, chunk_use_prob
+  --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
+  --- More for better distribution
+  if reduction <= 1 then
+    border = 3
+    chunk_use_prob = 0.1
+  elseif reduction == 2 then
+    border = 5
+    chunk_use_prob = 0.05
+  elseif reduction == 3 then
+    border = 7
+    chunk_use_prob = 0.025
+  elseif reduction == 4 then
+    border = 10
+    chunk_use_prob = 0.01
+  elseif reduction == 5 then
+    border = 15
+    chunk_use_prob = 0.003
+  else
+    border = 20
+    chunk_use_prob = 0.001
+  end
+  return border, chunk_use_prob
+end
+
 local function make_chunks_cache(surface)
+  local chunks = get_surface_chunks(surface)
+  local border, chunk_use_prob = get_reduction_cfs(#chunks, -1)
   local cache = {}
   local total = 0
   local active = 0
-  for chunk in chunk_filter_iter(surface, 5) do
+  for chunk in chunk_filter_iter(surface, border, chunks) do
     total = total + 1
     power_level = get_max_power_level(currSurfSettings, chunk)
     if power_level > 0 then
@@ -341,10 +456,10 @@ local function _handle_chunk(chunks_todo, chunk, power_level)
   if math.random() < 0.03 then power_level = power_level + 1 end
   if math.random() < 0.03 then power_level = power_level + 1 end
   power_level = math.clamp(power_level, 0, global_max_power_level)
+  
+  if power_level > 0 then chunks_todo[#chunks_todo + 1] = {chunk, power_level} end
   --- Save into todo list with prob according to level
-  for i = 1, power_level do
-    chunks_todo[#chunks_todo + 1] = {chunk, power_level}
-  end
+  -- for i = 1, power_level do chunks_todo[#chunks_todo + 1] = {chunk, power_level} end
 end
 
 local function process_surface(surface, currSurfSettings)
@@ -355,11 +470,11 @@ local function process_surface(surface, currSurfSettings)
   local todo_number = 0
   local power_level
 
-  if currSurfSettings.base < 1 and currSurfSettings.speed == 0 then
+  if currSurfSettings.base < 1 and currSurfSettings.zspeed == 0 then
     local cache_empty = currSurfSettings.cache == nil
     local cache_expired = currSurfSettings.cache_created ~= nil and game.ticks_played - currSurfSettings.cache_created > chunk_cache_ttl
     if cache_empty or cache_expired then
-      -- perf_print("TLS cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
+      perf_print("TLS cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
       make_chunks_cache(surface)
     end
   else
@@ -369,36 +484,23 @@ local function process_surface(surface, currSurfSettings)
   if script_data.surfSettings[surface.index].cache ~= nil then
 
     --- Optimise base==0 surfaces with cache of lightning-active regions
-    local total = 0
-    for _, chunk_info in pairs(script_data.surfSettings[surface.index].cache) do
-      total = total + 1
-      power_level = math.random(0, chunk_info[2])
-      _handle_chunk(chunks_todo, chunk_info[1], power_level)
+    local cache = script_data.surfSettings[surface.index].cache
+    local border, chunk_use_prob = get_reduction_cfs(#cache, -1)
+    for _, chunk_info in pairs(cache) do
+      if math.random() < chunk_use_prob then
+        power_level = math.random(0, chunk_info[2])
+        _handle_chunk(chunks_todo, chunk_info[1], power_level)
+      end
     end
-    todo_number = #chunks_todo
-    -- perf_print("TLS process_surface with cache: "..total.." chunks, "..#chunks_todo.." todo")
+    --- Normalise frequence for further probability calculation
+    todo_number = #chunks_todo / chunk_use_prob
+    perf_print("TLS process_surface with cache: "..#cache.." chunks, "..#chunks_todo.." todo")
 
   else
     --- Optimise other surfaces with chunk usage probability
-    --- TODO: maybe also use cache for random power level to reduce noise calc?
     local chunks = get_surface_chunks(surface)
-    local border, chunk_use_prob
-    --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
-    --- More for better distribution
-    -- TODO: set higher reduction by settings / surfaces number
-    if #chunks < 2000 then
-      border = 3
-      chunk_use_prob = 0.1
-    elseif #chunks < 5000 then
-      border = 5
-      chunk_use_prob = 0.05
-    elseif #chunks < 10000 then
-      border = 7
-      chunk_use_prob = 0.025
-    else
-      border = 10
-      chunk_use_prob = 0.01
-    end
+    local border, chunk_use_prob = get_reduction_cfs(#chunks)
+
     for chunk in chunk_filter_iter(surface, border, chunks) do
       if math.random() < chunk_use_prob then
         power_level = currSurfSettings.base + get_random_power_level(currSurfSettings, chunk)
@@ -407,11 +509,13 @@ local function process_surface(surface, currSurfSettings)
     end
     --- Normalise frequence for further probability calculation
     todo_number = #chunks_todo / chunk_use_prob
-    -- perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
+    perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
   end
 
   local surface_event_number = todo_number * lightning_update_rate / chunk_lightning_rate
+  perf_print("TLS surface_event_number: "..surface_event_number)
   surface_event_number = math.min(surface_event_number, #chunks_todo)
+
   if surface_event_number < 1 then
     if math.random() < surface_event_number then
       make_lightning_inner(surface, chunks_todo[math.random(#chunks_todo)])
@@ -431,16 +535,15 @@ end
 
 local function process_lightnings()
   local profiler = set_perf_debug and game.create_profiler() or nil
-  local surface
-  --- TODO: shift surfaces on different calls/ticks; use buckets?
-  for surface_name, currSurfSettings in pairs(script_data.surfSettings) do
-    if currSurfSettings.base > 0 or currSurfSettings.scale > 0 then
-      surface = game.surfaces[surface_name]
-      process_surface(surface, currSurfSettings)
+  --- TODO: Shift surfaces on different calls/ticks. Use buckets or mod by surface index?
+  for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
+    if currSurfSettings.active and currSurfSettings.base > 0 or currSurfSettings.scale > 0 then
+      process_surface(game.surfaces[surface_index], currSurfSettings)
     end
   end
   if profiler then perf_print{"", "TLS main process: ", profiler, "\n"} end
 end
+
 
 local function process_a_rod(currSurfSettings, rod_entity)
   local surface = rod_entity.surface
@@ -459,9 +562,9 @@ local function process_a_rod(currSurfSettings, rod_entity)
 end
 
 local function process_entities(event)
-  for surface_name, surface_bucket in pairs(script_data.rods_by_surface) do
+  for surface_index, surface_bucket in pairs(script_data.rods_by_surface) do
     -- game.print(serpent.line(script_data.surfSettings))
-    currSurfSettings = script_data.surfSettings[surface_name]
+    currSurfSettings = script_data.surfSettings[surface_index]
     local bucket = surface_bucket[event.tick % entity_update_rate]
     if not bucket then return end
     for unit_number, rod_entity in pairs(bucket) do
@@ -490,6 +593,25 @@ local function update_configuration()
   rods_reload()
 end
 
+local function cache_clean()
+  for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
+    currSurfSettings.cache = nil
+  end
+end
+
+local function process_rare()
+  if game.active_mods[SE] then
+    --- Tried defines.events.on_surface_created
+    --- But seems like during the event, SE doesn't have surface linked to zone yet
+    for _, surface in pairs(game.surfaces) do
+      if not script_data.surfSettings[surface.index] then
+        se_register_zone(surface.index)
+      end
+    end
+  end
+end
+
+
 script.on_init(on_init)
 script.on_load(on_load)
 script.on_event(defines.events.on_runtime_mod_setting_changed, update_runtime_settings)
@@ -504,15 +626,31 @@ script.on_event({
 }, on_any_built)
 
 script.on_nth_tick(lightning_update_rate, process_lightnings)
+script.on_nth_tick(minute_ups, process_rare)
 script.on_event(defines.events.on_tick, process_entities)
 
+
 commands.add_command(
-  "tsl-clean",
+  "tsl-clean-draw",
   "Remove all TSL drawings",
   clean_drawings
 )
 commands.add_command(
-  "tsl-reload",
-  "Reload all TSL chests",
+  "tsl-rods-reload",
+  "Reload all TSL rods",
   rods_reload
 )
+commands.add_command(
+  "tsl-clean-cache",
+  "Reload all TSL surface cache",
+  cache_clean
+)
+
+remote.add_interface(mod_name, {
+  list_surf_settings = function()
+    return script_data.surfSettings
+  end,
+  set_surf_settings = function(surface_index, new_settings)
+    shared.tableOverride(script_data.surfSettings[surface_index], new_settings)
+  end,
+})

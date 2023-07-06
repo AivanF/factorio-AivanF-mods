@@ -55,6 +55,13 @@ function shared.Iter2Array(...)
   return arr
 end
 
+function shared.tableOverride(dst, src)
+  for k, v in pairs(src) do
+    dst[k] = v
+  end
+  return dst
+end
+
 shared.max_catch_radius = 48
 shared.min_catch_radius = 8
 return shared
