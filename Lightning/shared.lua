@@ -1,39 +1,68 @@
-local shared = {}
+local shared = {
+  mod_name = "Lightning",
+  max_catch_radius = 48,
+  min_catch_radius = 8,
+}
+
+shared.PRESET_NIL    = "nil"
+shared.PRESET_HOME   = "home"
+shared.PRESET_MOVING = "move"
+shared.PRESET_TOTAL  = "total"
+shared.allowed_presets = {shared.PRESET_NIL, shared.PRESET_HOME, shared.PRESET_MOVING, shared.PRESET_TOTAL}
+shared.default_presets = {
+  {"iron-ore", shared.PRESET_TOTAL},
+  {"copper-ore", nil},
+  {"uranium-ore", nil},
+  {"se-holmium-ore", shared.PRESET_TOTAL},
+  {"se-beryllium-ore", nil},
+  {"se-iridium-ore", nil},
+  -- Other
+  {"stone", nil},
+  {"coal", nil},
+  {"crude-oil", nil},
+  {"se-vitamelange", nil},
+  {"se-cryonite", shared.PRESET_MOVING},
+  {"se-vulcanite", shared.PRESET_MOVING},
+}
+
+function shared.preset_setting_name_for_resource(resource)
+  return "af-tls-preset-for-"..resource
+end
 
 function math.clamp(x, min, max)
-    return math.max(math.min(x, max), min)
+  return math.max(math.min(x, max), min)
 end
 
 function shared.ShuffleInPlace(t)
-    for i = #t, 2, -1 do
-        local j = math.random(i)
-        t[i], t[j] = t[j], t[i]
-    end
+  for i = #t, 2, -1 do
+    local j = math.random(i)
+    t[i], t[j] = t[j], t[i]
+  end
 end
 
 function shared.spairs(t, order)
-    -- From here: https://stackoverflow.com/a/15706820/5308802
+  -- From here: https://stackoverflow.com/a/15706820/5308802
 
-    -- collect the keys
-    local keys = {}
-    for k in pairs(t) do keys[#keys+1] = k end
+  -- collect the keys
+  local keys = {}
+  for k in pairs(t) do keys[#keys+1] = k end
 
-    -- if order function given, sort by it by passing the table and keys a, b,
-    -- otherwise just sort the keys 
-    if order then
-        table.sort(keys, function(a,b) return order(t, a, b) end)
-    else
-        table.sort(keys)
+  -- if order function given, sort by it by passing the table and keys a, b,
+  -- otherwise just sort the keys 
+  if order then
+    table.sort(keys, function(a,b) return order(t, a, b) end)
+  else
+    table.sort(keys)
+  end
+
+  -- return the iterator function
+  local i = 0
+  return function()
+    i = i + 1
+    if keys[i] then
+      return keys[i], t[keys[i]]
     end
-
-    -- return the iterator function
-    local i = 0
-    return function()
-        i = i + 1
-        if keys[i] then
-            return keys[i], t[keys[i]]
-        end
-    end
+  end
 end
 
 function shared.chunk_is_border(surface, chunk, dst)
@@ -62,6 +91,4 @@ function shared.tableOverride(dst, src)
   return dst
 end
 
-shared.max_catch_radius = 48
-shared.min_catch_radius = 8
 return shared

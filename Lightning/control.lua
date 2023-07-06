@@ -1,17 +1,23 @@
 local perlin = require("perlin")
 local shared = require("shared")
 
-local mod_name = "Lightning"
+local mod_name = shared.mod_name
 local global_max_power_level = 4
 local script_data = {}
+local SE = "space-exploration"
 
 local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
+local set_nauvis_size = settings.global["af-tls-nauvis-size"].value
+local set_nauvis_zspeed = settings.global["af-tls-nauvis-zspeed"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
 local set_base_capture_prob = settings.global["af-tls-capture-prob"].value
-local set_main_debug = true --settings.global["af-tls-debug-main"].value
+local set_main_debug = false --settings.global["af-tls-debug-main"].value
 local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
+
+local settings_nauvis_changed = false
+local settings_presets_changed = false
 
 local function perf_print(txt)
   if set_perf_debug then
@@ -38,7 +44,7 @@ local lightning_update_rate = 15 * (set_perf_debug and 6 or 1)
 -- Lightning delay per chunk
 local chunk_lightning_rate = minute_ticks /1 /set_rate_cf
 -- For stickers
-local entity_update_rate = 120
+local entity_update_rate = second_ticks * 2
 -- Used to reduce Perlin noise calc per step
 local chunk_cache_ttl = minute_ticks * 2
 
@@ -54,36 +60,27 @@ local rod_protos_ordered = {
   [2] = "lightning-rod-1",
 }
 
-
-local PRESET_HOME   = "home"
-local PRESET_MOVING = "move"
-local PRESET_TOTAL  = "total"
-
 local surfPresets = {
-  [PRESET_HOME]   = { base=set_nauvis_base, scale=set_nauvis_scale, size=1, zspeed=0 },
-  [PRESET_MOVING] = { base=0, scale=2, size=2, zspeed=1 },
-  [PRESET_TOTAL]  = { base=1, scale=0, size=1, zspeed=0 },
+  [shared.PRESET_HOME]   = {
+    base=set_nauvis_base, scale=set_nauvis_scale,
+    size=set_nauvis_size, zspeed=set_nauvis_zspeed,
+  },
+  [shared.PRESET_MOVING] = { base=0, scale=2, size=2, zspeed=1 },
+  [shared.PRESET_TOTAL]  = { base=1, scale=0, size=1, zspeed=0 },
 }
 
-local SE = "space-exploration"
-local zone_ore_to_preset = {
-  -- Metals
-  ["iron-ore"] = PRESET_TOTAL,
-  ["copper-ore"] = nil,
-  ["uranium-ore"] = nil,
-  ["se-holmium-ore"] = PRESET_TOTAL,
-  ["se-beryllium-ore"] = nil,
-  ["se-iridium-ore"] = nil,
-  -- Other
-  ["stone"] = nil,
-  ["coal"] = nil,
-  ["crude-oil"] = nil,
-  ["se-vitamelange"] = nil,
-  ["se-cryonite"] = PRESET_MOVING,
-  ["se-vulcanite"] = PRESET_MOVING,
-}
+local zone_ore_to_preset = {}
+local function reload_preset_mappings()
+  local preset_name
+  for index, info in ipairs(shared.default_presets) do
+    preset_name = settings.global[shared.preset_setting_name_for_resource(info[1])].value
+    if preset_name == shared.PRESET_NIL then preset_name = nil end
+    zone_ore_to_preset[info[1]] = preset_name
+  end
+end
+reload_preset_mappings()
 
-local function setupPreset(name, seed)
+local function setup_preset(name, seed)
   local preset = surfPresets[name]
   if not preset then
     error("No preset named "..serpent.line(name))
@@ -93,6 +90,7 @@ local function setupPreset(name, seed)
   currSurfSettings.preset_name = name
   currSurfSettings.seed = math.fmod(seed, 1000)
   currSurfSettings.active = true
+  currSurfSettings.changed = false
   -- Copy preset values
   currSurfSettings.base = preset.base
   currSurfSettings.scale = preset.scale
@@ -102,15 +100,52 @@ local function setupPreset(name, seed)
   return currSurfSettings
 end
 
+local function se_zone_to_preset(zone)
+  local preset_name = zone_ore_to_preset[zone.primary_resource]
+  if zone.is_homeworld then preset_name = shared.PRESET_HOME end
+  if zone.type ~= "planet" and zone.type ~= "moon" then return nil end
+  if not preset_name then return nil end
+  return preset_name
+end
+
+local function apply_updated_mappings()
+  local preset_name, surface_index
+  if game.active_mods[SE] then
+    for _, zone in pairs(remote.call(SE, "get_zone_index", {})) do
+      surface_index = zone.surface_index
+      preset_name = zone.surface_index and se_zone_to_preset(zone) or nil
+
+      if script_data.surfSettings[surface_index] then
+        if preset_name == nil then
+          --- Mapping removed
+          script_data.surfSettings[surface_index] = nil
+        else
+          if script_data.surfSettings[surface_index].preset_name ~= preset_name then
+            --- Mapping changed
+            shared.tableOverride(script_data.surfSettings[surface_index], setup_preset(preset_name, zone.seed))
+          end
+        end
+
+      else
+        if preset_name == nil then
+          --- Nothing to do
+        else
+          --- Mapping created
+          script_data.surfSettings[surface_index] = setup_preset(preset_name, zone.seed)
+        end
+      end
+    end
+  end
+end
+
 local function se_register_zone(surface_index)
   local zone = remote.call(SE, "get_zone_from_surface_index", {surface_index=surface_index})
   if zone then
-    local preset_name = zone_ore_to_preset[zone.primary_resource]
-    if zone.is_homeworld then preset_name = PRESET_HOME end
+    local preset_name = se_zone_to_preset(zone)
     -- debug_print("TLS se_register_zone, index: "..surface_index..", type: "..serpent.line(zone.type)..", preset: "..serpent.line(preset_name))
-    if zone.type ~= "planet" and zone.type ~= "moon" then return false end
     if not preset_name then return false end
-    local currSurfSettings = setupPreset(preset_name, zone.seed)
+    -- if name == shared.PRESET_NIL then return false end  -- Should be handled by reload_preset_mappings
+    local currSurfSettings = setup_preset(preset_name, zone.seed)
     if script_data.surfSettings[surface_index] then
       shared.tableOverride(script_data.surfSettings[surface_index], currSurfSettings)
     else
@@ -121,35 +156,51 @@ local function se_register_zone(surface_index)
   return false
 end
 
+local function se_add_zones()
+  local done = 0
+  for _, surface in pairs(game.surfaces) do
+    done = done + (se_register_zone(surface.index) and 1 or 0)
+  end
+  debug_print("TLS+SE added "..done.." surfaces of "..#game.surfaces)
+end
+
+local function apply_updated_preset(preset_name)
+  for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
+    if currSurfSettings.preset_name == preset_name then
+      shared.tableOverride(currSurfSettings, setup_preset(preset_name, currSurfSettings.seed))
+    end
+  end
+end
+
 
 local function reset_global()
   debug_print("TLS reset_global")
-  script_data.surfSettings = {
-    [1] = setupPreset("home", 0),
-  }
-  if game.active_mods[SE] then
-    local done = 0
-    for _, surface in pairs(game.surfaces) do
-      done = done + (se_register_zone(surface.index) and 1 or 0)
-    end
-    debug_print("TLS+SE added "..done.." surfaces of "..#game.surfaces)
-  end
   script_data.rods_by_surface = {}
+  script_data.surfSettings = {
+    [1] = setup_preset(shared.PRESET_HOME, 0),
+  }
+  if game.active_mods[SE] then se_add_zones() end
 end
 
-local function update_runtime_settings()
-  -- Read
+
+local function update_runtime_settings(event)
+  --- Common values
+  set_base_capture_prob = settings.global["af-tls-capture-prob"].value
   set_energy_cf = settings.global["af-tls-energy-cf"].value
   set_rate_cf = settings.global["af-tls-rate-cf"].value
-  set_nauvis_base = settings.global["af-tls-nauvis-base"].value
-  set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
-  set_base_capture_prob = settings.global["af-tls-capture-prob"].value
-  -- Apply
   chunk_lightning_rate = minute_ticks /1 /set_rate_cf
-  surfPresets["home"].base = set_nauvis_base
-  surfPresets["home"].scale = set_nauvis_scale
-  -- TODO: apply presets to surfSettings by preset_name
+
+  --- Homeworld preset
+  if event.setting:find("af-tls-nauvis-", 1, true) then
+    settings_nauvis_changed = true
+  end
+
+  --- Mappings
+  if event.setting:find("af-tls-preset-for-", 1, true) then
+    settings_presets_changed = true
+  end
 end
+
 
 local function register_rod(entity)
   local surface_index = entity.surface.index
@@ -443,7 +494,7 @@ local function get_reduction_cfs(chunks_number, shift)
   return border, chunk_use_prob
 end
 
-local function make_chunks_cache(surface)
+local function make_chunks_cache(surface, currSurfSettings)
   local chunks = get_surface_chunks(surface)
   local border, chunk_use_prob = get_reduction_cfs(#chunks, -1)
   local cache = {}
@@ -459,8 +510,8 @@ local function make_chunks_cache(surface)
       end
     end
   end
-  script_data.surfSettings[surface.index].cache_created = game.ticks_played
-  script_data.surfSettings[surface.index].cache = cache
+  currSurfSettings.cache_created = game.ticks_played
+  currSurfSettings.cache = cache
   debug_print("TLS chunks cache: "..active.." of "..total)
 end
 
@@ -489,7 +540,7 @@ local function process_surface(surface, currSurfSettings)
     local cache_expired = currSurfSettings.cache_created ~= nil and game.ticks_played - currSurfSettings.cache_created > chunk_cache_ttl
     if cache_empty or cache_expired then
       perf_print("TLS cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
-      make_chunks_cache(surface)
+      make_chunks_cache(surface, currSurfSettings)
     end
   else
     script_data.surfSettings[surface.index].cache = nil
@@ -625,6 +676,29 @@ local function process_rare()
   end
 end
 
+local function process_sometimes()
+  if settings_nauvis_changed then
+    debug_print("TLS settings_nauvis_changed")
+    settings_nauvis_changed = false
+    set_nauvis_base = settings.global["af-tls-nauvis-base"].value
+    set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
+    set_nauvis_size = settings.global["af-tls-nauvis-size"].value
+    set_nauvis_zspeed = settings.global["af-tls-nauvis-zspeed"].value
+    surfPresets[shared.PRESET_HOME].base = set_nauvis_base
+    surfPresets[shared.PRESET_HOME].scale = set_nauvis_scale
+    surfPresets[shared.PRESET_HOME].size = set_nauvis_size
+    surfPresets[shared.PRESET_HOME].zspeed = set_nauvis_zspeed
+    apply_updated_preset(shared.PRESET_HOME)
+  end
+
+  if settings_presets_changed then
+    debug_print("TLS settings_presets_changed")
+    settings_presets_changed = false
+    reload_preset_mappings()
+    apply_updated_mappings()
+  end
+end
+
 
 script.on_init(on_init)
 script.on_load(on_load)
@@ -641,6 +715,7 @@ script.on_event({
 
 script.on_nth_tick(lightning_update_rate, process_lightnings)
 script.on_nth_tick(minute_ticks, process_rare)
+script.on_nth_tick(second_ticks, process_sometimes)
 script.on_event(defines.events.on_tick, process_entities)
 
 
