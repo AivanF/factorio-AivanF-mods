@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2023-07-06
+  Major Features:
+    - SE planets support! Many settings to adjust lightning beheviour for different surfaces.
+  Features:
+    - Added light on strikes, nice for nights. Animated fade out would be nice to add...
+    - More settings options to customise experience and performance.
+  Optimizations:
+    - There is never too much of optimization! Especially when you have many planets with thousands of chunks to process (:
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2023-07-05
   Optimizations:
