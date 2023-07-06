@@ -9,7 +9,8 @@ local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
 local set_energy_cf = settings.global["af-tls-energy-cf"].value
 local set_rate_cf = settings.global["af-tls-rate-cf"].value
-local set_main_debug = false --settings.global["af-tls-debug-main"].value
+local set_base_capture_prob = settings.global["af-tls-capture-prob"].value
+local set_main_debug = true --settings.global["af-tls-debug-main"].value
 local set_perf_debug = false --settings.global["af-tls-debug-perf"].value
 
 local function perf_print(txt)
@@ -26,21 +27,20 @@ local function debug_print(txt)
   end
 end
 
--- Ticks per second
-local second_ups = 60
--- Ticks per minute
-local minute_ups = second_ups * 60
--- Lightning calc delay
+---- Helpful Factorio constants
+local MJ = 1000 * 1000
+local chunk_size = 32
+local second_ticks = 60
+local minute_ticks = second_ticks * 60
+
+-- Lightning calc delay. Less frequent for debug to not drown under spamming messages
 local lightning_update_rate = 15 * (set_perf_debug and 6 or 1)
 -- Lightning delay per chunk
-local chunk_lightning_rate = minute_ups /1 /set_rate_cf
+local chunk_lightning_rate = minute_ticks /1 /set_rate_cf
 -- For stickers
 local entity_update_rate = 120
 -- Used to reduce Perlin noise calc per step
-local chunk_cache_ttl = minute_ups * 2
-
-local MJ = 1000 * 1000
-local chunk_size = 32
+local chunk_cache_ttl = minute_ticks * 2
 
 local subtype_accum = 2
 local subtype_simple = 1
@@ -53,6 +53,7 @@ local rod_protos_ordered = {
   [1] = "lightning-rod-2-accumulator",
   [2] = "lightning-rod-1",
 }
+
 
 local PRESET_HOME   = "home"
 local PRESET_MOVING = "move"
@@ -120,6 +121,7 @@ local function se_register_zone(surface_index)
   return false
 end
 
+
 local function reset_global()
   debug_print("TLS reset_global")
   script_data.surfSettings = {
@@ -141,8 +143,9 @@ local function update_runtime_settings()
   set_rate_cf = settings.global["af-tls-rate-cf"].value
   set_nauvis_base = settings.global["af-tls-nauvis-base"].value
   set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
+  set_base_capture_prob = settings.global["af-tls-capture-prob"].value
   -- Apply
-  chunk_lightning_rate = minute_ups /1 /set_rate_cf
+  chunk_lightning_rate = minute_ticks /1 /set_rate_cf
   surfPresets["home"].base = set_nauvis_base
   surfPresets["home"].scale = set_nauvis_scale
   -- TODO: apply presets to surfSettings by preset_name
@@ -203,7 +206,7 @@ function draw_lightning(surface, position, tint)
   rendering.draw_sprite{
     sprite="tsl-lightning", x_scale=1, y_scale=1, tint=tint,
     render_layer="light-effect", only_in_alt_mode=false,
-    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ups/2
+    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2
   }
   surface.play_sound{path="tsl-lightning", position=position, volume_modifier=1}
 end
@@ -269,19 +272,22 @@ function make_lightning(surface, area, power_level, capture_limit)
   if capture_limit < shared.min_catch_radius then capture_limit = shared.min_catch_radius end
 
   lightning_energy = math.floor(math.random(100*power_level, 500*power_level) * set_energy_cf) * MJ
-  if power_level >= 4 then
-    tint = {1, 0.9, 0.8, 1}
+  -- TODO: add extra loud sounds for 3+ level
+  if power_level >= 5 then
+    tint = {0.5, 0.5, 0.5, 1}
+  elseif power_level >= 4 then
+    tint = {1, 0.8, 0.9, 1}
   elseif power_level >= 3 then
-    tint = {1, 0.9, 0.9, 1}
+    tint = {1, 0.9, 0.8, 1}
   elseif power_level >= 2 then
     volume = 0.85
-    tint = {1, 1, 0.9, 1}
+    tint = {1, 0.95, 0.8, 1}
   else
     volume = 0.7
-    tint = {0.9, 0.9, 1, 1}
+    tint = {0.8, 0.8, 1, 0.8}
   end
 
-  local capture_prob = math.pow(0.95, power_level)
+  local capture_prob = math.pow(set_base_capture_prob, power_level)
 
   for _, name in pairs(rod_protos_ordered) do
     subtype = rod_protos[name]
@@ -350,7 +356,7 @@ function get_max_power_level(currSurfSettings, chunk)
     -- It's 18% faster
     value = perlin.noise2d(x, y)
   else
-    local z = currSurfSettings.seed*37 + currSurfSettings.zspeed*game.ticks_played/minute_ups
+    local z = currSurfSettings.seed*37 + currSurfSettings.zspeed*game.ticks_played/minute_ticks
     value = perlin.noise2d(x, y, z)
   end
   value = (value+1) /2 -0.6
@@ -450,24 +456,24 @@ local function make_chunks_cache(surface)
   debug_print("TLS chunks cache: "..active.." of "..total)
 end
 
-local function _handle_chunk(chunks_todo, chunk, power_level)
+local function _handle_chunk(chunks_tasks, chunk, power_level)
   --- Small chance of higher level
   if math.random() < 0.03 then power_level = power_level + 1 end
   if math.random() < 0.03 then power_level = power_level + 1 end
   if math.random() < 0.03 then power_level = power_level + 1 end
   power_level = math.clamp(power_level, 0, global_max_power_level)
   
-  if power_level > 0 then chunks_todo[#chunks_todo + 1] = {chunk, power_level} end
-  --- Save into todo list with prob according to level
-  -- for i = 1, power_level do chunks_todo[#chunks_todo + 1] = {chunk, power_level} end
+  if power_level > 0 then chunks_tasks[#chunks_tasks + 1] = {chunk, power_level} end
+  --- Save into tasks list with prob according to level
+  -- for i = 1, power_level do chunks_tasks[#chunks_tasks + 1] = {chunk, power_level} end
 end
 
 local function process_surface(surface, currSurfSettings)
   --- surface: https://lua-api.factorio.com/latest/LuaSurface.html
   --- chunk: https://lua-api.factorio.com/latest/Concepts.html#ChunkPositionAndArea
 
-  local chunks_todo = {}
-  local todo_number = 0
+  local chunks_tasks = {}
+  local tasks_number = 0
   local power_level
 
   if currSurfSettings.base < 1 and currSurfSettings.zspeed == 0 then
@@ -489,12 +495,12 @@ local function process_surface(surface, currSurfSettings)
     for _, chunk_info in pairs(cache) do
       if math.random() < chunk_use_prob then
         power_level = math.random(0, chunk_info[2])
-        _handle_chunk(chunks_todo, chunk_info[1], power_level)
+        _handle_chunk(chunks_tasks, chunk_info[1], power_level)
       end
     end
     --- Normalise frequence for further probability calculation
-    todo_number = #chunks_todo / chunk_use_prob
-    perf_print("TLS process_surface with cache: "..#cache.." chunks, "..#chunks_todo.." todo")
+    tasks_number = #chunks_tasks / chunk_use_prob
+    perf_print("TLS process_surface with cache: "..#cache.." chunks, "..#chunks_tasks.." tasks")
 
   else
     --- Optimise other surfaces with chunk usage probability
@@ -504,31 +510,31 @@ local function process_surface(surface, currSurfSettings)
     for chunk in chunk_filter_iter(surface, border, chunks) do
       if math.random() < chunk_use_prob then
         power_level = currSurfSettings.base + get_random_power_level(currSurfSettings, chunk)
-        _handle_chunk(chunks_todo, chunk, power_level)
+        _handle_chunk(chunks_tasks, chunk, power_level)
       end
     end
     --- Normalise frequence for further probability calculation
-    todo_number = #chunks_todo / chunk_use_prob
-    perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_todo.." todo")
+    tasks_number = #chunks_tasks / chunk_use_prob
+    perf_print("TLS process_surface direct: "..#chunks.." chunks, "..#chunks_tasks.." tasks")
   end
 
-  local surface_event_number = todo_number * lightning_update_rate / chunk_lightning_rate
+  local surface_event_number = tasks_number * lightning_update_rate / chunk_lightning_rate
   perf_print("TLS surface_event_number: "..surface_event_number)
-  surface_event_number = math.min(surface_event_number, #chunks_todo)
+  surface_event_number = math.min(surface_event_number, #chunks_tasks)
 
   if surface_event_number < 1 then
     if math.random() < surface_event_number then
-      make_lightning_inner(surface, chunks_todo[math.random(#chunks_todo)])
+      make_lightning_inner(surface, chunks_tasks[math.random(#chunks_tasks)])
     end
   end
   surface_event_number = math.floor(surface_event_number + 0.5)
   if surface_event_number == 1 then
-    make_lightning_inner(surface, chunks_todo[math.random(#chunks_todo)])
+    make_lightning_inner(surface, chunks_tasks[math.random(#chunks_tasks)])
   end
   if surface_event_number > 1 then
-    shared.ShuffleInPlace(chunks_todo)
+    shared.ShuffleInPlace(chunks_tasks)
     for i = 1, surface_event_number do
-      make_lightning_inner(surface, chunks_todo[i])
+      make_lightning_inner(surface, chunks_tasks[i])
     end
   end
 end
@@ -626,7 +632,7 @@ script.on_event({
 }, on_any_built)
 
 script.on_nth_tick(lightning_update_rate, process_lightnings)
-script.on_nth_tick(minute_ups, process_rare)
+script.on_nth_tick(minute_ticks, process_rare)
 script.on_event(defines.events.on_tick, process_entities)
 
 
