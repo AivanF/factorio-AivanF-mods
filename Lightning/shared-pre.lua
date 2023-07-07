@@ -1,7 +1,5 @@
-local shared = {
-  mod_name = "Lightning",
-}
-
+local shared = {}
+shared.mod_name = "Lightning"
 shared.PRESET_NIL    = "nil"
 shared.PRESET_HOME   = "home"
 shared.PRESET_MOVING = "move"
@@ -22,6 +20,17 @@ shared.default_presets = {
   {"se-cryonite", shared.PRESET_MOVING},
   {"se-vulcanite", shared.PRESET_MOVING},
 }
+
+shared.animations_seeds = {4, 5, 9}
+shared.animations_length = 10
+shared.animation_ttl = 30
+shared.animation_speed = shared.animations_length / shared.animation_ttl
+
+function shared.get_seed_animation_name(seed)
+  return "tsl-lightning-"..seed
+end
+
+shared.big_animation_name = "tsl-lightning-big"
 
 function shared.preset_setting_name_for_resource(resource)
   return "af-tls-preset-for-"..resource

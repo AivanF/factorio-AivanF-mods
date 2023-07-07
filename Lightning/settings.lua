@@ -14,16 +14,6 @@ data:extend{
 
     -- Map/global
     {
-        type = "double-setting",
-        name = "af-tls-capture-prob",
-        setting_type = "runtime-global",
-        minimum_value = 0.1,
-        default_value = 0.95,
-        maximum_value = 1,
-        order = "a",
-    },
-
-    {
         type = "string-setting",
         name = "af-tls-nauvis---",
         localised_name = "--------- Nauvis:",
@@ -79,6 +69,15 @@ data:extend{
         allowed_values = {""},
         allow_blank = true,
         order = "c-0",
+    },
+    {
+        type = "double-setting",
+        name = "af-tls-capture-prob",
+        setting_type = "runtime-global",
+        minimum_value = 0.1,
+        default_value = 0.95,
+        maximum_value = 1,
+        order = "c-common-0",
     },
     {
         type = "double-setting",

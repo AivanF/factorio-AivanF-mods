@@ -1,7 +1,54 @@
+local shared = require("shared")
+
 local damage = 75
 local duration = 15
 local interval = 1
 local per_tick = damage / (1 + interval)
+
+local function add_lightning_animation(name, suffix)
+  -- https://wiki.factorio.com/Prototype/Animation
+  local hr_stripes = {}
+  local stripes = {}
+  for index = 1, shared.animations_length do
+    stripes[#stripes+1] = {
+      width_in_frames=1,
+      height_in_frames=1,
+      filename="__Lightning__/graphics/fx/lightning-"..suffix.."/"..string.format("%04d", index)..".png",
+    }
+    hr_stripes[#hr_stripes+1] = {
+      width_in_frames=1,
+      height_in_frames=1,
+      filename="__Lightning__/graphics/fx/lightning-"..suffix.."-hr/"..string.format("%04d", index)..".png",
+    }
+  end
+  data:extend({{
+    type="animation",
+    name=name,
+    stripes=stripes,
+    frame_count=shared.animations_length,
+    hr_version = {
+      stripes=hr_stripes,
+      frame_count=shared.animations_length,
+      width=512,
+      height=1024,
+      shift=util.by_pixel(0, -512),
+      blend_mode="additive",
+      apply_runtime_tint=true,
+    },
+    width=256,
+    height=512,
+    shift=util.by_pixel(0, -256),
+    apply_runtime_tint=true,
+    blend_mode="additive",
+    -- draw_as_light=true,
+    -- draw_as_glow=true,
+  }})
+end
+
+for _, seed in ipairs(shared.animations_seeds) do
+  add_lightning_animation(shared.get_seed_animation_name(seed), "seed-"..seed)
+end
+add_lightning_animation(shared.big_animation_name, "big")
 
 data:extend({
   -- https://wiki.factorio.com/Prototype/Sticker
@@ -24,15 +71,6 @@ data:extend({
 
   -- https://wiki.factorio.com/Prototype/Sprite
   -- https://lua-api.factorio.com/latest/Concepts.html#SpritePath
-  {
-    type="sprite",
-    name="tsl-lightning",
-    filename="__Lightning__/graphics/fx/lightning.png",
-    width=512,
-    height=1024,
-    shift=util.by_pixel(0, -512),
-    blend_mode="additive",
-  },
   {
     type="sprite",
     name="tsl-light",

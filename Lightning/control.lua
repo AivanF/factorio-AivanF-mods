@@ -66,8 +66,8 @@ local surfPresets = {
     base=set_nauvis_base, scale=set_nauvis_scale,
     size=set_nauvis_size, zspeed=set_nauvis_zspeed,
   },
-  [shared.PRESET_MOVING] = { base=0, scale=2, size=2, zspeed=1 },
-  [shared.PRESET_TOTAL]  = { base=1, scale=0, size=1, zspeed=0 },
+  [shared.PRESET_MOVING] = { base=0, scale=2, size=2, zspeed=0.1 },
+  [shared.PRESET_TOTAL]  = { base=1, scale=0, size=0, zspeed=0 },
 }
 
 local zone_ore_to_preset = {}
@@ -255,14 +255,45 @@ function rods_reload()
 end
 
 
-function draw_lightning(surface, position, tint, scale)
+function draw_lightning(surface, position, power_level)
   -- game.print("Lightning: [gps="..position[1]..","..position[2]..","..surface.index.."]")
   -- TODO: add small random rotation
-  rendering.draw_sprite{
-    sprite="tsl-lightning", x_scale=1, y_scale=1, tint=tint,
-    render_layer="light-effect", only_in_alt_mode=false,
-    target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2,
+
+  local animation
+  if power_level >= 3 then
+    animation = shared.big_animation_name
+  else
+    animation = shared.get_seed_animation_name(
+      shared.animations_seeds[math.random(1, #shared.animations_seeds)]
+    )
+  end
+
+  local tint
+  -- Gold sprite
+  if power_level >= 5 then
+    tint = {1, 0.8, 0.9, 1}
+  elseif power_level >= 4 then
+    tint = {1, 1, 1, 1}
+  elseif power_level >= 3 then
+    tint = {1, 0.9, 0.8, 1}
+  -- Cold sprite
+  elseif power_level >= 2 then
+    volume = 0.85
+    tint = {1, 1, 1, 1}
+  else
+    volume = 0.7
+    tint = {0.7, 0.7, 1, 1}
+  end
+
+  rendering.draw_animation{
+    animation=animation,
+    x_scale=1-2*math.random(1), y_scale=1, tint=tint, render_layer="light-effect",
+    animation_speed=shared.animation_speed, time_to_live=shared.animation_ttl,
+    animation_offset=-(game.ticks_played * shared.animation_speed) % shared.animations_length,
+    target=position, target_offset={0, 0}, surface=surface,
   }
+
+  local scale = 1 + power_level * 3
   rendering.draw_light{
     sprite="tsl-light", scale=scale/2, intensity=1, minimum_darkness=0, color=tint,
     target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/3,
@@ -324,7 +355,7 @@ function order_by_empty_acc(ar, i, j)
 end
 
 function make_lightning(surface, area, power_level, capture_limit)
-  local toCheck, rods, lightning_energy, volume, tint
+  local toCheck, rods, lightning_energy, volume
   local position = nil
   local target = nil
   local captured = false
@@ -336,18 +367,12 @@ function make_lightning(surface, area, power_level, capture_limit)
 
   lightning_energy = math.floor(math.random(100*power_level, 500*power_level) * set_energy_cf) * MJ
   -- TODO: add extra loud sounds for 3+ level
-  if power_level >= 5 then
-    tint = {1, 1, 1, 1}
-  elseif power_level >= 4 then
-    tint = {1, 0.8, 0.9, 1}
-  elseif power_level >= 3 then
-    tint = {1, 0.9, 0.8, 1}
+  if power_level >= 3 then
+    volume = 1
   elseif power_level >= 2 then
     volume = 0.85
-    tint = {1, 0.95, 0.8, 1}
   else
     volume = 0.7
-    tint = {0.8, 0.8, 1, 0.8}
   end
 
   local capture_prob = math.pow(set_base_capture_prob, power_level)
@@ -404,7 +429,7 @@ function make_lightning(surface, area, power_level, capture_limit)
     make_damage(surface, position, power_level)
   end
 
-  draw_lightning(surface, position, tint, 1+power_level*3)
+  draw_lightning(surface, position, power_level)
 end
 
 local function make_lightning_inner(surface, chunk_info)
