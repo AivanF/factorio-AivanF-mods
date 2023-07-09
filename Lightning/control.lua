@@ -52,13 +52,15 @@ local chunk_cache_ttl = minute_ticks * 2
 local subtype_accum = 2
 local subtype_simple = 1
 local rod_protos = {
+    ["lightning-rod-3-mighty"] = subtype_accum,
     ["lightning-rod-2-accumulator"] = subtype_accum,
     ["lightning-rod-1"] = subtype_simple,
 }
--- To be used with ipairs; accumulators go first
+-- Priority list, to be used with ipairs
 local rod_protos_ordered = {
-  [1] = "lightning-rod-2-accumulator",
-  [2] = "lightning-rod-1",
+  {name="lightning-rod-3-mighty", limit_cf=1.5, add_capture_prob=0.5,},
+  {name="lightning-rod-2-accumulator", limit_cf=1, add_capture_prob=0.1,},
+  {name="lightning-rod-1", limit_cf=1,},
 }
 
 local surfPresets = {
@@ -377,17 +379,17 @@ function make_lightning(surface, area, power_level, capture_limit)
 
   local capture_prob = math.pow(set_base_capture_prob, power_level)
 
-  for _, name in pairs(rod_protos_ordered) do
-    subtype = rod_protos[name]
+  for _, rod_class_info in pairs(rod_protos_ordered) do
+    subtype = rod_protos[rod_class_info.name]
     toCheck = {
-      {area.left_top.x-capture_limit, area.left_top.y-capture_limit},
-      {area.right_bottom.x+capture_limit, area.right_bottom.y+capture_limit}}
-    rods = surface.find_entities_filtered{area=toCheck, name=name}
+      {area.left_top.x-capture_limit*rod_class_info.limit_cf, area.left_top.y-capture_limit*rod_class_info.limit_cf},
+      {area.right_bottom.x+capture_limit*rod_class_info.limit_cf, area.right_bottom.y+capture_limit*rod_class_info.limit_cf}}
+    rods = surface.find_entities_filtered{area=toCheck, name=rod_class_info.name}
     shared.ShuffleInPlace(rods)
 
     if subtype == subtype_accum then
       for _, entity in shared.spairs(rods, order_by_empty_acc) do
-        captured = math.random() < capture_prob * (1 - entity.energy / entity.electric_buffer_size)
+        captured = math.random() < capture_prob * (1 - entity.energy / entity.electric_buffer_size) + rod_class_info.add_capture_prob
         target = entity
         position = entity.position
         if captured then
