@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2023-07-09
+  Features:
+    - Created Mighty Heaven Handler
+  Graphics:
+    - New pretty structures images! Higher and small resulutions included. Spent more days in Blender...
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2023-07-08
   Graphics:
