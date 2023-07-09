@@ -6,11 +6,7 @@ local icon = "__Lightning__/graphics/icons/1rod.png"
 local icon_size = 64
 local icon_mipmaps = 3
 
--- TODO: add energy.png using:
--- https://wiki.factorio.com/Types/IconSpecification
--- https://wiki.factorio.com/Types/IconData
-
-data:extend({  
+data:extend({
   {
     type = "item",
     name = name,
@@ -57,19 +53,36 @@ data:extend({
         {
           filename = "__Lightning__/graphics/entity/rod.png",
           priority = "extra-high",
-          width = 256,
-          height = 512,
-          scale = 0.2,
+          width = 64,
+          height = 128,
+          scale = 0.8,
           shift = util.by_pixel(0, -36),
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/rod-hr.png",
+            priority = "extra-high",
+            width = 128,
+            height = 256,
+            scale = 0.4,
+            shift = util.by_pixel(0, -36),
+          },
         },
         {
           filename = "__Lightning__/graphics/entity/rod-shadow.png",
           priority = "extra-high",
-          width = 512,
-          height = 256,
-          scale = 0.2,
+          width = 128,
+          height = 64,
+          scale = 0.8,
           shift = util.by_pixel(28, 0),
           draw_as_shadow = true,
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/rod-shadow-hr.png",
+            priority = "extra-high",
+            width = 256,
+            height = 128,
+            scale = 0.4,
+            shift = util.by_pixel(28, 0),
+            draw_as_shadow = true,
+          }
         }
       }
     },

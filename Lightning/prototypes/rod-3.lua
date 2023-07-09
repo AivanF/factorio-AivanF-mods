@@ -7,7 +7,7 @@ local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 10000
 
-data:extend({  
+data:extend({
   {
     type = "item",
     name = name,
@@ -67,18 +67,33 @@ data:extend({
       layers = {
         {
           filename = "__Lightning__/graphics/entity/mighty.png",
-          width = 512,
-          height = 1024,
-          scale = 0.4,
+          width = 256,
+          height = 512,
+          scale = 0.8,
           shift = {0, -3},
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/mighty-hr.png",
+            width = 512,
+            height = 1024,
+            scale = 0.4,
+            shift = {0, -3},
+          },
         },
         {
           filename = "__Lightning__/graphics/entity/mighty-shadow.png",
-          width = 1024,
-          height = 512,
-          scale = 0.4,
+          width = 512,
+          height = 256,
+          scale = 0.8,
           shift = {4, 0},
           draw_as_shadow = true,
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/mighty-shadow-hr.png",
+            width = 1024,
+            height = 512,
+            scale = 0.4,
+            shift = {4, 0},
+            draw_as_shadow = true,
+          },
         },
       }
     },

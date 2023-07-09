@@ -7,7 +7,7 @@ local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 500
 
-data:extend({  
+data:extend({
   {
     type = "item",
     name = name,
@@ -61,18 +61,33 @@ data:extend({
       layers = {
         {
           filename = "__Lightning__/graphics/entity/handler.png",
-          width = 256,
-          height = 512,
-          scale = 0.4,
+          width = 128,
+          height = 256,
+          scale = 0.8,
           shift = {0, -1.8},
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/handler-hr.png",
+            width = 256,
+            height = 512,
+            scale = 0.4,
+            shift = {0, -1.8},
+          },
         },
         {
           filename = "__Lightning__/graphics/entity/handler-shadow.png",
-          width = 512,
-          height = 256,
-          scale = 0.6,
+          width = 256,
+          height = 128,
+          scale = 1.2,
           shift = {3, 0},
           draw_as_shadow = true,
+          hr_version = {
+            filename = "__Lightning__/graphics/entity/handler-shadow-hr.png",
+            width = 512,
+            height = 256,
+            scale = 0.6,
+            shift = {3, 0},
+            draw_as_shadow = true,
+          },
         },
       }
     },
