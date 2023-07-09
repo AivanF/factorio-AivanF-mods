@@ -2,9 +2,9 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
 local name = "lightning-rod-1"
-local icon = "__Lightning__/graphics/icons/medium-electric-pole.png"
+local icon = "__Lightning__/graphics/icons/1rod.png"
 local icon_size = 64
-local icon_mipmaps = 4
+local icon_mipmaps = 3
 
 -- TODO: add energy.png using:
 -- https://wiki.factorio.com/Types/IconSpecification
@@ -55,40 +55,21 @@ data:extend({
     pictures = {
       layers = {
         {
-          filename = "__Lightning__/graphics/entity/medium-electric-pole.png",
+          filename = "__Lightning__/graphics/entity/rod.png",
           priority = "extra-high",
-          width = 40,
-          height = 124,
-          direction_count = 4,
-          shift = util.by_pixel(4, -44),
-          hr_version = {
-            filename = "__Lightning__/graphics/entity/hr-medium-electric-pole.png",
-            priority = "extra-high",
-            width = 84,
-            height = 252,
-            direction_count = 4,
-            shift = util.by_pixel(3.5, -44),
-            scale = 0.5
-          }
+          width = 256,
+          height = 512,
+          scale = 0.2,
+          shift = util.by_pixel(0, -36),
         },
         {
-          filename = "__base__/graphics/entity/medium-electric-pole/medium-electric-pole-shadow.png",
+          filename = "__Lightning__/graphics/entity/rod-shadow.png",
           priority = "extra-high",
-          width = 140,
-          height = 32,
-          direction_count = 4,
-          shift = util.by_pixel(56, -1),
+          width = 512,
+          height = 256,
+          scale = 0.2,
+          shift = util.by_pixel(28, 0),
           draw_as_shadow = true,
-          hr_version = {
-            filename = "__base__/graphics/entity/medium-electric-pole/hr-medium-electric-pole-shadow.png",
-            priority = "extra-high",
-            width = 280,
-            height = 64,
-            direction_count = 4,
-            shift = util.by_pixel(56.5, -1),
-            draw_as_shadow = true,
-            scale = 0.5
-          }
         }
       }
     },

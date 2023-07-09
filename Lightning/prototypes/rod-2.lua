@@ -2,9 +2,9 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
 local name = "lightning-rod-2-accumulator"
-local icon = "__Lightning__/graphics/icons/robot-charge-port.png"
+local icon = "__Lightning__/graphics/icons/2handler.png"
 local icon_size = 64
-local icon_mipmaps = 2
+local icon_mipmaps = 3
 local acc_capacity = 500
 
 data:extend({  
@@ -37,10 +37,15 @@ data:extend({
     flags = {"placeable-player", "player-creation"},
     minable = {hardness = 0.5, mining_time = 1, result = name},
     max_health = 500,
-    collision_box = {{-0.7, -0.7}, {0.7, 0.7}},
-    selection_box = {{-1, -1}, {1, 1}},
-    drawing_box = {{-1, -3}, {1, 0.5}},
-    -- corpse = "medium-remnants",
+    resistances = {
+      { type = "physical", decrease=10, percent=50 },
+      { type = "impact", decrease=10, percent=50 },
+      { type = "explosion", decrease=20, percent=50 },
+      { type = "poison", decrease=100, percent=99 },
+      { type = "electric", decrease=50, percent=80 },
+    },
+    collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
+    selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
     corpse = "big-electric-pole-remnants",
     dying_explosion = "medium-explosion",
     energy_source = {
@@ -53,20 +58,26 @@ data:extend({
     charge_cooldown = 5,
     discharge_cooldown = 5,
     picture = {
-      filename = "__Lightning__/graphics/entity/robot-charge-port.png",
-      width = 98,
-      height = 164,
-      shift = {0, -1.2}
+      layers = {
+        {
+          filename = "__Lightning__/graphics/entity/handler.png",
+          width = 256,
+          height = 512,
+          scale = 0.4,
+          shift = {0, -1.8},
+        },
+        {
+          filename = "__Lightning__/graphics/entity/handler-shadow.png",
+          width = 512,
+          height = 256,
+          scale = 0.6,
+          shift = {3, 0},
+          draw_as_shadow = true,
+        },
+      }
     },
-    recharging_animation = {
-      filename = "__Lightning__/graphics/entity/roboport-recharging.png",
-      priority = "high",
-      width = 37,
-      height = 35,
-      frame_count = 16,
-      scale = 1.75,
-      animation_speed = 0.85
-    },
+    -- discharge_animation = {},
+    -- recharging_animation = {},
     vehicle_impact_sound = sounds.generic_impact,
     open_sound = sounds.electric_network_open,
     close_sound = sounds.electric_network_close,
