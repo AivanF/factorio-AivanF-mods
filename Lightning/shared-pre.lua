@@ -1,5 +1,6 @@
 local shared = {}
 shared.mod_name = "Lightning"
+shared.SE = "space-exploration"
 shared.PRESET_NIL    = "nil"
 shared.PRESET_HOME   = "home"
 shared.PRESET_MOVING = "move"
@@ -81,6 +82,17 @@ function shared.chunk_is_border(surface, chunk, dst)
     or not surface.is_chunk_generated({chunk.x-dst, chunk.y})
     or not surface.is_chunk_generated({chunk.x, chunk.y-dst})
   )
+end
+
+function shared.split(inputstr, sep)
+  if sep == nil then
+    sep = "%s"
+  end
+  local t={}
+  for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    table.insert(t, str)
+  end
+  return t
 end
 
 function shared.Iter2Array(...)

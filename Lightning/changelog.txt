@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2023-07-14
+  Bugfixes:
+    - Fixed error on new game with SE
+  Features:
+    - Also a couple of new settings for mods compatibility: enable/disable other surfaces detection, recipes changing for new ingredients from other mods. Currently Space Exploration only, but more overhaul mods can be easily added!
+    - A couple of game commands for manual control of lightnings over surfaces, see mod page for more info.
+  Optimizations:
+    - New startup setting to reduce rate of lightnings calculations
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2023-07-09
   Features:

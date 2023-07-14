@@ -6,6 +6,30 @@ local icon = "__Lightning__/graphics/icons/3mighty.png"
 local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 10000
+local prereq = "electric-energy-accumulators"
+
+local ingredients = {
+  {"steel-plate", 2000},
+  {"copper-plate", 1000},
+  {"coal", 200},
+  {"plastic-bar", 400},
+  {"battery", 2000},
+  {"processing-unit", 100},
+}
+
+if settings.startup["af-tsl-support-recipes"].value then
+  if mods[shared.SE] then
+    prereq = "se-holmium-cable"
+    ingredients = {
+      {"steel-plate", 2000},
+      {"copper-plate", 1000},
+      {"se-holmium-cable", 200},
+      {"battery", 2000},
+      {"processing-unit", 100},
+    }
+    -- Replace with se-holmium-solenoid or se-superconductive-cable???
+  end
+end
 
 data:extend({
   {
@@ -22,14 +46,7 @@ data:extend({
     type = "recipe",
     name = name,
     enabled = false,
-    ingredients = {
-      {"steel-plate", 2000},
-      {"copper-plate", 1000},
-      {"coal", 200},
-      {"plastic-bar", 400},
-      {"battery", 2000},
-      {"processing-unit", 100},
-    },
+    ingredients = ingredients,
     result = name,
   },
   {
@@ -129,6 +146,6 @@ data:extend({
 })
 
 table.insert(
-  data.raw.technology["electric-energy-accumulators"].effects,
+  data.raw.technology[prereq].effects,
   { type = "unlock-recipe", recipe = name }
 )

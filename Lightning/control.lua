@@ -4,7 +4,7 @@ local shared = require("shared")
 local mod_name = shared.mod_name
 local global_max_power_level = 4
 local script_data = {}
-local SE = "space-exploration"
+local SE = shared.SE
 
 local set_nauvis_base = settings.global["af-tls-nauvis-base"].value
 local set_nauvis_scale = settings.global["af-tls-nauvis-scale"].value
@@ -41,7 +41,7 @@ local second_ticks = 60
 local minute_ticks = second_ticks * 60
 
 -- Lightning calc delay. Less frequent for debug to not drown under spamming messages
-local lightning_update_rate = 15 * (set_perf_debug and 6 or 1)
+local lightning_update_rate = settings.startup["af-tls-update-delay"].value * (set_perf_debug and 6 or 1)
 -- Lightning delay per chunk
 local chunk_lightning_rate = minute_ticks /1 /set_rate_cf
 -- For stickers
@@ -58,7 +58,7 @@ local rod_protos = {
 }
 -- Priority list, to be used with ipairs
 local rod_protos_ordered = {
-  {name="lightning-rod-3-mighty", limit_cf=1.5, add_capture_prob=0.5,},
+  {name="lightning-rod-3-mighty", limit_cf=1.5, add_capture_prob=0.8,},
   {name="lightning-rod-2-accumulator", limit_cf=1, add_capture_prob=0.1,},
   {name="lightning-rod-1", limit_cf=1,},
 }
@@ -141,6 +141,17 @@ local function apply_updated_mappings()
   end
 end
 
+local function apply_preset(surface_index, preset_name, seed)
+  seed = seed or surface_index * 314
+  local currSurfSettings = setup_preset(preset_name, seed)
+  -- TODO: try to save important values like seed
+  if script_data.surfSettings[surface_index] then
+    shared.tableOverride(script_data.surfSettings[surface_index], currSurfSettings)
+  else
+    script_data.surfSettings[surface_index] = currSurfSettings
+  end
+end
+
 local function se_register_zone(surface_index)
   local zone = remote.call(SE, "get_zone_from_surface_index", {surface_index=surface_index})
   if zone then
@@ -148,12 +159,7 @@ local function se_register_zone(surface_index)
     -- debug_print("TLS se_register_zone, index: "..surface_index..", type: "..serpent.line(zone.type)..", preset: "..serpent.line(preset_name))
     if not preset_name then return false end
     -- if name == shared.PRESET_NIL then return false end  -- Should be handled by reload_preset_mappings
-    local currSurfSettings = setup_preset(preset_name, zone.seed)
-    if script_data.surfSettings[surface_index] then
-      shared.tableOverride(script_data.surfSettings[surface_index], currSurfSettings)
-    else
-      script_data.surfSettings[surface_index] = currSurfSettings
-    end
+    apply_preset(surface_index, preset_name, zone.seed)
     return true
   end
   return false
@@ -182,7 +188,9 @@ local function reset_global()
   script_data.surfSettings = {
     [1] = setup_preset(shared.PRESET_HOME, 0),
   }
-  if game.active_mods[SE] then se_add_zones() end
+  if settings.startup["af-tsl-support-surfaces"].value then
+    if game.active_mods[SE] then se_add_zones() end
+  end
 end
 
 
@@ -299,11 +307,11 @@ function draw_lightning(surface, position, power_level)
   rendering.draw_light{
     sprite="tsl-light", scale=scale/2, intensity=1, minimum_darkness=0, color=tint,
     target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/3,
-  } 
+  }
   rendering.draw_light{
     sprite="tsl-light", scale=scale, intensity=0.5, minimum_darkness=0, color=tint,
     target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/2,
-  } 
+  }
   surface.play_sound{path="tsl-lightning", position=position, volume_modifier=1}
 end
 
@@ -659,16 +667,55 @@ local function process_entities(event)
   for surface_index, surface_bucket in pairs(script_data.rods_by_surface) do
     -- game.print(serpent.line(script_data.surfSettings))
     currSurfSettings = script_data.surfSettings[surface_index]
-    local bucket = surface_bucket[event.tick % entity_update_rate]
-    if not bucket then return end
-    for unit_number, rod_entity in pairs(bucket) do
-      if rod_entity.valid then
-        process_a_rod(currSurfSettings, rod_entity)
-      else
-        table.remove(bucket, unit_number)
+    if currSurfSettings ~= nil then
+      local bucket = surface_bucket[event.tick % entity_update_rate]
+      if not bucket then return end
+      for unit_number, rod_entity in pairs(bucket) do
+        if rod_entity.valid then
+          process_a_rod(currSurfSettings, rod_entity)
+        else
+          table.remove(bucket, unit_number)
+        end
       end
     end
   end
+end
+
+local function surface_clean_cmd(command)
+  -- TODO: check if player is admin or nil
+  local surface_name = tonumber(command.parameter) or command.parameter
+  local surface = game.surfaces[surface_name]
+  if not surface then
+    game.get_player(command.player_index).print("No surface '"..surface_name.."'")
+    return
+  end
+
+  if script_data.surfSettings[surface.index] then
+    script_data.surfSettings[surface.index] = nil
+    game.get_player(command.player_index).print("Cleaned surface '"..surface_name.."'")
+  else
+    game.get_player(command.player_index).print("Surface '"..surface_name.."' exists but not registered")
+  end
+end
+
+local function surface_add_cmd(command)
+  -- TODO: check if player is admin or nil
+  local args = shared.split(command.parameter or "")
+
+  if #args < 1 or #args > 2 then
+    game.get_player(command.player_index).print("Bad arguments number")
+    return
+  end
+
+  local surface_name = tonumber(args[1]) or args[1]
+  local surface = game.surfaces[surface_name]
+  if not surface then
+    game.get_player(command.player_index).print("No surface '"..surface_name.."'")
+    return
+  end
+
+  local preset_name = args[2] or shared.PRESET_HOME
+  apply_preset(surface.index, preset_name)
 end
 
 local function on_init()
@@ -694,7 +741,7 @@ local function cache_clean()
 end
 
 local function process_rare()
-  if game.active_mods[SE] then
+  if game.active_mods[SE] and game.tick > second_ticks then
     --- Tried defines.events.on_surface_created
     --- But seems like during the event, SE doesn't have surface linked to zone yet
     for _, surface in pairs(game.surfaces) do
@@ -762,6 +809,16 @@ commands.add_command(
   "tsl-clean-cache",
   "Reload all TSL surface cache",
   cache_clean
+)
+commands.add_command(
+  "tsl-remove-surface",
+  "Remove lightnings from a surface",
+  surface_clean_cmd
+)
+commands.add_command(
+  "tsl-add-surface",
+  "Add lightnings to a surface",
+  surface_add_cmd
 )
 
 remote.add_interface(mod_name, {
