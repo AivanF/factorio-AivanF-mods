@@ -684,9 +684,9 @@ end
 local function surface_clean_cmd(command)
   -- TODO: check if player is admin or nil
   local surface_name = tonumber(command.parameter) or command.parameter
-  local surface = game.surfaces[surface_name]
+  local surface = command.parameter and game.surfaces[surface_name]
   if not surface then
-    game.get_player(command.player_index).print("No surface '"..surface_name.."'")
+    game.get_player(command.player_index).print("No surface '"..serpent.line(surface_name).."'")
     return
   end
 

@@ -22,8 +22,8 @@ data:extend({
     name = name,
     enabled = false,
     ingredients = {
-      {"steel-plate", 100},
-      {"copper-plate", 20},
+      {"steel-plate", 40},
+      {"copper-plate", 40},
     },
     result = name,
   },
