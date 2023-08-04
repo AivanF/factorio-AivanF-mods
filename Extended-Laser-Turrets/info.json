@@ -1,0 +1,12 @@
+{
+  "name": "Extended-Laser-Turrets",
+  "version": "1.0.0",
+  "title": "Extended Laser Turrets",
+  "author": "AivanF",
+  "homepage": "https://mods.factorio.com/mod/Extended-Laser-Turrets",
+  "factorio_version": "1.1",
+  "dependencies": [
+    "? space-exploration"
+  ],
+  "description": "In case you are upset with other las turrets mods due to total imbalance, have a look at this one! ELT provides new grades and varients of laser turrets with smooth grow of distance, damage, energy consumption, recipe cost.\n\nNow we have:\n- Laser Turret (vanilla MK1)\n- MK2 Damager: x2 damage\n- MK2 Ranger: x2 range\n- MK3 Damager: x4 damage x2 range\n- MK3 Ranger: x4 range x2 damage\n\nBoth variants indended to be used together to deal with swarms of small biter beasts as well as sole huge snapper bosses. SE supported. Based on nice yet imbalanced DimmimoLongRangeLasers mod by Viidi."
+}
