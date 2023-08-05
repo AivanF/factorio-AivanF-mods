@@ -1,0 +1,10 @@
+{
+  "name": "Recipes-Reload",
+  "version": "1.0.1",
+  "title": "Recipes Reload",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": [],
+  "factorio_version": "1.1",
+  "description": "This mod does one simple thing: it reloads researched recipes when new mods get added or updated.\n\nUnfortunately, Factorio doesn't do this by default. Some mods forget doing this and you get missing recipes, other ones add the same script, but duplication leads to performance degradation. So this mods intended to be a dependency for single recalculation of technologies results. You can also call it manually with /recipes-reload command."
+}
