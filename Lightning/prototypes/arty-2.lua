@@ -41,9 +41,9 @@ local picture_base = {
       scale = 0.8,
       shift = {0, -3.3},
       hr_version = {
-        filename = "__Lightning__/graphics/entity/mighty-hr.png",
+        filename = "__Lightning__/graphics/entity/arty2-hr.png",
         width = 800,
-        height = 1024,
+        height = 1067,
         scale = 0.4,
         shift = {0, -3.3},
       },
