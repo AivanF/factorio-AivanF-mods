@@ -96,7 +96,7 @@ local function apply_preset(surface_index, preset_name, seed)
   end
 end
 
-local function se_register_zone(surface_index)
+function se_register_zone(surface_index)
   local zone = remote.call(SE, "get_zone_from_surface_index", {surface_index=surface_index})
   if zone then
     local preset_name = se_zone_to_preset(zone)

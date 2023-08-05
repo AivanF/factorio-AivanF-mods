@@ -2,8 +2,8 @@ local shared = require("shared")
 local name = shared.tech_catch_prob
 
 local levels = {
-  -- 0 is 70%
-  [1] = {  -- 75%
+  -- 0 is 75%
+  [1] = {  -- 80%
     count = 50,
     ingredients = {
       {"automation-science-pack", 1},
@@ -11,7 +11,7 @@ local levels = {
       {"chemical-science-pack", 1},
     }
   },
-  [2] = {  -- 80%
+  [2] = {  -- 85%
     count = 100,
     ingredients = {
       {"automation-science-pack", 1},
@@ -19,7 +19,7 @@ local levels = {
       {"chemical-science-pack", 1},
     }
   },
-  [3] = {  -- 85%
+  [3] = {  -- 90%
     count = 200,
     ingredients = {
       {"automation-science-pack", 1},
@@ -28,7 +28,7 @@ local levels = {
       {"production-science-pack", 1},
     }
   },
-  [4] = {  -- 90%
+  [4] = {  -- 95%
     count = 500,
     ingredients = {
       {"automation-science-pack", 1},
@@ -38,7 +38,7 @@ local levels = {
       {"utility-science-pack", 1},
     }
   },
-  [5] = {  -- 95%
+  [5] = {  -- 97%
     count = 1000,
     ingredients = {
       {"automation-science-pack", 1},
@@ -48,7 +48,7 @@ local levels = {
       {"utility-science-pack", 1},
     }
   },
-  [6] = {  -- 97%
+  [6] = {  -- 98%
     count = 2000,
     ingredients = {
       {"automation-science-pack", 1},
@@ -75,8 +75,8 @@ local levels = {
 if settings.startup["af-tsl-support-recipes"].value then
   if mods[shared.SE] then
     levels = {
-      -- 0 is 70%
-      [1] = {  -- 75%
+      -- 0 is 75%
+      [1] = {  -- 80%
         count = 50,
         ingredients = {
           {"automation-science-pack", 1},
@@ -84,7 +84,7 @@ if settings.startup["af-tsl-support-recipes"].value then
           {"chemical-science-pack", 1},
         }
       },
-      [2] = {  -- 80%
+      [2] = {  -- 85%
         count = 100,
         ingredients = {
           {"automation-science-pack", 1},
@@ -92,7 +92,7 @@ if settings.startup["af-tsl-support-recipes"].value then
           {"chemical-science-pack", 1},
         }
       },
-      [3] = {  -- 85%
+      [3] = {  -- 90%
         count = 150,
         ingredients = {
           {"automation-science-pack", 1},
@@ -101,7 +101,7 @@ if settings.startup["af-tsl-support-recipes"].value then
           {"se-rocket-science-pack", 1},
         }
       },
-      [4] = {  -- 90%
+      [4] = {  -- 95%
         count = 200,
         ingredients = {
           {"automation-science-pack", 1},
@@ -111,20 +111,20 @@ if settings.startup["af-tsl-support-recipes"].value then
           {"space-science-pack", 1},
         }
       },
-      [5] = {  -- 95%
+      [5] = {  -- 97%
         count = 500,
         ingredients = {
           {"space-science-pack", 1},
           {"utility-science-pack", 1},
-          {"energy-science-pack-1", 1},
+          {"se-energy-science-pack-1", 1},
         }
       },
-      [6] = {  -- 97%
+      [6] = {  -- 98%
         count = 1000,
         ingredients = {
           {"space-science-pack", 1},
           {"utility-science-pack", 1},
-          {"energy-science-pack-2", 1},
+          {"se-energy-science-pack-2", 1},
         }
       },
       [7] = {  -- 99%
@@ -132,7 +132,7 @@ if settings.startup["af-tsl-support-recipes"].value then
         ingredients = {
           {"space-science-pack", 1},
           {"utility-science-pack", 1},
-          {"energy-science-pack-3", 1},
+          {"se-energy-science-pack-3", 1},
         }
       },
     }

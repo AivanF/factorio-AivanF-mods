@@ -1,8 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2023-08-05
+  Bugfixes:
+    - Fixed error with SE: 1. wrong sci-pack name, 2. missing func export.
+  Balance:
+    - Fixed too dangerous lightnings: 1. a bit higher capture rate, 2. missed lightnings get slightly reduced damage.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.6
-Date: 2023-08-04
+Date: 2023-08-05
   Features:
-    - Lightning is artillery!!!
+    - Lightning is artillery!!! Added Tesla & Zeus towers with remote control for strikes and bombarding.
+    - I understood how to make arbitrary damage.
+  Other:
+    - Refactored scripts structure, bugs possible.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2023-07-14

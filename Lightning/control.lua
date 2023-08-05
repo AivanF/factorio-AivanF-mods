@@ -1,7 +1,7 @@
 script_data = {}
 require("scripts/common")
 require("scripts/surface")
-require("scripts/rods")
+require("scripts/lightning")
 require("scripts/arty")
 require("scripts/technologies")
 

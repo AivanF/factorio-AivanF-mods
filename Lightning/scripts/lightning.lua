@@ -92,7 +92,7 @@ function draw_lightning(surface, position, power_level)
     target=position, target_offset={0, 0}, surface=surface,
   }
 
-  local scale = 1 + power_level * 3
+  local scale = 1 + power_level * 4
   rendering.draw_light{
     sprite="tsl-light", scale=scale/2, intensity=1, minimum_darkness=0, color=tint,
     target=position, target_offset={0, 0}, surface=surface, time_to_live=second_ticks/3,
@@ -144,14 +144,20 @@ local function make_damage(surface, position, power_level)
       position=shifted, source=shifted, target=position
     }
   
-  else
+  elseif power_level >=1 then
     surface.create_entity{
       name="tsl-explo-1", force="neutral", speed=hidden_speed,
       position=shifted, source=shifted, target=position
     }
+  
+  else
+    surface.create_entity{
+      name="tsl-explo-0", force="neutral", speed=hidden_speed,
+      position=shifted, source=shifted, target=position
+    }
   end
 
-  for i = 0, power_level do
+  for i = 0, math.random(0, power_level) do
     surface.create_entity{name="fire-flame-on-tree", position=PosShiftRandom(position, 1.5*power_level), force="neutral"}
   end
 
@@ -166,13 +172,13 @@ end
 
 
 local pre_capture_prob = {
-  [0] = 0.70,
-  [1] = 0.75,
-  [2] = 0.80,
-  [3] = 0.85,
-  [4] = 0.90,
-  [5] = 0.95,
-  [6] = 0.97,
+  [0] = 0.75,
+  [1] = 0.80,
+  [2] = 0.85,
+  [3] = 0.90,
+  [4] = 0.95,
+  [5] = 0.97,
+  [6] = 0.98,
   [7] = 0.99,
 }
 function get_rod_capture_prob(rod_class_info, entity, power_level)
@@ -208,6 +214,7 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
   else
     volume = 0.7
   end
+  local damage_power_level = power_level
 
   local position
   if place.left_top then
@@ -243,6 +250,8 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
           target.energy = target.energy + lightning_energy
           surface.play_sound{path="tsl-charging", position=position, volume_modifier=volume}
           break
+        else
+          damage_power_level = math.max(0, damage_power_level-math.random(0, 1))
         end
       end
     else
@@ -267,10 +276,10 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
         y=target.position.y-4+math.random(0, 8)
       }
     end
-    make_damage(surface, position, power_level)
+    make_damage(surface, position, damage_power_level)
   end
 
-  draw_lightning(surface, position, power_level)
+  draw_lightning(surface, position, damage_power_level)
 end
 
 

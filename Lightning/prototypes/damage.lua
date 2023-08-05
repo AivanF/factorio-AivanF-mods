@@ -7,6 +7,36 @@ local projectiles = {
 
   {
     type = "projectile",
+    name = "tsl-explo-0",
+    flags = {"not-on-map"},
+    acceleration = 0.001,
+    turn_speed = 0.01,
+    action = {
+      {
+        type = "area",
+        radius = 2,
+        ignore_collision_condition = true,
+        action_delivery = {
+          type = "instant",
+          target_effects = {
+            {
+              type = "damage",
+              vaporize = false,
+              damage = {amount = 10, type = "explosion"}
+            },
+            {
+              type = "damage",
+              vaporize = false,
+              damage = {amount = 10, type = "fire"}
+            },
+          }
+        }
+      },
+    },
+  },
+
+  {
+    type = "projectile",
     name = "tsl-explo-1",
     flags = {"not-on-map"},
     acceleration = 0.001,

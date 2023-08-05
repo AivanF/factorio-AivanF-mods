@@ -94,7 +94,7 @@ if settings.startup["af-tsl-support-recipes"].value then
         ingredients = {
           {"space-science-pack", 1},
           {"utility-science-pack", 1},
-          {"energy-science-pack-1", 1},
+          {"se-energy-science-pack-1", 1},
         }
       },
     }
