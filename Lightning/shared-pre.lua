@@ -1,4 +1,15 @@
 local shared = {}
+shared.rod1 = "lightning-rod-1"
+shared.rod2 = "lightning-rod-2-accumulator"
+shared.rod3 = "lightning-rod-3-mighty"
+shared.arty1 = "lightning-arty-1"
+shared.arty2 = "lightning-arty-2"
+shared.remote_name = "lightning-arty-remote"
+
+shared.tech_catch_energy = "af-tsl-catch-energy"
+shared.tech_catch_prob = "af-tsl-catch-prob"
+shared.tech_range = "af-tsl-arty-range"
+
 shared.mod_name = "Lightning"
 shared.SE = "space-exploration"
 shared.PRESET_NIL    = "nil"
@@ -34,7 +45,7 @@ end
 shared.big_animation_name = "tsl-lightning-big"
 
 function shared.preset_setting_name_for_resource(resource)
-  return "af-tls-preset-for-"..resource
+  return "af-tsl-preset-for-"..resource
 end
 
 function math.clamp(x, min, max)

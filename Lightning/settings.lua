@@ -4,7 +4,7 @@ data:extend{
     -- Startup
     {
         type = "double-setting",
-        name = "af-tls-rod-catch-radius",
+        name = "af-tsl-rod-catch-radius",
         setting_type = "startup",
         minimum_value = 16,
         default_value = 48,
@@ -13,7 +13,7 @@ data:extend{
     },
     {
         type = "int-setting",
-        name = "af-tls-update-delay",
+        name = "af-tsl-update-delay",
         setting_type = "startup",
         minimum_value = 15,
         default_value = 30,
@@ -38,7 +38,7 @@ data:extend{
     -- Map/global
     {
         type = "string-setting",
-        name = "af-tls-common-cf---",
+        name = "af-tsl-common-cf---",
         localised_name = "--------- Common:",
         setting_type = "runtime-global",
         default_value = "",
@@ -48,7 +48,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-capture-prob",
+        name = "af-tsl-capture-prob",
         setting_type = "runtime-global",
         minimum_value = 0.1,
         default_value = 0.95,
@@ -57,7 +57,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-rate-cf",
+        name = "af-tsl-rate-cf",
         setting_type = "runtime-global",
         minimum_value = 0.01,
         default_value = 1,
@@ -66,7 +66,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-energy-cf",
+        name = "af-tsl-energy-cf",
         setting_type = "runtime-global",
         minimum_value = 0.01,
         default_value = 1,
@@ -75,7 +75,7 @@ data:extend{
     },
     {
         type = "int-setting",
-        name = "af-tls-extra-reduct",
+        name = "af-tsl-extra-reduct",
         setting_type = "runtime-global",
         minimum_value = -1,
         default_value = 0,
@@ -85,7 +85,7 @@ data:extend{
 
     {
         type = "string-setting",
-        name = "af-tls-nauvis---",
+        name = "af-tsl-nauvis---",
         localised_name = "--------- Nauvis:",
         setting_type = "runtime-global",
         default_value = "",
@@ -95,7 +95,7 @@ data:extend{
     },
     {
         type = "int-setting",
-        name = "af-tls-nauvis-base",
+        name = "af-tsl-nauvis-base",
         setting_type = "runtime-global",
         minimum_value = 0,
         default_value = 0,
@@ -104,7 +104,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-nauvis-scale",
+        name = "af-tsl-nauvis-scale",
         setting_type = "runtime-global",
         minimum_value = 0,
         default_value = 1,
@@ -113,7 +113,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-nauvis-size",
+        name = "af-tsl-nauvis-size",
         setting_type = "runtime-global",
         minimum_value = 0.1,
         default_value = 1,
@@ -122,7 +122,7 @@ data:extend{
     },
     {
         type = "double-setting",
-        name = "af-tls-nauvis-zspeed",
+        name = "af-tsl-nauvis-zspeed",
         setting_type = "runtime-global",
         minimum_value = 0,
         default_value = 0,
@@ -132,7 +132,7 @@ data:extend{
 
     {
         type = "string-setting",
-        name = "af-tls-planets---",
+        name = "af-tsl-planets---",
         localised_name = "--------- Planets:",
         setting_type = "runtime-global",
         default_value = "",

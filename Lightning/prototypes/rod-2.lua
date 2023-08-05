@@ -1,7 +1,7 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
-local name = "lightning-rod-2-accumulator"
+local name = shared.rod2
 local icon = "__Lightning__/graphics/icons/2handler.png"
 local icon_size = 64
 local icon_mipmaps = 3
@@ -26,6 +26,7 @@ data:extend({
       {"steel-plate", 200},
       {"copper-plate", 100},
       {"battery", 400},
+      {"electronic-circuit", 100}
     },
     result = name,
   },

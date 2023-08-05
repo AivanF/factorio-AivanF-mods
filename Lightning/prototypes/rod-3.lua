@@ -1,7 +1,7 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
-local name = "lightning-rod-3-mighty"
+local name = shared.rod3
 local icon = "__Lightning__/graphics/icons/3mighty.png"
 local icon_size = 64
 local icon_mipmaps = 3
