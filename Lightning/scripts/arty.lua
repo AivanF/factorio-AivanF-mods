@@ -42,6 +42,22 @@ local function level_to_energy_attack(power_level)
   return (50 + 50 * power_level * power_level) * MJ
 end
 
+local function get_max_force_power_level(force_index, is_bombarding)
+  local power_level, max_level
+  -- Max research level is 3
+  local tech_arty_lvl = (script_data.technologies[shared.tech_arty_lvl][force_index] or 0)
+
+  if is_bombarding then
+    power_level = script_data.arty_lvl_bomb[force_index] or 2
+    power_level = math.clamp(power_level, 1, tech_arty_lvl)
+
+  else
+    power_level = script_data.arty_lvl_stri[force_index] or 5
+    power_level = math.clamp(power_level, 1, tech_arty_lvl+2)
+  end
+  return power_level
+end
+
 local function on_player_selected_area(event)
   local alt = event.name == defines.events.on_player_alt_selected_area
   if event.item ~= shared.remote_name then return end
@@ -61,20 +77,20 @@ local function on_player_selected_area(event)
   local closest_dst = math.huge
   local dst, todo
 
-  -- TODO: allow choosing somewhow
-  local power_level = is_bombarding and 2 or 4
+  local power_level = get_max_force_power_level(force.index, is_bombarding)
   local single_energy = level_to_energy_attack(power_level)
   local req_pc = 0.05
   local req_en = (is_bombarding and 10 or 1) * single_energy
   local matched = 0
   local nearby = 0
   local max_dst
+  local attacks = 0
 
   -- TODO: cache arty entities by surface?
   for _, info in ipairs(arty_protos_ordered) do
     for _, entity in pairs(surface.find_entities_filtered{name=info.name}) do
       todo = entity.force == force
-      max_dst = info.max_dst * (1 + 0.25 * (script_data.technologies[shared.tech_range][entity.force_index] or 0))
+      max_dst = info.max_dst * (1 + 0.25 * (script_data.technologies[shared.tech_arty_range][entity.force_index] or 0))
       if todo and alt then
         dst = math.sqrt( (entity.position.x-target.x)^2 + (entity.position.y-target.y)^2 )
         todo = dst > 8 and dst < info.max_dst and dst < closest_dst
@@ -87,9 +103,10 @@ local function on_player_selected_area(event)
         todo = dst > 8 and dst < info.max_dst and dst < closest_dst
       end
       if todo then
-        matched = matched + 1
         closest_arty = entity
         closest_dst = dst
+        matched = matched + 1
+        attacks = attacks + math.floor(entity.energy / req_en)
       end
     end
   end
@@ -98,9 +115,16 @@ local function on_player_selected_area(event)
     local attack_type = "strike"
     if is_bombarding then
       attack_type = "bombarding"
-      if bombarding_level > 1 then attack_type = attack_type.."x"..bombarding_level end
+      if bombarding_level > 1 then attack_type = attack_type.." x"..bombarding_level end
     end
-    player.print("Lightning "..attack_type..": "..nearby.." nearby, "..matched.." ready")
+    player.print(table.concat({
+      "Lightning "..attack_type..":",
+      nearby.." nearby,",
+      matched.." ready",
+      "for "..attacks,
+      " of "..power_level.." lvl, ",
+      shared.energy_to_str(req_en).."J",
+    }, " "))
   else
     if closest_arty then
       script_data.arty_tasks[closest_arty.unit_number] = {
@@ -120,9 +144,6 @@ local function on_player_selected_area(event)
     end
   end
 end
-
-script.on_event(defines.events.on_player_selected_area, on_player_selected_area)
-script.on_event(defines.events.on_player_alt_selected_area, on_player_selected_area)
 
 function update_arty_tasks()
   for unit_number, task in pairs(script_data.arty_tasks) do
@@ -144,3 +165,44 @@ function update_arty_tasks()
     end
   end
 end
+
+local function calc_attack_level(cmd, is_bombarding)
+  local player = game.get_player(cmd.player_index)
+  local power_level = tonumber(cmd.parameter)
+  if power_level == nil then
+    player.print("Bad level "..serpent.line(cmd.parameter))
+    return
+  else
+    power_level = math.clamp(power_level, 1, 5)
+    local max_level = get_max_force_power_level(player.force_index, is_bombarding)
+    local attack_type = is_bombarding and "bombarding" or "strike"
+    player.print("Set "..attack_type.." level "..power_level..", max is "..max_level)
+    return power_level
+  end
+end
+
+local function set_stri_lvl_cmd(cmd)
+  local power_level = script_data.arty_lvl_stri[cmd.player_index]
+  power_level = calc_attack_level(cmd, false) or power_level
+  script_data.arty_lvl_stri[cmd.player_index] = power_level
+end
+
+local function set_bomb_lvl_cmd(cmd)
+  local power_level = script_data.arty_lvl_bomb[cmd.player_index]
+  power_level = calc_attack_level(cmd, true) or power_level
+  script_data.arty_lvl_bomb[cmd.player_index] = power_level
+end
+
+script.on_event(defines.events.on_player_selected_area, on_player_selected_area)
+script.on_event(defines.events.on_player_alt_selected_area, on_player_selected_area)
+
+commands.add_command(
+  "tsl-stri",
+  "Set lightning level for your artillery strikes",
+  set_stri_lvl_cmd
+)
+commands.add_command(
+  "tsl-bomb",
+  "Set lightning level for your artillery bombarding",
+  set_bomb_lvl_cmd
+)

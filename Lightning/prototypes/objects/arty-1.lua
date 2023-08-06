@@ -1,7 +1,7 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
-local name = shared.arty1
+local name = shared.art1
 local icon = "__Lightning__/graphics/icons/arty1.png"
 local icon_size = 64
 local icon_mipmaps = 3
@@ -57,7 +57,7 @@ data:extend({
     name = name,
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
-    subgroup = "energy-pipe-distribution",
+    subgroup = "defensive-structure",
     order = "z[lightning-arty-1]",
     place_result = name,
     stack_size = 10,
@@ -132,8 +132,3 @@ data:extend({
     },
   },
 })
-
-table.insert(
-  data.raw.technology["electric-energy-accumulators"].effects,
-  { type = "unlock-recipe", recipe = name }
-)

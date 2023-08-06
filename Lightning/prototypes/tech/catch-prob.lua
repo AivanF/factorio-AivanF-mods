@@ -1,5 +1,6 @@
 local shared = require("shared")
 local name = shared.tech_catch_prob
+local prereq = {shared.tech_catch1}
 
 local levels = {
   -- 0 is 75%
@@ -148,14 +149,9 @@ for k, info in pairs (levels) do
     type = "technology",
     icons = {
       {
-        icon = "__Lightning__/graphics/tech/Lightning-Catch.png",
+        icon = "__Lightning__/graphics/tech/Catch-Safe.png",
         icon_size = 256, icon_mipmaps = 1,
       },
-      {
-        icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-upgrade-planner.png",
-        icon_size = 64, icon_mipmaps = 2,
-        shift = {100, 100},
-      }
     },
     upgrade = true,
     effects = {
@@ -164,7 +160,7 @@ for k, info in pairs (levels) do
         effect_description = "Higher lightning catch probability",
         icons = {
           {
-            icon = "__Lightning__/graphics/tech/Lightning-Catch.png",
+            icon = "__Lightning__/graphics/tech/Catch-Safe.png",
             icon_size = 256, icon_mipmaps = 1,
           },
           {
@@ -175,7 +171,7 @@ for k, info in pairs (levels) do
         }
       },
     },
-    prerequisites = k > 1 and {name.."-"..(k - 1)} or {},
+    prerequisites = k > 1 and {name.."-"..(k - 1)} or prereq,
     unit = {
       count = info.count,
       ingredients = info.ingredients,

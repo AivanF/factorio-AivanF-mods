@@ -34,6 +34,13 @@ data:extend{
         default_value = true,
         order = "c-sup-2",
     },
+    {
+        type = "bool-setting",
+        name = "af-tsl-early-arty",
+        setting_type = "startup",
+        default_value = false,
+        order = "c-sup-3",
+    },
 
     -- Map/global
     {
@@ -45,15 +52,6 @@ data:extend{
         allowed_values = {""},
         allow_blank = true,
         order = "a-common-0",
-    },
-    {
-        type = "double-setting",
-        name = "af-tsl-capture-prob",
-        setting_type = "runtime-global",
-        minimum_value = 0.1,
-        default_value = 0.95,
-        maximum_value = 1,
-        order = "a-common-1",
     },
     {
         type = "double-setting",

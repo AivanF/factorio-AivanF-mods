@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.9
+Date: 2023-08-06
+  Features:
+    - Many technologies to research!
+    - Console commands to set lightning artillery strike & bombarding levels, see mod description web page.
+    - Surface editing commands are now restricted to admins only.
+    - Early thunder artillery startup setting (allows lightning handler to attack).
+  Balance:
+    - Many things changed to make the challenge more fun!
+---------------------------------------------------------------------------------------------------
 Version: 1.0.8
 Date: 2023-08-05
   Bugfixes:

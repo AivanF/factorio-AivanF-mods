@@ -1,12 +1,11 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
-local name = shared.rod3
-local icon = "__Lightning__/graphics/icons/3mighty.png"
+local name = shared.han2
+local icon = "__Lightning__/graphics/icons/han2.png"
 local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 10000
-local prereq = "electric-energy-accumulators"
 
 local ingredients = {
   {"steel-plate", 2000},
@@ -19,7 +18,6 @@ local ingredients = {
 
 if settings.startup["af-tsl-support-recipes"].value then
   if mods[shared.SE] then
-    prereq = "se-holmium-cable"
     ingredients = {
       {"steel-plate", 2000},
       {"copper-plate", 1000},
@@ -38,7 +36,7 @@ data:extend({
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = "energy-pipe-distribution",
-    order = "z[lightning-rod-3]",
+    order = "z[lightning-2han-2]",
     place_result = name,
     stack_size = 1,
   },
@@ -60,8 +58,8 @@ data:extend({
     resistances = {
       { type = "physical", decrease=50, percent=50 },
       { type = "impact", decrease=50, percent=50 },
-      { type = "fire", decrease=50, percent=50 },
-      { type = "acid", decrease=20, percent=20 },
+      { type = "fire", decrease=100, percent=99 },
+      { type = "acid", decrease=50, percent=50 },
       { type = "poison", decrease=200, percent=99 },
       { type = "explosion", decrease=50, percent=50 },
       { type = "laser", decrease=20, percent=20 },
@@ -144,8 +142,3 @@ data:extend({
     },
   },
 })
-
-table.insert(
-  data.raw.technology[prereq].effects,
-  { type = "unlock-recipe", recipe = name }
-)

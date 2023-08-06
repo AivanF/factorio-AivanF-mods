@@ -2,7 +2,7 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
 local name = shared.rod1
-local icon = "__Lightning__/graphics/icons/1rod.png"
+local icon = "__Lightning__/graphics/icons/rod1.png"
 local icon_size = 64
 local icon_mipmaps = 3
 
@@ -13,17 +13,17 @@ data:extend({
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = "energy-pipe-distribution",
-    order = "z[lightning-rod-1]",
+    order = "z[lightning-1rod-1]",
     place_result = name,
-    stack_size = 20,
+    stack_size = 50,
   },
   {
     type = "recipe",
     name = name,
     enabled = false,
     ingredients = {
-      {"steel-plate", 40},
-      {"copper-plate", 40},
+      {"iron-plate", 20},
+      {"copper-plate", 30},
     },
     result = name,
   },
@@ -38,7 +38,7 @@ data:extend({
     corpse = "medium-electric-pole-remnants",
     dying_explosion = "medium-electric-pole-explosion",
     track_coverage_during_build_by_moving = true,
-    fast_replaceable_group = "electric-pole",
+    fast_replaceable_group = "tsl-rod",
     resistances = {
       {type = "fire", percent = 100}
     },
@@ -109,8 +109,3 @@ data:extend({
     }
   },
 })
-
-table.insert(
-  data.raw.technology["electric-energy-distribution-1"].effects,
-  { type = "unlock-recipe", recipe = name }
-)

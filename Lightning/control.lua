@@ -40,10 +40,14 @@ local function reset_global()
   }
   script_data.objects = {}  -- by unit_number
   script_data.arty_tasks = {}  -- by unit_number
+  script_data.arty_lvl_stri = {}  -- by player_index
+  script_data.arty_lvl_bomb = {}  -- by player_index
   script_data.technologies = {}  -- name => force => value
   if settings.startup["af-tsl-support-surfaces"].value then
     if game.active_mods[SE] then se_add_zones() end
   end
+
+  reset_technologies()
 end
 
 function clean_drawings()
@@ -69,7 +73,6 @@ local function update_configuration()
   clean_drawings()
   reset_global()
   rods_reload()
-  tech_on_conf_changed()
 end
 
 local function cache_clean()

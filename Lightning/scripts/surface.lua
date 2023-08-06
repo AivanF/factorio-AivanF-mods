@@ -142,32 +142,45 @@ local function surface_clean_cmd(command)
   -- TODO: check if player is admin or nil
   local surface_name = tonumber(command.parameter) or command.parameter
   local surface = command.parameter and game.surfaces[surface_name]
+  local player = game.get_player(command.player_index)
+
+  if not player.admin then
+    player.print("You are not an admin!")
+    return
+  end
+
   if not surface then
-    game.get_player(command.player_index).print("No surface '"..serpent.line(surface_name).."'")
+    player.print("No surface '"..serpent.line(surface_name).."'")
     return
   end
 
   if script_data.surfSettings[surface.index] then
     script_data.surfSettings[surface.index] = nil
-    game.get_player(command.player_index).print("Cleaned surface '"..surface_name.."'")
+    player.print("Cleaned surface '"..surface_name.."'")
   else
-    game.get_player(command.player_index).print("Surface '"..surface_name.."' exists but not registered")
+    player.print("Surface '"..surface_name.."' exists but not registered")
   end
 end
 
 function surface_add_cmd(command)
   -- TODO: check if player is admin or nil
   local args = shared.split(command.parameter or "")
+  local player = game.get_player(command.player_index)
+
+  if not player.admin then
+    player.print("You are not an admin!")
+    return
+  end
 
   if #args < 1 or #args > 2 then
-    game.get_player(command.player_index).print("Bad arguments number")
+    player.print("Bad arguments number")
     return
   end
 
   local surface_name = tonumber(args[1]) or args[1]
   local surface = game.surfaces[surface_name]
   if not surface then
-    game.get_player(command.player_index).print("No surface '"..surface_name.."'")
+    player.print("No surface '"..surface_name.."'")
     return
   end
 

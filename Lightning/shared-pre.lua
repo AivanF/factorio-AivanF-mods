@@ -1,14 +1,23 @@
 local shared = {}
 shared.rod1 = "lightning-rod-1"
-shared.rod2 = "lightning-rod-2-accumulator"
-shared.rod3 = "lightning-rod-3-mighty"
-shared.arty1 = "lightning-arty-1"
-shared.arty2 = "lightning-arty-2"
+shared.rod2 = "lightning-rod-1-mk2"
+shared.han1 = "lightning-rod-2-accumulator"
+shared.han2 = "lightning-rod-3-mighty"
+shared.art1 = "lightning-arty-1"
+shared.art2 = "lightning-arty-2"
 shared.remote_name = "lightning-arty-remote"
+
+
+shared.tech_catch1 = "af-tsl-catch-1"
+shared.tech_catch2 = "af-tsl-catch-2"
+shared.tech_catch3 = "af-tsl-catch-3"
+shared.tech_arty1 = "af-tsl-arty-1"
+shared.tech_arty2 = "af-tsl-arty-2"
 
 shared.tech_catch_energy = "af-tsl-catch-energy"
 shared.tech_catch_prob = "af-tsl-catch-prob"
-shared.tech_range = "af-tsl-arty-range"
+shared.tech_arty_range = "af-tsl-arty-range"
+shared.tech_arty_lvl = "af-tsl-arty-lvl"
 
 shared.mod_name = "Lightning"
 shared.SE = "space-exploration"
@@ -119,6 +128,21 @@ function shared.tableOverride(dst, src)
     dst[k] = v
   end
   return dst
+end
+
+local energy_prefixes = {"K", "M", "G"}
+function shared.energy_to_str(energy)
+  local picked = ""
+  for _, prefix in ipairs(energy_prefixes) do
+    if energy < 1000 then break end
+    picked = prefix
+    energy = energy / 1000
+  end
+  if energy > 0 then
+    return string.format("%.0f"..picked, energy)
+  else
+    return string.format("%.1f"..picked, energy)
+  end
 end
 
 return shared

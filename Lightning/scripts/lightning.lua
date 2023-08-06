@@ -4,8 +4,6 @@ local perlin = require("perlin")
 set_energy_cf = settings.global["af-tsl-energy-cf"].value
 set_rate_cf = settings.global["af-tsl-rate-cf"].value
 set_extra_reduct = settings.global["af-tsl-extra-reduct"].value
-set_main_debug = false --settings.global["af-tsl-debug-main"].value
-set_perf_debug = false --settings.global["af-tsl-debug-perf"].value
 
 -- Lightning calc delay. Less frequent for debug to not drown under spamming messages
 lightning_update_rate = settings.startup["af-tsl-update-delay"].value * (set_perf_debug and 6 or 1)
@@ -172,24 +170,22 @@ end
 
 
 local pre_capture_prob = {
-  [0] = 0.75,
-  [1] = 0.80,
-  [2] = 0.85,
-  [3] = 0.90,
-  [4] = 0.95,
-  [5] = 0.97,
-  [6] = 0.98,
-  [7] = 0.99,
+  [0] = 0.80,
+  [1] = 0.85,
+  [2] = 0.90,
+  [3] = 0.95,
+  [4] = 0.97,
+  [5] = 0.98,
+  [6] = 0.99,
+  [7] = 0.999,
 }
-function get_rod_capture_prob(rod_class_info, entity, power_level)
+function get_capture_prob(rod_class_info, entity, power_level)
   local level = math.clamp(script_data.technologies[shared.tech_catch_prob][entity.force_index] or 0, 0, 7)
   local result = math.pow(pre_capture_prob[level] or 0.5, power_level)
-  return result
-end
-function get_acc_capture_prob(rod_class_info, entity, power_level)
-  local result = get_rod_capture_prob(rod_class_info, entity, power_level)
-  result = result * (1 - entity.energy / entity.electric_buffer_size)
-  return result + math.pow(rod_class_info.add_capture_prob, power_level)
+  if entity.electric_buffer_size then
+    result = result * (1 - entity.energy / entity.electric_buffer_size)
+  end
+  return result + rod_class_info.add_capture_prob / power_level
 end
 
 
@@ -238,7 +234,7 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
 
     if subtype == subtype_accum then
       for _, entity in shared.spairs(rods, order_by_empty_acc) do
-        captured = math.random() < get_acc_capture_prob(rod_class_info, entity, power_level)
+        captured = math.random() < get_capture_prob(rod_class_info, entity, power_level)
         target = entity
         position = entity.position
         if captured then
@@ -256,7 +252,7 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
       end
     else
       for _, entity in pairs(rods) do
-        captured = math.random() < get_rod_capture_prob(rod_class_info, entity, power_level)
+        captured = math.random() < get_capture_prob(rod_class_info, entity, power_level)
         target = entity
         position = entity.position
         if captured then
@@ -301,7 +297,7 @@ function get_max_power_level(currSurfSettings, chunk)
   end
   value = (value+1) /2 -0.6
   value = math.ceil(value *15 *currSurfSettings.scale)
-  value = math.clamp(value, 0, global_max_power_level)
+  value = math.clamp(value, 0, max_natural_power_level)
   return value
 end
 
@@ -405,7 +401,7 @@ local function _handle_chunk(chunks_tasks, chunk, power_level)
   if math.random() < 0.03 then power_level = power_level + 1 end
   if math.random() < 0.03 then power_level = power_level + 1 end
   if math.random() < 0.03 then power_level = power_level + 1 end
-  power_level = math.clamp(power_level, 0, global_max_power_level)
+  power_level = math.clamp(power_level, 0, max_natural_power_level)
   
   if power_level > 0 then chunks_tasks[#chunks_tasks + 1] = {chunk, power_level} end
   --- Save into tasks list with prob according to level

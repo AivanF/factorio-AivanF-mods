@@ -1,5 +1,6 @@
 local shared = require("shared")
-local name = shared.tech_range
+local name = shared.tech_arty_range
+local prereq = {shared.tech_arty1}
 
 local levels = {
   [1] = {
@@ -96,7 +97,7 @@ for k, ingredients in pairs (levels) do
     type = "technology",
     icons = {
       {
-        icon = "__Lightning__/graphics/tech/Arty-Range.png",
+        icon = "__Lightning__/graphics/tech/Arty-Extra.png",
         icon_size = 256, icon_mipmaps = 1,
       },
       {
@@ -112,7 +113,7 @@ for k, ingredients in pairs (levels) do
         effect_description = "Lightning artillery range: +25%",
         icons = {
           {
-            icon = "__Lightning__/graphics/tech/Arty-Range.png",
+            icon = "__Lightning__/graphics/tech/Arty-Extra.png",
             icon_size = 256, icon_mipmaps = 1,
           },
           {
@@ -123,7 +124,7 @@ for k, ingredients in pairs (levels) do
         }
       },
     },
-    prerequisites = k > 1 and {name.."-"..k - 1} or {},
+    prerequisites = k > 1 and {name.."-"..k - 1} or prereq,
     unit = {
       count = k * 100,
       ingredients = ingredients,
@@ -143,7 +144,7 @@ local infinite = {
   type = "technology",
   icons = {
     {
-      icon = "__Lightning__/graphics/tech/Arty-Range.png",
+      icon = "__Lightning__/graphics/tech/Arty-Extra.png",
         icon_size = 256, icon_mipmaps = 1,
     },
     {
@@ -159,7 +160,7 @@ local infinite = {
       effect_description = "Lightning artillery range: +25%",
       icons = {
         {
-          icon = "__Lightning__/graphics/tech/Arty-Range.png",
+          icon = "__Lightning__/graphics/tech/Arty-Extra.png",
           icon_size = 256, icon_mipmaps = 1,
         },
         {

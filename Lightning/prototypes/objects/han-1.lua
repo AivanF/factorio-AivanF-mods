@@ -1,8 +1,8 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
-local name = shared.rod2
-local icon = "__Lightning__/graphics/icons/2handler.png"
+local name = shared.han1
+local icon = "__Lightning__/graphics/icons/han1.png"
 local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 500
@@ -14,7 +14,7 @@ data:extend({
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = "energy-pipe-distribution",
-    order = "z[lightning-rod-2]",
+    order = "z[lightning-2han-1]",
     place_result = name,
     stack_size = 10,
   },
@@ -122,8 +122,3 @@ data:extend({
     },
   },
 })
-
-table.insert(
-  data.raw.technology["electric-energy-accumulators"].effects,
-  { type = "unlock-recipe", recipe = name }
-)

@@ -249,7 +249,7 @@ local projectiles = {
             {
               type = "set-tile",
               tile_name = "nuclear-ground",
-              radius = 8,
+              radius = 4,
               apply_projection = true,
               tile_collision_mask = { "water-tile" }
             },

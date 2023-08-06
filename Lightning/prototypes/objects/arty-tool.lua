@@ -42,7 +42,12 @@ data:extend({
   },
 })
 
+local prereq = shared.tech_arty1
+if settings.startup["af-tsl-early-arty"].value then
+  prereq = shared.tech_catch2
+end
+
 table.insert(
-  data.raw.technology["electric-energy-distribution-2"].effects,
+  data.raw.technology[prereq].effects,
   { type = "unlock-recipe", recipe = shared.remote_name }
 )
