@@ -253,3 +253,15 @@ data:extend{
     order = "tsl-2[attack]-2",
   },
 }
+
+-- Enable arty-tool
+table.insert(
+  data.raw.technology[shared.tech_arty1].effects,
+  { type = "unlock-recipe", recipe = shared.remote_name }
+)
+if settings.startup["af-tsl-early-arty"].value then
+  table.insert(
+    data.raw.technology[shared.tech_catch2].effects,
+    { type = "unlock-recipe", recipe = shared.remote_name }
+  )
+end
