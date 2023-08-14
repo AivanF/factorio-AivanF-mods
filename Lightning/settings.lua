@@ -54,6 +54,15 @@ data:extend{
         order = "a-common-0",
     },
     {
+        type = "int-setting",
+        name = "af-tsl-fire-from-level",
+        setting_type = "runtime-global",
+        minimum_value = 0,
+        default_value = 3,
+        maximum_value = 5,
+        order = "a-common-1",
+    },
+    {
         type = "double-setting",
         name = "af-tsl-rate-cf",
         setting_type = "runtime-global",

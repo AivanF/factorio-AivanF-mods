@@ -77,6 +77,11 @@ local function on_player_selected_area(event)
   local closest_dst = math.huge
   local dst, todo
 
+  -- local chunk = {x=math.floor(target.x/32), y=math.floor(target.y/32)}
+  -- -- local chunk_is = surface.is_chunk_generated({chunk.x, chunk.y})
+  -- local chunk_is = not shared.chunk_is_border(surface, chunk, 30)
+  -- game.print("Chunk "..serpent.line(chunk).." is ready: "..serpent.line(chunk_is))
+
   local power_level = get_max_force_power_level(force.index, is_bombarding)
   local single_energy = level_to_energy_attack(power_level)
   local req_pc = 0.05

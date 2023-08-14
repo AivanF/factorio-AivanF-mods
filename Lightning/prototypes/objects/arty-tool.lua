@@ -17,7 +17,7 @@ data:extend({
       flare = flare_name
     },
     subgroup = "defensive-structure",
-    order = "b[turret]-e[lightning]-3[remote]",
+    order = "b[turret]-e[lightning]-z[remote]",
     stack_size = 1,
     stackable = false,
     selection_color = {r = 0.3, g = 0.9, b = 0.3},

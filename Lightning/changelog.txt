@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.11
+Date: 2023-08-07
+  Optimizations:
+    - Extended border of no lightning nearby map ends.
+    - Moved out chunks cache from the save file to reduce it's size, but seems like the difference is meaningless.
+  Balance:
+    - Added a setting for starting lightning power level to make fire (default is 3), to reduce pollution and burning out forests.
+  Gui:
+    - Changed order of lightning artillery items/recipes to make it more clear.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.10
 Date: 2023-08-07
   Bugfixes:

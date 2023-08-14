@@ -80,7 +80,7 @@ data:extend({
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = "defensive-structure",
-    order = "z[lightning-arty-2]",
+    order = "b[turret]-e[lightning]-a[arty-2]",
     place_result = name,
     stack_size = 1,
   },

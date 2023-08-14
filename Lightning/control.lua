@@ -75,12 +75,6 @@ local function update_configuration()
   rods_reload()
 end
 
-local function cache_clean()
-  for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
-    currSurfSettings.cache = nil
-  end
-end
-
 local function process_min()
   if game.active_mods[SE] and game.tick > second_ticks then
     --- Tried defines.events.on_surface_created
@@ -117,6 +111,7 @@ local function update_runtime_settings(event)
     set_rate_cf = settings.global["af-tsl-rate-cf"].value
     chunk_lightning_rate = minute_ticks /1 /set_rate_cf
     set_extra_reduct = settings.global["af-tsl-extra-reduct"].value
+    set_fire_lvl = settings.global["af-tsl-fire-from-level"].value
   end
 
   --- Homeworld preset

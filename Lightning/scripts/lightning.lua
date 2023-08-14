@@ -4,6 +4,7 @@ local perlin = require("perlin")
 set_energy_cf = settings.global["af-tsl-energy-cf"].value
 set_rate_cf = settings.global["af-tsl-rate-cf"].value
 set_extra_reduct = settings.global["af-tsl-extra-reduct"].value
+set_fire_lvl = settings.global["af-tsl-fire-from-level"].value
 
 -- Lightning calc delay. Less frequent for debug to not drown under spamming messages
 lightning_update_rate = settings.startup["af-tsl-update-delay"].value * (set_perf_debug and 6 or 1)
@@ -13,6 +14,8 @@ chunk_lightning_rate = minute_ticks /1 /set_rate_cf
 entity_update_rate = second_ticks * 2
 -- Used to reduce Perlin noise calc per step
 chunk_cache_ttl = minute_ticks * 2
+
+local surf_cache = {}
 
 
 function register_rod(entity)
@@ -155,8 +158,10 @@ local function make_damage(surface, position, power_level)
     }
   end
 
-  for i = 0, math.random(0, power_level) do
-    surface.create_entity{name="fire-flame-on-tree", position=PosShiftRandom(position, 1.5*power_level), force="neutral"}
+  if power_level > set_fire_lvl then
+    for i = 1, math.random(0, power_level) do
+      surface.create_entity{name="fire-flame-on-tree", position=PosShiftRandom(position, 1.5*power_level), force="neutral"}
+    end
   end
 
 end
@@ -352,22 +357,22 @@ local function get_reduction_cfs(chunks_number, shift)
   --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
   --- More for better distribution
   if reduction <= 1 then
-    border = 3
+    border = 10
     chunk_use_prob = 0.1
   elseif reduction == 2 then
-    border = 5
+    border = 15
     chunk_use_prob = 0.05
   elseif reduction == 3 then
-    border = 7
+    border = 20
     chunk_use_prob = 0.025
   elseif reduction == 4 then
-    border = 10
+    border = 30
     chunk_use_prob = 0.01
   elseif reduction == 5 then
-    border = 15
+    border = 40
     chunk_use_prob = 0.003
   else
-    border = 20
+    border = 50
     chunk_use_prob = 0.001
   end
   return border, chunk_use_prob
@@ -390,9 +395,15 @@ local function make_chunks_cache(surface, currSurfSettings)
       end
     end
   end
-  currSurfSettings.cache_created = game.ticks_played
-  currSurfSettings.cache = cache
-  debug_print("TSL chunks cache: "..active.." of "..total)
+  surf_cache[surface.index] = {
+    cache_created = game.ticks_played,
+    cache = cache,
+  }
+  debug_print(table.concat({
+    "TSL chunks cache for surface "..surface.index..":",
+    active.." of "..total..",",
+    "border: "..border,
+  }, " "))
 end
 
 
@@ -418,20 +429,20 @@ local function process_surface(surface, currSurfSettings)
   local power_level
 
   if currSurfSettings.base < 1 and currSurfSettings.zspeed == 0 then
-    local cache_empty = currSurfSettings.cache == nil
-    local cache_expired = currSurfSettings.cache_created ~= nil and game.ticks_played - currSurfSettings.cache_created > chunk_cache_ttl
+    local cache_empty = surf_cache[surface.index] == nil
+    local cache_expired = not cache_empty and game.ticks_played - surf_cache[surface.index].cache_created > chunk_cache_ttl
     if cache_empty or cache_expired then
       perf_print("TSL cache is empty or expired: "..serpent.line(cache_empty).." "..serpent.line(cache_expired))
       make_chunks_cache(surface, currSurfSettings)
     end
   else
-    script_data.surfSettings[surface.index].cache = nil
+    surf_cache[surface.index] = nil
   end
 
-  if script_data.surfSettings[surface.index].cache ~= nil then
+  if surf_cache[surface.index] ~= nil then
 
     --- Optimise base==0 surfaces with cache of lightning-active regions
-    local cache = script_data.surfSettings[surface.index].cache
+    local cache = surf_cache[surface.index].cache
     local border, chunk_use_prob = get_reduction_cfs(#cache, -1)
     for _, chunk_info in pairs(cache) do
       if math.random() < chunk_use_prob then
@@ -481,7 +492,7 @@ local function process_surface(surface, currSurfSettings)
 end
 
 
-function process_lightnings()
+local function process_lightnings()
   local profiler = set_perf_debug and game.create_profiler() or nil
   --- TODO: Shift surfaces on different calls/ticks. Use buckets or mod by surface index?
   for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
@@ -527,3 +538,9 @@ function process_entities(event)
     end
   end
 end
+
+function cache_clean()
+  surf_cache = {}
+end
+
+script.on_nth_tick(lightning_update_rate, process_lightnings)
