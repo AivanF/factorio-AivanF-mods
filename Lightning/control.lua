@@ -146,7 +146,6 @@ script.on_event({
   defines.events.script_raised_destroy,
 }, on_any_remove)
 
-script.on_nth_tick(lightning_update_rate, process_lightnings)
 script.on_nth_tick(minute_ticks, process_min)
 script.on_nth_tick(second_ticks, process_sec)
 script.on_event(defines.events.on_tick, process_entities)

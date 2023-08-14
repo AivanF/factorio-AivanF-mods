@@ -269,6 +269,8 @@ function make_lightning(surface, place, power_level, capture_limit, energy_cf)
     if captured then break end
   end
 
+  -- game.print("Lightning "..damage_power_level.." of "..power_level.." at "..serpent.line(position))
+
   if not captured then
     -- Rods can miss yet guide lightnings leading to damage
     if target ~= nil then
