@@ -359,10 +359,10 @@ local function get_reduction_cfs(chunks_number, shift)
   --- The chunk_use_prob should be at least >1/chunk_lightning_rate ~= 1/300 to keep calc robust
   --- More for better distribution
   if reduction <= 1 then
-    border = 10
+    border = 5
     chunk_use_prob = 0.1
   elseif reduction == 2 then
-    border = 15
+    border = 10
     chunk_use_prob = 0.05
   elseif reduction == 3 then
     border = 20
@@ -384,6 +384,7 @@ end
 local function make_chunks_cache(surface, currSurfSettings)
   local chunks = get_surface_chunks(surface)
   local border, chunk_use_prob = get_reduction_cfs(#chunks, -1)
+  -- game.print("surface "..surface.name.." borer "..border)
   local cache = {}
   local total = 0
   local active = 0
