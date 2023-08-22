@@ -1,0 +1,13 @@
+{
+  "name": "WH40k-Titans",
+  "version": "0.9.1",
+  "title": "WH40k: Titans",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": [
+    "Recipes-Reload", "WH40k-Titans-media = 1.0.1",
+    "? space-exploration", "? Mechanicus"
+  ],
+  "factorio_version": "1.1",
+  "description": "TechPriest, are you seeking Omnissiah blessing to protect and expand your Forge World?.. Legio Titanicus is here for you! The mod provides unique and customizable war machines from WarHammer 40.000 with enormously powerful military capabilities. Production challanges included! In case you are tired of logistics, you can also explore and restore broken titans.\n\nWIP WARNING! The mod is in active early development. I have lots of plans to implement and problems to fix, so no need to report bugs.\nPlease don't use for stable save files, but feel free to try in sandbox god mod, and wait for new versions :) Press C to attack when inside a titan!\n\nIn case you have skills of sounds editing or 3D modelling/rendering, and would like to help, please contact me on Discord!"
+}
