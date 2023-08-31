@@ -1,5 +1,31 @@
 local shared = require("shared")
 
+for _, titan_type in ipairs(shared.titan_classes) do
+  if titan_type.plane then
+    data:extend({
+      {
+        type="animation",
+        name=titan_type.name,
+        filename=titan_type.plane,
+        frame_count=1,
+        width=1024,
+        height=1024,
+        shift=util.by_pixel(0, -64),
+      },
+      {
+        type="animation",
+        name=titan_type.name.."-shadow",
+        filename=titan_type.plane,
+        frame_count=1,
+        width=1024,
+        height=1024,
+        shift=util.by_pixel(0, -64),
+        draw_as_shadow=true,
+      },
+    })
+  end
+end
+
 data:extend({
   -- https://wiki.factorio.com/Prototype/Sprite
   -- https://lua-api.factorio.com/latest/Concepts.html#SpritePath
@@ -15,8 +41,8 @@ data:extend({
   -- https://wiki.factorio.com/Prototype/Animation
   {
     type="animation",
-    name=shared.mod_prefix.."class1",
-    filename=shared.media_prefix.."graphics/titans/class1.png",
+    name=shared.mod_prefix.."class3",
+    filename=shared.media_prefix.."graphics/titans/class3.png",
     frame_count=1,
     width=1024,
     height=1024,
@@ -24,8 +50,8 @@ data:extend({
   },
   {
     type="animation",
-    name=shared.mod_prefix.."class1-shadow",
-    filename=shared.media_prefix.."graphics/titans/class1.png",
+    name=shared.mod_prefix.."class3-shadow",
+    filename=shared.media_prefix.."graphics/titans/class3.png",
     frame_count=1,
     width=1024,
     height=1024,
@@ -45,6 +71,15 @@ data:extend({
     type="animation",
     name=shared.mod_prefix.."step-small",
     filename=shared.media_prefix.."graphics/titans/step-small.png",
+    frame_count=1,
+    width=256,
+    height=256,
+    shift=util.by_pixel(0, 0),
+  },
+  {
+    type="animation",
+    name=shared.mod_prefix.."foot-big",
+    filename=shared.media_prefix.."graphics/titans/foot-big.png",
     frame_count=1,
     width=256,
     height=256,

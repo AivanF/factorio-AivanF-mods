@@ -51,6 +51,7 @@ local used_specials = {}
 ------- Logic -------
 
 local function get_keys(tbl)
+  if tbl == nil then return nil end
   local result = {}
   for k, v in pairs(tbl) do
     result[#result+1] = k
@@ -64,6 +65,7 @@ local function merge(a, b, over)
       a[k] = v
     end
   end
+  return a
 end
 
 local function points_to_orientation(a, b)
@@ -106,12 +108,24 @@ local function preprocess_entities(list)
   end
 end
 
+local function init_gun(name)
+  return  {
+    name = name,
+    cd = 0,
+    oris = 0, -- orientation shift of the cannon
+    target = nil, -- LuaEntity or position
+    ordered = 0, -- task creation tick for expiration
+    gun_cd = 0,
+  }
+end
+
 
 local function register_titan(entity)
   if ctrl_data.titans[entity.unit_number] then return end
+  local class_info = shared.titan_classes[entity.name]
   local info = {
     entity = entity,
-    class = shared.titan_classes[entity.name].class,
+    class = class_info.class,
     voice_cd = 0, -- phrases muted till
     body_cd = 0, -- step and rotation sounds muted till
     track_cd = 0, -- footstep track drawing cooldown till
@@ -122,24 +136,19 @@ local function register_titan(entity)
     guns = {}, -- should be added by bunker script
   }
 
-  info.guns = {
-    {
-      name = shared.weapon_plasma_destructor,
-      cd = 0,
-      oris = 0, -- orientation shift of the cannon
-      target = nil, -- LuaEntity or position
-      ordered = 0, -- task creation tick for expiration
-      gun_cd = 0,
-    },
-    {
-      name = shared.weapon_turbolaser,
-      cd = 0,
-      oris = 0, -- orientation shift of the cannon
-      target = nil, -- LuaEntity or position
-      ordered = 0, -- task creation tick for expiration
-      gun_cd = 0,
-    },
-  }
+  if class_info.class == 1 then
+    info.guns = {
+      init_gun(shared.weapon_plasma_destructor),
+      init_gun(shared.weapon_turbolaser),
+    }
+  else
+    info.guns = {
+      init_gun(shared.weapon_plasma_destructor),
+      init_gun(shared.weapon_plasma_destructor),
+      init_gun(shared.weapon_turbolaser),
+      init_gun(shared.weapon_lascannon),
+    }
+  end
 
   ctrl_data.titans[entity.unit_number] = info
   entity.surface.play_sound{
@@ -284,48 +293,50 @@ end
 
 local function process_single_titan(info)
   local tick = game.tick
-  local weapon_class, tori, orid, gunpos, img, sc, foot, dst
-
   local class_info = shared.titan_classes[info.class]
+  local class = info.class
+  local name = class_info.name
   local entity = info.entity
   local surface = entity.surface
   local spd = math.abs(entity.speed)
   if entity.speed < 0 then
-    entity.speed = entity.speed * (1-0.01*info.class)
+    entity.speed = entity.speed * 0.99
   end
   local ori = entity.orientation
   local oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3
-  local shadow_shift = {2 * (1+info.class), 1}
+  local shadow_shift = {2 * (1+class), 1}
 
   ----- Body
 
   rendering.draw_animation{
-    animation=shared.mod_prefix.."class1-shadow",
+    animation=name.."-shadow",
     x_scale=1, y_scale=1, render_layer=shadow_render_layer,
     time_to_live=vehicle_update_rate+1,
     surface=surface, target=entity, target_offset=shadow_shift,
     orientation=ori+oris,
   }
   rendering.draw_animation{
-    animation=shared.mod_prefix.."class1",
+    animation=name,
     x_scale=1, y_scale=1, render_layer=body_render_layer,
     time_to_live=vehicle_update_rate+1,
     surface=surface, target=entity, target_offset={0, 0},
     orientation=ori+oris,
   }
   rendering.draw_light{
-    sprite=shared.mod_prefix.."light", scale=7+3*info.class,
-    intensity=1, minimum_darkness=0, color=tint,
+    sprite=shared.mod_prefix.."light", scale=7+3*class,
+    intensity=1+0.5*class, minimum_darkness=0, color=tint,
     time_to_live=vehicle_update_rate+1,
     surface=surface, target=Position.add(entity.position, point_orientation_shift(ori, 0, 6)),
   }
 
 
   ----- The Guns
+  local weapon_class, tori, orid, gunpos, dst
+
   for k, cannon in ipairs(info.guns) do
     weapon_class = shared.weapons[info.guns[k].name]
     gunpos = Position.add(entity.position, point_orientation_shift(ori, class_info.guns[k].oris, class_info.guns[k].shift))
-    tori = ori
+    tori = ori  -- target orientation
 
     if cannon.target ~= nil and tick < cannon.ordered + order_ttl then
       -- TODO: check if target is a LuaEntity
@@ -369,33 +380,46 @@ local function process_single_titan(info)
     -- TODO: add weapons shadow
   end
 
-  -- TODO: remove foots if far
+  -- TODO: remove foots if too far
 
-  if spd > 0.05 then
+  local img, sc, foot
+  if spd > 0.03 then
 
 
     ----- Foots
 
     if info.foot_cd < tick then
-      info.foot_cd = tick + 15 + 15 * info.class
+      info.foot_cd = tick + 15 + 15 * class
       info.foot_rot = not info.foot_rot
 
       foot = info.foots[info.foot_rot and 1 or 2]
       if foot and foot.valid then foot.destroy() end
-      -- TODO: pos oris +0.5 if speed is negative!
 
-      local foot_oris = 0.1 * (info.foot_rot and -1 or 1)
-      if entity.speed < 0 then foot_oris = foot_oris + 0.5 end
+      local foot_oris, foot_shift
+      if entity.speed < 0 then
+        foot_oris = 0.4 * (info.foot_rot and -1 or 1)
+        foot_shift = 6 + class
+      else
+        foot_oris = 0.1 * (info.foot_rot and -1 or 1)
+        foot_shift = 8 + class
+      end
+      if class < 2 then
+        img = shared.mod_prefix.."foot-small"
+        sc = 1
+      else
+        img = shared.mod_prefix.."foot-big"
+        sc = (class+0.5) / 2
+      end
       foot = surface.create_entity{
-        name=shared.titan_foot_small, force="neutral",
-        position=Position.add(entity.position, point_orientation_shift(ori, foot_oris, 8+info.class)),
+        name=class_info.foot, force="neutral",
+        position=Position.add(entity.position, point_orientation_shift(ori, foot_oris, foot_shift)),
       }
-      ctrl_data.foots[#ctrl_data.foots+1] = {
+      ctrl_data.foots[#ctrl_data.foots+1] = {  -- TODO: is this buggy?!?
         owner = entity, entity=foot,
-        animation=shared.mod_prefix.."foot-small", ori=ori,
+        animation=img, ori=ori, sc=sc,
       }
       surface.create_entity{
-        name=shared.titan_foot_small.."-damage", force="neutral", speed=1,
+        name=class_info.foot.."-damage", force="neutral", speed=1,
         position=foot.position, target=foot.position, source=Position.add(foot.position, {x=0, y=-1})
       }
       info.foots[info.foot_rot and 1 or 2] = foot
@@ -403,22 +427,22 @@ local function process_single_titan(info)
       --   game.print("Placed foot: "..serpent.line(foot.valid).." / "..serpent.line(info.foots[info.leg and 2 or 1].valid))
       -- end
 
-      -- TODO: if not over_water, apply landfill/shallow-water if small deep-water found
+      -- TODO: if not over_water, apply landfill/shallow-water if small (deep)water found
     end
 
 
     ----- Tracks
 
     if info.track_cd < tick then
-      info.track_cd = tick + 45 + 15 * info.class
+      info.track_cd = tick + 45 + 15 * class
       info.track_rot = not info.track_rot
 
-      if info.class < 2 then
+      if class < 2 then
         img = shared.mod_prefix.."step-small"
         sc = 1
       else
         img = shared.mod_prefix.."step-big"
-        sc = info.class / 2
+        sc = class / 2
       end
 
       rendering.draw_animation{
@@ -439,7 +463,7 @@ local function process_single_titan(info)
         path="wh40k-titans-walk-step",
         position=entity.position, volume_modifier=volume*0.8
       }
-      info.body_cd = tick + 30 + 15 * info.class
+      info.body_cd = tick + 30 + 15 * class
     end
     if info.voice_cd < tick then
       if math.random(100) < 30 then
@@ -448,7 +472,7 @@ local function process_single_titan(info)
           position=entity.position, volume_modifier=1
         }
       end
-      info.voice_cd = tick + 450 + 150 * info.class
+      info.voice_cd = tick + 450 + 150 * class
     end
   end -- if spd
 
@@ -462,9 +486,8 @@ local function process_single_titan(info)
 
   -- Equipment grid, VSA
   for _, eq in pairs(entity.grid.equipment) do
-    if name == shared.vsa then
-      eq.energy = math.min(eq.energy + 100000, eq.max_energy)
-      game.print("vsa done!")
+    if eq.name == shared.vsa then
+      eq.energy = math.min(eq.energy + eq.max_energy/60, eq.max_energy)
     end
   end
 end
@@ -482,7 +505,7 @@ local function process_titans()
     if info.entity.valid then
       rendering.draw_animation{
         animation=info.animation,
-        x_scale=1, y_scale=1, render_layer=foot_render_layer,
+        x_scale=info.sc or 1, y_scale=info.sc or 1, render_layer=foot_render_layer,
         time_to_live=vehicle_update_rate+1,
         surface=info.entity.surface,
         target=info.entity,
@@ -638,6 +661,7 @@ end
 
 local function update_configuration()
   global.ctrl_data = merge(global.ctrl_data or {}, blank_ctrl_data, false)
+  ctrl_data = global.ctrl_data
   clean_drawings()
   total_reload()
 end

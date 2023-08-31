@@ -1,0 +1,22 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.9.2
+Date: 2023-08-27
+  Features:
+    - Titan class 3 WarLord
+  Balance:
+    - Lots of balance fixes
+  Info:
+    - Tserup and The King Jo joined the team!
+---------------------------------------------------------------------------------------------------
+Version: 0.9.1
+Date: 2023-08-21
+  Bugfixes:
+    - Fixed crashes
+---------------------------------------------------------------------------------------------------
+Version: 0.9.0
+Date: 2023-08-20
+  Features:
+    - Titan class 1 WarHound
+    - Drafts of Titan Assembly Bunker, ingredients, technologies
+  Info:
+    - Initial release by AivanF!
