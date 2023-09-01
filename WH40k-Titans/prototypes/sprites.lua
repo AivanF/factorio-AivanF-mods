@@ -37,6 +37,14 @@ data:extend({
     height=360,
     shift=util.by_pixel(0, 0),
   },
+  {
+    type="sprite",
+    name=shared.mod_prefix.."shield",
+    filename=shared.media_prefix.."graphics/fx/shield-effect.png",
+    width=800,
+    height=800,
+    shift=util.by_pixel(0, 0),
+  },
 
   -- https://wiki.factorio.com/Prototype/Animation
   {

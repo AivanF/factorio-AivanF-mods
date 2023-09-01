@@ -71,7 +71,7 @@ for _, info in pairs(parts) do
     {
       type = "recipe",
       name = info.name,
-      enabled = true,
+      enabled = false,
       ingredients = info.ingredients,
       result = info.name,
     },

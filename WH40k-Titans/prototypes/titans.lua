@@ -75,10 +75,10 @@ for _, titan_type in ipairs(shared.titan_classes) do
       resistances = {
         { type = "impact", decrease=1000, percent=100 },
         { type = "physical", decrease=500, percent=90 },
+        { type = "explosion", decrease=100, percent=50 },
         { type = "fire", decrease=100, percent=90 },
         { type = "acid", decrease=100, percent=90 },
         { type = "poison", decrease=100, percent=99 },
-        { type = "explosion", decrease=100, percent=90 },
         { type = "laser", decrease=100, percent=90 },
         { type = "electric", decrease=100, percent=90 },
       },
@@ -105,7 +105,6 @@ for _, titan_type in ipairs(shared.titan_classes) do
       rotation_speed = 0.004,
 
       inventory_size = 50 * titan_type.class,
-      equipment_grid = "wh40k-titan-c"..titan_type.class.."-egrid",
       chunk_exploration_radius = 1 + titan_type.class,
       render_layer = "air-object",
       final_render_layer = "air-object",
@@ -189,6 +188,10 @@ data:extend({
     max_health = 5000,
     resistances = {
       { type = "impact", decrease=1000, percent=100 },
+      { type = "explosion", decrease=1000, percent=100 },
+      { type = "fire", decrease=1000, percent=100 },
+      { type = "acid", decrease=1000, percent=100 },
+      { type = "poison", decrease=1000, percent=100 },
     },
     picture = { layers = {misc.empty_sprite} },
   },
@@ -204,6 +207,10 @@ data:extend({
     max_health = 5000,
     resistances = {
       { type = "impact", decrease=1000, percent=100 },
+      { type = "explosion", decrease=1000, percent=100 },
+      { type = "fire", decrease=1000, percent=100 },
+      { type = "acid", decrease=1000, percent=100 },
+      { type = "poison", decrease=1000, percent=100 },
     },
     picture = { layers = {misc.empty_sprite} }
   },

@@ -47,7 +47,7 @@ local titan_class_list = {
     },
     foot = shared.titan_foot_small,
     entity = shared.titan_prefix..shared.titan_1warhound,
-    health = 10000,
+    health = 10*1000,
     kill_cliffs = false,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-1.png",
@@ -77,7 +77,7 @@ local titan_class_list = {
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_2reaver,
-    health = 25000,
+    health = 20*1000,
     kill_cliffs = false,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-2.png",
@@ -107,7 +107,7 @@ local titan_class_list = {
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_3warlord,
-    health = 40000,
+    health = 30*1000,
     kill_cliffs = true,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-3.png",
@@ -139,7 +139,7 @@ local titan_class_list = {
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_4warmaster,
-    health = 80000,
+    health = 60*1000,
     kill_cliffs = true,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-4.png",
@@ -172,7 +172,7 @@ local titan_class_list = {
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_5emperor,
-    health = 150000,
+    health = 100*1000,
     kill_cliffs = true,
     over_water = true,
     icon = shared.media_prefix.."graphics/icons/titan-5.png",
@@ -190,6 +190,7 @@ local titan_class_list = {
 shared.titan_classes = {}
 
 for _, info in pairs(titan_class_list) do
+  info.max_shield = info.ingredients[shared.void_shield] * 2000
   shared.titan_classes[info.class] = info
   shared.titan_classes[info.name] = info
   shared.titan_classes[info.entity] = info

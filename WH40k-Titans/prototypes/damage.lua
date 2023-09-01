@@ -75,10 +75,10 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 8,
+              lower_distance_threshold = 10,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 4000, type = "explosion"}
             },
             {
@@ -93,10 +93,10 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 8,
+              lower_distance_threshold = 10,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 3000, type = "electric"}
             },
           }

@@ -19,6 +19,7 @@ local lower_render_layer = 168
 local arm_render_layer = 169
 local body_render_layer = 170
 local shoulder_render_layer = 171
+local shield_render_layer = 172
 
 local building_update_rate = 60
 local vehicle_update_rate = 1
@@ -126,6 +127,7 @@ local function register_titan(entity)
   local info = {
     entity = entity,
     class = class_info.class,
+    shield = 0, -- void shield health amount
     voice_cd = 0, -- phrases muted till
     body_cd = 0, -- step and rotation sounds muted till
     track_cd = 0, -- footstep track drawing cooldown till
@@ -274,7 +276,6 @@ local function on_any_remove(event)
     local tctrl = ctrl_data.titans[unit_number]
     die_all(tctrl.foots)
     -- TODO: check event.name and make explo, corpse
-    game.print("Titan removed with "..event.name)
     ctrl_data.titans[unit_number] = nil
   end
 
@@ -328,6 +329,45 @@ local function process_single_titan(info)
     time_to_live=vehicle_update_rate+1,
     surface=surface, target=Position.add(entity.position, point_orientation_shift(ori, 0, 6)),
   }
+
+
+  ----- Void Shield
+  -- TODO: consider energy spent on guns
+  -- 3 minutes for the full recharge
+  info.shield = math.min((info.shield or 0) + class_info.max_shield /60 /180, class_info.max_shield)
+  local sc = 0.75 + 0.25*class
+
+  -- Main visual
+  if info.shield > 100 then
+    rendering.draw_sprite{
+      sprite=shared.mod_prefix.."shield",
+      x_scale=sc, y_scale=sc, render_layer=shield_render_layer,
+      time_to_live=vehicle_update_rate+1,
+      surface=surface, target=Position.add(entity.position, point_orientation_shift(ori, 0, 2)),
+    }
+  end
+
+  -- Ratio bar
+  local shield_cf = info.shield/class_info.max_shield
+    if shield_cf < 0.99 then
+    local w2 = 1 + class
+    local yy = 4 + class
+    local hh = 0.5
+    rendering.draw_rectangle{
+      color={0,0,0,1}, filled=true,
+      left_top=entity, left_top_offset={-w2-0.1,yy-0.1},
+      right_bottom=entity, right_bottom_offset={w2+0.1,yy+hh+0.1},
+      surface=surface, time_to_live=vehicle_update_rate+1,
+      forces={entity.force}, only_in_alt_mode=true
+    }
+    rendering.draw_rectangle{
+      color={1,1,1,1}, filled=true,
+      left_top=entity, left_top_offset={-w2,yy},
+      right_bottom=entity, right_bottom_offset={-w2+2*w2*shield_cf,yy+hh},
+      surface=surface, time_to_live=vehicle_update_rate+1,
+      forces={entity.force}, only_in_alt_mode=true
+    }
+  end
 
 
   ----- The Guns
@@ -482,14 +522,6 @@ local function process_single_titan(info)
       if st.valid then st.destroy() end
     end
   end
-
-
-  -- Equipment grid, VSA
-  for _, eq in pairs(entity.grid.equipment) do
-    if eq.name == shared.vsa then
-      eq.energy = math.min(eq.energy + eq.max_energy/60, eq.max_energy)
-    end
-  end
 end
 
 
@@ -575,6 +607,24 @@ local function handle_attack_order(event)
     -- game.print("No ready titan cannon")
   end
 end
+
+
+----- Void Shields absorbing
+script.on_event(defines.events.on_entity_damaged, function(event)
+  local entity = event.entity
+  local unit_number = entity.valid and entity.unit_number
+  if unit_number == nil then return end
+  if ctrl_data.titans[unit_number] then
+    local tctrl = ctrl_data.titans[unit_number]
+    entity.health = event.final_health + event.final_damage_amount
+    local damage = event.final_damage_amount
+    local shielded = math.min(damage, tctrl.shield)
+    tctrl.shield = tctrl.shield - shielded
+    damage = damage - shielded
+    entity.health = entity.health - damage
+    -- game.print("damage: "..damage..", shielded: "..shielded)
+  end
+end)
 
 
 local function process_bunkers()
