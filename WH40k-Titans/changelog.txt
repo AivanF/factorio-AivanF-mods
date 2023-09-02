@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.4
+Date: 2023-09-01
+  Bugfixes:
+    - Fixed crashes
+  Info:
+    - Big refactoring of control scripts for further logic expation, hopefully without new bugs
+---------------------------------------------------------------------------------------------------
 Version: 0.9.3
 Date: 2023-08-31
   Features:
