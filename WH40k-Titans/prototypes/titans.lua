@@ -20,13 +20,13 @@ for name, proto in pairs(data.raw["tile"]) do
   end
 end
 
-for _, titan_type in ipairs(shared.titan_classes) do
+for _, titan_type in ipairs(shared.titan_type_list) do
   local name = titan_type.entity
   local class = titan_type.class
   local icon = titan_type.icon
   local icon_size = titan_type.icon_size
   local icon_mipmaps = titan_type.icon_mipmaps
-  local place_result = titan_type.plane and name or shared.titan_prefix..shared.titan_1warhound
+  local place_result = titan_type.plane and name or shared.titan_prefix..shared.titan_warhound
 
   data:extend({
     {
@@ -89,7 +89,7 @@ for _, titan_type in ipairs(shared.titan_classes) do
       vehicle_impact_sound = sounds.generic_impact,
       open_sound = sounds.electric_network_open,
       close_sound = sounds.electric_network_close,
-      weight = titan_type.class * 50000,
+      weight = titan_type.class * 5000,
       energy_source = { type = "void" },
       allow_passengers = true,
       has_belt_immunity = true,
@@ -104,10 +104,10 @@ for _, titan_type in ipairs(shared.titan_classes) do
       breaking_speed = 0.1,
       rotation_speed = 0.004,
 
-      inventory_size = 50 * titan_type.class,
-      chunk_exploration_radius = 1 + titan_type.class,
-      render_layer = "air-object",
-      final_render_layer = "air-object",
+      inventory_size = math.ceil(50 * titan_type.class/10),
+      chunk_exploration_radius = math.ceil(1 + titan_type.class/10),
+      -- render_layer = "air-object",
+      -- final_render_layer = "air-object",
       animation = table.deepcopy(data.raw["car"]["car"].animation),
     },
   })
@@ -116,18 +116,12 @@ end
 local foot_size_1 = 2.5
 local foot_size_2 = 5
 -- Dummy icon for foots
-local titan_type = shared.titan_classes[1]
+local titan_type = shared.titan_types[shared.class_warhound]
 local icon = titan_type.icon
 local icon_size = titan_type.icon_size
 local icon_mipmaps = titan_type.icon_mipmaps
 
 data:extend({
-  {
-    type = "custom-input",
-    name = shared.mod_prefix.."attack",
-    key_sequence = "C",
-    action = "lua",
-  },
   {
     type = "projectile",
     name = shared.titan_foot_small.."-damage",

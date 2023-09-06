@@ -4,7 +4,7 @@ local function get_weapon_effects(grade)
   local result = {}
   for _, info in pairs(shared.weapons) do
     if grade == info.grade then
-      result[#result+1] = { type = "unlock-recipe", recipe = info.name }
+      result[#result+1] = { type = "unlock-recipe", recipe = shared.mod_prefix..info.name }
     end
   end
   return result
@@ -78,10 +78,14 @@ data:extend{
       -- Body parts
       { type = "unlock-recipe", recipe = shared.servitor },
       { type = "unlock-recipe", recipe = shared.brain },
-      { type = "unlock-recipe", recipe = shared.motor },
-      { type = "unlock-recipe", recipe = shared.frame_part },
       { type = "unlock-recipe", recipe = shared.energy_core },
       { type = "unlock-recipe", recipe = shared.void_shield },
+      { type = "unlock-recipe", recipe = shared.motor },
+      { type = "unlock-recipe", recipe = shared.frame_part },
+      -- Common details
+      { type = "unlock-recipe", recipe = shared.antigraveng },
+      { type = "unlock-recipe", recipe = shared.realityctrl },
+      { type = "unlock-recipe", recipe = shared.emfc },
       -- Weapon parts
       { type = "unlock-recipe", recipe = shared.barrel },
       { type = "unlock-recipe", recipe = shared.proj_engine },
@@ -110,7 +114,8 @@ data:extend{
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.titan_classes[shared.titan_1warhound].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warhound].entity },
+      -- { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
     },
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
@@ -131,7 +136,7 @@ data:extend{
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.titan_classes[shared.titan_2reaver].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_reaver].entity },
     },
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
@@ -152,7 +157,7 @@ data:extend{
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.titan_classes[shared.titan_3warlord].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warlord].entity },
     },
     prerequisites = {shared.mod_prefix.."2-class"},
     unit = {
@@ -173,7 +178,7 @@ data:extend{
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.titan_classes[shared.titan_4warmaster].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warmaster].entity },
     },
     prerequisites = {shared.mod_prefix.."3-class"},
     unit = {
@@ -194,11 +199,12 @@ data:extend{
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.titan_classes[shared.titan_5emperor].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_imperator].entity },
+      -- { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
     },
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
-      count = 100,
+      count = 600,
       ingredients = {{shared.sp, 1}},
       time = 30
     },
@@ -238,9 +244,9 @@ data:extend{
       }
     },
     effects = get_weapon_effects(shared.gun_grade_medium),
-    prerequisites = {shared.mod_prefix.."1-grade", shared.mod_prefix.."2-class"},
+    prerequisites = {shared.mod_prefix.."1-grade", shared.mod_prefix.."3-class"},
     unit = {
-      count = 100,
+      count = 200,
       ingredients = {{shared.sp, 1}},
       time = 30
     },
@@ -257,26 +263,7 @@ data:extend{
       }
     },
     effects = get_weapon_effects(shared.gun_grade_big),
-    prerequisites = {shared.mod_prefix.."2-grade", shared.mod_prefix.."3-class"},
-    unit = {
-      count = 250,
-      ingredients = {{shared.sp, 1}},
-      time = 30
-    },
-    order = name
-  },
-  {
-    name = shared.mod_prefix.."4-grade",
-    type = "technology",
-    icons = {
-      {
-      icon = shared.media_prefix.."graphics/tech/grade-2.png",
-      icon_size = 256,
-      icon_mipmaps = 1,
-      }
-    },
-    effects = get_weapon_effects(shared.gun_grade_huge),
-    prerequisites = {shared.mod_prefix.."3-grade", shared.mod_prefix.."5-class"},
+    prerequisites = {shared.mod_prefix.."2-grade", shared.mod_prefix.."5-class"},
     unit = {
       count = 400,
       ingredients = {{shared.sp, 1}},

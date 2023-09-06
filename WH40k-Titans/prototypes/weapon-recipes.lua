@@ -6,7 +6,7 @@ for _, info in pairs(shared.weapons) do
   data:extend({
     {
       type = "recipe",
-      name = info.name,
+      name = shared.mod_prefix..info.name,
       localised_name = {"item-name."..shared.mod_prefix..info.name},
       enabled = false,
       energy_required = 60*60*24,

@@ -28,8 +28,12 @@ local function on_any_remove(event)
   if not unit_number then return end
 
   if ctrl_data.titans[unit_number] then
-    local tctrl = ctrl_data.titans[unit_number]
-    die_all(tctrl.foots)
+    local titan_info = ctrl_data.titans[unit_number]
+    if event.name == defines.events.on_entity_died then
+      titan.titan_death(titan_info)
+    end
+    remove_titan_gui_by_titan(titan_info)
+    die_all(titan_info.foots)
     -- TODO: check event.name and make explo, corpse
     ctrl_data.titans[unit_number] = nil
   end
@@ -55,15 +59,15 @@ local function total_reload()
   used_specials = {}
 
   for _, surface in pairs(game.surfaces) do
-    for _, titan_class in pairs(shared.titan_classes) do
+    for _, titan_class in pairs(shared.titan_types) do
       for _, entity in pairs (surface.find_entities_filtered{name=titan_class.entity}) do
-        register_titan(entity)
+        titan.register_titan(entity)
         titan_count = titan_count + 1
       end
     end
 
     for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker}) do
-      register_bunker(entity)
+      assemble.register_bunker(entity)
       bunker_count = bunker_count + 1
     end
 

@@ -1,6 +1,6 @@
 local shared = require("shared")
 
-for _, titan_type in ipairs(shared.titan_classes) do
+for _, titan_type in ipairs(shared.titan_type_list) do
   if titan_type.plane then
     data:extend({
       {
@@ -102,7 +102,18 @@ data:extend({
     height=279,
     shift=util.by_pixel(0, 0),
   },
-  -- TODO: load weapon sprites from common W dataset
+
+
+----- Weapons
+  {
+    type="animation",
+    name=shared.mod_prefix.."Inferno",
+    filename=shared.media_prefix.."graphics/weapons/Inferno.png",
+    frame_count=1,
+    width=205,
+    height=410,
+    shift=util.by_pixel(0, -110),
+  },
   {
     type="animation",
     name=shared.mod_prefix.."Turbo-Laser",
@@ -123,11 +134,38 @@ data:extend({
   },
   {
     type="animation",
+    name=shared.mod_prefix.."Plasma-BlastGun",
+    filename=shared.media_prefix.."graphics/weapons/Plasma-BlastGun.png",
+    frame_count=1,
+    width=256,
+    height=512,
+    shift=util.by_pixel(0, -130),
+  },
+  {
+    type="animation",
     name=shared.mod_prefix.."Plasma-Destructor",
     filename=shared.media_prefix.."graphics/weapons/Plasma-Destructor.png",
     frame_count=1,
     width=240,
     height=560,
     shift=util.by_pixel(0, -140),
+  },
+  {
+    type="animation",
+    name=shared.mod_prefix.."MissileLauncher",
+    filename=shared.media_prefix.."graphics/weapons/MissileLauncher.png",
+    frame_count=1,
+    width=256,
+    height=256,
+    shift=util.by_pixel(0, 0),
+  },
+  {
+    type="animation",
+    name=shared.mod_prefix.."ApocLauncher",
+    filename=shared.media_prefix.."graphics/weapons/ApocLauncher.png",
+    frame_count=1,
+    width=256,
+    height=256,
+    shift=util.by_pixel(0, 0),
   },
 })

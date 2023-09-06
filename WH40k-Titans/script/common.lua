@@ -2,21 +2,6 @@ require("__core__.lualib.util") -- for table.deepcopy
 shared = require("shared")
 mod_name = shared.mod_name
 
---[[
-https://lua-api.factorio.com/latest/Concepts.html#RenderLayer
-"air-object" = 145
-"light-effect" = 148
-"selection-box" = 187
-]]--
-track_render_layer = 122
-foot_render_layer = 124 -- ="lower-object"
-shadow_render_layer = 144
-lower_render_layer = 168
-arm_render_layer = 169
-body_render_layer = 170
-shoulder_render_layer = 171
-shield_render_layer = 172
-
 
 ----- Script data -----
 
@@ -24,6 +9,8 @@ blank_ctrl_data = {
   bunkers = {},
   titans = {},
   foots = {},
+  titan_gui = {},
+  by_player = {}, -- user settings
 }
 ctrl_data = table.deepcopy(blank_ctrl_data)
 
@@ -61,7 +48,7 @@ function orientation_diff(src, dst)
 end
 
 function point_orientation_shift(ori, oris, length)
-  ori = -ori + 0.25 + oris
+  ori = -ori -oris +0.25
   ori = ori * 2 * math.pi
   return {length*math.cos(ori), -length*math.sin(ori)}
 end
@@ -81,11 +68,28 @@ end
 
 function preprocess_entities(list)
   for _, entity in pairs(list) do
-    used_specials[entity.unit_number] = true
-    entity.active = false -- for crafting machines
+    if entity.valid then
+      used_specials[entity.unit_number] = true
+      entity.active = false -- for crafting machines
+    end
   end
 end
 
 function is_titan(name)
   return name:find(shared.titan_prefix, 1, true)
+end
+
+function list_players(values)
+  -- values is a list of player/character/nil
+  local result = {}
+  for _, obj in pairs(values) do
+    if obj then
+      if obj.player then
+        table.insert(result, obj.player)
+      else
+        table.insert(result, obj)
+      end
+    end
+  end
+  return result
 end

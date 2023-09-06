@@ -1,71 +1,93 @@
 local shared = require("shared-base")
 
---------- Titan weapon parts items
-shared.barrel      = shared.mod_prefix.."barrel"
-shared.proj_engine = shared.mod_prefix.."projectile-engine"  -- for bolters
-shared.he_emitter  = shared.mod_prefix.."he-emitter"  -- high energy for lasers
-shared.ehe_emitter = shared.mod_prefix.."ehe-emitter" -- extra high energy for melta and hell cannon
--- TODO: add electro-magnetic manipulator for plasma guns and hell cannon
-
 -- Aliases
 shared.bolter_engine = shared.proj_engine
 shared.rocket_engine = shared.proj_engine
 shared.quake_engine  = shared.proj_engine
 shared.las_engine    = shared.he_emitter
 shared.melta_engine  = shared.he_emitter
-shared.plasma_engine = shared.he_emitter
-shared.hell_engine   = shared.ehe_emitter
+-- shared.plasma_engine = shared.he_emitter + shared.emfc
+-- shared.hell_engine   = shared.ehe_emitter + shared.emfc
 
---------- Titan weapon ammo
+--------- Titan weapon ammo aliases
 -- Custom
 shared.big_bolt = shared.mod_prefix.."big-bolt"
 shared.huge_bolt = shared.mod_prefix.."huge-bolt"
 shared.quake_proj = shared.mod_prefix.."quake-projectile"
 -- Builtin usage
-shared.laser_ammo = "battery"
-shared.plasma_ammo = "nuclear-fuel"
-shared.melta_ammo = "nuclear-fuel"
-shared.hell_ammo = "nuclear-fuel"
+shared.laser_ammo   = "battery"
+shared.flamer_ammo  = "rocket-fuel"
+shared.melta_ammo   = "rocket-fuel"
+shared.plasma_ammo  = "rocket-fuel"
+shared.hell_ammo    = "nuclear-fuel"
 shared.missile_ammo = "explosive-rocket"
 
 --------- Titan weapon scaling
 -- Specified size also allows to use 1 grade lower
-shared.gun_grade_small = 1
+shared.gun_grade_small  = 1
 shared.gun_grade_medium = 2
-shared.gun_grade_big = 3
-shared.gun_grade_huge = 4
+shared.gun_grade_big    = 3
 
---------- Weapon classes
+--------- Weapon categories
 -- NOTE: number can be changed, shouldn't go to save files
+-- This should be only used for faster runtime indices
 shared.wc_rocket = 01
 shared.wc_bolter = 02
 shared.wc_quake  = 03
-shared.wc_laser  = 11
-shared.wc_plasma = 12
-shared.wc_melta  = 13
-shared.wc_hell   = 14
+shared.wc_flamer = 11
+shared.wc_laser  = 12
+shared.wc_plasma = 13
+shared.wc_melta  = 14
+shared.wc_hell   = 15
+shared.wc_melee  = 21
 
 --------- Weapon types
 shared.weapons = {}
 local dst_s, dst_m, dst_l, dst_xl
-dst_s, dst_m, dst_l, dst_xl = 64, 96, 160, 256
+dst_s, dst_m, dst_l, dst_xl = 64, 96, 128, 192
 local wname = nil
 local order_index = 1
 
---------- Small
+
+--------- 1. Small
+
+wname = "inferno"  -- 3 flamers
+shared.weapon_inferno = wname
+shared.weapons[wname] = {
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_flamer,
+  min_dst = 6, max_dst = dst_s, dmg=1,
+  speed = 18, barrel = 9,
+  ammo = shared.flamer_ammo,
+  per_shot = 1, inventory = 2000,
+  cd = 0.05, attack_size = 5, scatter = 5,
+  bolt_type = "flamethrower-fire-stream",
+  ingredients = {
+    {shared.bolter_engine, 3},
+    {shared.barrel, 6},
+    {shared.frame_part, 2},
+  },
+  icon = "__base__/graphics/icons/flamethrower-turret.png",  -- TODO: replace
+  icon_size = 64, icon_mipmaps = 4,
+  animation = shared.mod_prefix.."Inferno",
+  order_index = order_index,
+}
+order_index = order_index + 1
 
 wname = "vulcan-mega-bolter"  -- 2 guns with 6 big bolters
 shared.weapon_megabolter = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
-  class = shared.wc_bolter,
-  min_dst = 2, max_dst = dst_s, spd=3, dmg=1,
+  category = shared.wc_bolter,
+  min_dst = 6, max_dst = dst_s, dmg=1,
   ammo = shared.big_bolt,
   per_shot = 1, inventory = 2000,
+  cd = 0.1, attack_size = 3,
   ingredients = {
     {shared.bolter_engine, 2},
-    {shared.barrel, 10},
+    {shared.barrel, 12},
     {shared.frame_part, 2},
   },
   icon = "__base__/graphics/icons/gun-turret.png",
@@ -80,10 +102,11 @@ shared.weapon_boltcannon = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
-  class = shared.wc_bolter,
-  min_dst = 4, max_dst = dst_s, spd=1, dmg=1,
+  category = shared.wc_bolter,
+  min_dst = 6, max_dst = dst_s, dmg=1,
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 500,
+  cd = 2,
   ingredients = {
     {shared.bolter_engine, 3},
     {shared.barrel, 4},
@@ -96,36 +119,18 @@ shared.weapons[wname] = {
 }
 order_index = order_index + 1
 
-wname = "missile-launcher"
-shared.weapon_missiles = wname
-shared.weapons[wname] = {
-  name = wname,
-  grade = shared.gun_grade_small,
-  class = shared.wc_rocket,
-  min_dst = 8, max_dst = dst_m, spd=1, dmg=1,
-  ammo = shared.missile_ammo,
-  per_shot = 1, inventory = 1000,
-  ingredients = {
-    {shared.rocket_engine, 4},
-    {shared.barrel, 4},
-    {shared.frame_part, 2},
-  },
-  icon = "__base__/graphics/icons/rocket-launcher.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
-  order_index = order_index,
-}
-order_index = order_index + 1
-
 wname = "lascannon"
 shared.weapon_lascannon = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
-  class = shared.wc_laser,
-  min_dst = 6, max_dst = dst_s, spd=1, dmg=1,
+  category = shared.wc_laser,
+  min_dst = 6, max_dst = dst_m, dmg=1,
+  speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
   per_shot = 2, inventory = 1000,
+  cd = 0.4,
+  bolt_type = shared.mod_prefix.."bolt-laser",
   ingredients = {
     {shared.las_engine, 1},
     {shared.barrel, 2},
@@ -138,59 +143,18 @@ shared.weapons[wname] = {
 }
 order_index = order_index + 1
 
-wname = "plasma-destructor"
-shared.weapon_plasma_destructor = wname
-shared.weapons[wname] = {
-  name = wname,
-  grade = shared.gun_grade_small,
-  class = shared.wc_plasma,
-  min_dst = 6, max_dst = dst_s, spd=1, dmg=1,
-  ammo = shared.plasma_ammo,
-  per_shot = 3, inventory = 150,
-  ingredients = {
-    {shared.plasma_engine, 3},
-    {shared.barrel, 4},
-    {shared.frame_part, 2},
-  },
-  icon = "__base__/graphics/icons/flamethrower.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = shared.mod_prefix.."Plasma-Destructor",
-  order_index = order_index,
-}
-order_index = order_index + 1
-
---------- Medium
-
-wname = "apocalypse-missiles"
-shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
-shared.weapons[wname] = {
-  name = wname,
-  grade = shared.gun_grade_medium,
-  class = shared.wc_rocket,
-  min_dst = 8, max_dst = dst_l, spd=2, dmg=1,
-  ammo = shared.missile_ammo,
-  per_shot = 1, inventory = 2000,
-  ingredients = {
-    {shared.rocket_engine, 10},
-    {shared.barrel, 8},
-    {shared.frame_part, 5},
-  },
-  icon = "__base__/graphics/icons/rocket-launcher.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
-  order_index = order_index,
-}
-order_index = order_index + 1
-
 wname = "turbo-laser-destructor"  -- 2 lasers
 shared.weapon_turbolaser = wname
 shared.weapons[wname] = {
   name = wname,
-  grade = shared.gun_grade_medium,
-  class = shared.wc_laser,
+  grade = shared.gun_grade_small,
+  category = shared.wc_laser,
   min_dst = 8, max_dst = dst_m, spd=1.5, dmg=1.5,
+  speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
-  per_shot = 4, inventory = 4000,
+  per_shot = 3, inventory = 4000,
+  cd = 0.15, attack_size = 3, scatter = 2,
+  bolt_type = shared.mod_prefix.."bolt-laser",
   ingredients = {
     {shared.las_engine, 2},
     {shared.barrel, 4},
@@ -203,15 +167,115 @@ shared.weapons[wname] = {
 }
 order_index = order_index + 1
 
+wname = "plasma-blastgun"
+shared.weapon_plasma_blastgun = wname
+shared.weapons[wname] = {
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_plasma,
+  min_dst = 6, max_dst = dst_s, dmg=1,
+  ammo = shared.plasma_ammo,
+  per_shot = 2, inventory = 500,
+  cd = 1,
+  bolt_type = shared.mod_prefix.."bolt-plasma-1",
+  ingredients = {
+    {shared.he_emitter, 2},
+    {shared.emfc, 2},
+    {shared.barrel, 4},
+    {shared.frame_part, 2},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."Plasma-BlastGun",
+  order_index = order_index,
+}
+order_index = order_index + 1
+
+wname = "missile-launcher"
+shared.weapon_missiles = wname
+shared.weapons[wname] = {
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_rocket,
+  min_dst = 8, max_dst = (dst_m+dst_l)/2, dmg=1,
+  speed = 1, barrel = 0,
+  ammo = shared.missile_ammo,
+  per_shot = 1, inventory = 3000,
+  attack_size = 3, scatter = 4,
+  cd = 0.4, bolt_type = shared.mod_prefix.."explosive-rocket",
+  ingredients = {
+    {shared.rocket_engine, 4},
+    {shared.barrel, 4},
+    {shared.frame_part, 2},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/MissileLauncher.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."MissileLauncher",
+  order_index = order_index,
+}
+order_index = order_index + 1
+
+wname = "apocalypse-missiles"
+shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
+shared.weapons[wname] = {
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_rocket,
+  min_dst = 8, max_dst = dst_l, dmg=1,
+  speed = 1, barrel = 0,
+  ammo = shared.missile_ammo,
+  per_shot = 1, inventory = 8000,
+  cd = 0.15, attack_size = 7, scatter = 6,
+  bolt_type = shared.mod_prefix.."explosive-rocket",
+  ingredients = {
+    {shared.rocket_engine, 10},
+    {shared.barrel, 8},
+    {shared.frame_part, 5},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/ApocLauncher.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."ApocLauncher",
+  order_index = order_index,
+}
+order_index = order_index + 1
+
+
+--------- 2. Medium
+
+wname = "plasma-destructor"
+shared.weapon_plasma_destructor = wname
+shared.weapons[wname] = {
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_plasma,
+  min_dst = 8, max_dst = dst_m, dmg=2,
+  ammo = shared.plasma_ammo,
+  per_shot = 3, inventory = 900,
+  cd = 2,
+  bolt_type = shared.mod_prefix.."bolt-plasma-2",
+  ingredients = {
+    {shared.he_emitter, 6},
+    {shared.emfc, 6},
+    {shared.barrel, 6},
+    {shared.frame_part, 3},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."Plasma-Destructor",
+  order_index = order_index,
+}
+order_index = order_index + 1
+
 wname = "gatling-blaster"  -- 3 huge bolters
 shared.weapon_gatling_blaster = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_medium,
-  class = shared.wc_bolter,
-  min_dst = 4, max_dst = dst_m, spd=3, dmg=1,
+  category = shared.wc_bolter,
+  min_dst = 8, max_dst = dst_m, dmg=1,
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 1000,
+  attack_size = 3,
   ingredients = {
     {shared.bolter_engine, 9},
     {shared.barrel, 12},
@@ -229,8 +293,8 @@ order_index = order_index + 1
 -- shared.weapons[wname] = {
 --   name = wname,
 --   grade = shared.gun_grade_medium,
---   class = shared.wc_quake,
---   min_dst = 8, max_dst = dst_m, spd=0.5, dmg=1,
+--   category = shared.wc_quake,
+--   min_dst = 12, max_dst = dst_m, spd=0.5, dmg=1,
 --   ammo = shared.quake_proj,
 --   per_shot = 1, inventory = 200,
 --   ingredients = {
@@ -250,11 +314,12 @@ shared.weapon_volcano_cannon = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_medium,
-  class = shared.wc_hell,
-  min_dst = 6, max_dst = dst_m, spd=1, dmg=1,
+  category = shared.wc_hell,
+  min_dst = 8, max_dst = dst_l, dmg=1,
   ammo = shared.hell_ammo,
   ingredients = {
-    {shared.hell_engine, 3},
+    {shared.ehe_emitter, 3},
+    {shared.emfc, 3},
     {shared.barrel, 4},
     {shared.frame_part, 5},
   },
@@ -266,21 +331,20 @@ shared.weapons[wname] = {
 }
 order_index = order_index + 1
 
---------- Big
-
 -- wname = "graviton-ruinator"
 -- shared.weapon_graviton_ruinator = wname
 -- shared.weapons[wname] = {
 --   name = wname,
---   grade = shared.gun_grade_big,
---   class = shared.wc_quake,
---   min_dst = 8, max_dst = dst_l, spd=0.5, dmg=2,
+--   grade = shared.gun_grade_medium,
+--   category = shared.wc_quake,
+--   min_dst = 10, max_dst = dst_l, spd=0.5, dmg=2,
 --   ammo = shared.laser_ammo,
 --   per_shot = 200, inventory = 1000,
 --   ingredients = {
 --     {shared.ehe_emitter, 6},
 --     {shared.barrel, 4},
 --     {shared.frame_part, 5},
+--     {shared.antigraveng, 5},
 --   },
 --   icon = "__base__/graphics/icons/inserter.png",
 --   icon_size = 64, icon_mipmaps = 4,
@@ -293,11 +357,12 @@ wname = "volkite-destructor"  -- quick big melta, short-range
 shared.weapon_volkite_destructor = wname
 shared.weapons[wname] = {
   name = wname,
-  grade = shared.gun_grade_big,
-  class = shared.wc_melta,
-  min_dst = 4, max_dst = dst_m, spd=1, dmg=1,
+  grade = shared.gun_grade_medium,
+  category = shared.wc_melta,
+  min_dst = 8, max_dst = dst_m, dmg=1,
   ammo = shared.melta_ammo,
   per_shot = 1, inventory = 500,
+  attack_size = 5,
   ingredients = {
     {shared.melta_engine, 6},
     {shared.barrel, 8},
@@ -310,40 +375,46 @@ shared.weapons[wname] = {
 }
 order_index = order_index + 1
 
+
+--------- 3. Huge
+
 wname = "plasma-annihilator"
 shared.weapon_plasma_annihilator = wname
 shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_big,
-  class = shared.wc_plasma,
-  min_dst = 8, max_dst = dst_l, spd=1, dmg=2,
+  category = shared.wc_plasma,
+  min_dst = 12, max_dst = dst_l, dmg=4,
   ammo = shared.plasma_ammo,
-  per_shot = 10, inventory = 500,
+  per_shot = 10, inventory = 5000,
+  cd = 4,
+  bolt_type = shared.mod_prefix.."bolt-plasma-3",
   ingredients = {
-    {shared.plasma_engine, 6},
+    {shared.he_emitter, 12},
+    {shared.emfc, 12},
     {shared.barrel, 10},
     {shared.frame_part, 6},
   },
-  icon = "__base__/graphics/icons/flamethrower.png",
-  icon_size = 64, icon_mipmaps = 4,
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
+  icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",  -- TODO: replace
   order_index = order_index,
 }
 order_index = order_index + 1
 
---------- Huge
-
 wname = "hellstorm-cannon"
 shared.weapon_hellstorm_cannon = wname
 shared.weapons[wname] = {
   name = wname,
-  grade = shared.gun_grade_huge,
-  class = shared.wc_hell,
-  min_dst = 8, max_dst = dst_l, spd=0.2, dmg=10,
+  grade = shared.gun_grade_big,
+  category = shared.wc_hell,
+  min_dst = 16, max_dst = dst_xl, spd=0.2, dmg=10,
   ammo = shared.hell_ammo,
   per_shot = 12, inventory = 1000,
+  cd = 6,
   ingredients = {
-    {shared.hell_engine, 12},
+    {shared.ehe_emitter, 10},
+    {shared.emfc, 10},
     {shared.barrel, 30},
     {shared.frame_part, 19},
   },
@@ -353,3 +424,31 @@ shared.weapons[wname] = {
   order_index = order_index,
 }
 order_index = order_index + 1
+
+-- wname = "doomstrike-missiles"
+-- shared.weapon_doomstrike_missiles = wname
+-- shared.weapons[wname] = {
+--   name = wname,
+--   grade = shared.gun_grade_big,
+--   category = shared.wc_quake,
+--   min_dst = 32, max_dst = dst_xl, spd=0.2, dmg=10,
+--   ammo = shared.hell_ammo,
+--   per_shot = 12, inventory = 1000,
+--   ingredients = {
+--     {shared.rocket_engine, 16},
+--     {shared.barrel, 16},
+--     {shared.frame_part, 11},
+--   },
+--   icon = shared.media_prefix.."graphics/icons/weapons/MissileLauncher.png", -- TODO: replace
+--   icon_size = 64, icon_mipmaps = 3,
+--   animation = shared.mod_prefix.."MissileLauncher", -- TODO: replace
+--   order_index = order_index,
+-- }
+-- order_index = order_index + 1
+
+
+
+for name, weapon_type in pairs(shared.weapons) do
+  weapon_type.cd = weapon_type.cd or 3
+  weapon_type.attack_size = weapon_type.attack_size or 1
+end

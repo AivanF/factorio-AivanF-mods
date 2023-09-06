@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.5
+Date: 2023-09-04
+  Features:
+    - 7 different weapons ready: inferno flamer, 2 laser & 2 plasma cannons, 2 missile launchers.
+    - Attack radius visualization.
+    - 3 attack hotkeys, by default: Z, X, C.
+    - Titan dashboard and weapons control to map hotkeys and zoom out button.
+  Balance:
+    - Much better game balance now.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.4
 Date: 2023-09-01
   Bugfixes:
