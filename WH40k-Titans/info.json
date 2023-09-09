@@ -1,11 +1,11 @@
 {
   "name": "WH40k-Titans",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "title": "WH40k: Titans",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [
-    "Recipes-Reload", "WH40k-Titans-media = 1.0.4",
+    "Recipes-Reload", "WH40k-Titans-media = 1.0.5",
     "? space-exploration", "? Mechanicus"
   ],
   "factorio_version": "1.1",

@@ -56,7 +56,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warhound,
     class = shared.class_warhound,
-    dst = 1, dmg = 1, spd = 5,
+    dst = 1, dmg = 1, spd = 5.5,
     arms = shared.gun_grade_small,
     carapace1 = nil,
     carapace2 = nil,
@@ -87,7 +87,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_direwolf,
     class = shared.class_direwolf,
-    dst = 1, dmg = 1, spd = 4,
+    dst = 1, dmg = 1, spd = 4.8,
     arms = shared.gun_grade_small,
     carapace1 = nil,
     carapace2 = nil,

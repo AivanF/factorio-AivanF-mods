@@ -10,11 +10,13 @@ local function preprocess_recipes(dict)
   return result
 end
 
-local cmu = require("collision-mask-util")
-local only_water_layer = cmu.get_first_unused_layer()
+-- local cmu = require("collision-mask-util")
+-- local only_water_layer = cmu.get_first_unused_layer()
+local collision_mask_util_extended = require("cmue.collision-mask-util-extended")
+local only_water_layer = collision_mask_util_extended.get_make_named_collision_mask("only-water-layer")
 -- Add new layer to the water, ignoring shallow
 for name, proto in pairs(data.raw["tile"]) do
-  if proto.draw_in_water_layer then
+  if proto.draw_in_water_layer and not name:find("shallow", 1, true) then
     log("Titans: only_water_layer for "..proto.name)
     proto.collision_mask[#proto.collision_mask+1] = only_water_layer
   end

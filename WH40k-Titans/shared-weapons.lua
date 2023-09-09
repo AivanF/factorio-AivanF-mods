@@ -18,9 +18,9 @@ shared.quake_proj = shared.mod_prefix.."quake-projectile"
 shared.laser_ammo   = "battery"
 shared.flamer_ammo  = "rocket-fuel"
 shared.melta_ammo   = "rocket-fuel"
-shared.plasma_ammo  = "rocket-fuel"
 shared.hell_ammo    = "nuclear-fuel"
 shared.missile_ammo = "explosive-rocket"
+shared.plasma_ammo  = shared.part_prefix.."plasma-fuel"
 
 --------- Titan weapon scaling
 -- Specified size also allows to use 1 grade lower
@@ -57,7 +57,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_flamer,
-  min_dst = 6, max_dst = dst_s, dmg=1,
+  min_dst = 6, max_dst = dst_s,
   speed = 18, barrel = 9,
   ammo = shared.flamer_ammo,
   per_shot = 1, inventory = 2000,
@@ -81,7 +81,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_bolter,
-  min_dst = 6, max_dst = dst_s, dmg=1,
+  min_dst = 6, max_dst = dst_s,
   ammo = shared.big_bolt,
   per_shot = 1, inventory = 2000,
   cd = 0.1, attack_size = 3,
@@ -103,7 +103,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_bolter,
-  min_dst = 6, max_dst = dst_s, dmg=1,
+  min_dst = 6, max_dst = dst_s,
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 500,
   cd = 2,
@@ -125,10 +125,10 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_laser,
-  min_dst = 6, max_dst = dst_m, dmg=1,
+  min_dst = 6, max_dst = dst_m,
   speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
-  per_shot = 2, inventory = 1000,
+  per_shot = 2, inventory = 2000,
   cd = 0.4,
   bolt_type = shared.mod_prefix.."bolt-laser",
   ingredients = {
@@ -149,10 +149,10 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_laser,
-  min_dst = 8, max_dst = dst_m, spd=1.5, dmg=1.5,
+  min_dst = 8, max_dst = dst_m, spd=1.5,
   speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
-  per_shot = 3, inventory = 4000,
+  per_shot = 3, inventory = 6000,
   cd = 0.15, attack_size = 3, scatter = 2,
   bolt_type = shared.mod_prefix.."bolt-laser",
   ingredients = {
@@ -173,7 +173,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_plasma,
-  min_dst = 6, max_dst = dst_s, dmg=1,
+  min_dst = 6, max_dst = dst_s,
   ammo = shared.plasma_ammo,
   per_shot = 2, inventory = 500,
   cd = 1,
@@ -197,7 +197,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
-  min_dst = 8, max_dst = (dst_m+dst_l)/2, dmg=1,
+  min_dst = 8, max_dst = (dst_m+dst_l)/2,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 3000,
@@ -221,7 +221,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
-  min_dst = 8, max_dst = dst_l, dmg=1,
+  min_dst = 8, max_dst = dst_l,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 8000,
@@ -246,9 +246,9 @@ wname = "plasma-destructor"
 shared.weapon_plasma_destructor = wname
 shared.weapons[wname] = {
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_medium,
   category = shared.wc_plasma,
-  min_dst = 8, max_dst = dst_m, dmg=2,
+  min_dst = 8, max_dst = dst_m,
   ammo = shared.plasma_ammo,
   per_shot = 3, inventory = 900,
   cd = 2,
@@ -272,7 +272,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_bolter,
-  min_dst = 8, max_dst = dst_m, dmg=1,
+  min_dst = 8, max_dst = dst_m,
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 1000,
   attack_size = 3,
@@ -294,7 +294,7 @@ order_index = order_index + 1
 --   name = wname,
 --   grade = shared.gun_grade_medium,
 --   category = shared.wc_quake,
---   min_dst = 12, max_dst = dst_m, spd=0.5, dmg=1,
+--   min_dst = 12, max_dst = dst_m, spd=0.5,
 --   ammo = shared.quake_proj,
 --   per_shot = 1, inventory = 200,
 --   ingredients = {
@@ -315,7 +315,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_hell,
-  min_dst = 8, max_dst = dst_l, dmg=1,
+  min_dst = 8, max_dst = dst_l,
   ammo = shared.hell_ammo,
   ingredients = {
     {shared.ehe_emitter, 3},
@@ -337,7 +337,7 @@ order_index = order_index + 1
 --   name = wname,
 --   grade = shared.gun_grade_medium,
 --   category = shared.wc_quake,
---   min_dst = 10, max_dst = dst_l, spd=0.5, dmg=2,
+--   min_dst = 10, max_dst = dst_l, spd=0.5,
 --   ammo = shared.laser_ammo,
 --   per_shot = 200, inventory = 1000,
 --   ingredients = {
@@ -359,7 +359,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_melta,
-  min_dst = 8, max_dst = dst_m, dmg=1,
+  min_dst = 8, max_dst = dst_m,
   ammo = shared.melta_ammo,
   per_shot = 1, inventory = 500,
   attack_size = 5,
@@ -384,7 +384,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_big,
   category = shared.wc_plasma,
-  min_dst = 12, max_dst = dst_l, dmg=4,
+  min_dst = 12, max_dst = dst_l,
   ammo = shared.plasma_ammo,
   per_shot = 10, inventory = 5000,
   cd = 4,
@@ -408,7 +408,7 @@ shared.weapons[wname] = {
   name = wname,
   grade = shared.gun_grade_big,
   category = shared.wc_hell,
-  min_dst = 16, max_dst = dst_xl, spd=0.2, dmg=10,
+  min_dst = 16, max_dst = dst_xl, spd=0.2,
   ammo = shared.hell_ammo,
   per_shot = 12, inventory = 1000,
   cd = 6,
@@ -431,9 +431,9 @@ order_index = order_index + 1
 --   name = wname,
 --   grade = shared.gun_grade_big,
 --   category = shared.wc_quake,
---   min_dst = 32, max_dst = dst_xl, spd=0.2, dmg=10,
---   ammo = shared.hell_ammo,
---   per_shot = 12, inventory = 1000,
+--   min_dst = 32, max_dst = dst_xl*1.5, spd=0.2,
+--   ammo = shared.doom_rocket,
+--   per_shot = 1, inventory = 16,
 --   ingredients = {
 --     {shared.rocket_engine, 16},
 --     {shared.barrel, 16},

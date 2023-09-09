@@ -10,9 +10,7 @@ local function get_weapon_effects(grade)
   return result
 end
 
--- TODO: adjust for SE!
-
-data:extend{
+local tech_researches = {
   {
     name = shared.mod_prefix.."base",
     type = "technology",
@@ -115,7 +113,7 @@ data:extend{
     },
     effects = {
       { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warhound].entity },
-      -- { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
     },
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
@@ -200,7 +198,7 @@ data:extend{
     },
     effects = {
       { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_imperator].entity },
-      -- { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
+      { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
     },
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
@@ -225,7 +223,10 @@ data:extend{
       }
     },
     effects = get_weapon_effects(shared.gun_grade_small),
-    prerequisites = {shared.mod_prefix.."production", shared.mod_prefix.."1-class"},
+    prerequisites = {
+      -- shared.mod_prefix.."production",
+      shared.mod_prefix.."1-class",
+    },
     unit = {
       count = 50,
       ingredients = {{shared.sp, 1}},
@@ -272,3 +273,10 @@ data:extend{
     order = name
   },
 }
+
+data:extend(tech_researches)
+
+se_prodecural_tech_exclusions = se_prodecural_tech_exclusions or {}
+for _, info in pairs(tech_researches) do
+  table.insert(se_prodecural_tech_exclusions, info.name)
+end

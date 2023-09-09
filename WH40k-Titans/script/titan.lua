@@ -267,12 +267,18 @@ local function create_titan_gui(player, titan_info)
   guiobj.titan_info_table = guiobj.main_frame.add{type="table", name="titan_info_table", column_count=1, style="filter_slot_table"}
   guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/radar",
-    tooltip={"controls."..shared.mod_prefix.."zoom-out"},
+    tooltip={"gui."..shared.mod_prefix.."zoom-out"},
     tags={action=action_zoom_out},
+  }
+  guiobj.health = guiobj.titan_info_table.add{
+    type="sprite-button", sprite="item/"..shared.frame_part,
+    tooltip={"gui.wh40k-titans-health"},
+    tags={action=action_toggle_ammo_count},
   }
   guiobj.void_shield = guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/"..shared.void_shield,
-    tooltip={"controls.wh40k-titans-vs-value"},
+    tooltip={"gui.wh40k-titans-vs-value"},
+    tags={action=action_toggle_ammo_count},
   }
 end
 
@@ -297,7 +303,18 @@ local function update_gui()
     else
       local player_settings = ctrl_data.by_player[guiobj.player.index] or {}
       if guiobj.void_shield then
-        guiobj.void_shield.number = math.floor(100 * guiobj.titan_info.shield / shared.titan_types[guiobj.titan_info.class].max_shield)
+        if player_settings.percent_ammo then
+          guiobj.void_shield.number = math.floor(100 * guiobj.titan_info.shield / shared.titan_types[guiobj.titan_info.class].max_shield)
+        else
+          guiobj.void_shield.number = math.floor(guiobj.titan_info.shield)
+        end
+      end
+      if guiobj.health then
+        if player_settings.percent_ammo then
+          guiobj.health.number = math.floor(100 * guiobj.titan_info.entity.health / shared.titan_types[guiobj.titan_info.class].health)
+        else
+          guiobj.health.number = math.floor(guiobj.titan_info.entity.health)
+        end
       end
       local still_cd
       for k, cannon in pairs(guiobj.titan_info.guns) do
@@ -316,16 +333,20 @@ local function update_gui()
           guiobj.guns[k].ammo.number = cannon.ammo_count or 0
         end
         if guiobj.titan_info.guns[k].ai then
-          -- guiobj.guns[k].mode.text = "AI"
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-info"
+          guiobj.guns[k].mode.tooltip={"gui."..shared.mod_prefix.."attack-ai"}
         elseif player_settings.guns[k].mode == 1 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-1"
+          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-1"}
         elseif player_settings.guns[k].mode == 2 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-2"
+          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-2"}
         elseif player_settings.guns[k].mode == 3 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-3"
+          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-3"}
         else
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-red"
+          guiobj.guns[k].mode.tooltip={"gui."..shared.mod_prefix.."attack-0"}
         end
       end
     end
@@ -454,6 +475,27 @@ end
 
 
 ----- MAIN -----
+
+local collision_mask_util_extended = require("cmue.collision-mask-util-control")
+
+local function try_remove_small_water(surface, position, radius)
+  local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
+  local total = surface.count_tiles_filtered{position=position, radius=radius}
+  -- TODO: count shallow water as 0.5
+  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={only_water_layer}}
+  local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
+  -- game.print("Found water "..water.." and shallow "..shallow.." of total "..total)
+  water = water + 0.5*shallow
+  if water > 0 and water/total < 0.4 then
+    local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={only_water_layer}}
+    local new_tiles = {}
+    for _, tl in pairs(tiles) do
+      table.insert(new_tiles, {position=tl.position, name="water-shallow"})
+    end
+    surface.set_tiles(new_tiles, true)
+  end
+end
+
 
 local function process_single_titan(titan_info)
   local tick = game.tick
@@ -593,9 +635,14 @@ local function process_single_titan(titan_info)
         img = shared.mod_prefix.."foot-big"
         sc = (class+5) /20
       end
+      local foot_pos = math2d.position.add(entity.position, point_orientation_shift(ori, foot_oris, foot_shift))
+      if not titan_type.over_water then
+        local earty_radius = 5 + class*0.1
+        try_remove_small_water(surface, foot_pos, earty_radius)
+        try_remove_small_water(surface, math2d.position.add(entity.position, point_orientation_shift(ori, 0, foot_shift)), earty_radius)
+      end
       foot = surface.create_entity{
-        name=titan_type.foot, force="neutral",
-        position=math2d.position.add(entity.position, point_orientation_shift(ori, foot_oris, foot_shift)),
+        name=titan_type.foot, force="neutral", position=foot_pos,
       }
       ctrl_data.foots[#ctrl_data.foots+1] = {  -- TODO: is this buggy?!?
         owner = entity, entity=foot,
@@ -702,6 +749,7 @@ lib:on_event(defines.events.on_tick, process_titans)
 local function handle_attack_order(event, kind)
   -- https://lua-api.factorio.com/latest/events.html#CustomInputEvent
   local player = game.players[event.player_index]
+  -- try_remove_small_water(player.character.surface, event.cursor_position, 8)
   if not (player.character and player.character.vehicle) then return end
   local entity = player.character.vehicle
   local titan_info = ctrl_data.titans[entity.unit_number]
