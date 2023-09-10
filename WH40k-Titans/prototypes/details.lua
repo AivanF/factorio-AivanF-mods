@@ -14,7 +14,7 @@ local parts = {
       {"construction-robot", 1},
     },
     se_ingredients = {
-      {"se-biomass", 20},
+      {"se-specimen", 20}, -- biomass
       {"se-neural-gel", 5},
       {"processing-unit", 1},
       {"copper-cable", 40},

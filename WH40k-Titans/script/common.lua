@@ -86,7 +86,7 @@ function list_players(values)
     if obj then
       if obj.player then
         table.insert(result, obj.player)
-      else
+      elseif obj.object_name == "LuaPlayer" then
         table.insert(result, obj)
       end
     end
