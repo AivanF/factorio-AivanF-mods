@@ -15,7 +15,7 @@ local parts = {
     },
     se_ingredients = {
       {"se-specimen", 20}, -- biomass
-      {"se-neural-gel", 5},
+      {type="fluid", name="se-neural-gel", amount=20},
       {"processing-unit", 1},
       {"copper-cable", 40},
       {"steel-plate", 10},
