@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.9.0
+Date: 2023-09-13
+  Info:
+    - Initial release by AivanF!
+    - Supported: AAI Industry, Space Exploration, Krastorio 2, Very BZ, Angel+Bob, Pyanodon, Industrial Revolution 3, Exotic Industries.
+    - ToDo: 248k, 5Dim, ModMash.

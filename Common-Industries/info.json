@@ -1,0 +1,19 @@
+{
+  "name": "Common-Industries",
+  "version": "0.9.0",
+  "title": "Bridge Technologies",
+  "author": "AivanF", 
+  "homepage": "https://mods.factorio.com/mod/Common-Industries",
+  "dependencies": [
+    "? space-exploration", "? aai-industry", "? Krastorio2",
+    "? bobelectronics", "? MDbobelectronics", "? bobtech", "? bobplates", "? bobpower",
+    "? angels", "? angelspetrochem", "? angelssmelting", "? angelbob",
+    "? IndustrialRevolution3", "? exotic-industries",
+    "? bzvery", "? bzbintermediates", "? bzbelectronics", "? bzsilicon", "? bzcarbon", "? bzgraphene", "? bzaluminum", "? bztungsten",
+    "? pyhightech", "? pyindustry", "? pypetroleumhandling", "? pyfusionenergy", "? pycoalprocessing", "? pyalternativeenergy",
+    "? 5dim_compatibility", "? 5dim_energy", "? 5dim_nuclear", "? 5dim_mining", "? 5dim_storage", "? 5dim_logistic", "? 5dim_automation",
+    "? Recipes-Reload"
+  ],
+  "factorio_version": "1.1",
+  "description": "Mediator for overhaul mods. When requested by other mods, the Bridge adds ingredients, items and recipes that will get replaced or adjusted if compatible big mods are presented. The goal is to make a single dependency, simple connection and integration of small and overhaul mods. See Home Page for more details. Known as Bridge Technologies and Common Industries."
+}
