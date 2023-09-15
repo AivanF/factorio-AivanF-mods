@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.1
+Date: 2023-09-15
+  Features:
+    - Added new items: ceramic, meat, brain, optical emitter.
+    - Added support for 248k, 5Dim, ModMash, Omni.
+    - Many other changes.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.0
 Date: 2023-09-13
   Info:

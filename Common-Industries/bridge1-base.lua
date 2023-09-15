@@ -19,10 +19,14 @@ local bridge = {
 }
 afci_bridge = bridge
 
+bridge.debug_all = false
+-- bridge.debug_all = true
+
 bridge.media_path = "__Common-Industries__/graphics/"
 bridge.prefix = "afci-"
 bridge.log_prefix = "AFCI: "
 bridge.empty = ""
+bridge.not_updated = "none"
 
 function bridge.is_new(name)
   return name:find(bridge.prefix, 1, true)
@@ -32,7 +36,7 @@ function bridge.clean_prerequisites(given)
   local already = {}
   local result = {}
   for _, name in pairs(given) do
-    if given ~= "" then
+    if given ~= bridge.empty then
       if not already[name] then
         table.insert(result, name)
         already[name] = true
@@ -50,7 +54,7 @@ bridge.mods_list = {
   -- K2    https://mods.factorio.com/user/raiguard
   { short_name = "k2",    name = "Krastorio2" },
   -- 248k  https://mods.factorio.com/mod/248k
-  { short_name = "248k",  name = "248k" },
+  { short_name = "_248k", name = "248k" },
 
   -- EI    https://mods.factorio.com/user/PreLeyZero
   { short_name = "exind", name = "exotic-industries" },
@@ -64,13 +68,17 @@ bridge.mods_list = {
   { short_name = "bobtech",   name = "bobtech" },
   { short_name = "bobplates", name = "bobplates" },
   { short_name = "bobpower",  name = "bobpower" },
+  { short_name = "bobores",   name = "bobores" },
   -- Angel's  https://mods.factorio.com/user/Arch666Angel
   -- Does anybody play angels without bobs?
   { short_name = "angels", name = "angelsindustries" },
+  { short_name = "angelsbio", name = "angelsbioprocessing" },
   { short_name = "angelspetrochem", name = "angelspetrochem" },
   { short_name = "angelssmelting", name = "angelssmelting" },
 
   -- 5Dim  https://mods.factorio.com/user/McGuten
+  -- Nothing to integrate: it add absolutely no new ingredients,
+  -- just new building made from old buildings and components.
   { short_name = "5d_com", name = "5dim_compatibility" },
   { short_name = "5d_enr", name = "5dim_energy" },
   { short_name = "5d_nuk", name = "5dim_nuclear" },
@@ -83,15 +91,15 @@ bridge.mods_list = {
   { short_name = "ir3", name = "IndustrialRevolution3" },
 
   -- BZ    https://mods.factorio.com/user/brevven
-  { short_name = "bzvery",    name = "bzvery" },
+  { short_name = "bzvery",     name = "bzvery" },
   { short_name = "bzbintermediates", name = "bzbintermediates" },
   { short_name = "bzbelectronics",   name = "bzbelectronics" },
-  { short_name = "bzbearly",  name = "bzbearly" },
-  { short_name = "bzsilicon", name = "bzsilicon" },
-  { short_name = "bzcarbon",  name = "bzcarbon" },
-  { short_name = "bzgraphene",  name = "bzgraphene" },
-  { short_name = "bzaluminum",  name = "bzaluminum" },
-  { short_name = "bztungsten",  name = "bztungsten" },
+  { short_name = "bzbearly",   name = "bzbearly" },
+  { short_name = "bzsilicon",  name = "bzsilicon" },
+  { short_name = "bzcarbon",   name = "bzcarbon" },
+  { short_name = "bzgraphene", name = "bzgraphene" },
+  { short_name = "bzaluminum", name = "bzaluminum" },
+  { short_name = "bztungsten", name = "bztungsten" },
 
   -- Py    https://mods.factorio.com/user/pyanodon
   { short_name = "py_ht",  name = "pyhightech" },
@@ -99,8 +107,14 @@ bridge.mods_list = {
   { short_name = "py_pet", name = "pypetroleumhandling" },
   { short_name = "py_fus", name = "pyfusionenergy" },
   { short_name = "py_cp",  name = "pycoalprocessing" },
-  { short_name = "py_alt",  name = "pyalternativeenergy" },
-  { short_name = "py_raw",  name = "pyrawores" },
+  { short_name = "py_alt", name = "pyalternativeenergy" },
+  { short_name = "py_life",name = "pyalienlife" },
+  { short_name = "py_raw", name = "pyrawores" },
+
+  -- Omni  https://mods.factorio.com/user/OmnissiahZelos
+  { short_name = "om_cry", name = "omnimatter_crystal" },
+  { short_name = "om_enr", name = "omnimatter_energy" },
+  { short_name = "om_mat", name = "omnimatter" },
 
   -- ModMash/Splinter  https://mods.factorio.com/user/btarrant
   { short_name = "spl_mash", name = "modmash" },
@@ -109,8 +123,12 @@ bridge.mods_list = {
   { short_name = "spl_reg",  name = "modmashsplinterregenerative" },
 
   -- https://mods.factorio.com/user/YuokiTani
+  { short_name = "yit", name = "Yi_Tech_Tree_ExtraVanilla" },
   { short_name = "yie", name = "yi_engines" },
   { short_name = "yi",  name = "Yuoki" },
+
+  -- https://mods.factorio.com/user/AivanF
+  { short_name = "pbb",  name = "Powered-by-Biters" },
 }
 
 
@@ -140,17 +158,21 @@ function bridge.preprocess(obj_info)
     return obj_info
   end
   -- Try to adjust
-  for _, specialised in pairs(obj_info.modded or {}) do
+  for _, specialised in ipairs(obj_info.modded or {}) do
     if bridge.have_required_mod(specialised.mod) then
       table.merge(obj_info, specialised)
       bridge.preprocessed[obj_info.short_name] = true
       obj_info.updated = bridge.is_new(obj_info.name) and "adjusted" or "replaced"
       log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
-      return obj_info
+      if not specialised.continue then
+        return obj_info
+      end
     end
   end
-  -- Found nothing
-  obj_info.updated = "pass"
+  if obj_info.updated == bridge.not_updated then
+    -- Found nothing
+    obj_info.updated = "pass"
+  end
   bridge.preprocessed[obj_info.short_name] = true
   return obj_info
 end

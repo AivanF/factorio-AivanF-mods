@@ -44,17 +44,17 @@ data:extend{
 }
 
 -- Materialise everything for debug
-local debug_all = false
--- debug_all = true
-if debug_all then
-	log(bridge.log_prefix.."Item: "..serpent.line(table.get_keys(data.raw.item)))
-	for short_name, item_info in pairs(bridge.item) do
-	  log("Doing "..short_name)
-	  item_info.getter()
-	  if not data.raw.item[item_info.name] then
-	    error("No item "..item_info.name.." for "..short_name)
-	  end
-	end
+if bridge.debug_all or settings.startup["afci-materialise-all"].value then
+  log(bridge.log_prefix.."all_items: "..serpent.line(table.get_keys(data.raw.item)))
+  for short_name, item_info in pairs(bridge.item) do
+    if not item_info.minor then
+      log("Doing "..short_name)
+      item_info.getter()
+      if not data.raw.item[item_info.name] then
+        error("No item "..item_info.name.." for "..short_name)
+      end
+    end
+  end
 end
 
 return bridge

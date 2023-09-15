@@ -1,17 +1,19 @@
 {
   "name": "Common-Industries",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "title": "Bridge Technologies",
   "author": "AivanF", 
   "homepage": "https://mods.factorio.com/mod/Common-Industries",
   "dependencies": [
-    "? space-exploration", "? aai-industry", "? Krastorio2",
+    "? space-exploration", "? aai-industry", "? Krastorio2", "? 248k",
     "? bobelectronics", "? MDbobelectronics", "? bobtech", "? bobplates", "? bobpower",
     "? angels", "? angelspetrochem", "? angelssmelting", "? angelbob",
     "? IndustrialRevolution3", "? exotic-industries",
     "? bzvery", "? bzbintermediates", "? bzbelectronics", "? bzsilicon", "? bzcarbon", "? bzgraphene", "? bzaluminum", "? bztungsten",
     "? pyhightech", "? pyindustry", "? pypetroleumhandling", "? pyfusionenergy", "? pycoalprocessing", "? pyalternativeenergy",
     "? 5dim_compatibility", "? 5dim_energy", "? 5dim_nuclear", "? 5dim_mining", "? 5dim_storage", "? 5dim_logistic", "? 5dim_automation",
+    "? omnimatter_crystal", "? omnimatter_energy", "? omnimatter",
+    "? Yi_Tech_Tree_ExtraVanilla", "? yi_engines", "? Yuoki",
     "? Recipes-Reload"
   ],
   "factorio_version": "1.1",

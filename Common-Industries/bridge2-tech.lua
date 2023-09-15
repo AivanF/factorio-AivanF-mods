@@ -7,9 +7,15 @@ local function add_tech(tech_info)
   bridge.tech[tech_info.name] = tech_info
 end
 
+
+bridge.early = bridge.prefix.."early"
+bridge.midgame = bridge.prefix.."midgame"
+bridge.lategame = bridge.prefix.."lategame"
+bridge.endgame = bridge.prefix.."endgame"
+
 add_tech({
   short_name = "early",
-  name = bridge.prefix.."early",
+  name = bridge.early,
   icon = bridge.media_path.."tech/t1-craft.png",
   icon_size = 256, icon_mipmaps = 1,
   prerequisites = {},
@@ -21,7 +27,7 @@ add_tech({
 
 add_tech({
   short_name = "midgame",
-  name = bridge.prefix.."midgame",
+  name = bridge.midgame,
   icon = bridge.media_path.."tech/t2-industry.png",
   icon_size = 256, icon_mipmaps = 1,
   prerequisites = {
@@ -34,11 +40,27 @@ add_tech({
     {"logistic-science-pack", 1},
     {"chemical-science-pack", 1},
   },
+  modded = {
+    {
+      mod = bridge.mods.yit,
+      prerequisites = {
+        "chemical-science-pack",
+        "yi-intermediates",
+      }
+    },
+    {
+      mod = bridge.mods.om_mat,
+      prerequisites = {
+        "chemical-science-pack",
+        "omnitech-solvation-omniston-1",
+      }
+    },
+  },
 })
 
 add_tech({
   short_name = "lategame",
-  name = bridge.prefix.."lategame",
+  name = bridge.lategame,
   icon = bridge.media_path.."tech/t3-nanotech.png",
   icon_size = 256, icon_mipmaps = 1,
   prerequisites = {
@@ -59,12 +81,27 @@ add_tech({
       mod = bridge.mods.bzcarbon,
       prerequisites = {"nanotubes"},
     },
+    {
+      mod = bridge.mods.yit,
+      prerequisites = {
+        "production-science-pack",
+        "utility-science-pack",
+        "yi-advanced-machines",
+      },
+    },
+    {
+      mod = bridge.mods.om_cry,
+      prerequisites = {
+        "chemical-science-pack",
+        "omnitech-crystallonics-3",
+      }
+    },
   },
 })
 
 add_tech({
   short_name = "endgame",
-  name = bridge.prefix.."endgame",
+  name = bridge.endgame,
   icon = bridge.media_path.."tech/t4-technomagic.png",
   icon_size = 256, icon_mipmaps = 1,
   prerequisites = {
