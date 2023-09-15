@@ -5,9 +5,9 @@ shared.bolter_engine = shared.proj_engine
 shared.rocket_engine = shared.proj_engine
 shared.quake_engine  = shared.proj_engine
 shared.las_engine    = shared.he_emitter
-shared.melta_engine  = shared.he_emitter
--- shared.plasma_engine = shared.he_emitter + shared.emfc
--- shared.hell_engine   = shared.ehe_emitter + shared.emfc
+-- shared.melta_engine  = he_emitter + melta_pump
+-- shared.plasma_engine = he_emitter + emfc
+-- shared.hell_engine   = ehe_emitter + melta_pump
 
 --------- Titan weapon ammo aliases
 -- Custom
@@ -20,7 +20,7 @@ shared.flamer_ammo  = "rocket-fuel"
 shared.melta_ammo   = "rocket-fuel"
 shared.hell_ammo    = "nuclear-fuel"
 shared.missile_ammo = "explosive-rocket"
-shared.plasma_ammo  = shared.part_prefix.."plasma-fuel"
+shared.plasma_ammo  = shared.bridge_prefix.."plasma-fuel"
 
 --------- Titan weapon scaling
 -- Specified size also allows to use 1 grade lower
@@ -64,7 +64,7 @@ shared.weapons[wname] = {
   cd = 0.05, attack_size = 5, scatter = 5,
   bolt_type = "flamethrower-fire-stream",
   ingredients = {
-    {shared.bolter_engine, 3},
+    {shared.melta_pump, 3},
     {shared.barrel, 6},
     {shared.frame_part, 2},
   },
@@ -179,6 +179,7 @@ shared.weapons[wname] = {
   cd = 1,
   bolt_type = shared.mod_prefix.."bolt-plasma-1",
   ingredients = {
+    -- {shared.melta_pump, 2},
     {shared.he_emitter, 2},
     {shared.emfc, 2},
     {shared.barrel, 4},
@@ -254,6 +255,7 @@ shared.weapons[wname] = {
   cd = 2,
   bolt_type = shared.mod_prefix.."bolt-plasma-2",
   ingredients = {
+    -- {shared.melta_pump, 4},
     {shared.he_emitter, 6},
     {shared.emfc, 6},
     {shared.barrel, 6},
@@ -318,8 +320,8 @@ shared.weapons[wname] = {
   min_dst = 8, max_dst = dst_l,
   ammo = shared.hell_ammo,
   ingredients = {
+    {shared.melta_pump, 3},
     {shared.ehe_emitter, 3},
-    {shared.emfc, 3},
     {shared.barrel, 4},
     {shared.frame_part, 5},
   },
@@ -364,7 +366,8 @@ shared.weapons[wname] = {
   per_shot = 1, inventory = 500,
   attack_size = 5,
   ingredients = {
-    {shared.melta_engine, 6},
+    {shared.melta_pump, 6},
+    {shared.he_emitter, 6},
     {shared.barrel, 8},
     {shared.frame_part, 10},
   },
@@ -390,8 +393,9 @@ shared.weapons[wname] = {
   cd = 4,
   bolt_type = shared.mod_prefix.."bolt-plasma-3",
   ingredients = {
-    {shared.he_emitter, 12},
-    {shared.emfc, 12},
+    -- {shared.melta_pump, 18},
+    {shared.he_emitter, 18},
+    {shared.emfc, 18},
     {shared.barrel, 10},
     {shared.frame_part, 6},
   },
@@ -413,8 +417,8 @@ shared.weapons[wname] = {
   per_shot = 12, inventory = 1000,
   cd = 6,
   ingredients = {
-    {shared.ehe_emitter, 10},
-    {shared.emfc, 10},
+    {shared.melta_pump, 10},
+    {shared.ehe_emitter, 20},
     {shared.barrel, 30},
     {shared.frame_part, 19},
   },

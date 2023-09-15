@@ -12,7 +12,7 @@ for _, info in pairs(shared.weapons) do
       energy_required = 60*60*24,
       icon = info.icon or "__base__/graphics/icons/pipe-to-ground.png",
       icon_size = info.icon_size or 64, icon_mipmaps = info.icon_mipmaps or 4,
-      ingredients = info.ingredients,
+      ingredients = shared.preprocess_recipe(info.ingredients),
       results = {},
       category = shared.craftcat_weapon,
       subgroup = shared.subg_weapons,
@@ -20,3 +20,6 @@ for _, info in pairs(shared.weapons) do
     },
   })
 end
+
+-- Materialise ammo from the Bridge
+local item_info = afci_bridge.get.plasma_fuel()

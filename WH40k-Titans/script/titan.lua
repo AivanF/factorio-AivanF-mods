@@ -236,7 +236,7 @@ local function create_titan_gui(player, titan_info)
   }
   guiobj.main_frame.style.size = {340, 180}
   -- guiobj.main_frame.auto_center = true
-  player.opened = main_frame
+  player.opened = guiobj.main_frame
 
   guiobj.weapon_table = guiobj.main_frame.add{type="table", name="weapon_table", column_count=#titan_info.guns, style="filter_slot_table"}
   -- guiobj.weapon_table.clear()
@@ -417,18 +417,25 @@ function lib.register_titan(entity)
       -- init_gun(shared.weapon_turbolaser),
       -- init_gun(shared.weapon_lascannon),
     }
-  elseif titan_type.class <= shared.class_reaver then
+  elseif titan_type.class == shared.class_direwolf then
     titan_info.guns = {
       init_gun(shared.weapon_plasma_blastgun),
       init_gun(shared.weapon_plasma_blastgun),
       init_gun(shared.weapon_turbolaser),
     }
-  elseif titan_type.class >= shared.class_warmaster then
+  elseif titan_type.class == shared.class_reaver then
     titan_info.guns = {
-      init_gun(shared.weapon_plasma_blastgun),
-      init_gun(shared.weapon_plasma_blastgun),
+      -- TODO: use weapon_gatling_blaster
+      init_gun(shared.weapon_plasma_destructor),
       init_gun(shared.weapon_turbolaser),
+      init_gun(shared.weapon_apocalypse_missiles),
     }
+  -- elseif titan_type.class >= shared.class_warmaster then
+  --   titan_info.guns = {
+  --     init_gun(shared.weapon_plasma_blastgun),
+  --     init_gun(shared.weapon_plasma_blastgun),
+  --     init_gun(shared.weapon_turbolaser),
+  --   }
   else
     titan_info.guns = {
       init_gun(shared.weapon_plasma_destructor),
@@ -614,7 +621,7 @@ local function process_single_titan(titan_info)
     ----- Foots
 
     if titan_info.foot_cd < tick then
-      titan_info.foot_cd = tick + 15 + 1.5*class
+      titan_info.foot_cd = tick + 10 + class
       titan_info.foot_rot = not titan_info.foot_rot
 
       foot = titan_info.foots[titan_info.foot_rot and 1 or 2]
@@ -720,6 +727,7 @@ local function process_titans()
     if titan_info.entity.valid then
       process_single_titan(titan_info)
     else
+      game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
       ctrl_data.titans[unit_number] = nil
     end
   end
@@ -742,6 +750,24 @@ end
 
 lib:on_event(defines.events.on_tick, process_titans)
 
+
+local function titans_debug_cmd(cmd)
+  local player = game.players[cmd.player_index]
+  if not player.admin then
+    player.print("You are not an admin!")
+    return
+  end
+  local valid_titans = 0
+  local bad_titans = 0
+  for unit_number, titan_info in pairs(ctrl_data.titans) do
+    if titan_info.entity.valid then
+      valid_titans = valid_titans + 1
+    else
+      bad_titans = bad_titans + 1
+    end
+  end
+  player.print("Found "..valid_titans.." good titans, "..bad_titans.." bad ones")
+end
 
 
 ----- Attack Order -----
@@ -827,6 +853,13 @@ lib:on_event(defines.events.on_entity_damaged, function(event)
     -- game.print("damage: "..damage..", shielded: "..shielded)
   end
 end)
+
+
+commands.add_command(
+  "titans-debug",
+  "Prints some debug info",
+  titans_debug_cmd
+)
 
 
 return lib

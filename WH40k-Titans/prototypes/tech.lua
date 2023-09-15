@@ -25,7 +25,10 @@ local tech_researches = {
       { type = "unlock-recipe", recipe = shared.sp },
       { type = "unlock-recipe", recipe = shared.lab },
     },
-    prerequisites = {},
+    prerequisites = {
+      "military-science-pack",
+      "chemical-science-pack",
+    },
     unit = {
       count = 500,
       ingredients = {
@@ -83,16 +86,23 @@ local tech_researches = {
       -- Common details
       { type = "unlock-recipe", recipe = shared.antigraveng },
       { type = "unlock-recipe", recipe = shared.realityctrl },
-      { type = "unlock-recipe", recipe = shared.emfc },
+      -- { type = "unlock-recipe", recipe = shared.emfc },
       -- Weapon parts
       { type = "unlock-recipe", recipe = shared.barrel },
       { type = "unlock-recipe", recipe = shared.proj_engine },
-      { type = "unlock-recipe", recipe = shared.he_emitter },
-      { type = "unlock-recipe", recipe = shared.ehe_emitter },
+      { type = "unlock-recipe", recipe = shared.melta_pump },
+      -- { type = "unlock-recipe", recipe = shared.he_emitter },
+      -- { type = "unlock-recipe", recipe = shared.ehe_emitter },
     },
-    prerequisites = {shared.mod_prefix.."base"},
+    prerequisites = afci_bridge.clean_prerequisites{
+      shared.mod_prefix.."base",
+      afci_bridge.get.emfc().prerequisite,
+      afci_bridge.get.he_emitter().prerequisite,
+      afci_bridge.get.ehe_emitter().prerequisite,
+      afci_bridge.get.st_operator().prerequisite,
+    },
     unit = {
-      count = 100,
+      count = 500,
       ingredients = {{shared.sp, 1}},
       time = 30
     },

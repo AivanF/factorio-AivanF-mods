@@ -5,36 +5,31 @@ local parts = {
   {
     name = shared.servitor,
     icon = shared.media_prefix.."graphics/icons/details/servitor.png",
-    icon_size = 64, icon_mipmaps = 4,
+    icon_size = 64, icon_mipmaps = 1,
     ingredients = {
-      {"low-density-structure", 20},
+      -- {"low-density-structure", 20},
+      {afci_bridge.get.meat().name, 40},
+      {afci_bridge.get.brain().name, 1},
+      {"iron-stick", 20},
       {"iron-gear-wheel", 20},
       {"copper-cable", 40},
-      {"processing-unit", 50},
-      {"construction-robot", 1},
+      -- {"processing-unit", 1},
+      -- {"construction-robot", 1},
+      {"repair-pack", 100},
     },
-    se_ingredients = {
-      {"se-specimen", 20}, -- biomass
-      {type="fluid", name="se-neural-gel", amount=20},
-      {"processing-unit", 1},
-      {"copper-cable", 40},
-      {"steel-plate", 10},
-    },
-    category = "chemistry",
+    stack_size = 4,
     order = "a-1",
     place_result = nil,
   },
   {
     name = shared.brain,
     icon = shared.media_prefix.."graphics/icons/details/titanic-brain.png",
-    icon_size = 64, icon_mipmaps = 4,
+    icon_size = 64, icon_mipmaps = 1,
     ingredients = {
       {"radar", 1},
-      {"processing-unit", 200},
-    },
-    se_ingredients = {
-      {"se-quantum-processor", 1},
-      {"low-density-structure", 10},
+      {afci_bridge.get.nano_mat().name, 24},
+      {afci_bridge.get.quantum_chip().name, 42},
+      -- Titans know the meaning of life, the universe, and everything!
     },
     order = "a-2",
   },
@@ -43,12 +38,11 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/titanic-motor.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"electric-engine-unit", 50},
-      {"iron-gear-wheel", 20},
-      {"steel-plate", 60},
-    },
-    se_ingredients = {
-      {"se-heavy-assembly", 18},
+      {"electric-engine-unit", 40},
+      -- {"iron-gear-wheel", 20},
+      {afci_bridge.get.bearing().name, 20},
+      -- {"steel-plate", 60},
+      {afci_bridge.get.heavy_material().name, 60},
     },
     order = "a-3",
   },
@@ -57,14 +51,10 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/frame-part.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"low-density-structure", 100},
-      {"iron-gear-wheel", 40},
-      {"copper-cable", 100},
-    },
-    se_ingredients = {
-      {"se-nanomaterial", 12},
-      {"se-heavy-assembly", 1},
-      {"processing-unit", 1},
+      {afci_bridge.get.heavy_material().name, 120},
+      {afci_bridge.get.light_material().name, 120},
+      {afci_bridge.get.bearing().name, 24},
+      {afci_bridge.get.dense_cable().name, 20},
     },
     order = "a-4",
   },
@@ -73,14 +63,10 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/energy-core.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"fusion-reactor-equipment", 21},
-      {shared.emfc, 1},
-      {"steel-plate", 100},
-    },
-    se_ingredients = {
-      {"fusion-reactor-equipment", 7},
-      {shared.emfc, 1},
-      {"se-heavy-girder", 50},
+      {afci_bridge.get.he_provider().name, 7},
+      {afci_bridge.get.emfc().name, 6},
+      {afci_bridge.get.heavy_material().name, 20},
+      {afci_bridge.get.dense_cable().name, 8},
     },
     order = "a-5",
     place_result = nil,
@@ -91,7 +77,7 @@ local parts = {
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
       {shared.realityctrl, 1},
-      {"steel-plate", 24},
+      {"energy-shield-mk2-equipment", 1},
     },
     order = "a-6",
   },
@@ -103,14 +89,9 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/antigraveng.png",
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
-      {"fusion-reactor-equipment", 7},
-      {"processing-unit", 23},
-      {"energy-shield-mk2-equipment", 16},
-    },
-    se_ingredients = {
-      {"se-naquium-cube", 1},
-      {"processing-unit", 23},
-      {"steel-plate", 47},
+      {afci_bridge.get.st_operator().name, 3},
+      {afci_bridge.get.heavy_material().name, 7},
+      -- {"energy-shield-mk2-equipment", 1},
     },
     order = "b-1",
   },
@@ -119,34 +100,14 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/reality-ctrl.png",
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
-      {shared.antigraveng, 13},
-      {"low-density-structure", 47},
-    },
-    se_ingredients = {
-      {shared.antigraveng, 13},
-      {"se-naquium-tesseract", 3},
-      {"se-nanomaterial", 41},
+      {afci_bridge.get.st_operator().name, 19},
+      -- {afci_bridge.get.heavy_material().name, 17},
+      {afci_bridge.get.light_material().name, 11},
+      -- {shared.antigraveng, 13},
+      -- {"low-density-structure", 47},
     },
     order = "b-2",
   },
-  {
-    name = shared.emfc,
-    icon = shared.media_prefix.."graphics/icons/details/emfc.png",
-    icon_size = 64, icon_mipmaps = 4,
-    ingredients = {
-      {"energy-shield-mk2-equipment", 5},
-      {"low-density-structure", 20},
-    },
-    se_ingredients = {
-      {"se-holmium-solenoid", 6},
-      {"se-superconductive-cable", 24},
-      {"processing-unit", 5},
-      {"low-density-structure", 10},
-    },
-    order = "b-3",
-    place_result = nil,
-  },
-
 
   -- Weapon details
   {
@@ -154,11 +115,7 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/barrel.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"sulfur", 100},
-      {"steel-plate", 200},
-    },
-    se_ingredients = {
-      {"se-heavy-girder", 12},
+      {afci_bridge.get.heavy_material().name, 180},
     },
     order = "c-1",
     place_result = nil,
@@ -168,100 +125,33 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/projectile-engine.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"low-density-structure", 50},
-      {"iron-gear-wheel", 40},
-      {"electric-engine-unit", 20},
+      {afci_bridge.get.heavy_material().name, 50},
+      {afci_bridge.get.bearing().name, 30},
+      {"electric-engine-unit", 10},
       {"engine-unit", 10},
-    },
-    se_ingredients = {
-      {"se-heavy-assembly", 4},
-      {"engine-unit", 6},
     },
     order = "c-2",
     place_result = nil,
   },
   {
-    name = shared.he_emitter,
-    icon = shared.media_prefix.."graphics/icons/details/emitter-he.png",
-    icon_size = 64, icon_mipmaps = 3,
+    name = shared.melta_pump,
+    icon = shared.media_prefix.."graphics/icons/details/melta-pump.png",
+    icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"energy-shield-mk2-equipment", 10},
-      {"copper-cable", 200},
-      {"processing-unit", 20},
-    },
-    se_ingredients = {
-      {shared.emfc, 1},
-      {"se-dynamic-emitter", 1},
-      {"glass", 7},
-      {"processing-unit", 3},
+      {shared.barrel, 2},
+      {"electric-engine-unit", 4},
+      {"engine-unit", 4},
     },
     order = "c-3",
-    place_result = nil,
-  },
-  {
-    name = shared.ehe_emitter,
-    icon = shared.media_prefix.."graphics/icons/details/emitter-ehe.png",
-    icon_size = 64, icon_mipmaps = 4,
-    ingredients = {
-      {"energy-shield-mk2-equipment", 20},
-      {"processing-unit", 100},
-      {"copper-cable", 100},
-    },
-    se_ingredients = {
-      {"se-dynamic-emitter", 5},
-      {"se-naquium-cube", 1},
-      {"processing-unit", 5},
-      {"se-superconductive-cable", 10},
-    },
-    order = "c-4",
-    place_result = nil,
-  },
-
-
-  -- Ammo
-  {
-    name = shared.plasma_ammo,
-    icon = shared.media_prefix.."graphics/icons/weapons/plasma-fuel.png",
-    icon_size = 64, icon_mipmaps = 4,
-    energy_required = 5,
-    ingredients = {
-      {type="fluid", name="water", amount=50},
-      {"battery", 5},
-      {"steel-plate", 2},
-    },
-    -- se_ingredients = {
-    -- TODO: make smth here?
-    -- },
-    results = {
-      {"iron-ore", 1},
-      {"copper-ore", 1},
-    },
-    se_results = {
-      {"se-scrap", 4},
-    },
-    stack_size = 10,
-    category = "chemistry",
-    order = "d-1",
     place_result = nil,
   },
 }
 
 
-local ingredients, results
-local has_SE = not not mods[shared.mod_SE]
-
+local results
 for _, info in pairs(parts) do
-
-  ingredients = info.ingredients
-  if has_SE and info.se_ingredients and #info.se_ingredients > 0 then
-    ingredients = info.se_ingredients
-  end
-
   results = info.results
   -- TODO: add use_recylcing startup setting, remove ores if false
-  if has_SE and info.se_results and #info.se_results > 0 then
-    results = info.se_results
-  end
   if results then
     table.insert(results, 1, {info.name, 1})
   end
@@ -282,7 +172,7 @@ for _, info in pairs(parts) do
       name = info.name,
       enabled = false,
       energy_required = info.energy_required or 10,
-      ingredients = ingredients,
+      ingredients = info.ingredients,
       result = info.name,
       results = results,
       main_product = info.name,

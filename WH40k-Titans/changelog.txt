@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.9
+Date: 2023-09-15
+  Info:
+    - Balance and recipes fixes. Bridge Technologies / Common Industries integrated! Lots of overhaul mods are supported now :)
+---------------------------------------------------------------------------------------------------
 Version: 0.9.8
 Date: 2023-09-10
   Bugfixes:

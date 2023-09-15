@@ -30,7 +30,8 @@ lamp.flags = special_flags
 lamp.selectable_in_game = false
 lamp.collision_mask = {}
 lamp.energy_source = { type = "void" }
-lamp.resistances = bunker_resistances,
+lamp.resistances = bunker_resistances
+lamp.next_upgrade = nil
 data:extend({ lamp })
 
 local idle_sprite = {

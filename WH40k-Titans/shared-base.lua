@@ -3,15 +3,14 @@ shared.debug_mod = true
 shared.mod_name = "WH40k-Titans"
 shared.path_prefix = "__"..shared.mod_name.."__/"
 shared.media_prefix = "__"..shared.mod_name.."-media__/"
-shared.mod_prefix = "wh40k-titans-"
-shared.titan_prefix = "wh40k-titan-"
-
--- For other mods compatibility
-shared.mod_SE = "space-exploration"
+shared.mod_prefix = "wh40k-titans-"  -- Most entities
+shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
+shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
+shared.bridge_prefix = "afci-"
 
 
 --------- Titan parts
-shared.part_prefix = "afi-"  -- AivanF Medium/Bridge Industry
+afci_bridge = require("__Common-Industries__.bridge3-item")
 -- Body
 shared.servitor    = shared.part_prefix.."servitor"
 shared.brain       = shared.part_prefix.."titanic-brain"
@@ -22,12 +21,15 @@ shared.frame_part  = shared.part_prefix.."titanic-frame-part"
 -- Common
 shared.antigraveng = shared.part_prefix.."anti-grav-engine"   -- for titan bodies, titan graviton ruinator
 shared.realityctrl = shared.part_prefix.."reality-controller" -- for void shields, warp missiles
-shared.emfc = shared.part_prefix.."emfc" -- electro-magnetic field controller, for energy core, plasma and hellcannon
 -- Weapons
 shared.barrel      = shared.part_prefix.."titanic-barrel"
 shared.proj_engine = shared.part_prefix.."titanic-projectile-engine" -- mostly mechanical, for bolters, rockets
-shared.he_emitter  = shared.part_prefix.."he-emitter"  -- high energy for lasers, plasma, melta
-shared.ehe_emitter = shared.part_prefix.."ehe-emitter" -- extra high energy for hell cannon
+shared.melta_pump  = shared.part_prefix.."titanic-melta-pump" -- mostly mechanical pump, for plasma, melta
+
+-- From the Bridge
+shared.emfc = afci_bridge.item.emfc
+shared.he_emitter  = afci_bridge.item.he_emitter
+shared.ehe_emitter = afci_bridge.item.ehe_emitter
 
 
 shared.bunker = shared.mod_prefix.."assembly-bunker-base"
@@ -48,7 +50,20 @@ shared.subg_titans = "wh40k-titan-classes"
 shared.subg_weapons = "wh40k-titan-weapons"
 
 shared.lab = "wh40k-lab"
-shared.sp = "wh40k-science-pack"
+shared.sp = "wh40k-titan-science-pack"
+
+function shared.preprocess_recipe(ingredients)
+  -- Materialize Bridge items
+  result = {}
+  for _, couple in pairs(ingredients) do
+    if couple[1].short_name then
+      afci_bridge.preprocess(couple[1])
+      couple[1] = couple[1].name
+    end
+    result[#result+1] = couple
+  end
+  return result
+end
 
 function shared.shuffle(t)
   for i = #t, 2, -1 do

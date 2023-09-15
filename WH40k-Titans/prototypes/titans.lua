@@ -2,14 +2,6 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 local misc = require("prototypes.misc")
 
-local function preprocess_recipes(dict)
-  result = {}
-  for key, count in pairs(dict) do
-    result[#result+1] = {key, count}
-  end
-  return result
-end
-
 -- local cmu = require("collision-mask-util")
 -- local only_water_layer = cmu.get_first_unused_layer()
 local collision_mask_util_extended = require("cmue.collision-mask-util-extended")
@@ -45,7 +37,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       name = name,
       enabled = false,
       category = shared.craftcat_titan,
-      ingredients = preprocess_recipes(titan_type.ingredients),
+      ingredients = shared.preprocess_recipe(titan_type.ingredients),
       result = name,
     },
     -- {
@@ -69,9 +61,12 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       minable = {mining_time = 1.5, result = name},  -- TODO: remove this
       energy_per_hit_point = 0.05,
       max_health = titan_type.health,
-      healing_per_tick = math.ceil(titan_type.health / 600),  -- TODO: doesn't work?!?
-      -- corpse = "medium-electric-pole-remnants",  -- TODO: here!
-      -- minimap_representation = ,  -- TODO: here!
+      -- healing_per_tick = math.ceil(titan_type.health / 600),  -- TODO: doesn't work?!?
+      minimap_representation = {
+        filename = shared.media_prefix.."graphics/icons/titan-map.png",
+        width = 48,
+        height = 80,
+      },
       dying_explosion = "medium-explosion",
       track_coverage_during_build_by_moving = true,
       resistances = {
@@ -91,15 +86,15 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       vehicle_impact_sound = sounds.generic_impact,
       open_sound = sounds.electric_network_open,
       close_sound = sounds.electric_network_close,
-      weight = titan_type.class * 5000,
-      energy_source = { type = "void" },
       allow_passengers = true,
       has_belt_immunity = true,
       -- tank_driving = true,
       selection_priority = 70,
 
+      energy_source = { type = "void" },
       effectivity = 1,
-      consumption = "10MW",
+      weight = titan_type.class * 5000,
+      consumption = math.floor(titan_type.spd * math.pow(titan_type.class, 0.5)).."MW",
       braking_power = "2MW",
       terrain_friction_modifier = 0.2,
       friction = 0.03,

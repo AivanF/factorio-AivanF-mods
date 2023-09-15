@@ -49,25 +49,6 @@ data:extend({
   -- https://wiki.factorio.com/Prototype/Animation
   {
     type="animation",
-    name=shared.mod_prefix.."class3",
-    filename=shared.media_prefix.."graphics/titans/class3.png",
-    frame_count=1,
-    width=1024,
-    height=1024,
-    shift=util.by_pixel(0, -64),
-  },
-  {
-    type="animation",
-    name=shared.mod_prefix.."class3-shadow",
-    filename=shared.media_prefix.."graphics/titans/class3.png",
-    frame_count=1,
-    width=1024,
-    height=1024,
-    shift=util.by_pixel(0, -64),
-    draw_as_shadow=true,
-  },
-  {
-    type="animation",
     name=shared.mod_prefix.."foot-small",
     filename=shared.media_prefix.."graphics/titans/foot-small.png",
     frame_count=1,

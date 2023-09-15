@@ -34,7 +34,6 @@ local function on_any_remove(event)
     end
     remove_titan_gui_by_titan(titan_info)
     die_all(titan_info.foots)
-    -- TODO: check event.name and make explo, corpse
     ctrl_data.titans[unit_number] = nil
   end
 
