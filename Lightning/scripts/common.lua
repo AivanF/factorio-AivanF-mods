@@ -40,16 +40,16 @@ rod_protos = {
 }
 -- Strongest catchers first
 rod_protos_ordered = {
-  {name=shared.han2, limit_cf=1.5, add_capture_prob=0.8,},
-  {name=shared.han1, limit_cf=1.0, add_capture_prob=0.1,},
-  {name=shared.rod2, limit_cf=1.5, add_capture_prob=0.3,},
-  {name=shared.rod1, limit_cf=1.0, add_capture_prob=0.0,},
+  {name=shared.han2, limit_cf=1.5, add_capture_prob=0.9,},
+  {name=shared.han1, limit_cf=1.0, add_capture_prob=0.2,},
+  {name=shared.rod2, limit_cf=1.5, add_capture_prob=0.4,},
+  {name=shared.rod1, limit_cf=1.0, add_capture_prob=0.1,},
 }
 -- Weakest towers first to save strongest for farther attacks
 arty_protos_ordered = {
   {name=shared.han2, max_dst=256, },
-  {name=shared.art1, max_dst=320, },
-  {name=shared.art2, max_dst=800, },
+  {name=shared.art1, max_dst=480, },
+  {name=shared.art2, max_dst=960, },
 }
 if settings.startup["af-tsl-early-arty"].value then
   table.insert(arty_protos_ordered, 1, {name=shared.han1, max_dst=128, })

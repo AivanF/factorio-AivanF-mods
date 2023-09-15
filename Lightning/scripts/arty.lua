@@ -42,19 +42,22 @@ local function level_to_energy_attack(power_level)
   return (50 + 50 * power_level * power_level) * MJ
 end
 
-local function get_max_force_power_level(force_index, is_bombarding)
-  local power_level, max_level
+function get_max_force_power_level(force_index, is_bombarding)
   -- Max research level is 3
-  local tech_arty_lvl = (script_data.technologies[shared.tech_arty_lvl][force_index] or 0)
+  local max_arty_lvl = script_data.technologies[shared.tech_arty_lvl][force_index] or 0
+  max_arty_lvl = max_arty_lvl + (is_bombarding and 1 or 2)
+  return max_arty_lvl
+end
 
+function get_player_power_level(player, is_bombarding)
+  local max_arty_lvl = get_max_force_power_level(player.force.index, is_bombarding)
+  local power_level
   if is_bombarding then
-    power_level = script_data.arty_lvl_bomb[force_index] or 2
-    power_level = math.clamp(power_level, 1, tech_arty_lvl)
-
+    power_level = script_data.arty_lvl_bomb[player.index] or 2
   else
-    power_level = script_data.arty_lvl_stri[force_index] or 5
-    power_level = math.clamp(power_level, 1, tech_arty_lvl+2)
+    power_level = script_data.arty_lvl_stri[player.index] or 5
   end
+  power_level = math.clamp(power_level, 1, max_arty_lvl)
   return power_level
 end
 
@@ -82,7 +85,7 @@ local function on_player_selected_area(event)
   -- local chunk_is = not shared.chunk_is_border(surface, chunk, 30)
   -- game.print("Chunk "..serpent.line(chunk).." is ready: "..serpent.line(chunk_is))
 
-  local power_level = get_max_force_power_level(force.index, is_bombarding)
+  local power_level = get_player_power_level(player, is_bombarding)
   local single_energy = level_to_energy_attack(power_level)
   local req_pc = 0.05
   local req_en = (is_bombarding and 10 or 1) * single_energy
@@ -171,43 +174,45 @@ function update_arty_tasks()
   end
 end
 
-local function calc_attack_level(cmd, is_bombarding)
-  local player = game.get_player(cmd.player_index)
-  local power_level = tonumber(cmd.parameter)
+function set_attack_level(player_index, value, is_bombarding, say)
+  local player = game.get_player(player_index)
+  local power_level = tonumber(value)
   if power_level == nil then
-    player.print("Bad level "..serpent.line(cmd.parameter))
+    player.print("Bad level "..serpent.line(value))
     return
   else
-    power_level = math.clamp(power_level, 1, 5)
     local max_level = get_max_force_power_level(player.force_index, is_bombarding)
+    power_level = math.clamp(power_level, 1, max_level)
     local attack_type = is_bombarding and "bombarding" or "strike"
-    player.print("Set "..attack_type.." level "..power_level..", max is "..max_level)
-    return power_level
+    local changed = false
+    if is_bombarding then
+      changed = script_data.arty_lvl_bomb[player_index] ~= power_level
+      script_data.arty_lvl_bomb[player_index] = power_level
+    else
+      changed = script_data.arty_lvl_stri[player_index] ~= power_level
+      script_data.arty_lvl_stri[player_index] = power_level
+    end
+    if changed or say then
+      player.print("Have set "..attack_type.." level "..power_level..", max is "..max_level)
+    end
   end
 end
 
-local function set_stri_lvl_cmd(cmd)
-  local power_level = script_data.arty_lvl_stri[cmd.player_index]
-  power_level = calc_attack_level(cmd, false) or power_level
-  script_data.arty_lvl_stri[cmd.player_index] = power_level
-end
 
-local function set_bomb_lvl_cmd(cmd)
-  local power_level = script_data.arty_lvl_bomb[cmd.player_index]
-  power_level = calc_attack_level(cmd, true) or power_level
-  script_data.arty_lvl_bomb[cmd.player_index] = power_level
+local function set_attack_level_cmd(cmd, is_bombarding)
+  set_attack_level(cmd.player_index, cmd.parameter, is_bombarding, true)
 end
-
-script.on_event(defines.events.on_player_selected_area, on_player_selected_area)
-script.on_event(defines.events.on_player_alt_selected_area, on_player_selected_area)
 
 commands.add_command(
   "tsl-stri",
   "Set lightning level for your artillery strikes",
-  set_stri_lvl_cmd
+  function (cmd) set_attack_level_cmd(cmd, false) end
 )
 commands.add_command(
   "tsl-bomb",
   "Set lightning level for your artillery bombarding",
-  set_bomb_lvl_cmd
+  function (cmd) set_attack_level_cmd(cmd, true) end
 )
+
+script.on_event(defines.events.on_player_selected_area, on_player_selected_area)
+script.on_event(defines.events.on_player_alt_selected_area, on_player_selected_area)

@@ -7,6 +7,13 @@ local icon_size = 64
 local icon_mipmaps = 3
 local acc_capacity = 500
 
+local ingredients = {
+  {"steel-plate", 200},
+  {"copper-plate", 100},
+  {"battery", 400},
+  {"electronic-circuit", 100}
+}
+
 data:extend({
   {
     type = "item",
@@ -22,12 +29,7 @@ data:extend({
     type = "recipe",
     name = name,
     enabled = false,
-    ingredients = {
-      {"steel-plate", 200},
-      {"copper-plate", 100},
-      {"battery", 400},
-      {"electronic-circuit", 100}
-    },
+    ingredients = ingredients,
     result = name,
   },
   {

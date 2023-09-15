@@ -22,11 +22,11 @@ if settings.startup["af-tsl-support-recipes"].value then
     ingredients = {
       {"steel-plate", 2000},
       {"copper-plate", 2000},
-      {"se-holmium-cable", 200},
+      {"se-holmium-solenoid", 200},
       {"battery", 5000},
       {"processing-unit", 100},
     }
-    -- Replace with se-holmium-solenoid or se-superconductive-cable???
+    -- Replace se-holmium-solenoid with se-superconductive-cable???
   end
 end
 

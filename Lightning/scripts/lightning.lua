@@ -500,7 +500,11 @@ local function process_lightnings()
   --- TODO: Shift surfaces on different calls/ticks. Use buckets or mod by surface index?
   for surface_index, currSurfSettings in pairs(script_data.surfSettings) do
     if currSurfSettings.active and currSurfSettings.base > 0 or currSurfSettings.scale > 0 then
-      process_surface(game.surfaces[surface_index], currSurfSettings)
+      if game.surfaces[surface_index] ~= nil then
+        process_surface(game.surfaces[surface_index], currSurfSettings)
+      else
+        script_data.surfSettings[surface_index] = nil
+      end
     end
   end
   if profiler then perf_print{"", "TSL main process: ", profiler, "\n"} end

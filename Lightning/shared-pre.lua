@@ -21,6 +21,8 @@ shared.tech_arty_lvl = "af-tsl-arty-lvl"
 
 shared.mod_name = "Lightning"
 shared.SE = "space-exploration"
+shared.IR = "IndustrialRevolution3"
+
 shared.PRESET_NIL    = "nil"
 shared.PRESET_HOME   = "home"
 shared.PRESET_MOVING = "move"

@@ -57,6 +57,9 @@ local info = {
 }
 
 if settings.startup["af-tsl-support-recipes"].value then
+  if mods[shared.IR] then
+    info.c1.prereq = {"ir-bronze-milestone"}
+  end
   if mods[shared.SE] then
     info = {
       c1 = {

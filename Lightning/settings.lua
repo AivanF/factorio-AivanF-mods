@@ -156,7 +156,7 @@ for index, info in ipairs(shared.default_presets) do
 	data:extend{{
 		type = "string-setting",
         name = shared.preset_setting_name_for_resource(resource),
-        localised_name = {"", {"resource-preset-setting"}, " ", {"item-name."..resource}},
+        localised_name = {"", {"tsl.resource-preset-setting"}, " ", {"item-name."..resource}},
         setting_type = "runtime-global",
         default_value = default,
         allowed_values = shared.allowed_presets,

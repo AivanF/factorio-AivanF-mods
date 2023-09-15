@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.13
+Date: 2023-09-15
+  Features:
+    - GUI to control lightning artillery strength!
+  Balance:
+    - Increased damage of lightning levels 4 and 5.
+    - Higher base catch probability.
+    - Larger default artillery attack distance.
+    - Simplified lightning rod reciped for IR3, so it's made of bronze instead of iron.
+  Bugfixes:
+    - Fixed crash when a surface with lightnings is destroyed, e.g when you clean SE planet.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.12
 Date: 2023-08-14
   Bugfixes:

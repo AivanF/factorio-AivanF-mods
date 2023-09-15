@@ -270,16 +270,16 @@ local projectiles = {
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 500, type = "explosion"}
+              damage = {amount = 1000, type = "explosion"}
             },
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
@@ -288,7 +288,7 @@ local projectiles = {
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
@@ -377,37 +377,37 @@ local projectiles = {
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 1000, type = "impact"}
             },
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 3000, type = "explosion"}
             },
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 3000, type = "fire"}
             },
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 0,
+              lower_distance_threshold = 8,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
-              upper_damage_modifier = 0.1,
+              upper_damage_modifier = 0.2,
               damage = {amount = 3000, type = "electric"}
             },
           }

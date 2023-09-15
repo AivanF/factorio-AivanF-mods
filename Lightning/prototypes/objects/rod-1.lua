@@ -6,6 +6,20 @@ local icon = "__Lightning__/graphics/icons/rod1.png"
 local icon_size = 64
 local icon_mipmaps = 3
 
+ingredients = {
+  {"iron-plate", 20},
+  {"copper-plate", 30},
+}
+
+if settings.startup["af-tsl-support-recipes"].value then
+  if mods[shared.IR] then
+    ingredients = {
+      {"bronze-rod", 6},
+      {"copper-plate", 20},
+    }
+  end
+end
+
 data:extend({
   {
     type = "item",
@@ -21,10 +35,7 @@ data:extend({
     type = "recipe",
     name = name,
     enabled = false,
-    ingredients = {
-      {"iron-plate", 20},
-      {"copper-plate", 30},
-    },
+    ingredients = ingredients,
     result = name,
   },
   {

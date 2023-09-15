@@ -3,6 +3,7 @@ require("scripts/common")
 require("scripts/surface")
 require("scripts/lightning")
 require("scripts/arty")
+require("scripts/arty-gui")
 require("scripts/technologies")
 
 
@@ -73,6 +74,9 @@ local function update_configuration()
   clean_drawings()
   reset_global()
   rods_reload()
+  for _, player in pairs(game.players) do
+    setup_gui_btn(player.index)
+  end
 end
 
 local function process_min()
@@ -130,6 +134,10 @@ script.on_init(on_init)
 script.on_load(on_load)
 script.on_event(defines.events.on_runtime_mod_setting_changed, update_runtime_settings)
 script.on_configuration_changed(update_configuration)
+
+script.on_event(defines.events.on_player_created, function(event)
+  setup_gui_btn(event.player_index)
+end)
 
 script.on_event({
   defines.events.on_built_entity,
