@@ -33,6 +33,7 @@ bridge.item = {}
 local ordered = 0
 
 -- Generate items API, `bridge.get[short_name]()` returns item_info
+-- TODO: add recipe_anyway flag
 local function add_item(item_info)
   ordered = ordered + 1
 
@@ -42,7 +43,7 @@ local function add_item(item_info)
   item_info.prerequisite = item_info.prereq -- original custom prereq
   bridge.item[item_info.short_name] = item_info
 
-  item_info.getter = function()
+  item_info.data_getter = function()
     if item_info.done then
       if item_info.done == bridge.empty then
         error("Recursive add_item "..item_info.short_name)
@@ -62,7 +63,7 @@ local function add_item(item_info)
         if row[1] and row[1].is_bridge_item then
           ing_info = row[1]
           if bridge.is_new(ing_info.name) then
-            ing_info.getter()
+            ing_info.data_getter()
           end
           row[1] = ing_info.name
         end
@@ -70,7 +71,7 @@ local function add_item(item_info)
         if row.name and row.name.is_bridge_item then
           ing_info = row.name
           if bridge.is_new(ing_info.name) then
-            ing_info.getter()
+            ing_info.data_getter()
           end
           row[1] = ing_info.name
         end
@@ -83,7 +84,7 @@ local function add_item(item_info)
       -- If so, let's recursively preprocess it and take its prerequisite
       ing_info = item_info.prereq
       if bridge.is_new(ing_info.name) then
-        ing_info.getter()
+        ing_info.data_getter()
       end
       item_info.prereq = ing_info.prereq
     end
@@ -100,7 +101,7 @@ local function add_item(item_info)
     if results then
       table.insert(results, 1, {item_info.name, item_info.result_count or 1})
     end
-    -- TODO: remove ores/scrap(SE)/slag(248k) if related startup setting is set
+    -- TODO: remove ores/scrap+sludge(SE)/slag(248k) if related startup setting is set
 
     -- Make actual item + recipe
     if bridge.is_new(item_info.name) then
@@ -142,7 +143,28 @@ local function add_item(item_info)
     bridge.item[item_info.name] = item_info
     return item_info
   end
-  bridge.get[item_info.short_name] = item_info.getter
+
+  item_info.control_getter = function()
+    if item_info.done then
+      return item_info
+    end
+    bridge.preprocess(item_info)
+    bridge.item[item_info.name] = item_info
+    item_info.done = true
+    return item_info
+  end
+
+  local union_getter = function()
+    if data then
+      return item_info.data_getter()
+    elseif game or bridge.active_mods_cache then
+      return item_info.control_getter()
+    else
+      error("Unknown game stage. Is it on_load?")
+    end
+  end
+  item_info.getter = union_getter
+  bridge.get[item_info.short_name] = union_getter
 end
 
 --[[

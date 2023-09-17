@@ -137,13 +137,14 @@ for _, mod_info in pairs(bridge.mods_list) do
   bridge.mods[mod_info.short_name] = mod_info
 end
 
-
+bridge.active_mods_cache = nil
 function bridge.have_required_mod(mod_info)
+  local active_mods = bridge.active_mods_cache or mods or game.active_mods
   if mod_info.name then
-    return not not mods[mod_info.name]
+    return not not active_mods[mod_info.name]
   elseif mod_info.names then
     for _, name in pairs(mod_info.names) do
-      if mods[name] then return true end
+      if active_mods[name] then return true end
     end
   end
   return false
