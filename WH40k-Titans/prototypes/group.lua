@@ -10,6 +10,10 @@ data:extend{
     type = "recipe-category",
     name = shared.craftcat_weapon
   },
+  {
+    type = "recipe-category",
+    name = shared.craftcat_empty
+  },
 
   {
     type = "item-group",

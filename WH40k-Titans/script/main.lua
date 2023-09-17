@@ -10,7 +10,7 @@ local function on_any_built(event)
   if not (entity and entity.valid) then return end
   if is_titan(entity.name) then
     titan.register_titan(entity)
-  elseif entity.name == shared.bunker then
+  elseif entity.name == shared.bunker_minable then
     assemble.register_bunker(entity)
   end
 end
@@ -37,16 +37,29 @@ local function on_any_remove(event)
     ctrl_data.titans[unit_number] = nil
   end
 
-  local bucket = ctrl_data.bunkers[unit_number % building_update_rate]
-  if bucket and bucket[unit_number] then
-    local bunker = bucket[unit_number]
-    -- TODO: replace non-empty storages with temp containers!
-    die_all(bunker.lamps)
-    die_all(bunker.wstore)
-    die_all(bunker.wrecipe)
-    die_all({bunker.brecipe, bunker.bstore})
-    ctrl_data.bunkers[unit_number % building_update_rate] = nil
+  if event.name ~= defines.events.script_raised_destroy and ctrl_data.assembler_index[unit_number] then
+    local assembler = ctrl_data.assembler_index[unit_number]
+    local bucket = ctrl_data.assembler_buckets[assembler.uid % building_update_rate]
+    if bucket and bucket[assembler.uid] then
+      bucket[assembler.uid] = nil
+    end
+    -- TODO: replace non-empty storages and assembler.items with temp containers!
+    die_all({assembler.wentity, assembler.sentity}, ctrl_data.assembler_index)
+    die_all(assembler.lamps)
+    die_all(assembler.wstore)
+    die_all(assembler.wrecipe, ctrl_data.entities)
+    die_all({assembler.brecipe, assembler.bstore}, ctrl_data.entities)
+    for player_index, info in pairs(ctrl_data.assembler_gui) do
+      if info.assembler == assembler then
+        if info.main_frame.valid then
+          info.main_frame.destroy()
+        end
+        ctrl_data.assembler_gui[player_index] = nil
+      end
+    end
   end
+
+  ctrl_data.assembler_index[unit_number] = nil
 end
 
 
@@ -65,7 +78,12 @@ local function total_reload()
       end
     end
 
-    for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker}) do
+    for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker_minable}) do
+      assemble.register_bunker(entity)
+      bunker_count = bunker_count + 1
+    end
+
+    for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker_active}) do
       assemble.register_bunker(entity)
       bunker_count = bunker_count + 1
     end
@@ -96,11 +114,13 @@ end
 
 
 local function on_init()
+  global.active_mods_cache = game.active_mods
   global.ctrl_data = table.deepcopy(blank_ctrl_data)
 end
 
 local function on_load()
   ctrl_data = global.ctrl_data
+  preprocess_ingredients()
 end
 
 local function clean_drawings()
@@ -113,6 +133,10 @@ local function clean_drawings()
 end
 
 local function update_configuration()
+  -- game.print("Titans.update_configuration")
+  global.active_mods_cache = game.active_mods
+  preprocess_ingredients()
+
   global.ctrl_data = merge(global.ctrl_data or {}, blank_ctrl_data, false)
   ctrl_data = global.ctrl_data
   clean_drawings()

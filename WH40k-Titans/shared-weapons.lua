@@ -48,12 +48,21 @@ dst_s, dst_m, dst_l, dst_xl = 64, 96, 128, 192
 local wname = nil
 local order_index = 1
 
+local function add_weapon(weapon_type)
+  weapon_type.entity = shared.mod_prefix..weapon_type.name
+  weapon_type.cd = weapon_type.cd or 3
+  weapon_type.attack_size = weapon_type.attack_size or 1
+
+  shared.weapons[weapon_type.entity] = weapon_type
+  shared.weapons[weapon_type.name] = weapon_type
+end
+
 
 --------- 1. Small
 
 wname = "inferno"  -- 3 flamers
 shared.weapon_inferno = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_flamer,
@@ -72,12 +81,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = shared.mod_prefix.."Inferno",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "vulcan-mega-bolter"  -- 2 guns with 6 big bolters
 shared.weapon_megabolter = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_bolter,
@@ -94,12 +103,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "mauler-bolt-cannon"  -- 1 huge bolter
 shared.weapon_boltcannon = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_bolter,
@@ -116,12 +125,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "lascannon"
 shared.weapon_lascannon = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_laser,
@@ -140,12 +149,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."LasCannon",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "turbo-laser-destructor"  -- 2 lasers
 shared.weapon_turbolaser = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_laser,
@@ -164,12 +173,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Turbo-Laser",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "plasma-blastgun"
 shared.weapon_plasma_blastgun = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_plasma,
@@ -189,12 +198,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-BlastGun",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "missile-launcher"
 shared.weapon_missiles = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
@@ -213,12 +222,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."MissileLauncher",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "apocalypse-missiles"
 shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
@@ -237,7 +246,7 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."ApocLauncher",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 
@@ -245,7 +254,7 @@ order_index = order_index + 1
 
 wname = "plasma-destructor"
 shared.weapon_plasma_destructor = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_plasma,
@@ -265,12 +274,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "gatling-blaster"  -- 3 huge bolters
 shared.weapon_gatling_blaster = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_bolter,
@@ -287,12 +296,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 -- wname = "quake-cannon"
 -- shared.weapon_quake_cannon = wname
--- shared.weapons[wname] = {
+-- add_weapon({
 --   name = wname,
 --   grade = shared.gun_grade_medium,
 --   category = shared.wc_quake,
@@ -308,12 +317,12 @@ order_index = order_index + 1
 --   icon_size = 64, icon_mipmaps = 4,
 --   animation = nil,  -- TODO: here!
 --   order_index = order_index,
--- }
+-- })
 -- order_index = order_index + 1
 
 wname = "volcano-cannon"
 shared.weapon_volcano_cannon = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_hell,
@@ -330,12 +339,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 -- wname = "graviton-ruinator"
 -- shared.weapon_graviton_ruinator = wname
--- shared.weapons[wname] = {
+-- add_weapon({
 --   name = wname,
 --   grade = shared.gun_grade_medium,
 --   category = shared.wc_quake,
@@ -352,12 +361,12 @@ order_index = order_index + 1
 --   icon_size = 64, icon_mipmaps = 4,
 --   animation = nil,  -- TODO: here!
 --   order_index = order_index,
--- }
+-- })
 -- order_index = order_index + 1
 
 wname = "volkite-destructor"  -- quick big melta, short-range
 shared.weapon_volkite_destructor = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_melta,
@@ -375,7 +384,7 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 
@@ -383,7 +392,7 @@ order_index = order_index + 1
 
 wname = "plasma-annihilator"
 shared.weapon_plasma_annihilator = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_big,
   category = shared.wc_plasma,
@@ -403,12 +412,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",  -- TODO: replace
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 wname = "hellstorm-cannon"
 shared.weapon_hellstorm_cannon = wname
-shared.weapons[wname] = {
+add_weapon({
   name = wname,
   grade = shared.gun_grade_big,
   category = shared.wc_hell,
@@ -426,12 +435,12 @@ shared.weapons[wname] = {
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
   order_index = order_index,
-}
+})
 order_index = order_index + 1
 
 -- wname = "doomstrike-missiles"
 -- shared.weapon_doomstrike_missiles = wname
--- shared.weapons[wname] = {
+-- add_weapon({
 --   name = wname,
 --   grade = shared.gun_grade_big,
 --   category = shared.wc_quake,
@@ -447,12 +456,5 @@ order_index = order_index + 1
 --   icon_size = 64, icon_mipmaps = 3,
 --   animation = shared.mod_prefix.."MissileLauncher", -- TODO: replace
 --   order_index = order_index,
--- }
+-- })
 -- order_index = order_index + 1
-
-
-
-for name, weapon_type in pairs(shared.weapons) do
-  weapon_type.cd = weapon_type.cd or 3
-  weapon_type.attack_size = weapon_type.attack_size or 1
-end

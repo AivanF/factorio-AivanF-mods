@@ -2,9 +2,21 @@ local shared = require("shared")
 
 local function get_weapon_effects(grade)
   local result = {}
+  local already = {}
   for _, info in pairs(shared.weapons) do
-    if grade == info.grade then
-      result[#result+1] = { type = "unlock-recipe", recipe = shared.mod_prefix..info.name }
+    if grade == info.grade and not already[info.name] then
+      result[#result+1] = { type = "unlock-recipe", recipe = info.entity }
+      already[info.name] = true
+    end
+  end
+  return result
+end
+
+local function get_titan_effects(class)
+  local result = {}
+  for _, info in pairs(shared.titan_type_list) do
+    if class == math.floor(info.class/10) then
+      result[#result+1] = { type = "unlock-recipe", recipe = info.entity }
     end
   end
   return result
@@ -55,7 +67,7 @@ local tech_researches = {
       }
     },
     effects = {
-      { type = "unlock-recipe", recipe = shared.bunker },
+      { type = "unlock-recipe", recipe = shared.bunker_minable },
     },
     prerequisites = {shared.mod_prefix.."base"},
     unit = {
@@ -121,10 +133,11 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = {
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warhound].entity },
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
-    },
+    -- effects = {
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warhound].entity },
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
+    -- },
+    effects = get_titan_effects(1),
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
       count = 50,
@@ -143,9 +156,10 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = {
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_reaver].entity },
-    },
+    -- effects = {
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_reaver].entity },
+    -- },
+    effects = get_titan_effects(2),
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
       count = 100,
@@ -164,9 +178,10 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = {
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warlord].entity },
-    },
+    -- effects = {
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warlord].entity },
+    -- },
+    effects = get_titan_effects(3),
     prerequisites = {shared.mod_prefix.."2-class"},
     unit = {
       count = 250,
@@ -185,9 +200,10 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = {
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warmaster].entity },
-    },
+    -- effects = {
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warmaster].entity },
+    -- },
+    effects = get_titan_effects(4),
     prerequisites = {shared.mod_prefix.."3-class"},
     unit = {
       count = 400,
@@ -206,10 +222,11 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = {
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_imperator].entity },
-      { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
-    },
+    -- effects = {
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_imperator].entity },
+    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
+    -- },
+    effects = get_titan_effects(5),
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
       count = 600,

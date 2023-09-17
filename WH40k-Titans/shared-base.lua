@@ -32,7 +32,8 @@ shared.he_emitter  = afci_bridge.item.he_emitter
 shared.ehe_emitter = afci_bridge.item.ehe_emitter
 
 
-shared.bunker = shared.mod_prefix.."assembly-bunker-base"
+shared.bunker_minable = shared.mod_prefix.."assembly-bunker-minable"
+shared.bunker_active = shared.mod_prefix.."assembly-bunker-active"
 shared.bunker_center = shared.mod_prefix.."assembly-bunker-center"
 shared.bunker_wrecipeh = shared.mod_prefix.."assembly-bunker-weapon-recipe-hor"
 shared.bunker_wrecipev = shared.mod_prefix.."assembly-bunker-weapon-recipe-ver"
@@ -43,6 +44,7 @@ shared.bunker_lamp = shared.mod_prefix.."assembly-bunker-bunker_lamp"
 
 shared.craftcat_titan = shared.mod_prefix.."titan"
 shared.craftcat_weapon = shared.mod_prefix.."weapon"
+shared.craftcat_empty = shared.mod_prefix.."empty"
 
 shared.subg_build = "wh40k-titan-buildings"
 shared.subg_parts = "wh40k-titan-parts"
@@ -87,5 +89,16 @@ function table.slice(tbl, first, last, step)
   end
   return sliced
 end
+
+color_default_dst = {1,1,1}
+color_gold    = {255, 220,  50}
+color_orange  = {255, 160,  50}
+color_red     = {200,  20,  20}
+color_blue    = { 70, 120, 230}
+color_purple  = {200,  20, 200}
+color_green   = {20,  120,  20}
+color_cyan    = {20,  200, 200}
+color_ltgrey  = {160, 160, 160}
+color_dkgrey  = { 60,  60,  60}
 
 return shared

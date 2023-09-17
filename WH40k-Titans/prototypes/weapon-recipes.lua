@@ -6,8 +6,15 @@ for _, info in pairs(shared.weapons) do
   data:extend({
     {
       type = "recipe",
-      name = shared.mod_prefix..info.name,
-      localised_name = {"item-name."..shared.mod_prefix..info.name},
+      name = info.entity,
+      localised_name = {"item-name."..info.entity},
+      localised_description = {
+        "item-description.wh40k-titan-weapon",
+        {"item-name."..info.ammo},
+        -- "__ITEM__"..info.ammo.."__",
+        info.per_shot*info.attack_size,
+        info.inventory,
+      },
       enabled = false,
       energy_required = 60*60*24,
       icon = info.icon or "__base__/graphics/icons/pipe-to-ground.png",

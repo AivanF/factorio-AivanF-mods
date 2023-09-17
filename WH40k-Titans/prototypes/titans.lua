@@ -54,7 +54,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
     --   order = "a[test]",
     -- },
     {
-      type = "car",
+      type = shared.titan_base_type,
       name = name,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       flags = {"placeable-neutral", "player-creation", "placeable-off-grid"},

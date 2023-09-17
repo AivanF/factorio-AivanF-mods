@@ -2,7 +2,6 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 local misc = require("prototypes.misc")
 
-local name = shared.bunker
 local icon = shared.media_prefix.."graphics/icons/bunker.png"
 local icon_size = 32
 local icon_mipmaps = 1
@@ -13,9 +12,10 @@ local special_flags = {
 }
 
 local bunker_resistances = {
-  { type = "impact", decrease=1000, percent=100 },
+  { type = "impact", decrease=10000, percent=100 },
   { type = "physical", percent=100 },
   { type = "explosion", percent=100 },
+  { type = "laser", percent = 100 },
   { type = "fire", percent = 100 },
   { type = "electric", percent=100 },
   { type = "acid", percent=100 },
@@ -43,9 +43,26 @@ local idle_sprite = {
   shift = util.by_pixel(0, 0),
   frame_count = 1,
 }
-
 local idle_layers = {
   idle_sprite,
+}
+local idle_working_visualisations = {
+  {
+    always_draw = true,
+    render_layer = "object",
+    north_animation = {
+      layers = idle_layers
+    },
+    east_animation = {
+      layers = idle_layers
+    },
+    south_animation = {
+      layers = idle_layers
+    },
+    west_animation = {
+      layers = idle_layers
+    }
+  }
 }
 
 local empty_working_visualisations = {
@@ -58,7 +75,6 @@ local empty_working_visualisations = {
     east_animation = {
       layers = {misc.empty_sprite}
     },
-
     south_animation = {
       layers = {misc.empty_sprite}
     },
@@ -86,7 +102,7 @@ data:extend({
     selection_box = {{-2, -1}, {2, 1}},
     collision_box = {{-2, -1}, {2, 1}},
     collision_mask = {},
-    inventory_size = 50,
+    inventory_size = 100,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -110,7 +126,7 @@ data:extend({
     selection_box = {{-1, -2}, {1, 2}},
     collision_box = {{-1, -2}, {1, 2}},
     collision_mask = {},
-    inventory_size = 50,
+    inventory_size = 100,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -122,8 +138,7 @@ data:extend({
     name = shared.bunker_wrecipeh,
     localised_name = {"entity-name.wh40k-titans-assembly-bunker-wrecipe"},
     localised_description = {"entity-description.wh40k-titans-assembly-bunker-wrecipe"},
-    icon = icon,
-    icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+    icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     flags = special_flags,
     max_health = 10000,
     resistances = bunker_resistances,
@@ -152,8 +167,7 @@ data:extend({
     name = shared.bunker_wrecipev,
     localised_name = {"entity-name.wh40k-titans-assembly-bunker-wrecipe"},
     localised_description = {"entity-description.wh40k-titans-assembly-bunker-wrecipe"},
-    icon = icon,
-    icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+    icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     flags = special_flags,
     max_health = 10000,
     healing_per_tick = 10000,
@@ -187,6 +201,7 @@ data:extend({
     flags = special_flags,
     max_health = 20000,
     healing_per_tick = 20000,
+    resistances = bunker_resistances,
     dying_explosion = "iron-chest-explosion",
     open_sound = { filename = "__base__/sound/metallic-chest-open.ogg", volume=0.43 },
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
@@ -205,8 +220,7 @@ data:extend({
     name = shared.bunker_center,
     localised_name = {"entity-name.wh40k-titans-assembly-bunker-center"},
     localised_description = {"entity-description.wh40k-titans-assembly-bunker-center"},
-    icon = icon,
-    icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+    icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     flags = special_flags,
     max_health = 20000,
     healing_per_tick = 20000,
@@ -225,26 +239,25 @@ data:extend({
       module_slots = 0,
     },
     crafting_speed = 0.01,
-    crafting_categories = {shared.craftcat_titan},
+    crafting_categories = {shared.craftcat_empty},
     energy_source = { type = "void" },
     energy_usage = "1W",
   },
 
   {
     type = "item",
-    name = name,
-    localised_name = {"entity-name.wh40k-titans-assembly-bunker"},
-    localised_description = {"entity-description.wh40k-titans-assembly-bunker"},
-    icon = icon,
-    icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+    name = shared.bunker_minable,
+    localised_name = {"entity-name.wh40k-titans-assembly-bunker-minable"},
+    localised_description = {"entity-description.wh40k-titans-assembly-bunker-minable"},
+    icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = shared.subg_build,
     order = "a[assembly-bunker]",
-    place_result = name,
+    place_result = shared.bunker_minable,
     stack_size = 1,
   },
   {
     type = "recipe",
-    name = name,
+    name = shared.bunker_minable,
     enabled = false,
     ingredients = {
       {"steel-chest", 100},
@@ -253,40 +266,70 @@ data:extend({
       {"small-lamp", 12},
       {"processing-unit", 100},
     },
-    result = name,
-  },
-  {
-    type = "simple-entity-with-force",
-    name = name,
-    localised_name = {"entity-name.wh40k-titans-assembly-bunker"},
-    localised_description = {"entity-description.wh40k-titans-assembly-bunker"},
-    icon = icon,
-    icon_size = icon_size, icon_mipmaps = icon_mipmaps,
-    flags = {
-      "not-rotatable", "placeable-neutral", "player-creation",
-    },
-    minable = {mining_time = 2.0, result = name},
-    max_health = 10000,
-    corpse = "medium-electric-pole-remnants",
-    dying_explosion = "medium-electric-pole-explosion",
-    resistances = {
-      { type = "poison", decrease=1000, percent=100 },
-      { type = "impact", decrease=1000, percent=100 },
-      { type = "fire", decrease=1000, percent=100 },
-      { type = "physical", decrease=10, percent=50 },
-      { type = "explosion", decrease=100, percent=50 },
-      { type = "acid", decrease=10, percent=50 },
-    },
-    selection_box = {{-11, -11}, {11, 11}},
-    collision_box = {{-11, -11}, {11, 11}},
-    collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
-    selection_priority = 10,
-    render_layer = "floor",
-    vehicle_impact_sound = sounds.generic_impact,
-    open_sound = sounds.electric_network_open,
-    close_sound = sounds.electric_network_close,
-
-    render_layer = "floor",
-    animations = idle_sprite,
+    result = shared.bunker_minable,
   },
 })
+
+
+local base_bunker = {
+  type = "simple-entity-with-force",
+  -- type = "assembling-machine",
+  -- type = "roboport",
+  localised_name = {"entity-name.wh40k-titans-assembly-bunker"},
+  localised_description = {"entity-description.wh40k-titans-assembly-bunker"},
+  icon = icon,
+  icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+  flags = {
+    "not-rotatable", "placeable-neutral", "player-creation",
+  },
+  -- is_military_target = true,
+  max_health = 10000,
+  -- corpse = "big-remnants",
+  corpse = "rocket-silo-remnants",
+  dying_explosion = "massive-explosion",
+  resistances = {
+    { type = "impact", decrease=1000, percent=100 },
+    { type = "poison", decrease=1000, percent=100 },
+    { type = "fire", decrease=1000, percent=100 },
+    { type = "laser", decrease=50, percent=50 },
+    { type = "electric", decrease=50, percent=50 },
+    { type = "physical", decrease=50, percent=50 },
+    { type = "explosion", decrease=50, percent=50 },
+    { type = "acid", decrease=50, percent=50 },
+  },
+  selection_box = {{-11, -11}, {11, 11}},
+  collision_box = {{-11, -11}, {11, 11}},
+  collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
+  selection_priority = 10,
+  render_layer = "floor",
+  vehicle_impact_sound = sounds.generic_impact,
+  open_sound = sounds.electric_network_open,
+  close_sound = sounds.electric_network_close,
+
+  working_visualisations = idle_working_visualisations,
+  module_specification = {
+    module_slots = 0,
+  },
+  crafting_speed = 0.01,
+  crafting_categories = {shared.craftcat_titan},
+  energy_source = { type = "void" },
+  energy_usage = "1W",
+
+  render_layer = "floor",
+  animations = idle_sprite,
+}
+
+local bunker_minable = table.deepcopy(base_bunker)
+bunker_minable.name = shared.bunker_minable
+bunker_minable.minable = {mining_time = 2.0, result = shared.bunker_minable}
+bunker_minable.localised_name = {"entity-name."..shared.bunker_minable}
+bunker_minable.localised_description = {"entity-description."..shared.bunker_minable}
+
+local bunker_active = table.deepcopy(base_bunker)
+bunker_active.name = shared.bunker_active
+bunker_active.crafting_speed = 1
+bunker_active.localised_name = {"entity-name."..shared.bunker_active}
+bunker_active.localised_description = {"entity-description."..shared.bunker_active}
+
+data:extend({ bunker_minable, bunker_active })
+

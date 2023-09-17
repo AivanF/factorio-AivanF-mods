@@ -278,7 +278,7 @@ data:extend({
           target_effects = {
             {
               type = "damage",
-              vaporize = true,
+              vaporize = false,
               lower_distance_threshold = 10,
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
@@ -512,7 +512,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 8000, type = "explosion"}
+              damage = {amount = 15000, type = "explosion"}
             },
             {
               type = "damage",
@@ -521,7 +521,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 6000, type = "fire"}
+              damage = {amount = 10000, type = "fire"}
             },
             {
               type = "damage",
@@ -530,7 +530,7 @@ data:extend({
               -- upper_distance_threshold = 24,
               -- lower_damage_modifier = 1,
               -- upper_damage_modifier = 0.2,
-              damage = {amount = 6000, type = "electric"}
+              damage = {amount = 10000, type = "electric"}
             },
           }
         }

@@ -6,18 +6,58 @@ mod_name = shared.mod_name
 ----- Script data -----
 
 blank_ctrl_data = {
-  bunkers = {},
+  assembler_buckets = {}, -- uid => bucket => assembler
+  assembler_index = {}, -- entity.unit_number => assembler
+  -- assembler_entities = {}, -- bunker parts, entity.unit_number => {assembler=, index=[0:6]}
+  assembler_gui = {}, -- player.index => {assembler=, main_frame=}
+
   titans = {},
-  foots = {},
   titan_gui = {},
+  foots = {},
   by_player = {}, -- user settings
 }
 ctrl_data = table.deepcopy(blank_ctrl_data)
 
-local used_specials = {}
+used_specials = {}
 
 
 ----- Utils -----
+
+function preprocess_ingredients()
+  -- Replaces Bridge item objects with names
+  if not global.active_mods_cache then return end
+  log("preprocess_ingredients, active_mods_cache: "..serpent.line(global.active_mods_cache))
+  afci_bridge.active_mods_cache = global.active_mods_cache
+  local item
+  for _, titan_type in pairs(shared.titan_type_list) do
+    for _, stack in pairs(titan_type.ingredients) do
+      if stack[1].is_bridge_item then
+        item = stack[1]
+        item.getter() -- preprocessing
+        stack[1] = item.name
+      end
+    end
+  end
+  for _, weapon_type in pairs(shared.weapons) do
+    for _, stack in pairs(weapon_type.ingredients) do
+      if stack[1].is_bridge_item then
+        item = stack[1]
+        item.getter() -- preprocessing
+        stack[1] = item.name
+      end
+    end
+  end
+end
+
+function get_in_buckets_count(storage)
+  local result = 0
+  for _, bucket in pairs(storage) do
+    for _, value in pairs(bucket or {}) do
+      result = result + 1
+    end
+  end
+  return result
+end
 
 function get_keys(tbl)
   if tbl == nil then return nil end
@@ -59,9 +99,11 @@ end
 
 function die_all(list, global_storage)
   for _, special_entity in pairs(list) do
-    special_entity.destroy()
-    if global_storage ~= nil then
-      global_storage[special_entity.unit_number] = nil
+    if special_entity.valid then
+      if global_storage ~= nil then
+        global_storage[special_entity.unit_number] = nil
+      end
+      special_entity.destroy()
     end
   end
 end

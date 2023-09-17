@@ -6,7 +6,7 @@
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [
     "Recipes-Reload",
-    "Common-Industries = 0.9.1",
+    "Common-Industries = 0.9.2",
     "WH40k-Titans-media = 1.0.6",
     "? Mechanicus"
   ],

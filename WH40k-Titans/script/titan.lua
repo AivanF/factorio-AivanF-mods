@@ -19,10 +19,10 @@ local titan_explo_bolt = shared.mod_prefix.."bolt-plasma-3"
 
 ----- Weapons -----
 
-local function init_gun(name)
-  local weapon_type = shared.weapons[name]
+local function init_gun(name, weapon_type)
+  weapon_type = weapon_type or shared.weapons[name]
   return  {
-    name = name,
+    name = weapon_type.name,
     cd = 0,
     oris = 0, -- orientation shift of the cannon
     target = nil, -- LuaEntity or position
@@ -33,6 +33,7 @@ local function init_gun(name)
     ai = false,
   }
 end
+lib.init_gun = init_gun
 
 
 local function calc_max_dst(titan_type, k, weapon_type)
@@ -158,17 +159,6 @@ wc_control[shared.wc_melta]  = control_melta_gun
 wc_control[shared.wc_laser]  = control_beam_gun
 wc_control[shared.wc_hell]   = control_beam_gun
 
-local color_default_dst = {1,1,1}
-local color_gold    = {255, 220,  50}
-local color_orange  = {255, 160,  50}
-local color_red     = {200,  20,  20}
-local color_blue    = { 70, 120, 230}
-local color_purple  = {200,  20, 200}
-local color_green   = {20,  120,  20}
-local color_cyan    = {20,  200, 200}
-local color_ltgrey  = {160, 160, 160}
-local color_dkgrey  = { 60,  60,  60}
-
 local wc_color = {}
 wc_color[shared.wc_rocket] = color_ltgrey
 wc_color[shared.wc_bolter] = color_dkgrey
@@ -231,7 +221,7 @@ local function create_titan_gui(player, titan_info)
     player.gui.screen[main_frame_name].destroy()
   end
   guiobj.main_frame = player.gui.screen.add{
-    type="frame", name=main_frame_name, caption={shared.mod_name..".titan-dashboard"},
+    type="frame", name=main_frame_name, caption={"WH40k-Titans-gui.titan-dashboard-title"},
     direction="horizontal",
   }
   guiobj.main_frame.style.size = {340, 180}
@@ -267,17 +257,17 @@ local function create_titan_gui(player, titan_info)
   guiobj.titan_info_table = guiobj.main_frame.add{type="table", name="titan_info_table", column_count=1, style="filter_slot_table"}
   guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/radar",
-    tooltip={"gui."..shared.mod_prefix.."zoom-out"},
+    tooltip={"WH40k-Titans-gui.zoom-out"},
     tags={action=action_zoom_out},
   }
   guiobj.health = guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/"..shared.frame_part,
-    tooltip={"gui.wh40k-titans-health"},
+    tooltip={"WH40k-Titans-gui.health"},
     tags={action=action_toggle_ammo_count},
   }
   guiobj.void_shield = guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/"..shared.void_shield,
-    tooltip={"gui.wh40k-titans-vs-value"},
+    tooltip={"WH40k-Titans-gui.vs-value"},
     tags={action=action_toggle_ammo_count},
   }
 end
@@ -334,7 +324,7 @@ local function update_gui()
         end
         if guiobj.titan_info.guns[k].ai then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-info"
-          guiobj.guns[k].mode.tooltip={"gui."..shared.mod_prefix.."attack-ai"}
+          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-ai"}
         elseif player_settings.guns[k].mode == 1 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-1"
           guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-1"}
@@ -346,7 +336,7 @@ local function update_gui()
           guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-3"}
         else
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-red"
-          guiobj.guns[k].mode.tooltip={"gui."..shared.mod_prefix.."attack-0"}
+          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-0"}
         end
       end
     end
@@ -355,7 +345,7 @@ end
 
 lib:on_nth_tick(gui_update_rate, update_gui)
 
-script.on_event(defines.events.on_gui_click, function(event)
+lib:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
   local player_settings = ctrl_data.by_player[event.player_index]
   local titan_info = nil
@@ -389,7 +379,9 @@ end)
 ----- Intro -----
 
 function lib.register_titan(entity)
-  if ctrl_data.titans[entity.unit_number] then return end
+  if ctrl_data.titans[entity.unit_number] then
+    return ctrl_data.titans[entity.unit_number]
+  end
   local titan_type = shared.titan_types[entity.name]
   if not titan_type then
     game.print("Got bad titan "..entity.name)
@@ -454,6 +446,8 @@ function lib.register_titan(entity)
     path="wh40k-titans-phrase-init",
     position=entity.position, volume_modifier=1
   }
+
+  return titan_info
 end
 
 
@@ -537,8 +531,8 @@ local function process_single_titan(titan_info)
     orientation=ori+oris,
   }
   rendering.draw_light{
-    sprite=shared.mod_prefix.."light", scale=7+0.3*class,
-    intensity=1+0.05*class, minimum_darkness=0, color=tint,
+    sprite=shared.mod_prefix.."light", scale=7+0.5*class,
+    intensity=1.5+0.1*class, minimum_darkness=0,
     time_to_live=visual_ttl,
     surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 6)),
   }
