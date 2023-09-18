@@ -6,5 +6,5 @@
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [],
   "factorio_version": "1.1",
-  "description": "Provides a lab that performs reverse-engineering research converting items into science packs considering their worth. Useful with mods where you can find, loot advanced items."
+  "description": "Now you can uncraft & recycle items into science packs! Provides a lab that performs reverse-engineering research converting items into science packs considering their worth. Sometimes it can unlock related technology research! Useful with mods where you can find, loot advanced items, or just in case you wanna get rid of old stuff. Recipes and science packs from any other mods are supported."
 }

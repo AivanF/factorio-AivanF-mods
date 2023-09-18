@@ -1,46 +1,7 @@
+require("utils")
+
 local ext, delimiter = ".tsv", "\t"
 -- local ext, delimiter = ".csv", ", "
-
-function istable(t) return type(t) == 'table' end
-
-function deep_merge(a, b, over)
-  for k, v in pairs(b) do
-    if istable(v) and istable(a[k]) then
-      deep_merge(a[k], v, over)
-    elseif a[k] == nil or over then
-      a[k] = v
-    end
-  end
-  return a
-end
-
-function merge(a, b, over)
-  for k, v in pairs(b) do
-    if a[k] == nil or over then
-      a[k] = v
-    end
-  end
-  return a
-end
-
-function from_key_list(ar, value)
-  local result = {}
-  for _, key in pairs(ar) do
-    result[key] = value
-  end
-  return result
-end
-
--- Like Python's itertools.chain
-function chain_arrays(lists)
-  local result = {}
-  for _, ar in pairs(lists) do
-    for _, value in pairs(ar) do
-      table.insert(result, value)
-    end
-  end
-  return result
-end
 
 local red = "automation-science-pack"
 local green = "logistic-science-pack"
@@ -61,9 +22,8 @@ ignore_item = from_key_list({
   -- "discharge-defense-remote",
   -- "lightning-arty-remote",
 }, true)
-scipacks = {}
 
-local override_items = {
+override_items = {
   ["gun-turret"] = { ingredients = {red, grey}, need=10, price=1, prob=0.1 },
   ["solid-fuel"] = { ingredients = {red, green, blue}, need=50 },
 }
@@ -111,7 +71,7 @@ local function finalise(item_info)
   try_stack(item_info, 20, 50)
   try_stack(item_info, 50,100)
   -- item_info.price = math.floor(item_info.price)
-  item_info.prob = item_info.price / 15
+  item_info.prob = item_info.price / 10
 end
 
 function cache_data()
@@ -152,7 +112,7 @@ function cache_data()
               1 /(math.log10(stack_size)+1),
               math.log10(total_price / 3),
             }
-            deep_merge(scipacks, from_key_list(ingredients, true))
+            deep_merge(global.scipacks, from_key_list(ingredients, true))
             item_opts[tech_name] = {
               item_name = item_name,
               tech_name = tech_name,

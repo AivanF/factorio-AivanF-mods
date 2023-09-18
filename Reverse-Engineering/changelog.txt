@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2023-09-18
+  Info:
+    - Initial release by AivanF!
+  Features:
+    - 3 grades of Reverse Engineering labs
+    - Occasional technology researches
+    - Creates no reverse-recipes
+    - Remote interfaces
