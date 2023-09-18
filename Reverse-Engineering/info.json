@@ -1,0 +1,10 @@
+{
+  "name": "Reverse-Engineering",
+  "version": "1.0.0",
+  "title": "Reverse Engineering Lab",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": [],
+  "factorio_version": "1.1",
+  "description": "Provides a lab that performs reverse-engineering research converting items into science packs considering their worth. Useful with mods where you can find, loot advanced items."
+}
