@@ -2,7 +2,11 @@
 Version: 0.9.10
 Date: 2023-09-20
   Features:
-    - Titans Assembly Bunker GUI and work! Now you can't mine a titan or create a placeable item :)
+    - Assembly Bunker GUI and work! Now you can't mine a titan or create a placeable item :)
+    - Assembly Bunker leftovers chest in case it was deactivated and mined with items inside.
+    - Titan crew notification on ammo restock from an Assembly Bunker
+    - Titan far seeing
+    - Faster titans
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.9
 Date: 2023-09-15

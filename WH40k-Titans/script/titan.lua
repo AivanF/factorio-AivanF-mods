@@ -498,6 +498,44 @@ local function try_remove_small_water(surface, position, radius)
 end
 
 
+local function far_seeing(titan_info)
+  local dst = (titan_info.class + 5) * 4
+  local size = titan_info.class
+  titan_info.entity.force.chart(titan_info.entity.surface,
+    math2d.bounding_box.create_from_centre(
+      math2d.position.add(
+        titan_info.entity.position,
+        point_orientation_shift(titan_info.entity.orientation, 0, dst)),
+      size, size)
+  )
+  if titan_info.class >= shared.class_warlord then
+  -- if dst >= 96 then
+    for i = 0, 3 do
+      titan_info.entity.force.chart(titan_info.entity.surface,
+        math2d.bounding_box.create_from_centre(
+          math2d.position.add(
+            titan_info.entity.position,
+            point_orientation_shift(titan_info.entity.orientation, i/4, dst/2)),
+          size, size)
+      )
+    end
+  end
+end
+
+
+local function notify_crew(titan_info, message, color)
+  color = color or {1,1,1}
+  local entity = titan_info.entity
+  local crew = {}
+  crew[#crew+1] = entity.get_driver()
+  crew[#crew+1] = entity.get_passenger()
+  for _, player in pairs(list_players(crew)) do
+    player.print(message, color)
+  end
+end
+lib.notify_crew = notify_crew
+
+
 local function process_single_titan(titan_info)
   local tick = game.tick
   local titan_type = shared.titan_types[titan_info.class]
@@ -665,8 +703,9 @@ local function process_single_titan(titan_info)
     ----- Tracks
 
     if titan_info.track_cd < tick then
-      titan_info.track_cd = tick + 45 + 1.5*class
+      titan_info.track_cd = tick + 20 + 2*class
       titan_info.track_rot = not titan_info.track_rot
+      far_seeing(titan_info) -- it's here to make it not so often
 
       if class < 20 then
         img = shared.mod_prefix.."step-small"

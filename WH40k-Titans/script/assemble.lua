@@ -5,9 +5,11 @@ local titan = require("script/titan")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
+local heavy_debugging = false
+-- heavy_debugging = true
+
 building_update_rate = 60
-local quick_mode = false
--- quick_mode = true
+local quick_mode = heavy_debugging
 local required_ammo_ratio = 0.1
 
 local b1, b2 = 9, 6
@@ -39,7 +41,7 @@ states.restock = "restock"
 
 local function draw_assembler_lamp(assembler, k, lamp_color)
   local color = table.deepcopy(lamp_color)
-  table.insert(color, 0.35)
+  table.insert(color, 0.25)
   rendering.draw_sprite{
     surface=assembler.surface, sprite=shared.mod_prefix.."light", x_scale=1, y_scale=1,
     tint=color, time_to_live=building_update_rate+1, render_layer=145, -- 123 or 145
@@ -58,6 +60,12 @@ end
 local function change_assembler_state(assembler, new_state)
   if assembler.state == new_state then return end
   -- TODO: if force has >1 members, do notify them all
+  if lib.state_post_handler[assembler.state] then
+    lib.state_post_handler[assembler.state](assembler)
+  end
+  if lib.state_pre_handler[new_state] then
+    lib.state_pre_handler[new_state](assembler)
+  end
   assembler.state = new_state
   update_assembler_guis(assembler)
 end
@@ -238,6 +246,20 @@ local function bunker_internal_to_outer(assembler)
   return finished
 end
 
+local function safe_destroy_chest(entity)
+  if not entity.valid then return end
+  if entity.get_item_count() > 0 then
+    local new = entity.surface.create_entity{
+      name=shared.leftovers_chest, force="neutral", position=entity.position,
+    }
+    for item_name, have in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
+      new.insert({name=item_name, count=have})
+      entity.remove_item({name=item_name, count=done})
+    end
+  end
+  entity.destroy()
+end
+
 
 
 
@@ -381,10 +403,41 @@ end
 
 
 
+----- Outro -----
+function lib.bunker_removed(assembler)
+  local bucket = ctrl_data.assembler_buckets[assembler.uid % building_update_rate]
+  if bucket and bucket[assembler.uid] then
+    bucket[assembler.uid] = nil
+  end
+
+  func_map(safe_destroy_chest, chain_arrays({assembler.wstore, {assembler.bstore}}))
+
+  die_all({assembler.wentity, assembler.sentity}, ctrl_data.assembler_index)
+  die_all(assembler.lamps)
+  die_all(assembler.wstore)
+  die_all(assembler.wrecipe, ctrl_data.entities)
+  die_all({assembler.brecipe, assembler.bstore}, ctrl_data.entities)
+  for player_index, info in pairs(ctrl_data.assembler_gui) do
+    if info.assembler == assembler then
+      if info.main_frame.valid then
+        info.main_frame.destroy()
+      end
+      ctrl_data.assembler_gui[player_index] = nil
+    end
+  end
+end
+
+
+
 
 ----- MAIN -----
 
-local state_handler = {}
+lib.state_handler = {}
+lib.state_pre_handler = {}
+lib.state_post_handler = {}
+local state_handler = lib.state_handler
+local state_pre_handler = lib.state_pre_handler
+local state_post_handler = lib.state_post_handler
 
 function state_handler.disabled(assembler)
   -- Pass, state changing handled by GUI
@@ -395,14 +448,36 @@ function state_handler.initialising(assembler)
   if assembler.init_progress < bunker_init_time then
     update_assembler_guis(assembler)
   else
-    -- Change entity to not minable, stable/active
-    ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
-    assembler.wentity.destroy()
-    assembler.sentity = assembler.surface.create_entity{
-      name=shared.bunker_active, position=assembler.position, force=assembler.force,
-    }
+    if assembler.wentity and assembler.wentity.valid then
+      -- Change entity to not minable, stable/active
+      ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
+      assembler.wentity.destroy()
+      assembler.wentity = nil
+      assembler.sentity = assembler.surface.create_entity{
+        name=shared.bunker_active, position=assembler.position, force=assembler.force,
+      }
+    end
     ctrl_data.assembler_index[assembler.sentity.unit_number] = assembler
     change_assembler_state(assembler, states.idle)
+  end
+end
+
+function state_post_handler.deactivating(assembler)
+  if assembler.sentity and assembler.sentity.valid then
+    -- Change entity to minable
+    ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
+    assembler.sentity.destroy()
+    assembler.sentity = nil
+    assembler.wentity = assembler.surface.create_entity{
+      name=shared.bunker_minable, position=assembler.position, force=assembler.force,
+    }
+    ctrl_data.assembler_index[assembler.wentity.unit_number] = assembler
+  end
+end
+
+function state_pre_handler.deactivating(assembler)
+  if assembler.init_progress <= 0 or assembler.init_progress > bunker_init_time then
+    assembler.init_progress = bunker_init_time
   end
 end
 
@@ -411,15 +486,16 @@ function state_handler.deactivating(assembler)
   if assembler.init_progress > 0 then
     update_assembler_guis(assembler)
   else
-    if assembler.sentity then
-      -- Change entity to minable
-      ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
-      assembler.sentity.destroy()
-      assembler.wentity = assembler.surface.create_entity{
-        name=shared.bunker_minable, position=assembler.position, force=assembler.force,
-      }
-      ctrl_data.assembler_index[assembler.wentity.unit_number] = assembler
-    end
+    -- if assembler.sentity then
+    --   -- Change entity to minable
+    --   ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
+    --   assembler.sentity.destroy()
+    --   assembler.sentity = nil
+    --   assembler.wentity = assembler.surface.create_entity{
+    --     name=shared.bunker_minable, position=assembler.position, force=assembler.force,
+    --   }
+    --   ctrl_data.assembler_index[assembler.wentity.unit_number] = assembler
+    -- end
     change_assembler_state(assembler, states.disabled)
   end
 end
@@ -463,7 +539,7 @@ function state_handler.assembling(assembler)
 end
 
 function state_handler.waiting_disassembly(assembler)
-  local titan_entity = find_titan(assembler, empty)
+  local titan_entity = find_titan(assembler, true)
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
   if titan_entity and titan_info then
     local titan_type = shared.titan_types[titan_entity.name]
@@ -491,18 +567,29 @@ function state_handler.disassembling(assembler)
 end
 
 function state_handler.restock(assembler)
-  local titan_entity = find_titan(assembler, empty)
+  local titan_entity = find_titan(assembler, false)
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
 
   if titan_entity and titan_info then
-    local weapon_type, cannon, need_ammo, got_ammo
+    local titan_type = shared.titan_types[titan_entity.name]
+    local weapon_type, cannon, need_ammo, have_ammo, got_ammo
+    local done_ws, done_ammo = 0, 0
     for k, _ in pairs(titan_type.guns) do
       cannon = titan_info.guns[k]
       weapon_type = shared.weapons[cannon.name]
       need_ammo = weapon_type.inventory - cannon.ammo_count
-      got_ammo = assembler.wstore[k].remove_item({name=weapon_type.ammo, count=need_ammo})
-      cannon.ammo_count = cannon.ammo_count + got_ammo
-      -- TODO: if got_ammo > 0 then increase stats?
+      have_ammo = assembler.wstore[k].get_item_count(weapon_type.ammo)
+      got_ammo = math.min(need_ammo, have_ammo)
+      if got_ammo > 0 then
+        done_ws = done_ws + 1
+        done_ammo = done_ammo + got_ammo
+        assembler.wstore[k].remove_item({name=weapon_type.ammo, count=need_ammo})
+        cannon.ammo_count = cannon.ammo_count + got_ammo
+        -- TODO: increase stats?
+      end
+    end
+    if done_ammo > 0 then
+      titan.notify_crew(titan_info, {"WH40k-Titans-gui.msg-titan-restock", done_ws, done_ammo})
     end
   end
 end
@@ -734,6 +821,17 @@ local function create_assembly_gui(player, assembler)
   pusher.drag_target = main_frame
   pusher.style.maximal_height = 24
   flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
+
+  if heavy_debugging then
+    local tf = main_frame.add{ type="text-box", name="debugging",
+      text=table.concat(func_map(serpent.line, {
+        {"wentity", assembler.wentity},
+        {"is it valid", assembler.wentity and assembler.wentity.valid},
+        {"sentity", assembler.sentity},
+        {"is it valid", assembler.sentity and assembler.sentity.valid},
+      }), "\n") }
+    tf.style.minimal_width = 256
+  end
 
   main_frame.add{ type="flow", name="status_line", direction="horizontal" }
   main_frame.add{ type="flow", name="main_room", direction="vertical" }

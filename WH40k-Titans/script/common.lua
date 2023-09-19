@@ -77,6 +77,40 @@ function merge(a, b, over)
   return a
 end
 
+-- Long live the Functional programming!
+function chain_arrays(lists)
+  -- Like Python's itertools.chain
+  local result = {}
+  for _, ar in pairs(lists) do
+    for _, value in pairs(ar) do
+      table.insert(result, value)
+    end
+  end
+  return result
+end
+function partial(func, args_pre, args_post)
+  args_pre = args_pre or {}
+  args_post = args_post or {}
+  return function(...)
+    local new_args = chain_arrays(args_pre, {{...}, args_post})
+    func(table.unpack(new_args))
+  end
+end
+function func_map(func, args)
+  local results = {}
+  for _, value in pairs(args) do
+    results[#results+1] = func(value)
+  end
+  return results
+end
+function func_maps(func, args_arrays)
+  local results = {}
+  for _, args in pairs(args_arrays) do
+    results[#results+1] = func(table.unpack(args))
+  end
+  return results
+end
+
 function points_to_orientation(a, b)
   return 0.25 +math.atan2(b.y-a.y, b.x-a.x) /math.pi /2
 end

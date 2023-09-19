@@ -57,7 +57,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warhound,
     class = shared.class_warhound,
-    dst = 1, dmg = 1, spd = 6,
+    dst = 1, dmg = 1, spd = 7,
     arms = shared.gun_grade_small,
     carapace1 = nil,
     carapace2 = nil,
@@ -89,7 +89,7 @@ shared.titan_type_list = {
   -- {
   --   name = shared.titan_direwolf,
   --   class = shared.class_direwolf,
-  --   dst = 1, dmg = 1, spd = 5,
+  --   dst = 1, dmg = 1, spd = 6,
   --   arms = shared.gun_grade_small,
   --   carapace1 = nil,
   --   carapace2 = nil,
@@ -122,7 +122,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_reaver,
     class = shared.class_reaver,
-    dst = 1.25, dmg = 1.25, spd = 5,
+    dst = 1.25, dmg = 1.25, spd = 6,
     arms = shared.gun_grade_medium,
     carapace1 = shared.gun_grade_small,
     carapace2 = nil,
@@ -155,7 +155,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warlord,
     class = shared.class_warlord,
-    dst = 1.5, dmg = 1.5, spd = 4,
+    dst = 1.5, dmg = 1.5, spd = 5,
     arms = shared.gun_grade_big,
     carapace1 = shared.gun_grade_medium,
     carapace2 = shared.gun_grade_medium,
@@ -189,7 +189,7 @@ shared.titan_type_list = {
   -- {
   --   name = shared.titan_warmaster,
   --   class = shared.class_warmaster,
-  --   dst = 1.75, dmg = 1.75, spd = 3,
+  --   dst = 1.75, dmg = 1.75, spd = 4,
   --   arms = shared.gun_grade_big,
   --   carapace1 = shared.gun_grade_medium,
   --   carapace2 = shared.gun_grade_medium,
@@ -224,7 +224,7 @@ shared.titan_type_list = {
   -- {
   --   name = shared.titan_imperator,
   --   class = shared.class_imperator,
-  --   dst = 2, dmg = 2, spd = 3,
+  --   dst = 2, dmg = 2, spd = 4,
   --   arms = shared.gun_grade_huge,
   --   carapace1 = shared.gun_grade_big,
   --   carapace2 = shared.gun_grade_big,
@@ -259,7 +259,7 @@ shared.titan_type_list = {
   -- {
   --   name = shared.titan_warmonger,
   --   class = shared.class_warmonger,
-  --   dst = 2, dmg = 2, spd = 3,
+  --   dst = 2, dmg = 2, spd = 4,
   --   arms = shared.gun_grade_huge,
   --   carapace1 = shared.gun_grade_big,
   --   carapace2 = shared.gun_grade_big,

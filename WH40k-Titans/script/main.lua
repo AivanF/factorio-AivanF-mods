@@ -38,25 +38,7 @@ local function on_any_remove(event)
   end
 
   if event.name ~= defines.events.script_raised_destroy and ctrl_data.assembler_index[unit_number] then
-    local assembler = ctrl_data.assembler_index[unit_number]
-    local bucket = ctrl_data.assembler_buckets[assembler.uid % building_update_rate]
-    if bucket and bucket[assembler.uid] then
-      bucket[assembler.uid] = nil
-    end
-    -- TODO: replace non-empty storages and assembler.items with temp containers!
-    die_all({assembler.wentity, assembler.sentity}, ctrl_data.assembler_index)
-    die_all(assembler.lamps)
-    die_all(assembler.wstore)
-    die_all(assembler.wrecipe, ctrl_data.entities)
-    die_all({assembler.brecipe, assembler.bstore}, ctrl_data.entities)
-    for player_index, info in pairs(ctrl_data.assembler_gui) do
-      if info.assembler == assembler then
-        if info.main_frame.valid then
-          info.main_frame.destroy()
-        end
-        ctrl_data.assembler_gui[player_index] = nil
-      end
-    end
+    assemble.bunker_removed(ctrl_data.assembler_index[unit_number])
   end
 
   ctrl_data.assembler_index[unit_number] = nil
@@ -149,20 +131,8 @@ lib:on_load(on_load)
 -- lib.on_event(defines.events.on_runtime_mod_setting_changed, update_runtime_settings)
 lib:on_configuration_changed(update_configuration)
 
-lib:on_event({
-  defines.events.on_built_entity,
-  defines.events.on_robot_built_entity,
-  defines.events.script_raised_built,
-  defines.events.script_raised_revive,
-  defines.events.on_entity_cloned,
-}, on_any_built)
-
-lib:on_event({
-  defines.events.on_player_mined_entity,
-  defines.events.on_robot_mined_entity,
-  defines.events.on_entity_died,
-  defines.events.script_raised_destroy,
-}, on_any_remove)
+lib:on_any_built(on_any_built)
+lib:on_any_remove(on_any_remove)
 
 commands.add_command(
   "titans-clean-draw",

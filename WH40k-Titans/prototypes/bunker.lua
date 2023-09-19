@@ -11,7 +11,7 @@ local special_flags = {
   "not-blueprintable", "not-deconstructable", "not-flammable",
 }
 
-local bunker_resistances = {
+local technomagic_resistances = {
   { type = "impact", decrease=10000, percent=100 },
   { type = "physical", percent=100 },
   { type = "explosion", percent=100 },
@@ -20,6 +20,16 @@ local bunker_resistances = {
   { type = "electric", percent=100 },
   { type = "acid", percent=100 },
   { type = "poison", percent=100 },
+}
+local bunker_resistances = {
+  { type = "impact", decrease=1000, percent=100 },
+  { type = "poison", decrease=1000, percent=100 },
+  { type = "fire", decrease=1000, percent=100 },
+  { type = "laser", decrease=50, percent=50 },
+  { type = "electric", decrease=50, percent=50 },
+  { type = "physical", decrease=50, percent=50 },
+  { type = "explosion", decrease=50, percent=50 },
+  { type = "acid", decrease=50, percent=50 },
 }
 
 local lamp = table.deepcopy(data.raw["lamp"]["small-lamp"])
@@ -30,7 +40,7 @@ lamp.flags = special_flags
 lamp.selectable_in_game = false
 lamp.collision_mask = {}
 lamp.energy_source = { type = "void" }
-lamp.resistances = bunker_resistances
+lamp.resistances = technomagic_resistances
 lamp.next_upgrade = nil
 data:extend({ lamp })
 
@@ -95,7 +105,7 @@ data:extend({
     flags = special_flags,
     max_health = 10000,
     healing_per_tick = 10000,
-    resistances = bunker_resistances,
+    resistances = technomagic_resistances,
     dying_explosion = "iron-chest-explosion",
     open_sound = { filename = "__base__/sound/metallic-chest-open.ogg", volume=0.43 },
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
@@ -119,7 +129,7 @@ data:extend({
     flags = special_flags,
     max_health = 10000,
     healing_per_tick = 10000,
-    resistances = bunker_resistances,
+    resistances = technomagic_resistances,
     dying_explosion = "iron-chest-explosion",
     open_sound = { filename = "__base__/sound/metallic-chest-open.ogg", volume=0.43 },
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
@@ -141,11 +151,11 @@ data:extend({
   --   icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
   --   flags = special_flags,
   --   max_health = 10000,
-  --   resistances = bunker_resistances,
+  --   resistances = technomagic_resistances,
   --   healing_per_tick = 10000,
   --   corpse = "medium-electric-pole-remnants",
   --   dying_explosion = "medium-electric-pole-explosion",
-  --   resistances = bunker_resistances,
+  --   resistances = technomagic_resistances,
   --   selection_box = {{-2, -1}, {2, 1}},
   --   collision_box = {{-2, -1}, {2, 1}},
   --   collision_mask = {},
@@ -171,7 +181,7 @@ data:extend({
   --   flags = special_flags,
   --   max_health = 10000,
   --   healing_per_tick = 10000,
-  --   resistances = bunker_resistances,
+  --   resistances = technomagic_resistances,
   --   corpse = "medium-electric-pole-remnants",
   --   dying_explosion = "medium-electric-pole-explosion",
   --   selection_box = {{-1, -2}, {1, 2}},
@@ -201,7 +211,7 @@ data:extend({
     flags = special_flags,
     max_health = 20000,
     healing_per_tick = 20000,
-    resistances = bunker_resistances,
+    resistances = technomagic_resistances,
     dying_explosion = "iron-chest-explosion",
     open_sound = { filename = "__base__/sound/metallic-chest-open.ogg", volume=0.43 },
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
@@ -226,7 +236,7 @@ data:extend({
     healing_per_tick = 20000,
     corpse = "medium-electric-pole-remnants",
     dying_explosion = "medium-electric-pole-explosion",
-    resistances = bunker_resistances,
+    resistances = technomagic_resistances,
     selection_box = {{-4, -4}, {4, 4}},
     collision_box = {{-4, -4}, {4, 4}},
     collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
@@ -287,16 +297,7 @@ local base_bunker = {
   -- corpse = "big-remnants",
   corpse = "rocket-silo-remnants",
   dying_explosion = "massive-explosion",
-  resistances = {
-    { type = "impact", decrease=1000, percent=100 },
-    { type = "poison", decrease=1000, percent=100 },
-    { type = "fire", decrease=1000, percent=100 },
-    { type = "laser", decrease=50, percent=50 },
-    { type = "electric", decrease=50, percent=50 },
-    { type = "physical", decrease=50, percent=50 },
-    { type = "explosion", decrease=50, percent=50 },
-    { type = "acid", decrease=50, percent=50 },
-  },
+  resistances = bunker_resistances,
   selection_box = {{-11, -11}, {11, 11}},
   collision_box = {{-11, -11}, {11, 11}},
   collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
@@ -331,5 +332,13 @@ bunker_active.crafting_speed = 1
 bunker_active.localised_name = {"entity-name."..shared.bunker_active}
 bunker_active.localised_description = {"entity-description."..shared.bunker_active}
 
-data:extend({ bunker_minable, bunker_active })
+local leftovers_chest = table.deepcopy(data.raw["container"]["iron-chest"])
+leftovers_chest.name = shared.leftovers_chest
+leftovers_chest.resistances = bunker_resistances
+leftovers_chest.next_upgrade = nil
+leftovers_chest.minable = {mining_time = 3}
+leftovers_chest.inventory_size = 350
+leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest.png"
+leftovers_chest.picture.layers[1].hr_version.filename = shared.media_prefix.."graphics/entity/leftovers-chest-hr.png"
 
+data:extend({ bunker_minable, bunker_active, leftovers_chest })

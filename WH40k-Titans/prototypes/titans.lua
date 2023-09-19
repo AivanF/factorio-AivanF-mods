@@ -58,7 +58,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       max_health = titan_type.health,
       minimap_representation = {
         filename = shared.media_prefix.."graphics/icons/titan-map.png",
-        width = 48,
+        width = 64,
         height = 80,
       },
       dying_explosion = "medium-explosion",
@@ -93,7 +93,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       terrain_friction_modifier = 0.2,
       friction = 0.03,
       breaking_speed = 0.1,
-      rotation_speed = 0.004,
+      rotation_speed = (titan_type.class < shared.class_reaver) and 0.005 or 0.004,
 
       inventory_size = math.ceil(20 * titan_type.class/10),
       chunk_exploration_radius = math.ceil(1 + titan_type.class/10),
