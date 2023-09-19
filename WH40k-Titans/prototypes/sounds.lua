@@ -56,15 +56,6 @@ data:extend({
     },
     audible_distance_modifier=10,
   },
-  -- {
-  --   type="sound",
-  --   name="wh40k-titans-assembly",
-  --   category="environment",
-  --   variations={
-  --     {filename=shared.media_prefix.."sounds/assembly.mp3"},
-  --   },
-  --   audible_distance_modifier=3,
-  -- },
   {
     type="sound",
     name="wh40k-titans-assembly-main",
