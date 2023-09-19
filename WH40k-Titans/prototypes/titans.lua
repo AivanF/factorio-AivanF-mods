@@ -2,6 +2,8 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 local misc = require("prototypes.misc")
 
+local minable_titans = false
+
 -- local cmu = require("collision-mask-util")
 -- local only_water_layer = cmu.get_first_unused_layer()
 local collision_mask_util_extended = require("cmue.collision-mask-util-extended")
@@ -30,38 +32,30 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       subgroup = shared.subg_titans,
       order = "b[dummy-titan-item-"..class.."]",
       place_result = place_result,
-      stack_size = 20,
+      stack_size = 1,
     },
     {
       type = "recipe",
       name = name,
+      localised_name = {"entity-name."..name},
+      localised_description = {"entity-description."..name},
+      icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
+      subgroup = shared.subg_titans,
+      order = "b[dummy-titan-item-"..class.."]",
       enabled = false,
       category = shared.craftcat_titan,
       ingredients = shared.preprocess_recipe(titan_type.ingredients),
-      result = name,
+      results = minable_titans and {name} or {},
+      energy_required = 60*60*24,
     },
-    -- {
-    --   -- For sandbox/god mod testing
-    --   -- Other recipes aren't available by hand due to the category
-    --   type = "recipe",
-    --   name = name.."-sandbox",
-    --   enabled = true,
-    --   ingredients = {
-    --     {"steel-plate", 10*class},
-    --     {"copper-plate", 10*class},
-    --   },
-    --   result = name,
-    --   order = "a[test]",
-    -- },
     {
       type = shared.titan_base_type,
       name = name,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       flags = {"placeable-neutral", "player-creation", "placeable-off-grid"},
-      minable = {mining_time = 1.5, result = name},  -- TODO: remove this
+      minable = minable_titans and {mining_time = 1.5, result = name} or nil,
       energy_per_hit_point = 0.05,
       max_health = titan_type.health,
-      -- healing_per_tick = math.ceil(titan_type.health / 600),  -- TODO: doesn't work?!?
       minimap_representation = {
         filename = shared.media_prefix.."graphics/icons/titan-map.png",
         width = 48,
@@ -101,7 +95,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       breaking_speed = 0.1,
       rotation_speed = 0.004,
 
-      inventory_size = math.ceil(50 * titan_type.class/10),
+      inventory_size = math.ceil(20 * titan_type.class/10),
       chunk_exploration_radius = math.ceil(1 + titan_type.class/10),
       -- render_layer = "air-object",
       -- final_render_layer = "air-object",

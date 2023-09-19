@@ -37,7 +37,7 @@ https://lua-api.factorio.com/latest/Concepts.html#RenderLayer
 shared.rl_track = 122
 shared.rl_foot = 124 -- ="lower-object"
 
---- Above aircrafts and projectiles, but for shoulder weapons
+--- Above aircrafts and projectiles, bad for shoulder weapons
 shared.rl_shadow = 144
 shared.rl_arm = 169
 shared.rl_body = 170

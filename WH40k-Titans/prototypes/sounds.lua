@@ -17,7 +17,7 @@ data:extend({
       {filename=shared.media_prefix.."sounds/voice/serve.wav"},
       {filename=shared.media_prefix.."sounds/voice/fight for.wav"},
     },
-    audible_distance_modifier=10,
+    audible_distance_modifier=15,
   },
   {
     type="sound",
@@ -29,7 +29,7 @@ data:extend({
       {filename=shared.media_prefix.."sounds/voice/aliens.wav"},
       {filename=shared.media_prefix.."sounds/voice/haha.wav"},
     },
-    audible_distance_modifier=7,
+    audible_distance_modifier=10,
   },
   {
     type="sound",
@@ -42,7 +42,7 @@ data:extend({
       {filename=shared.media_prefix.."sounds/voice/die.wav"},
       {filename=shared.media_prefix.."sounds/voice/fight for.wav"},
     },
-    audible_distance_modifier=7,
+    audible_distance_modifier=10,
   },
   {
     -- TODO: split into for small 1-3 and huge 4-5 classes
@@ -54,15 +54,40 @@ data:extend({
       {filename=shared.media_prefix.."sounds/body/step-thud-1.wav"},
       {filename=shared.media_prefix.."sounds/body/step-thud-2.wav"},
     },
-    audible_distance_modifier=5,
+    audible_distance_modifier=10,
+  },
+  -- {
+  --   type="sound",
+  --   name="wh40k-titans-assembly",
+  --   category="environment",
+  --   variations={
+  --     {filename=shared.media_prefix.."sounds/assembly.mp3"},
+  --   },
+  --   audible_distance_modifier=3,
+  -- },
+  {
+    type="sound",
+    name="wh40k-titans-assembly-main",
+    category="environment",
+    variations={
+      {filename=shared.media_prefix.."sounds/assembly/main-1.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/main-2.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/main-3.wav"},
+    },
+    audible_distance_modifier=3,
   },
   {
     type="sound",
-    name="wh40k-titans-assembly",
+    name="wh40k-titans-assembly-add",
     category="environment",
     variations={
-      {filename=shared.media_prefix.."sounds/assembly.mp3"},
+      {filename=shared.media_prefix.."sounds/assembly/add-1.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/add-2.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/add-3.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/add-4.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/add-5.wav"},
+      {filename=shared.media_prefix.."sounds/assembly/add-6.wav"},
     },
-    audible_distance_modifier=2,
+    audible_distance_modifier=5,
   },
 })

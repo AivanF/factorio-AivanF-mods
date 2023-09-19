@@ -6,7 +6,8 @@ local Lib = require("script/event_lib")
 local lib = Lib.new()
 
 building_update_rate = 60
-local quick_mode = true
+local quick_mode = false
+-- quick_mode = true
 local required_ammo_ratio = 0.1
 
 local b1, b2 = 9, 6
@@ -36,6 +37,16 @@ states.disassembling = "disassembling"
 states.restock = "restock"
 
 
+local function draw_assembler_lamp(assembler, k, lamp_color)
+  local color = table.deepcopy(lamp_color)
+  table.insert(color, 0.35)
+  rendering.draw_sprite{
+    surface=assembler.surface, sprite=shared.mod_prefix.."light", x_scale=1, y_scale=1,
+    tint=color, time_to_live=building_update_rate+1, render_layer=145, -- 123 or 145
+    target={x=assembler.position.x+bunker_lamps[k][1], y=assembler.position.y+bunker_lamps[k][2]},
+  }
+end
+
 local function update_assembler_guis(assembler)
   for player_index, gui_info in pairs(ctrl_data.assembler_gui) do
     if gui_info.assembler == assembler then
@@ -58,21 +69,13 @@ local function get_titan_assembly_time(titan_class_or_name)
     return shared.titan_types[titan_class_or_name].health /1000 *10
   end
 end
-local bunker_init_time = quick_mode and 5 or 60
+local bunker_init_time = quick_mode and 8 or 40
 
 local function check_entity_has_ingredients(entity, ingredients)
   for _, stack in pairs(ingredients) do
     if entity.get_item_count(stack[1]) < stack[2] then return false end
   end
   return true
-end
-
-local function draw_assembler_lamp(assembler, k, lamp_color)
-  rendering.draw_light{
-    surface=assembler.surface, sprite=shared.mod_prefix.."light", scale=1,
-    intensity=2, minimum_darkness=0, color=lamp_color, time_to_live=building_update_rate,
-    target={x=assembler.position.x+bunker_lamps[k][1], y=assembler.position.y+bunker_lamps[k][2]},
-  }
 end
 
 local function collect_entity_ingredients(entity, ingredients)
@@ -142,16 +145,14 @@ local function check_bunker_correct_details(assembler)
       if not check_entity_has_ingredients(assembler.wstore[k], weapon_type.ingredients) then
         set_message(assembler, "not enough weapon details for "..weapon_type.name)
         weapon_fine = false
-        lamp_color = color_orange
+        lamp_color = lamp_color or color_orange
       end
       if assembler.wstore[k].get_item_count(weapon_type.ammo) < weapon_type.inventory*required_ammo_ratio-1 then
         set_message(assembler, "not enough ammo for "..weapon_type.name)
         weapon_fine = false
-        lamp_color = color_gold
+        lamp_color = lamp_color or color_gold
       end
-      if not lamp_color then
-        lamp_color = color_green
-      end
+      lamp_color = lamp_color or color_green
     end
     result = result and weapon_fine
     if lamp_color then
@@ -232,7 +233,7 @@ local function bunker_internal_to_outer(assembler)
   local finished = true
   finished = finished and put_items_to_entity(assembler.bstore, assembler.items_main)
   for k, _ in pairs(assembler.items_guns) do
-    finished = finished and put_items_to_entity(assembler.wstore[k], assembler.items_guns[k])
+    finished = put_items_to_entity(assembler.wstore[k], assembler.items_guns[k]) and finished
   end
   return finished
 end
@@ -434,6 +435,7 @@ function state_handler.prepare_assembly(assembler)
     assembler.assembly_progress_max = get_titan_assembly_time(assembler.class_recipe)
     change_assembler_state(assembler, states.assembling)
   else
+    -- TODO: update without recreation to prevent modal views disappearing!
     -- update_assembler_guis(assembler)
   end
 end
@@ -444,7 +446,7 @@ function state_handler.assembling(assembler)
     update_assembler_guis(assembler)
   else
     local titan_type = shared.titan_types[assembler.class_recipe]
-    assembler.force.print("Placing titan "..titan_type.name) -- TODO: translate
+    assembler.force.print({"WH40k-Titans-gui.msg-titan-created", {"entity-name."..titan_type.entity}})
     titan_entity = assembler.surface.create_entity{
       name=titan_type.entity, force=assembler.force, position=assembler.position,
     }
@@ -465,22 +467,25 @@ function state_handler.waiting_disassembly(assembler)
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
   if titan_entity and titan_info then
     local titan_type = shared.titan_types[titan_entity.name]
-    assembler.force.print("Disassembling titan "..titan_type.name) -- TODO: translate
+    assembler.force.print({"WH40k-Titans-gui.msg-titan-removed", {"entity-name."..titan_type.entity}})
     titan_to_bunker_internal(assembler, titan_info)
     titan_entity.destroy({raise_destroy=true})
     assembler.assembly_progress_max = get_titan_assembly_time(titan_info.class)
     assembler.assembly_progress = assembler.assembly_progress_max
+    assembler.message = nil
     change_assembler_state(assembler, states.disassembling)
   end
 end
 
 function state_handler.disassembling(assembler)
-  assembler.assembly_progress = assembler.assembly_progress - 1
+  assembler.assembly_progress = assembler.assembly_progress - 2
   if assembler.assembly_progress > 0 then
     update_assembler_guis(assembler)
   else
     if bunker_internal_to_outer(assembler) then
       change_assembler_state(assembler, states.idle)
+    else
+      assembler.message = "not enough space!"
     end
   end
 end
@@ -502,6 +507,68 @@ function state_handler.restock(assembler)
   end
 end
 
+
+local states_no_need_clean = {}
+states_no_need_clean[states.disabled] = true -- disabled is on you own risk!
+states_no_need_clean[states.initialising] = true -- just the same
+states_no_need_clean[states.deactivating] = true -- just the same
+states_no_need_clean[states.prepare_assembly] = true -- this state manages lamps itself
+states_no_need_clean[states.assembling] = true -- here, leftovers are fine for a while
+states_no_need_clean[states.restock] = true -- TODO: add custom colors for it to depict ammo correctness and amount
+
+local states_for_music = {}
+states_for_music[states.initialising] = true
+states_for_music[states.deactivating] = true
+states_for_music[states.assembling] = true
+states_for_music[states.disassembling] = true
+-- TODO: dynamically consider game.speed?
+
+
+local states_to_corner_colors = {}
+states_to_corner_colors[states.initialising] = color_green
+states_to_corner_colors[states.deactivating] = color_red
+states_to_corner_colors[states.assembling] = color_green
+states_to_corner_colors[states.disassembling] = color_red
+states_to_corner_colors[states.prepare_assembly] = color_blue
+states_to_corner_colors[states.waiting_disassembly] = color_purple
+states_to_corner_colors[states.restock] = color_orange
+states_to_corner_colors[states.idle] = color_ltgrey
+
+local function process_an_assembler(assembler)
+  -- game.print("Handling "..assembler.state.." for assembler "..assembler.uid)
+  state_handler[assembler.state](assembler)
+  if not states_no_need_clean[assembler.state] then
+    -- TODO: shine lamps if chests aren't empty!
+  end
+
+  local lamp_color = states_to_corner_colors[assembler.state]
+  -- if assembler.state==states.restock then
+  if lamp_color then
+    draw_assembler_lamp(assembler,  9, lamp_color)
+    draw_assembler_lamp(assembler, 10, lamp_color)
+    draw_assembler_lamp(assembler, 11, lamp_color)
+    draw_assembler_lamp(assembler, 12, lamp_color)
+  end
+
+  if states_for_music[assembler.state] then
+    assembler.music_step = ((assembler.music_step or 0) + 1) % 4
+    if assembler.music_step == 1 then
+      assembler.surface.play_sound{
+        path="wh40k-titans-assembly-main",
+        position=assembler.position, volume_modifier=1
+      }
+    end
+    if assembler.music_step == 1 and math.random(0, 1) == 0 then
+      assembler.surface.play_sound{
+        path="wh40k-titans-assembly-add",
+        position=assembler.position, volume_modifier=1
+      }
+    end
+  else
+    assembler.music_step = 0
+  end
+end
+
 local function process_assemblers()
   if not global.active_mods_cache then
     global.active_mods_cache = game.active_mods
@@ -511,16 +578,15 @@ local function process_assemblers()
   local bucket = ctrl_data.assembler_buckets[game.tick % building_update_rate]
   if not bucket then return end
   for uid, assembler in pairs(bucket) do
-    -- game.print("Handling "..assembler.state.." for assembler "..assembler.uid)
-    state_handler[assembler.state](assembler)
-
     if true
-      and assembler.state ~= states.prepare_assembly
-      and assembler.state ~= states.assembling
-      and assembler.state ~= states.waiting_disassembly
-      and assembler.state ~= states.disassembling
+      and (not assembler.wentity or not assembler.wentity.valid)
+      and (not assembler.sentity or not assembler.sentity.valid)
     then
-      -- TODO: shine lamps if chests aren't empty!
+      log("Missing assembler: "..serpent.block(assembler))
+      game.print("Missing assembler "..assembler.uid.." with state "..tostring(assembler.state))
+      bucket[uid] = nil
+    else
+      process_an_assembler(assembler)
     end
   end
 end
@@ -622,7 +688,7 @@ end
 function gui_maker.assembling(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.disassembling}, sprite="virtual-signal/signal-red", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   main_frame.main_room.add{ type="progressbar", name=main_frame_assembly_progress, direction="horizontal", value=assembler.assembly_progress/assembler.assembly_progress_max }
-  -- TODO: show class, weapons
+  -- TODO: show class, weapons !
 end
 
 function gui_maker.waiting_disassembly(assembler, main_frame)
@@ -631,7 +697,7 @@ end
 
 function gui_maker.disassembling(assembler, main_frame)
   main_frame.main_room.add{ type="progressbar", name=main_frame_assembly_progress, direction="horizontal", value=assembler.assembly_progress/assembler.assembly_progress_max }
-  -- TODO: show class, weapons
+  -- TODO: show class, weapons !
 end
 
 function gui_maker.restock(assembler, main_frame)
@@ -749,7 +815,6 @@ end)
 lib:on_event(defines.events.on_gui_closed, function(event)
   local player = game.get_player(event.player_index)
   if event.element and event.element.name == main_frame_name then
-    -- TODO: save values? Use some gui_closer
     event.element.destroy()
     ctrl_data.assembler_gui[event.player_index] = nil
   end

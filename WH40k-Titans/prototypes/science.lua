@@ -47,6 +47,7 @@ data:extend({
   {
     type = "lab",
     name = shared.lab,
+    se_allow_in_space = true,
     icon = shared.media_prefix.."graphics/icons/lab.png",
     icon_size = 64, icon_mipmaps = 4,
     flags = {"placeable-player", "player-creation"},
