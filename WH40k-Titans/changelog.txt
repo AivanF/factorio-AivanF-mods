@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.10
-Date: 2023-09-20
+Date: 2023-09-19
+  Bugfixes:
+    - Fixed missing recipes in the Assembly Bunker GUI
+---------------------------------------------------------------------------------------------------
+Version: 0.9.10
+Date: 2023-09-19
   Features:
     - Assembly Bunker GUI and work! Now you can't mine a titan or create a placeable item :)
     - Assembly Bunker leftovers chest in case it was deactivated and mined with items inside.

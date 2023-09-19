@@ -166,7 +166,7 @@ shared.titan_type_list = {
       {shared.servitor,    4},
       {shared.void_shield, 4},
       {shared.brain,       5},
-      {shared.motor,      40},
+      {shared.motor,      35},
       {shared.frame_part, 40},
       {shared.antigraveng, 3},
     },

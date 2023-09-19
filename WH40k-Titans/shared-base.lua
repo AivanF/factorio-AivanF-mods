@@ -43,14 +43,14 @@ shared.bunker_bstore = shared.mod_prefix.."assembly-bunker-body-storage"
 shared.bunker_lamp = shared.mod_prefix.."assembly-bunker-bunker-lamp"
 shared.leftovers_chest = shared.mod_prefix.."leftovers-chest"
 
-shared.craftcat_titan = shared.mod_prefix.."titan"
-shared.craftcat_weapon = shared.mod_prefix.."weapon"
 shared.craftcat_empty = shared.mod_prefix.."empty"
+shared.craftcat_titan = shared.mod_prefix.."titan-"
+shared.craftcat_weapon = shared.mod_prefix.."weapon-"
 
 shared.subg_build = "wh40k-titan-buildings"
 shared.subg_parts = "wh40k-titan-parts"
 shared.subg_titans = "wh40k-titan-classes"
-shared.subg_weapons = "wh40k-titan-weapons"
+shared.subg_weapons = "wh40k-titan-weapons-"
 
 shared.lab = "wh40k-lab"
 shared.sp = "wh40k-titan-science-pack"
@@ -101,5 +101,26 @@ color_green   = {20,  120,  20}
 color_cyan    = {20,  200, 200}
 color_ltgrey  = {160, 160, 160}
 color_dkgrey  = { 60,  60,  60}
+
+technomagic_resistances = {
+  { type = "impact", decrease=10000, percent=100 },
+  { type = "physical", percent=100 },
+  { type = "explosion", percent=100 },
+  { type = "laser", percent = 100 },
+  { type = "fire", percent = 100 },
+  { type = "electric", percent=100 },
+  { type = "acid", percent=100 },
+  { type = "poison", percent=100 },
+}
+strong_resistances = {
+  { type = "impact", decrease=1000, percent=100 },
+  { type = "poison", decrease=1000, percent=100 },
+  { type = "fire", decrease=1000, percent=100 },
+  { type = "laser", decrease=50, percent=50 },
+  { type = "electric", decrease=50, percent=50 },
+  { type = "physical", decrease=50, percent=50 },
+  { type = "explosion", decrease=50, percent=50 },
+  { type = "acid", decrease=50, percent=50 },
+}
 
 return shared

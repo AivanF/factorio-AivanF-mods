@@ -176,7 +176,7 @@ for _, info in pairs(parts) do
       result = info.name,
       results = results,
       main_product = info.name,
-      category = info.category or "crafting",
+      category = info.category or "advanced-crafting",
     },
   })
 end

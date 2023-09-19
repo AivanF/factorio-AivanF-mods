@@ -49,6 +49,8 @@ local wname = nil
 local order_index = 1
 
 local function add_weapon(weapon_type)
+  order_index = order_index + 1
+  weapon_type.order_index = order_index
   weapon_type.entity = shared.mod_prefix..weapon_type.name
   weapon_type.cd = weapon_type.cd or 3
   weapon_type.attack_size = weapon_type.attack_size or 1
@@ -59,122 +61,6 @@ end
 
 
 --------- 1. Small
-
-wname = "inferno"  -- 3 flamers
-shared.weapon_inferno = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_small,
-  category = shared.wc_flamer,
-  min_dst = 6, max_dst = dst_s,
-  speed = 18, barrel = 9,
-  ammo = shared.flamer_ammo,
-  per_shot = 1, inventory = 2000,
-  cd = 0.05, attack_size = 5, scatter = 5,
-  bolt_type = "flamethrower-fire-stream",
-  ingredients = {
-    {shared.melta_pump, 3},
-    {shared.barrel, 6},
-    {shared.frame_part, 2},
-  },
-  icon = "__base__/graphics/icons/flamethrower-turret.png",  -- TODO: replace
-  icon_size = 64, icon_mipmaps = 4,
-  animation = shared.mod_prefix.."Inferno",
-  order_index = order_index,
-})
-order_index = order_index + 1
-
-wname = "vulcan-mega-bolter"  -- 2 guns with 6 big bolters
-shared.weapon_megabolter = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_small,
-  category = shared.wc_bolter,
-  min_dst = 6, max_dst = dst_s,
-  ammo = shared.big_bolt,
-  per_shot = 1, inventory = 2000,
-  cd = 0.1, attack_size = 3,
-  ingredients = {
-    {shared.bolter_engine, 2},
-    {shared.barrel, 12},
-    {shared.frame_part, 2},
-  },
-  icon = "__base__/graphics/icons/gun-turret.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
-  order_index = order_index,
-})
-order_index = order_index + 1
-
-wname = "mauler-bolt-cannon"  -- 1 huge bolter
-shared.weapon_boltcannon = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_small,
-  category = shared.wc_bolter,
-  min_dst = 6, max_dst = dst_s,
-  ammo = shared.huge_bolt,
-  per_shot = 1, inventory = 500,
-  cd = 2,
-  ingredients = {
-    {shared.bolter_engine, 3},
-    {shared.barrel, 4},
-    {shared.frame_part, 4},
-  },
-  icon = "__base__/graphics/icons/gun-turret.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
-  order_index = order_index,
-})
-order_index = order_index + 1
-
-wname = "lascannon"
-shared.weapon_lascannon = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_small,
-  category = shared.wc_laser,
-  min_dst = 6, max_dst = dst_m,
-  speed = 15, barrel = 12,
-  ammo = shared.laser_ammo,
-  per_shot = 2, inventory = 2000,
-  cd = 0.4,
-  bolt_type = shared.mod_prefix.."bolt-laser",
-  ingredients = {
-    {shared.las_engine, 1},
-    {shared.barrel, 2},
-    {shared.frame_part, 2},
-  },
-  icon = shared.media_prefix.."graphics/icons/weapons/LasCannon.png",
-  icon_size = 64, icon_mipmaps = 3,
-  animation = shared.mod_prefix.."LasCannon",
-  order_index = order_index,
-})
-order_index = order_index + 1
-
-wname = "turbo-laser-destructor"  -- 2 lasers
-shared.weapon_turbolaser = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_small,
-  category = shared.wc_laser,
-  min_dst = 8, max_dst = dst_m, spd=1.5,
-  speed = 15, barrel = 12,
-  ammo = shared.laser_ammo,
-  per_shot = 3, inventory = 6000,
-  cd = 0.15, attack_size = 3, scatter = 2,
-  bolt_type = shared.mod_prefix.."bolt-laser",
-  ingredients = {
-    {shared.las_engine, 2},
-    {shared.barrel, 4},
-    {shared.frame_part, 5},
-  },
-  icon = shared.media_prefix.."graphics/icons/weapons/Turbo-Laser.png",
-  icon_size = 64, icon_mipmaps = 3,
-  animation = shared.mod_prefix.."Turbo-Laser",
-  order_index = order_index,
-})
-order_index = order_index + 1
 
 wname = "plasma-blastgun"
 shared.weapon_plasma_blastgun = wname
@@ -197,9 +83,113 @@ add_weapon({
   icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png",
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-BlastGun",
-  order_index = order_index,
 })
-order_index = order_index + 1
+
+wname = "inferno"  -- 3 flamers
+shared.weapon_inferno = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_flamer,
+  min_dst = 6, max_dst = dst_s,
+  speed = 18, barrel = 9,
+  ammo = shared.flamer_ammo,
+  per_shot = 1, inventory = 2000,
+  cd = 0.05, attack_size = 5, scatter = 5,
+  bolt_type = "flamethrower-fire-stream",
+  ingredients = {
+    {shared.melta_pump, 3},
+    {shared.barrel, 6},
+    {shared.frame_part, 2},
+  },
+  icon = "__base__/graphics/icons/flamethrower-turret.png",  -- TODO: replace
+  icon_size = 64, icon_mipmaps = 4,
+  animation = shared.mod_prefix.."Inferno",
+})
+
+wname = "vulcan-mega-bolter"  -- 2 guns with 6 big bolters
+shared.weapon_megabolter = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_bolter,
+  min_dst = 6, max_dst = dst_s,
+  ammo = shared.big_bolt,
+  per_shot = 1, inventory = 2000,
+  cd = 0.1, attack_size = 3,
+  ingredients = {
+    {shared.bolter_engine, 2},
+    {shared.barrel, 12},
+    {shared.frame_part, 2},
+  },
+  icon = "__base__/graphics/icons/gun-turret.png",
+  icon_size = 64, icon_mipmaps = 4,
+  animation = nil,  -- TODO: here!
+})
+
+wname = "mauler-bolt-cannon"  -- 1 huge bolter
+shared.weapon_boltcannon = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_bolter,
+  min_dst = 6, max_dst = dst_s,
+  ammo = shared.huge_bolt,
+  per_shot = 1, inventory = 500,
+  cd = 2,
+  ingredients = {
+    {shared.bolter_engine, 3},
+    {shared.barrel, 4},
+    {shared.frame_part, 4},
+  },
+  icon = "__base__/graphics/icons/gun-turret.png",
+  icon_size = 64, icon_mipmaps = 4,
+  animation = nil,  -- TODO: here!
+})
+
+wname = "lascannon"
+shared.weapon_lascannon = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_laser,
+  min_dst = 6, max_dst = dst_m,
+  speed = 15, barrel = 12,
+  ammo = shared.laser_ammo,
+  per_shot = 2, inventory = 2000,
+  cd = 0.4,
+  bolt_type = shared.mod_prefix.."bolt-laser",
+  ingredients = {
+    {shared.las_engine, 1},
+    {shared.barrel, 2},
+    {shared.frame_part, 2},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/LasCannon.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."LasCannon",
+})
+
+wname = "turbo-laser-destructor"  -- 2 lasers
+shared.weapon_turbolaser = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_small,
+  category = shared.wc_laser,
+  min_dst = 8, max_dst = dst_m, spd=1.5,
+  speed = 15, barrel = 12,
+  ammo = shared.laser_ammo,
+  per_shot = 3, inventory = 6000,
+  cd = 0.15, attack_size = 3, scatter = 2,
+  bolt_type = shared.mod_prefix.."bolt-laser",
+  ingredients = {
+    {shared.las_engine, 2},
+    {shared.barrel, 4},
+    {shared.frame_part, 5},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/Turbo-Laser.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."Turbo-Laser",
+})
 
 wname = "missile-launcher"
 shared.weapon_missiles = wname
@@ -221,9 +211,7 @@ add_weapon({
   icon = shared.media_prefix.."graphics/icons/weapons/MissileLauncher.png",
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."MissileLauncher",
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 wname = "apocalypse-missiles"
 shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
@@ -245,9 +233,7 @@ add_weapon({
   icon = shared.media_prefix.."graphics/icons/weapons/ApocLauncher.png",
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."ApocLauncher",
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 
 --------- 2. Medium
@@ -273,9 +259,7 @@ add_weapon({
   icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 wname = "gatling-blaster"  -- 3 huge bolters
 shared.weapon_gatling_blaster = wname
@@ -295,9 +279,7 @@ add_weapon({
   icon = "__base__/graphics/icons/gun-turret.png",
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 -- wname = "quake-cannon"
 -- shared.weapon_quake_cannon = wname
@@ -316,32 +298,8 @@ order_index = order_index + 1
 --   icon = "__base__/graphics/icons/grenade.png",
 --   icon_size = 64, icon_mipmaps = 4,
 --   animation = nil,  -- TODO: here!
---   order_index = order_index,
 -- })
--- order_index = order_index + 1
-
-wname = "volcano-cannon"
-shared.weapon_volcano_cannon = wname
-add_weapon({
-  name = wname,
-  grade = shared.gun_grade_medium,
-  category = shared.wc_hell,
-  min_dst = 8, max_dst = dst_l,
-  ammo = shared.hell_ammo,
-  ingredients = {
-    {shared.melta_pump, 3},
-    {shared.ehe_emitter, 3},
-    {shared.barrel, 4},
-    {shared.frame_part, 5},
-  },
-  per_shot = 2, inventory = 500,
-  icon = "__base__/graphics/icons/flamethrower-turret.png",
-  icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
-  order_index = order_index,
-})
-order_index = order_index + 1
-
+-- 
 -- wname = "graviton-ruinator"
 -- shared.weapon_graviton_ruinator = wname
 -- add_weapon({
@@ -360,10 +318,8 @@ order_index = order_index + 1
 --   icon = "__base__/graphics/icons/inserter.png",
 --   icon_size = 64, icon_mipmaps = 4,
 --   animation = nil,  -- TODO: here!
---   order_index = order_index,
 -- })
--- order_index = order_index + 1
-
+-- 
 wname = "volkite-destructor"  -- quick big melta, short-range
 shared.weapon_volkite_destructor = wname
 add_weapon({
@@ -383,9 +339,27 @@ add_weapon({
   icon = "__base__/graphics/icons/flamethrower-turret.png",
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
-  order_index = order_index,
 })
-order_index = order_index + 1
+
+wname = "volcano-cannon"
+shared.weapon_volcano_cannon = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_medium,
+  category = shared.wc_hell,
+  min_dst = 8, max_dst = dst_l,
+  ammo = shared.hell_ammo,
+  ingredients = {
+    {shared.melta_pump, 3},
+    {shared.ehe_emitter, 3},
+    {shared.barrel, 4},
+    {shared.frame_part, 5},
+  },
+  per_shot = 2, inventory = 500,
+  icon = "__base__/graphics/icons/flamethrower-turret.png",
+  icon_size = 64, icon_mipmaps = 4,
+  animation = nil,  -- TODO: here!
+})
 
 
 --------- 3. Huge
@@ -398,7 +372,7 @@ add_weapon({
   category = shared.wc_plasma,
   min_dst = 12, max_dst = dst_l,
   ammo = shared.plasma_ammo,
-  per_shot = 10, inventory = 5000,
+  per_shot = 10, inventory = 50000,
   cd = 4,
   bolt_type = shared.mod_prefix.."bolt-plasma-3",
   ingredients = {
@@ -411,9 +385,7 @@ add_weapon({
   icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",  -- TODO: replace
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 wname = "hellstorm-cannon"
 shared.weapon_hellstorm_cannon = wname
@@ -423,7 +395,7 @@ add_weapon({
   category = shared.wc_hell,
   min_dst = 16, max_dst = dst_xl, spd=0.2,
   ammo = shared.hell_ammo,
-  per_shot = 12, inventory = 1000,
+  per_shot = 12, inventory = 12000,
   cd = 6,
   ingredients = {
     {shared.melta_pump, 10},
@@ -434,9 +406,7 @@ add_weapon({
   icon = "__base__/graphics/icons/flamethrower-turret.png",
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
-  order_index = order_index,
 })
-order_index = order_index + 1
 
 -- wname = "doomstrike-missiles"
 -- shared.weapon_doomstrike_missiles = wname
@@ -455,6 +425,5 @@ order_index = order_index + 1
 --   icon = shared.media_prefix.."graphics/icons/weapons/MissileLauncher.png", -- TODO: replace
 --   icon_size = 64, icon_mipmaps = 3,
 --   animation = shared.mod_prefix.."MissileLauncher", -- TODO: replace
---   order_index = order_index,
 -- })
--- order_index = order_index + 1
+-- 

@@ -717,6 +717,25 @@ function gui_maker.idle(assembler, main_frame)
   top_line.add{type="sprite-button", tags={action=act_change_state, state=states.restock}, sprite="virtual-signal/signal-yellow", tooltip={"WH40k-Titans-gui.assembly-act-restock"} }
 end
 
+local no_recipes_filter = {
+  {filter="category", category=shared.craftcat_empty, mode="and"},
+  {filter="enabled", mode="and"},
+}
+
+local function get_category_filters_by_research(player, category, research)
+  local has_character = not not player.character
+  local filters = {}
+  for i = 1, 3 do
+    if not has_character or player.force.technologies[shared.mod_prefix..i..research].researched then
+      table.insert(filters, {filter="category", category=category..i, mode="or"})
+    end
+  end
+  if #filters == 0 then
+    filters = no_recipes_filter
+  end
+  return filters
+end
+
 function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   -- TODO: add auto-build setting, show button for states.assembling
@@ -727,19 +746,14 @@ function gui_maker.prepare_assembly(assembler, main_frame)
     caption="Status: "..(assembler.message or "unknown")
   }
 
-  local has_character = not not game.get_player(main_frame.player_index).character
-  function try_limit(filters)
-    if has_character then
-      table.insert(filters, {filter="enabled", mode="and"})
-    end
-    return filters
-  end
-
-  local grid = main_frame.main_room.add{ type="frame", direction="horizontal" }
+  local player = game.get_player(main_frame.player_index)
+  local filters
   local btn
+  local grid = main_frame.main_room.add{ type="frame", direction="horizontal" }
+
+  filters = get_category_filters_by_research(player, shared.craftcat_titan, "-class")
   btn = grid.add{
-    type="choose-elem-button", name="", elem_type="recipe",
-    elem_filters = try_limit{{filter="category", category = shared.craftcat_titan}},
+    type="choose-elem-button", name="", elem_type="recipe", elem_filters = filters,
     recipe = assembler.class_recipe,
     tags={action=act_set_class},
   }
@@ -747,13 +761,13 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
+  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade")
   for k = 1, 6 do
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",
-      elem_filters = try_limit{{filter="category", category = shared.craftcat_weapon}},
-      recipe = assembler.weapon_recipes[k],
+      elem_filters=filters, recipe=assembler.weapon_recipes[k],
       tags={action=act_set_weapon, k=k },
-    } 
+    }
     weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
     if titan_type then
       if not titan_type.guns[k] and not weapon_type then

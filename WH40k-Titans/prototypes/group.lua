@@ -1,15 +1,28 @@
 local shared = require("shared")
 local group_name = "wh40k-titans"
 
+for i = 1, 5 do
+  data:extend{{
+    type = "recipe-category",
+    name = shared.craftcat_titan..i
+  }}
+end
+for i = 1, 3 do
+  data:extend{
+    {
+      type = "recipe-category",
+      name = shared.craftcat_weapon..i
+    },
+    {
+      type = "item-subgroup",
+      name = shared.subg_weapons..i,
+      group = group_name,
+      order = "a-40-"..i,
+    },
+  }
+end
+
 data:extend{
-  {
-    type = "recipe-category",
-    name = shared.craftcat_titan
-  },
-  {
-    type = "recipe-category",
-    name = shared.craftcat_weapon
-  },
   {
     type = "recipe-category",
     name = shared.craftcat_empty
@@ -39,11 +52,5 @@ data:extend{
     name = shared.subg_titans,
     group = group_name,
     order = "a-30",
-  },
-  {
-    type = "item-subgroup",
-    name = shared.subg_weapons,
-    group = group_name,
-    order = "a-40",
   },
 }

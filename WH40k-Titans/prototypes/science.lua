@@ -3,7 +3,7 @@ local shared = require("shared")
 local hit_effects = require ("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
 
-local tint = { r = 8, g = .5, b = .7, a = 1}
+local tint = { r = .8, g = .7, b = .7, a = 1}
 
 data:extend({
   {

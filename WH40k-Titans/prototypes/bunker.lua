@@ -11,27 +11,6 @@ local special_flags = {
   "not-blueprintable", "not-deconstructable", "not-flammable",
 }
 
-local technomagic_resistances = {
-  { type = "impact", decrease=10000, percent=100 },
-  { type = "physical", percent=100 },
-  { type = "explosion", percent=100 },
-  { type = "laser", percent = 100 },
-  { type = "fire", percent = 100 },
-  { type = "electric", percent=100 },
-  { type = "acid", percent=100 },
-  { type = "poison", percent=100 },
-}
-local bunker_resistances = {
-  { type = "impact", decrease=1000, percent=100 },
-  { type = "poison", decrease=1000, percent=100 },
-  { type = "fire", decrease=1000, percent=100 },
-  { type = "laser", decrease=50, percent=50 },
-  { type = "electric", decrease=50, percent=50 },
-  { type = "physical", decrease=50, percent=50 },
-  { type = "explosion", decrease=50, percent=50 },
-  { type = "acid", decrease=50, percent=50 },
-}
-
 local lamp = table.deepcopy(data.raw["lamp"]["small-lamp"])
 lamp.name = shared.bunker_lamp
 lamp.max_health = 10000
@@ -297,12 +276,11 @@ local base_bunker = {
   -- corpse = "big-remnants",
   corpse = "rocket-silo-remnants",
   dying_explosion = "massive-explosion",
-  resistances = bunker_resistances,
+  resistances = strong_resistances,
   selection_box = {{-11, -11}, {11, 11}},
   collision_box = {{-11, -11}, {11, 11}},
   collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
   selection_priority = 10,
-  render_layer = "floor",
   vehicle_impact_sound = sounds.generic_impact,
   open_sound = sounds.electric_network_open,
   close_sound = sounds.electric_network_close,
@@ -312,7 +290,7 @@ local base_bunker = {
     module_slots = 0,
   },
   crafting_speed = 0.01,
-  crafting_categories = {shared.craftcat_titan},
+  crafting_categories = {shared.craftcat_empty},
   energy_source = { type = "void" },
   energy_usage = "1W",
 
@@ -334,7 +312,7 @@ bunker_active.localised_description = {"entity-description."..shared.bunker_acti
 
 local leftovers_chest = table.deepcopy(data.raw["container"]["iron-chest"])
 leftovers_chest.name = shared.leftovers_chest
-leftovers_chest.resistances = bunker_resistances
+leftovers_chest.resistances = strong_resistances
 leftovers_chest.next_upgrade = nil
 leftovers_chest.minable = {mining_time = 3}
 leftovers_chest.inventory_size = 350

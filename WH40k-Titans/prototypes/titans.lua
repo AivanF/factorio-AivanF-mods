@@ -43,7 +43,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       subgroup = shared.subg_titans,
       order = "b[dummy-titan-item-"..class.."]",
       enabled = false,
-      category = shared.craftcat_titan,
+      category = shared.craftcat_titan..math.floor(titan_type.class/10),
       ingredients = shared.preprocess_recipe(titan_type.ingredients),
       results = minable_titans and {name} or {},
       energy_required = 60*60*24,
