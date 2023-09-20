@@ -8,8 +8,61 @@ local function multEnergy(energy, mul)
   return (tonumber(e) * mul) .. u
 end
 
+local damage_set = settings.startup["af-elt-dmg-cf"].value
+local range_set  = settings.startup["af-elt-dst-cf"].value
+local energy_set = settings.startup["af-elt-pwr-cf"].value
+local health_set = settings.startup["af-elt-hp-cf"].value
 
-local function makeLaser(new_name, range_mult, damage_mult, energy_mult, health_mult, health_penalty, tint, ingredients)
+local function make_resistances(resist)
+  return {
+    {
+      type = "physical",
+      decrease = 5 ^ resist,
+      percent = 20
+    }, {
+      type = "impact",
+      decrease = 5 ^ resist,
+      percent = 50
+    }, {
+      type = "explosion",
+      decrease = 10 ^ resist,
+      percent = 30
+    }, {
+      type = "fire",
+      percent = 100
+    }, {
+      type = "acid",
+      decrease = 5 ^ resist,
+      percent = 80
+    }, {
+      type = "laser",
+      decrease = 5 ^ resist,
+      percent = 70
+    }
+  }
+end
+
+
+local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, health_penalty, tint, ingredients)
+  local range_mult = range_set ^ range_cf
+  local damage_mult = damage_set ^ damage_cf
+  local energy_mult = energy_set ^ energy_cf
+  local health_mult = health_set ^ health_cf
+
+  local descr
+  if health_cf >= 2 then
+    if damage_cf > range_cf then
+      descr = {"item-description.laser-turret-mk3-stro", damage_mult, range_mult}
+    else
+      descr = {"item-description.laser-turret-mk3-long", math.floor(range_mult), damage_mult}
+    end
+  else
+    if damage_cf > range_cf then
+      descr = {"item-description.laser-turret-mk2-stro", damage_mult}
+    else
+      descr = {"item-description.laser-turret-mk2-long", range_mult}
+    end
+  end
 
   local newBeam = table.deepcopy(data.raw.beam["laser-beam"])
   newBeam.action.action_delivery.target_effects[1].damage.amount = data.raw.beam["laser-beam"].action.action_delivery.target_effects[1].damage.amount * damage_mult
@@ -18,8 +71,10 @@ local function makeLaser(new_name, range_mult, damage_mult, energy_mult, health_
   data:extend({ newBeam })
 
   local newEntity = table.deepcopy(base_turret)
+  newEntity.localised_description = descr
   newEntity.rotation_speed = newEntity.rotation_speed * math.sqrt(math.max(damage_mult, range_mult))
   newEntity.max_health = newEntity.max_health * health_mult
+  newEntity.resistances = make_resistances(health_cf)
   newEntity.map_color = tint
   newEntity.base_picture.layers[1].tint = tint
   newEntity.base_picture.layers[1].hr_version.tint = tint
@@ -39,7 +94,7 @@ local function makeLaser(new_name, range_mult, damage_mult, energy_mult, health_
   newEntity.attack_parameters.cooldown = newBeam.damage_interval
   newEntity.attack_parameters.range = newEntity.attack_parameters.range * range_mult
   newEntity.attack_parameters.ammo_type.action.action_delivery.max_length = newEntity.attack_parameters.ammo_type.action.action_delivery.max_length * range_mult
-  newEntity.attack_parameters.damage_modifier = newEntity.attack_parameters.damage_modifier * damage_mult
+  newEntity.attack_parameters.damage_modifier = newEntity.attack_parameters.damage_modifier * math.sqrt(damage_mult)
   newEntity.attack_parameters.ammo_type.energy_consumption = multEnergy(data.raw["electric-turret"]["laser-turret"].attack_parameters.ammo_type.energy_consumption, energy_mult)
   newEntity.energy_source.buffer_capacity = multEnergy(data.raw["electric-turret"]["laser-turret"].energy_source.buffer_capacity, energy_mult * 5)
   newEntity.energy_source.input_flow_limit = multEnergy(data.raw["electric-turret"]["laser-turret"].energy_source.input_flow_limit, energy_mult)
@@ -54,17 +109,27 @@ local function makeLaser(new_name, range_mult, damage_mult, energy_mult, health_
       tint = tint,
       icon_mipmaps = 4,
       icon_size = 64,
-    }
+    },
+    (damage_cf > range_cf) and {
+      icon = "__core__/graphics/icons/technology/constants/constant-damage.png",
+      icon_mipmaps = 3,
+      icon_size = 128,
+      scale = 0.1 + health_cf/10,
+      shift = {8, 16},
+    } or {
+      icon = "__core__/graphics/icons/technology/constants/constant-range.png",
+      icon_mipmaps = 3,
+      icon_size = 128,
+      scale = 0.1 + health_cf/10,
+      shift = {8, 16},
+    },
   }
   newItem.name = new_name
-  newItem.localised_description = {"item-description."..new_name}
   newItem.place_result = new_name
   data:extend({newItem})
 
   local newRecipe = {
     name = new_name,
-    -- localised_name = {new_name},
-    -- localised_description = {"item-description."..new_name},
     enabled = false,
     energy_required = 20,
     ingredients = ingredients,
@@ -82,32 +147,32 @@ local mk2_stro = "laser-turret-mk2-stro"
 local mk3_long = "laser-turret-mk3-long"
 local mk3_stro = "laser-turret-mk3-stro"
 
-makeLaser(
+local mk2_long_ent = makeLaser(
   --       dst dmg  en  hp hp_pen
-  mk2_long,  2,  1,  4,  4,     1,
-  { r = .7, g = 1, b = .8, a = 1}, {
+  mk2_long,  1,  0,  1,  1,     2,
+  { r = .7, g = 0.8, b = 1, a = 1}, {
   {"laser-turret", 4}, {"stone-brick", 20}, {"effectivity-module", 1}
 })
-makeLaser(
+local mk2_stro_ent = makeLaser(
   --       dst dmg  en  hp hp_pen
-  mk2_stro,  1,  2,  4,  4,    -1,
+  mk2_stro,  0,  1,  1,  1,    -2,
   { r = .4, g = .7, b = .7, a = 1}, {
   {"laser-turret", 4}, {"stone-brick", 20}, {"speed-module", 1}
 })
 makeLaser(
   --       dst dmg  en  hp hp_pen
-  mk3_long,  4,  2, 16, 10,     1,
+  mk3_long,1.5,  1,  2,  2,    1,
   { r = 1, g = .8, b = .6, a = 1}, {
   {mk2_long, 4}, {"concrete", 50}, {"effectivity-module-2", 1}
 })
 makeLaser(
   --       dst dmg  en  hp hp_pen
-  mk3_stro, 2,   4, 16, 10,    -1,
-  { r = .8, g = .5, b = .2, a = 1}, {
+  mk3_stro,  1,  2,  2,  2,    -3,
+  { r = .8, g = .4, b = .2, a = 1}, {
   {mk2_stro, 4}, {"concrete", 50}, {"speed-module-2", 1}
 })
--- mk2_long_ent.next_upgrade = mk3_long
--- mk2_stro_ent.next_upgrade = mk3_stro
+mk2_long_ent.next_upgrade = mk3_long
+mk2_stro_ent.next_upgrade = mk3_stro
 
 local tech2 = "laser-turret-mk2"
 local tech3 = "laser-turret-mk3"
@@ -194,6 +259,7 @@ if mods["space-exploration"] then
    {"military-science-pack", 1},
    {"chemical-science-pack", 1},
    {"se-rocket-science-pack", 1},
+   {"space-science-pack", 1},
    {"utility-science-pack", 1},
   }
 end

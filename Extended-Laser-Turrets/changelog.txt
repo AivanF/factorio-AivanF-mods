@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2023-09-20
+  Features:
+    - Settings to adjust almost everything. Automatically higher defaults if modded enemies are present.
+  Info:
+    - Dynamic values in description.
+  Graphics:
+    - More distinctive entity colours.
+    - Additional small sub-icons.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2023-08-05
   Info:
