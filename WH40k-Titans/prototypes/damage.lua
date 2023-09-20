@@ -1,5 +1,6 @@
 local shared = require("shared")
 local sounds = require("__base__.prototypes.entity.sounds")
+local fireutil = require("__base__.prototypes.fire-util")
 
 data:extend({
   {
@@ -190,7 +191,7 @@ data:extend({
               upper_distance_threshold = 8,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 1500, type = "laser"}
+              damage = {amount = 2000, type = "laser"}
             },
             {
               type = "damage",
@@ -398,7 +399,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 4000, type = "explosion"}
+              damage = {amount = 10000, type = "explosion"}
             },
             {
               type = "damage",
@@ -407,7 +408,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 3000, type = "fire"}
+              damage = {amount = 4000, type = "fire"}
             },
             {
               type = "damage",
@@ -416,7 +417,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 3000, type = "electric"}
+              damage = {amount = 6000, type = "electric"}
             },
           }
         }
@@ -512,7 +513,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 15000, type = "explosion"}
+              damage = {amount = 25000, type = "explosion"}
             },
             {
               type = "damage",
@@ -521,7 +522,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 10000, type = "fire"}
+              damage = {amount = 15000, type = "fire"}
             },
             {
               type = "damage",
@@ -530,7 +531,7 @@ data:extend({
               -- upper_distance_threshold = 24,
               -- lower_damage_modifier = 1,
               -- upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "electric"}
+              damage = {amount = 20000, type = "electric"}
             },
           }
         }
@@ -550,7 +551,11 @@ data:extend({
   },
 })
 
+local fire = table.deepcopy(data.raw["fire"]["fire-flame"])
+fire.name = "titanic-fire-flame"
+fire.damage_per_tick = {amount = 30 / 60, type = "fire"}
 local stream = table.deepcopy(data.raw["stream"]["flamethrower-fire-stream"])
+stream.name = "titanic-fire-stream"
 stream.particle_horizontal_speed = stream.particle_horizontal_speed * 3
 stream.action = {
   {
@@ -574,7 +579,12 @@ stream.action = {
           type = "damage",
           damage = { amount = 25, type = "fire" },
           apply_damage_to_trees = true,
-        }
+        },
+        {
+          type = "damage",
+          damage = { amount = 25, type = "laser" },
+          apply_damage_to_trees = true,
+        },
       }
     }
   },
@@ -587,7 +597,7 @@ stream.action = {
       {
         {
           type = "create-fire",
-          entity_name = "fire-flame",
+          entity_name = "titanic-fire-flame",
           show_in_tooltip = true
         },
         {
@@ -598,4 +608,4 @@ stream.action = {
     }
   }
 }
-data:extend({ stream })
+data:extend({ stream, fire })

@@ -1,4 +1,4 @@
-local shared = require("shared-base")
+local shared = require("shared.shared-base")
 
 ----- Titan types
 -- Scout grade
@@ -186,76 +186,76 @@ shared.titan_type_list = {
       [4] = { oris= 0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
     },
   },
-  -- {
-  --   name = shared.titan_warmaster,
-  --   class = shared.class_warmaster,
-  --   dst = 1.75, dmg = 1.75, spd = 4,
-  --   arms = shared.gun_grade_big,
-  --   carapace1 = shared.gun_grade_medium,
-  --   carapace2 = shared.gun_grade_medium,
-  --   carapace3 = shared.gun_grade_small,
-  --   carapace4 = shared.gun_grade_small,
-  --   ingredients = {
-  --     {shared.energy_core, 7},
-  --     {shared.servitor,    6},
-  --     {shared.void_shield, 6},
-  --     {shared.brain,       8},
-  --     {shared.motor,      60},
-  --     {shared.frame_part, 80},
-  --     {shared.antigraveng, 6},
-  --   },
-  --   foot = shared.titan_foot_big,
-  --   entity = shared.titan_prefix..shared.titan_warmaster,
-  --   health = 60*1000,
-  --   max_shield = 6*5000,
-  --   kill_cliffs = true,
-  --   over_water = false,
-  --   icon = shared.media_prefix.."graphics/icons/titan-4.png",
-  --   icon_size = 64, icon_mipmaps = 3,
-  --   guns = {
-  --     [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
-  --     [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
-  --     [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
-  --     [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
-  --   },
-  -- },
-  -- {
-  --   name = shared.titan_imperator,
-  --   class = shared.class_imperator,
-  --   dst = 2, dmg = 2, spd = 4,
-  --   arms = shared.gun_grade_huge,
-  --   carapace1 = shared.gun_grade_big,
-  --   carapace2 = shared.gun_grade_big,
-  --   carapace3 = shared.gun_grade_medium,
-  --   carapace4 = shared.gun_grade_medium,
-  --   ingredients = {
-  --     {shared.energy_core, 15},
-  --     {shared.servitor,    12},
-  --     {shared.void_shield, 12},
-  --     {shared.brain,       10},
-  --     {shared.motor,      100},
-  --     {shared.frame_part, 150},
-  --     {shared.antigraveng, 10},
-  --   },
-  --   foot = shared.titan_foot_big,
-  --   entity = shared.titan_prefix..shared.titan_imperator,
-  --   health = 120*1000,
-  --   max_shield = 12*5000,
-  --   kill_cliffs = true,
-  --   over_water = true,
-  --   icon = shared.media_prefix.."graphics/icons/titan-5.png",
-  --   icon_size = 64, icon_mipmaps = 3,
-  --   guns = {
-  --     [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
-  --     [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
-  --     [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
-  --     [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
-  --   },
-  -- },
+  {
+    name = shared.titan_warmaster,
+    class = shared.class_warmaster,
+    dst = 1.75, dmg = 1.75, spd = 4,
+    arms = shared.gun_grade_big,
+    carapace1 = shared.gun_grade_medium,
+    carapace2 = shared.gun_grade_medium,
+    carapace3 = shared.gun_grade_small,
+    carapace4 = shared.gun_grade_small,
+    ingredients = {
+      {shared.energy_core, 7},
+      {shared.servitor,    6},
+      {shared.void_shield, 6},
+      {shared.brain,       8},
+      {shared.motor,      60},
+      {shared.frame_part, 80},
+      {shared.antigraveng, 6},
+    },
+    foot = shared.titan_foot_big,
+    entity = shared.titan_prefix..shared.titan_warmaster,
+    health = 60*1000,
+    max_shield = 6*5000,
+    kill_cliffs = true,
+    over_water = false,
+    icon = shared.media_prefix.."graphics/icons/titan-4.png",
+    icon_size = 64, icon_mipmaps = 3,
+    guns = {
+      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
+      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
+      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
+      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
+      [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
+      [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
+    },
+  },
+  {
+    name = shared.titan_imperator,
+    class = shared.class_imperator,
+    dst = 2, dmg = 2, spd = 4,
+    arms = shared.gun_grade_huge,
+    carapace1 = shared.gun_grade_big,
+    carapace2 = shared.gun_grade_big,
+    carapace3 = shared.gun_grade_medium,
+    carapace4 = shared.gun_grade_medium,
+    ingredients = {
+      {shared.energy_core, 15},
+      {shared.servitor,    12},
+      {shared.void_shield, 12},
+      {shared.brain,       10},
+      {shared.motor,      100},
+      {shared.frame_part, 150},
+      {shared.antigraveng, 10},
+    },
+    foot = shared.titan_foot_big,
+    entity = shared.titan_prefix..shared.titan_imperator,
+    health = 120*1000,
+    max_shield = 12*5000,
+    kill_cliffs = true,
+    over_water = true,
+    icon = shared.media_prefix.."graphics/icons/titan-5.png",
+    icon_size = 64, icon_mipmaps = 3,
+    guns = {
+      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
+      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
+      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
+      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
+      [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
+      [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
+    },
+  },
   -- {
   --   name = shared.titan_warmonger,
   --   class = shared.class_warmonger,
@@ -294,8 +294,9 @@ shared.titan_type_list = {
 }
 shared.titan_types = {}
 
-for _, info in pairs(shared.titan_type_list) do
-  shared.titan_types[info.class] = info
-  shared.titan_types[info.name] = info
-  shared.titan_types[info.entity] = info
+for _, titan_type in pairs(shared.titan_type_list) do
+  titan_type.available = not not titan_type.plane
+  shared.titan_types[titan_type.class]  = titan_type
+  shared.titan_types[titan_type.name]   = titan_type
+  shared.titan_types[titan_type.entity] = titan_type
 end

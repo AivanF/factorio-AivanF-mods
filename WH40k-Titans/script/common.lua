@@ -78,7 +78,10 @@ function merge(a, b, over)
 end
 
 -- Long live the Functional programming!
-function chain_arrays(lists)
+function iter_len(list)
+  return #list
+end
+function iter_chain(lists)
   -- Like Python's itertools.chain
   local result = {}
   for _, ar in pairs(lists) do
@@ -88,11 +91,33 @@ function chain_arrays(lists)
   end
   return result
 end
+function iter_zip(lists)
+  -- local common_len = math.min(table.unpack(func_map(iter_len, lists)))
+  local result = {}
+  local index = 1
+  local row, nils
+  while true do
+    nils = 0
+    row = {}
+    for _, ar in pairs(lists) do
+      table.insert(row, ar[index])
+      nils = nils + ((ar[index] == nil) and 1 or 0)
+    end
+    if nils == #lists then
+      break
+    elseif nils > 0 then
+      error("Different lengths")
+    end
+    table.insert(result, row)
+    index = index + 1
+  end
+  return result
+end
 function partial(func, args_pre, args_post)
   args_pre = args_pre or {}
   args_post = args_post or {}
   return function(...)
-    local new_args = chain_arrays(args_pre, {{...}, args_post})
+    local new_args = iter_chain(args_pre, {{...}, args_post})
     func(table.unpack(new_args))
   end
 end

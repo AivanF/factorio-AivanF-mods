@@ -1,4 +1,4 @@
-local shared = require("shared-base")
+local shared = require("shared.shared-base")
 
 -- Aliases
 shared.bolter_engine = shared.proj_engine
@@ -10,11 +10,12 @@ shared.las_engine    = shared.he_emitter
 -- shared.hell_engine   = ehe_emitter + melta_pump
 
 --------- Titan weapon ammo aliases
--- Custom
-shared.big_bolt = shared.mod_prefix.."big-bolt"
-shared.huge_bolt = shared.mod_prefix.."huge-bolt"
-shared.quake_proj = shared.mod_prefix.."quake-projectile"
--- Builtin usage
+--- Custom
+-- TODO: create all this stuff!
+-- shared.big_bolt = shared.mod_prefix.."big-bolt"
+-- shared.huge_bolt = shared.mod_prefix.."huge-bolt"
+-- shared.quake_proj = shared.mod_prefix.."quake-projectile"
+--- Builtin ones and the Bridge
 shared.laser_ammo   = "battery"
 shared.flamer_ammo  = "rocket-fuel"
 shared.melta_ammo   = "rocket-fuel"
@@ -29,8 +30,8 @@ shared.gun_grade_medium = 2
 shared.gun_grade_big    = 3
 
 --------- Weapon categories
--- NOTE: number can be changed, shouldn't go to save files
--- This should be only used for faster runtime indices
+-- NOTE: number can be changed, thus shouldn't go to save files
+-- This should be only used for faster runtime indexing
 shared.wc_rocket = 01
 shared.wc_bolter = 02
 shared.wc_quake  = 03
@@ -40,6 +41,33 @@ shared.wc_plasma = 13
 shared.wc_melta  = 14
 shared.wc_hell   = 15
 shared.wc_melee  = 21
+
+--------- Bolt types
+local bolt_types = {}
+bolt_types.bolt_plasma_1 = {
+  entity = shared.mod_prefix.."bolt-plasma-1",
+  single_damage = 7000,
+}
+bolt_types.bolt_plasma_2 = {
+  entity = shared.mod_prefix.."bolt-plasma-2",
+  single_damage = 20000,
+}
+bolt_types.bolt_plasma_3 = {
+  entity = shared.mod_prefix.."bolt-plasma-3",
+  single_damage = 60000,
+}
+bolt_types.bolt_rocket = {
+  entity = "explosive-rocket",
+  single_damage = 300,
+}
+bolt_types.bolt_fire = {
+  entity = "titanic-fire-stream",
+  single_damage = 50+30*5,
+}
+bolt_types.bolt_laser = {
+  entity = shared.mod_prefix.."bolt-laser",
+  single_damage = 5000,
+}
 
 --------- Weapon types
 shared.weapons = {}
@@ -54,6 +82,7 @@ local function add_weapon(weapon_type)
   weapon_type.entity = shared.mod_prefix..weapon_type.name
   weapon_type.cd = weapon_type.cd or 3
   weapon_type.attack_size = weapon_type.attack_size or 1
+  weapon_type.available = weapon_type.animation and weapon_type.ammo and weapon_type.bolt_type
 
   shared.weapons[weapon_type.entity] = weapon_type
   shared.weapons[weapon_type.name] = weapon_type
@@ -72,7 +101,7 @@ add_weapon({
   ammo = shared.plasma_ammo,
   per_shot = 2, inventory = 500,
   cd = 1,
-  bolt_type = shared.mod_prefix.."bolt-plasma-1",
+  bolt_type = bolt_types.bolt_plasma_1,
   ingredients = {
     -- {shared.melta_pump, 2},
     {shared.he_emitter, 2},
@@ -96,7 +125,7 @@ add_weapon({
   ammo = shared.flamer_ammo,
   per_shot = 1, inventory = 2000,
   cd = 0.05, attack_size = 5, scatter = 5,
-  bolt_type = "flamethrower-fire-stream",
+  bolt_type = bolt_types.bolt_fire,
   ingredients = {
     {shared.melta_pump, 3},
     {shared.barrel, 6},
@@ -158,7 +187,7 @@ add_weapon({
   ammo = shared.laser_ammo,
   per_shot = 2, inventory = 2000,
   cd = 0.4,
-  bolt_type = shared.mod_prefix.."bolt-laser",
+  bolt_type = bolt_types.bolt_laser,
   ingredients = {
     {shared.las_engine, 1},
     {shared.barrel, 2},
@@ -180,7 +209,7 @@ add_weapon({
   ammo = shared.laser_ammo,
   per_shot = 3, inventory = 6000,
   cd = 0.15, attack_size = 3, scatter = 2,
-  bolt_type = shared.mod_prefix.."bolt-laser",
+  bolt_type = bolt_types.bolt_laser,
   ingredients = {
     {shared.las_engine, 2},
     {shared.barrel, 4},
@@ -202,7 +231,7 @@ add_weapon({
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 3000,
   attack_size = 3, scatter = 4,
-  cd = 0.4, bolt_type = shared.mod_prefix.."explosive-rocket",
+  cd = 0.4, bolt_type = bolt_types.bolt_rocket,
   ingredients = {
     {shared.rocket_engine, 4},
     {shared.barrel, 4},
@@ -223,8 +252,8 @@ add_weapon({
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 8000,
-  cd = 0.15, attack_size = 7, scatter = 6,
-  bolt_type = shared.mod_prefix.."explosive-rocket",
+  cd = 0.15, attack_size = 8, scatter = 6,
+  bolt_type = bolt_types.bolt_rocket,
   ingredients = {
     {shared.rocket_engine, 10},
     {shared.barrel, 10},
@@ -246,9 +275,9 @@ add_weapon({
   category = shared.wc_plasma,
   min_dst = 8, max_dst = dst_m,
   ammo = shared.plasma_ammo,
-  per_shot = 3, inventory = 900,
-  cd = 2,
-  bolt_type = shared.mod_prefix.."bolt-plasma-2",
+  per_shot = 4, inventory = 900,
+  cd = 3,
+  bolt_type = bolt_types.bolt_plasma_2,
   ingredients = {
     -- {shared.melta_pump, 4},
     {shared.he_emitter, 6},
@@ -373,8 +402,8 @@ add_weapon({
   min_dst = 12, max_dst = dst_l,
   ammo = shared.plasma_ammo,
   per_shot = 10, inventory = 50000,
-  cd = 4,
-  bolt_type = shared.mod_prefix.."bolt-plasma-3",
+  cd = 6,
+  bolt_type = bolt_types.bolt_plasma_3,
   ingredients = {
     -- {shared.melta_pump, 18},
     {shared.he_emitter, 18},
@@ -396,7 +425,7 @@ add_weapon({
   min_dst = 16, max_dst = dst_xl, spd=0.2,
   ammo = shared.hell_ammo,
   per_shot = 12, inventory = 12000,
-  cd = 6,
+  cd = 8,
   ingredients = {
     {shared.melta_pump, 10},
     {shared.ehe_emitter, 20},

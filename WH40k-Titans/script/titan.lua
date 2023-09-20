@@ -54,7 +54,7 @@ local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, ta
     source = math2d.position.add(source, point_orientation_shift(entity.orientation, cannon.oris, barrel))
   end
   entity.surface.create_entity{
-    name=weapon_type.bolt_type, force=entity.force,
+    name=weapon_type.bolt_type.entity, force=entity.force,
     position=source, source=source, target=target, speed=speed,
   }
 end
@@ -499,8 +499,8 @@ end
 
 
 local function far_seeing(titan_info)
-  local dst = (titan_info.class + 5) * 4
-  local size = titan_info.class
+  local dst = (titan_info.class + 5) * 5
+  local size = titan_info.class + 8
   titan_info.entity.force.chart(titan_info.entity.surface,
     math2d.bounding_box.create_from_centre(
       math2d.position.add(

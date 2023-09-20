@@ -1,18 +1,25 @@
 local shared = require("shared")
 
+local ammo, stats_descr, own_descr, full_descr
 for _, info in pairs(shared.weapons) do
+  ammo = info.ammo or "unknown"
+  own_descr = {"item-description."..info.entity}
+  stats_descr = {
+    (info.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
+    -- Args:
+    {"item-name."..ammo}, -- "__ITEM__"..ammo.."__",
+    info.per_shot,
+    shorten_number(info.inventory),
+    info.bolt_type and shorten_number(info.attack_size * info.bolt_type.single_damage) or "terrible",
+    info.attack_size,
+  }
+  full_descr = {"?", {"", own_descr, " ", stats_descr}, stats_descr}
   data:extend({
     {
       type = "recipe",
       name = info.entity,
       localised_name = {"item-name."..info.entity},
-      localised_description = {
-        "item-description.wh40k-titan-weapon",
-        {"item-name."..info.ammo},
-        -- "__ITEM__"..info.ammo.."__",
-        info.per_shot*info.attack_size,
-        info.inventory,
-      },
+      localised_description = info.available and full_descr or {"item-description.wh40k-titans-not-yet"},
       enabled = false,
       energy_required = 60*60*24,
       icon = info.icon or "__base__/graphics/icons/pipe-to-ground.png",

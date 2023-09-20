@@ -1,5 +1,17 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.9.10
+Version: 0.9.12
+Date: 2023-09-20
+  Features:
+    - Leftovers chests created on Assembly Bunker picking tries to align so that it's easy to put the content back with an anserter.
+  Minor Features:
+    - Auto refresh of Assembly Bunker GUI.
+    - Better weapons description.
+  Bugfixes:
+    - Fixed crash on picking not implemented weapon.
+  Balance:
+    - Higher damage of plasma weapons.
+---------------------------------------------------------------------------------------------------
+Version: 0.9.11
 Date: 2023-09-19
   Bugfixes:
     - Fixed missing recipes in the Assembly Bunker GUI

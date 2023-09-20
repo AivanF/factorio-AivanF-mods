@@ -1,6 +1,7 @@
-local shared = require("shared-base")
-require("shared-titans")
-require("shared-weapons")
+local shared = require("shared.shared-base")
+require("shared.utils")
+require("shared.shared-titans")
+require("shared.shared-weapons")
 
 shared.special_entities = {
   shared.bunker_center,

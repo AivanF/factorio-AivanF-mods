@@ -12,6 +12,48 @@ building_update_rate = 60
 local quick_mode = heavy_debugging
 local required_ammo_ratio = 0.1
 
+local states = {}
+states.disabled = "disabled"
+states.initialising = "initialising"
+states.deactivating = "deactivating"
+states.idle = "idle"
+states.prepare_assembly = "prepare_assembly"
+states.assembling = "assembling"
+states.waiting_disassembly = "waiting_disassembly"
+states.disassembling = "disassembling"
+states.restock = "restock"
+
+local function hor_pos_array(xmax, y)
+  local result = {}
+  for x = 0, xmax do
+    table.insert(result, {x, y})
+    if x > 0 then table.insert(result, {-x, y}) end
+  end
+  return result
+end
+local function ver_pos_array(x, ymax)
+  local result = {}
+  for y = 0, ymax do
+    table.insert(result, {x, y})
+    if y > 0 then table.insert(result, {x, -y}) end
+  end
+  return result
+end
+local shifts_up    = hor_pos_array(3, -3)
+local shifts_left  = ver_pos_array(-3, 3)
+local shifts_right = ver_pos_array(3, 3)
+local shifts_down  = hor_pos_array(4, 4)
+local bunker_store_shifts = {
+  -- w 1, 2
+  shifts_up, shifts_up,
+  -- w 3, 4
+  shifts_left, shifts_right,
+  -- w 5, 6
+  shifts_left, shifts_right,
+  -- body
+  shifts_down,
+}
+
 local b1, b2 = 9, 6
 local bunker_lamps = {
   {-b2, -b1}, -- w1
@@ -26,17 +68,6 @@ local bunker_lamps = {
   {-b1, -b1}, { b1, -b1},
   {-b1,  b1}, { b1,  b1},
 }
-
-local states = {}
-states.disabled = "disabled"
-states.initialising = "initialising"
-states.deactivating = "deactivating"
-states.idle = "idle"
-states.prepare_assembly = "prepare_assembly"
-states.assembling = "assembling"
-states.waiting_disassembly = "waiting_disassembly"
-states.disassembling = "disassembling"
-states.restock = "restock"
 
 
 local function draw_assembler_lamp(assembler, k, lamp_color)
@@ -109,6 +140,10 @@ local function check_bunker_correct_details(assembler)
     set_message(assembler, "Titan class is not set")
     result = false
     lamp_color = color_red
+  elseif not titan_type.available then
+    set_message(assembler, "Titan class is not available")
+    result = false
+    lamp_color = color_red
   end
   if not assembler.bstore then
     set_message(assembler, "improper bunker setup 1")
@@ -118,7 +153,7 @@ local function check_bunker_correct_details(assembler)
   if titan_type and not check_entity_has_ingredients(assembler.bstore, titan_type.ingredients) then
     set_message(assembler, "not enough body details")
     result = false
-    lamp_color = color_gold
+    lamp_color = lamp_color or color_gold
   end
   draw_assembler_lamp(assembler, 7, lamp_color)
   draw_assembler_lamp(assembler, 8, lamp_color)
@@ -149,17 +184,24 @@ local function check_bunker_correct_details(assembler)
       weapon_fine = false
     end
     if weapon_type then
-      -- Set recipe to assembler.wrecipe[k] ?
-      if not check_entity_has_ingredients(assembler.wstore[k], weapon_type.ingredients) then
-        set_message(assembler, "not enough weapon details for "..weapon_type.name)
-        weapon_fine = false
-        lamp_color = lamp_color or color_orange
-      end
-      if assembler.wstore[k].get_item_count(weapon_type.ammo) < weapon_type.inventory*required_ammo_ratio-1 then
-        set_message(assembler, "not enough ammo for "..weapon_type.name)
+      if weapon_type.available then
+        -- Set recipe to assembler.wrecipe[k] ?
+        if not check_entity_has_ingredients(assembler.wstore[k], weapon_type.ingredients) then
+          set_message(assembler, "not enough weapon details for "..weapon_type.name)
+          weapon_fine = false
+          lamp_color = lamp_color or color_orange
+        end
+        if assembler.wstore[k].get_item_count(weapon_type.ammo) < weapon_type.inventory*required_ammo_ratio-1 then
+          set_message(assembler, "not enough ammo for "..weapon_type.name)
+          weapon_fine = false
+          lamp_color = lamp_color or color_gold
+        end
+      else
+        set_message(assembler, "weapon "..weapon_type.name.." is not available")
         weapon_fine = false
         lamp_color = lamp_color or color_gold
       end
+      -- If everything is fine
       lamp_color = lamp_color or color_green
     end
     result = result and weapon_fine
@@ -201,7 +243,7 @@ local function find_titan(assembler, empty)
     todo = todo and is_titan(entity.name)
     if empty then
       todo = todo and not entity.get_driver() and not entity.get_passenger()
-      todo = todo and (not entity.get_main_inventory() or entity.get_main_inventory().get_item_count() == 0)
+      todo = todo and (not entity.get_inventory(defines.inventory.car_trunk) or entity.get_inventory(defines.inventory.car_trunk).get_item_count() == 0)
     end
     if todo then return entity end
   end
@@ -246,11 +288,22 @@ local function bunker_internal_to_outer(assembler)
   return finished
 end
 
-local function safe_destroy_chest(entity)
+local function safe_destroy_chest(entity, shifts)
   if not entity.valid then return end
   if entity.get_item_count() > 0 then
+    local try_pos
+    local position = entity.position
+    for _, couple in pairs(shifts or {}) do
+      try_pos = math2d.position.add(entity.position, couple)
+      if entity.surface.can_place_entity{
+        name=shared.leftovers_chest, force="neutral", position=try_pos,
+      } then
+        position = try_pos
+        break
+      end
+    end
     local new = entity.surface.create_entity{
-      name=shared.leftovers_chest, force="neutral", position=entity.position,
+      name=shared.leftovers_chest, force="neutral", position=position,
     }
     for item_name, have in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
       new.insert({name=item_name, count=have})
@@ -309,6 +362,7 @@ function lib.register_bunker(centity)
     weapon_recipes = {},
     items_main = {},
     items_guns = {},
+    auto_build = false,
 
     -- Bunker entities
     wentity = wentity, -- weak, mainable entity
@@ -410,7 +464,11 @@ function lib.bunker_removed(assembler)
     bucket[assembler.uid] = nil
   end
 
-  func_map(safe_destroy_chest, chain_arrays({assembler.wstore, {assembler.bstore}}))
+  -- TODO: add desired shift options, to simplify bunker replacement
+  func_maps(safe_destroy_chest, iter_zip{
+    iter_chain({assembler.wstore, {assembler.bstore}}),
+    bunker_store_shifts
+  })
 
   die_all({assembler.wentity, assembler.sentity}, ctrl_data.assembler_index)
   die_all(assembler.lamps)
@@ -443,20 +501,24 @@ function state_handler.disabled(assembler)
   -- Pass, state changing handled by GUI
 end
 
+function state_pre_handler.initialising(assembler)
+  if assembler.wentity and assembler.wentity.valid then
+    -- Change entity to not minable, stable/active
+    ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
+    assembler.wentity.destroy()
+    assembler.wentity = nil
+    assembler.sentity = assembler.surface.create_entity{
+      name=shared.bunker_active, position=assembler.position, force=assembler.force,
+    }
+  end
+end
+
 function state_handler.initialising(assembler)
   assembler.init_progress = assembler.init_progress + 1
   if assembler.init_progress < bunker_init_time then
     update_assembler_guis(assembler)
   else
-    if assembler.wentity and assembler.wentity.valid then
-      -- Change entity to not minable, stable/active
-      ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
-      assembler.wentity.destroy()
-      assembler.wentity = nil
-      assembler.sentity = assembler.surface.create_entity{
-        name=shared.bunker_active, position=assembler.position, force=assembler.force,
-      }
-    end
+    -- Entity should be already changed
     ctrl_data.assembler_index[assembler.sentity.unit_number] = assembler
     change_assembler_state(assembler, states.idle)
   end
@@ -482,7 +544,7 @@ function state_pre_handler.deactivating(assembler)
 end
 
 function state_handler.deactivating(assembler)
-  assembler.init_progress = assembler.init_progress - 1
+  assembler.init_progress = assembler.init_progress - 2
   if assembler.init_progress > 0 then
     update_assembler_guis(assembler)
   else
@@ -504,15 +566,19 @@ function state_handler.idle(assembler)
   -- Pass, state changing handled by GUI
 end
 
+function state_pre_handler.prepare_assembly(assembler)
+  -- TODO: make false by default + add a UI flag
+  assembler.auto_build = true
+end
+
 function state_handler.prepare_assembly(assembler)
-  if check_bunker_correct_details(assembler) and (assembler.auto_build or true) then
+  if check_bunker_correct_details(assembler) and assembler.auto_build then
     collect_bunker_details(assembler)
     assembler.assembly_progress = 0
     assembler.assembly_progress_max = get_titan_assembly_time(assembler.class_recipe)
     change_assembler_state(assembler, states.assembling)
   else
-    -- TODO: update without recreation to prevent modal views disappearing!
-    -- update_assembler_guis(assembler)
+    update_assembler_guis(assembler)
   end
 end
 
@@ -695,6 +761,7 @@ local act_set_class = "wh40k-titans-assembly-set-class"
 local act_set_weapon = "wh40k-titans-assembly-set-weapon"
 
 local gui_maker = {}
+local gui_updater = {}
 
 function gui_maker.disabled(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", tags={action=act_change_state, state=states.initialising}, sprite="virtual-signal/signal-green", tooltip={"WH40k-Titans-gui.assembly-act-init"} }
@@ -722,10 +789,10 @@ local no_recipes_filter = {
   {filter="enabled", mode="and"},
 }
 
-local function get_category_filters_by_research(player, category, research)
+local function get_category_filters_by_research(player, category, research, count)
   local has_character = not not player.character
   local filters = {}
-  for i = 1, 3 do
+  for i = 1, count do
     if not has_character or player.force.technologies[shared.mod_prefix..i..research].researched then
       table.insert(filters, {filter="category", category=category..i, mode="or"})
     end
@@ -736,6 +803,11 @@ local function get_category_filters_by_research(player, category, research)
   return filters
 end
 
+function gui_updater.prepare_assembly(assembler, main_frame)
+  -- TODO: update other elements?
+  main_frame.main_room.label.caption = {"", "Status: ", assembler.message or "unknown"}
+end
+
 function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   -- TODO: add auto-build setting, show button for states.assembling
@@ -743,7 +815,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
 
   main_frame.main_room.add{
     type="label", name="label",
-    caption="Status: "..(assembler.message or "unknown")
+    caption={"", "Status: ", assembler.message or "unknown"},
   }
 
   local player = game.get_player(main_frame.player_index)
@@ -751,7 +823,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   local btn
   local grid = main_frame.main_room.add{ type="frame", direction="horizontal" }
 
-  filters = get_category_filters_by_research(player, shared.craftcat_titan, "-class")
+  filters = get_category_filters_by_research(player, shared.craftcat_titan, "-class", 5)
   btn = grid.add{
     type="choose-elem-button", name="", elem_type="recipe", elem_filters = filters,
     recipe = assembler.class_recipe,
@@ -761,7 +833,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
-  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade")
+  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 3)
   for k = 1, 6 do
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",
@@ -806,16 +878,23 @@ function gui_maker.restock(assembler, main_frame)
 end
 
 local function create_assembly_gui(player, assembler)
+  local main_frame, gui_info
   if player.gui.screen[main_frame_name] then
     if ctrl_data.assembler_gui[player.index].assembler == assembler then
-      lib.update_assembler_gui(ctrl_data.assembler_gui[player.index])
+      main_frame = player.gui.screen[main_frame_name]
+      gui_info = ctrl_data.assembler_gui[player.index]
+      gui_info.state = nil -- Do full reload
+      player.opened = main_frame
+      main_frame.focus()
+      main_frame.bring_to_front()
+      lib.update_assembler_gui(gui_info)
       return
     else
     player.gui.screen[main_frame_name].destroy()
     end
   end
 
-  local main_frame = player.gui.screen.add{ type="frame", name=main_frame_name, direction="vertical", }
+  main_frame = player.gui.screen.add{ type="frame", name=main_frame_name, direction="vertical", }
   main_frame.style.minimal_width = 256
   main_frame.style.maximal_width = 640
   main_frame.style.minimal_height = 128
@@ -850,18 +929,22 @@ local function create_assembly_gui(player, assembler)
   main_frame.add{ type="flow", name="status_line", direction="horizontal" }
   main_frame.add{ type="flow", name="main_room", direction="vertical" }
 
-  local gui_info = { assembler=assembler, main_frame=main_frame, player_index=player.index }
+  gui_info = { assembler=assembler, main_frame=main_frame, player_index=player.index }
   ctrl_data.assembler_gui[player.index] = gui_info
   lib.update_assembler_gui(ctrl_data.assembler_gui[player.index])
 end
 
 function lib.update_assembler_gui(gui_info)
-  gui_info.main_frame.status_line.clear()
-  gui_info.main_frame.status_line.add{ type="label", name="label" }
-  gui_info.main_frame.status_line.label.caption = {"WH40k-Titans-gui.assembly-state-"..gui_info.assembler.state}
-
-  gui_info.main_frame.main_room.clear()
-  gui_maker[gui_info.assembler.state](gui_info.assembler, gui_info.main_frame)
+  if gui_info.state == gui_info.assembler.state and gui_updater[gui_info.assembler.state] then
+    gui_updater[gui_info.assembler.state](gui_info.assembler, gui_info.main_frame)
+  else
+    gui_info.main_frame.status_line.clear()
+    gui_info.main_frame.status_line.add{ type="label", name="label" }
+    gui_info.main_frame.status_line.label.caption = {"WH40k-Titans-gui.assembly-state-"..gui_info.assembler.state}
+    gui_info.main_frame.main_room.clear()
+    gui_maker[gui_info.assembler.state](gui_info.assembler, gui_info.main_frame)
+    gui_info.state = gui_info.assembler.state
+  end
 end
 
 

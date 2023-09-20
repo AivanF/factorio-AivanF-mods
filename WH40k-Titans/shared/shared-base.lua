@@ -8,9 +8,10 @@ shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
 shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
 shared.bridge_prefix = "afci-"
 
+-- afci_bridge = require("__Common-Industries__.export") -- TODO: update
+afci_bridge = require("__Common-Industries__.bridge3-item")
 
 --------- Titan parts
-afci_bridge = require("__Common-Industries__.bridge3-item")
 -- Body
 shared.servitor    = shared.part_prefix.."servitor"
 shared.brain       = shared.part_prefix.."titanic-brain"
@@ -25,13 +26,12 @@ shared.realityctrl = shared.part_prefix.."reality-controller" -- for void shield
 shared.barrel      = shared.part_prefix.."titanic-barrel"
 shared.proj_engine = shared.part_prefix.."titanic-projectile-engine" -- mostly mechanical, for bolters, rockets
 shared.melta_pump  = shared.part_prefix.."titanic-melta-pump" -- mostly mechanical pump, for plasma, melta
-
 -- From the Bridge
 shared.emfc = afci_bridge.item.emfc
 shared.he_emitter  = afci_bridge.item.he_emitter
 shared.ehe_emitter = afci_bridge.item.ehe_emitter
 
-
+--------- Buildings, Groups, Categories
 shared.bunker_minable = shared.mod_prefix.."assembly-bunker-minable"
 shared.bunker_active = shared.mod_prefix.."assembly-bunker-active"
 shared.bunker_center = shared.mod_prefix.."assembly-bunker-center"
@@ -52,75 +52,16 @@ shared.subg_parts = "wh40k-titan-parts"
 shared.subg_titans = "wh40k-titan-classes"
 shared.subg_weapons = "wh40k-titan-weapons-"
 
+shared.excavator = shared.mod_prefix.."extractor"
+shared.excavation_recipe = shared.mod_prefix.."extracting"
+
 shared.lab = "wh40k-lab"
 shared.sp = "wh40k-titan-science-pack"
 
-function shared.preprocess_recipe(ingredients)
-  -- Materialize Bridge items
-  result = {}
-  for _, couple in pairs(ingredients) do
-    if couple[1].short_name then
-      afci_bridge.preprocess(couple[1])
-      couple[1] = couple[1].name
-    end
-    result[#result+1] = couple
-  end
-  return result
-end
-
-function shared.shuffle(t)
-  for i = #t, 2, -1 do
-    local j = math.random(i)
-    t[i], t[j] = t[j], t[i]
-  end
-end
-
-function table.shallow_copy(t)
-  local t2 = {}
-  for k,v in pairs(t) do
-    t2[k] = v
-  end
-  return t2
-end
-
-function table.slice(tbl, first, last, step)
-  local sliced = {}
-  for i = first or 1, last or #tbl, step or 1 do
-    sliced[#sliced+1] = tbl[i]
-  end
-  return sliced
-end
-
-color_default_dst = {1,1,1}
-color_gold    = {255, 220,  50}
-color_orange  = {255, 160,  50}
-color_red     = {200,  20,  20}
-color_blue    = { 70, 120, 230}
-color_purple  = {200,  20, 200}
-color_green   = {20,  120,  20}
-color_cyan    = {20,  200, 200}
-color_ltgrey  = {160, 160, 160}
-color_dkgrey  = { 60,  60,  60}
-
-technomagic_resistances = {
-  { type = "impact", decrease=10000, percent=100 },
-  { type = "physical", percent=100 },
-  { type = "explosion", percent=100 },
-  { type = "laser", percent = 100 },
-  { type = "fire", percent = 100 },
-  { type = "electric", percent=100 },
-  { type = "acid", percent=100 },
-  { type = "poison", percent=100 },
-}
-strong_resistances = {
-  { type = "impact", decrease=1000, percent=100 },
-  { type = "poison", decrease=1000, percent=100 },
-  { type = "fire", decrease=1000, percent=100 },
-  { type = "laser", decrease=50, percent=50 },
-  { type = "electric", decrease=50, percent=50 },
-  { type = "physical", decrease=50, percent=50 },
-  { type = "explosion", decrease=50, percent=50 },
-  { type = "acid", decrease=50, percent=50 },
+shared.mock_icon = {
+  icon = shared.media_prefix.."graphics/icons/titan-mock.png",
+  icon_size = 64,
+  icon_mipmaps = 1,
 }
 
 return shared
