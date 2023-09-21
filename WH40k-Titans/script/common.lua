@@ -1,32 +1,57 @@
 require("__core__.lualib.util") -- for table.deepcopy
+math2d = require("math2d")
 shared = require("shared")
-mod_name = shared.mod_name
 
+UPS = 60
 
------ Script data -----
+heavy_debugging = false
+-- heavy_debugging = true
 
-blank_ctrl_data = {
-  assembler_buckets = {}, -- uid => bucket => assembler
-  assembler_index = {}, -- entity.unit_number => assembler
-  -- assembler_entities = {}, -- bunker parts, entity.unit_number => {assembler=, index=[0:6]}
-  assembler_gui = {}, -- player.index => {assembler=, main_frame=}
+bucks = {}
 
-  titans = {},
-  titan_gui = {},
-  foots = {},
-  by_player = {}, -- user settings
-}
-ctrl_data = table.deepcopy(blank_ctrl_data)
+function bucks.save(buckets_table, total_number, index, value)
+  local bucket = buckets_table[index % total_number]
+  if not bucket then
+    bucket = {}
+    buckets_table[index % total_number] = bucket
+  end
+  bucket[index] = value
+end
 
-used_specials = {}
+function bucks.get_bucket(buckets_table, total_number, index)
+  return buckets_table[index % total_number]
+end
 
+function bucks.get(buckets_table, total_number, index)
+  local bucket = buckets_table[index % total_number]
+  if bucket then
+    return bucket[index]
+  end
+  return nil
+end
 
------ Utils -----
+function bucks.remove(buckets_table, total_number, index)
+  local bucket = buckets_table[index % total_number]
+  if bucket then
+    bucket[index] = nil
+  end
+end
+
+function bucks.total_count(buckets_table)
+  local result = 0
+  for _, bucket in pairs(buckets_table) do
+    for _, value in pairs(bucket or {}) do
+      result = result + 1
+    end
+  end
+  return result
+end
+
 
 function preprocess_ingredients()
   -- Replaces Bridge item objects with names
   if not global.active_mods_cache then return end
-  log("preprocess_ingredients, active_mods_cache: "..serpent.line(global.active_mods_cache))
+  -- log("preprocess_ingredients, active_mods_cache: "..serpent.line(global.active_mods_cache))
   afci_bridge.active_mods_cache = global.active_mods_cache
   local item
   for _, titan_type in pairs(shared.titan_type_list) do
@@ -49,11 +74,19 @@ function preprocess_ingredients()
   end
 end
 
-function get_in_buckets_count(storage)
-  local result = 0
-  for _, bucket in pairs(storage) do
-    for _, value in pairs(bucket or {}) do
-      result = result + 1
+function remove_ingredients_doubles(ingredients)
+  local indices = {}
+  local result = {}
+  local prev, name, count
+  for _, couple in pairs(ingredients) do
+    name = couple[1] or couple.name
+    count = couple[2] or couple.count
+    if indices[name] then
+      prev = result[indices[name]]
+      prev.count = prev.count + count
+    else
+      indices[name] = #result + 1
+      table.insert(result, {name=name, count=count})
     end
   end
   return result
@@ -170,7 +203,9 @@ end
 function preprocess_entities(list)
   for _, entity in pairs(list) do
     if entity.valid then
-      used_specials[entity.unit_number] = true
+      if shared.used_specials then
+        shared.used_specials[entity.unit_number] = true
+      end
       entity.active = false -- for crafting machines
     end
   end

@@ -1,14 +1,10 @@
 require("script/common")
-local math2d = require("math2d")
 local titan = require("script/titan")
 
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
-local heavy_debugging = false
--- heavy_debugging = true
-
-building_update_rate = 60
+building_update_rate = UPS
 local quick_mode = heavy_debugging
 local required_ammo_ratio = 0.1
 
@@ -135,7 +131,6 @@ local function check_bunker_correct_details(assembler)
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
-  lamp_color = color_green
   if not titan_type then
     set_message(assembler, "Titan class is not set")
     result = false
@@ -155,6 +150,7 @@ local function check_bunker_correct_details(assembler)
     result = false
     lamp_color = lamp_color or color_gold
   end
+  lamp_color = lamp_color or color_green
   draw_assembler_lamp(assembler, 7, lamp_color)
   draw_assembler_lamp(assembler, 8, lamp_color)
 
@@ -343,11 +339,6 @@ function lib.register_bunker(centity)
     uid = centity.unit_number
   end
 
-  local bucket = ctrl_data.assembler_buckets[uid % building_update_rate]
-  if not bucket then
-    bucket = {}
-    ctrl_data.assembler_buckets[uid % building_update_rate] = bucket
-  end
   local assembler = bucket[uid] or {
     -- Assembler states
     force = centity.force,
@@ -373,7 +364,7 @@ function lib.register_bunker(centity)
     bstore = nil,
     brecipe = nil,
   }
-  bucket[uid] = assembler
+  bucks.save(ctrl_data.assembler_buckets, building_update_rate, uid, assembler)
   -- game.print("register_bunker "..uid)
   ctrl_data.assembler_index[centity.unit_number] = assembler
 
@@ -459,10 +450,7 @@ end
 
 ----- Outro -----
 function lib.bunker_removed(assembler)
-  local bucket = ctrl_data.assembler_buckets[assembler.uid % building_update_rate]
-  if bucket and bucket[assembler.uid] then
-    bucket[assembler.uid] = nil
-  end
+  bucks.remove(ctrl_data.assembler_buckets, building_update_rate, assembler.uid)
 
   -- TODO: add desired shift options, to simplify bunker replacement
   func_maps(safe_destroy_chest, iter_zip{
@@ -504,6 +492,7 @@ end
 function state_pre_handler.initialising(assembler)
   if assembler.wentity and assembler.wentity.valid then
     -- Change entity to not minable, stable/active
+    -- TODO: copy health!
     ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
     assembler.wentity.destroy()
     assembler.wentity = nil
@@ -530,6 +519,7 @@ function state_post_handler.deactivating(assembler)
     ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
     assembler.sentity.destroy()
     assembler.sentity = nil
+    -- TODO: copy health!
     assembler.wentity = assembler.surface.create_entity{
       name=shared.bunker_minable, position=assembler.position, force=assembler.force,
     }
@@ -728,7 +718,7 @@ local function process_assemblers()
     preprocess_ingredients()
   end
 
-  local bucket = ctrl_data.assembler_buckets[game.tick % building_update_rate]
+  local bucket = bucks.get_bucket(ctrl_data.assembler_buckets, building_update_rate, game.tick)
   if not bucket then return end
   for uid, assembler in pairs(bucket) do
     if true
@@ -1027,7 +1017,7 @@ local function bunkers_debug_cmd(cmd)
   end
 
   player.print(serpent.block({
-    assembler_count = get_in_buckets_count(ctrl_data.assembler_buckets),
+    assembler_count = bucks.total_count(ctrl_data.assembler_buckets),
     entity_count = #get_keys(ctrl_data.assembler_index),
   }))
 end

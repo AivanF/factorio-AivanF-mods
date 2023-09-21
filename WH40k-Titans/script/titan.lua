@@ -1,10 +1,10 @@
 require("script/common")
-local math2d = require("math2d")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
+local shield_fill_time = 180 * UPS
+local order_ttl = 5 * UPS
 local gui_update_rate = 9
-local order_ttl = 60 * 5
 local visual_ttl = 2
 
 local max_oris = { -- titan cannon max orientation shift
@@ -76,7 +76,7 @@ local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type,
       math.random(-weapon_type.scatter, weapon_type.scatter)})
   end
   attacker(entity, titan_type, cannon, weapon_type, gunpos, target)
-  cannon.gun_cd = tick + weapon_type.cd * 60
+  cannon.gun_cd = tick + weapon_type.cd * UPS
   -- log("gun_do_attack name: "..cannon.name..", attack_number: "..cannon.attack_number)
 
   if (cannon.attack_number or 0) <= 0 then
@@ -310,7 +310,7 @@ local function update_gui()
       for k, cannon in pairs(guiobj.titan_info.guns) do
         still_cd = cannon.gun_cd > tick
         if still_cd then
-          guiobj.guns[k].img.number = 1- (cannon.gun_cd-tick) /shared.weapons[cannon.name].cd /60
+          guiobj.guns[k].img.number = 1- (cannon.gun_cd-tick) /shared.weapons[cannon.name].cd /UPS
         else
           guiobj.guns[k].img.number = nil
         end
@@ -579,7 +579,7 @@ local function process_single_titan(titan_info)
   ----- Void Shield
   -- TODO: consider energy spent on guns?
   -- 3 minutes for the full recharge
-  titan_info.shield = math.min((titan_info.shield or 0) + titan_type.max_shield /60 /180, titan_type.max_shield)
+  titan_info.shield = math.min((titan_info.shield or 0) + titan_type.max_shield /shield_fill_time, titan_type.max_shield)
   local sc = 0.75 + 0.025*class
 
   -- Main visual
@@ -683,6 +683,7 @@ local function process_single_titan(titan_info)
       foot = surface.create_entity{
         name=titan_type.foot, force="neutral", position=foot_pos,
       }
+      foot.destructible = false
       ctrl_data.foots[#ctrl_data.foots+1] = {  -- TODO: is this buggy?!?
         owner = entity, entity=foot,
         animation=img, ori=ori, sc=sc,
@@ -717,7 +718,7 @@ local function process_single_titan(titan_info)
 
       rendering.draw_animation{
         animation=img, x_scale=sc, y_scale=sc,
-        render_layer=shared.rl_track, time_to_live=60*5,
+        render_layer=shared.rl_track, time_to_live=5*UPS,
         surface=surface,
         target=math2d.position.add(entity.position, point_orientation_shift(ori, 0.25 * (titan_info.track_rot and 1 or -1), 4+0.1*titan_info.class)),
         target_offset={3, 0}, orientation=ori-oris/2,
@@ -875,6 +876,7 @@ lib:on_event(defines.events.on_entity_damaged, function(event)
   local entity = event.entity
   local unit_number = entity.valid and entity.unit_number
   if unit_number == nil then return end
+  -- TODO: pass half of each 1/Nth?
   if ctrl_data.titans[unit_number] then
     local tctrl = ctrl_data.titans[unit_number]
     entity.health = event.final_health + event.final_damage_amount
