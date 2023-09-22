@@ -1,5 +1,5 @@
 --[[ By AivanF.
-EventLib v2023.09.17
+EventLib v2023.09.19
 To be used with Factorio's builtin lualib.event_handler
 For simpler migration from a single control.lua file to libs.
 
@@ -84,7 +84,7 @@ end
 function Lib:on_event(event_list, callback)
   if type(event_list) ~= "table" then event_list = {event_list} end
   for _, event in pairs(event_list) do
-    if self.content.on_nth_tick[n] then
+    if self.content.events[event] then
       error("Trying to register same on_event "..event.." again")
     end
     self.content.events[event] = callback
@@ -105,6 +105,27 @@ local basic_methods = {"on_init", "on_load", "on_configuration_changed"}
 for _, name in pairs(basic_methods) do
   Lib[name] = function(self, callback)
     self.content[name] = callback
+  end
+end
+
+local combined_events = {
+  on_any_built = {
+    defines.events.on_built_entity,
+    defines.events.on_robot_built_entity,
+    defines.events.script_raised_built,
+    defines.events.script_raised_revive,
+    defines.events.on_entity_cloned,
+  },
+  on_any_remove = {
+    defines.events.on_player_mined_entity,
+    defines.events.on_robot_mined_entity,
+    defines.events.on_entity_died,
+    defines.events.script_raised_destroy,
+  },
+}
+for name, event_list in pairs(combined_events) do
+  Lib[name] = function(self, callback)
+    Lib.on_event(self, event_list, callback)
   end
 end
 

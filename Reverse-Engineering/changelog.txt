@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2023-09-22
+  Features:
+    - Added a shortcut top open window that shows reverse engineering value of items!
+    - Added runtime/map settings to adjust probabilities.
+  Info:
+    - Better RevLab graphics and smaller collision box.
+  Locales:
+    - Added Russion language / русский язык.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2023-09-18
   Info:

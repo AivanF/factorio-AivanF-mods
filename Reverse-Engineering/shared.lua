@@ -17,7 +17,7 @@ rlab_list = {
     ingredients = {
       {"iron-chest", 3},
       {"inserter", 5},
-      {"assembling-machine-2", 1},
+      {"assembling-machine-1", 1},
       {"electronic-circuit", 10},
     }
   },

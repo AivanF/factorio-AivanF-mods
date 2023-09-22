@@ -100,7 +100,7 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
       corpse = "lab-remnants",
       dying_explosion = "massive-explosion",
       selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
-      collision_box = {{-1.5, -1.5}, {1.5, 1.5}},
+      collision_box = {{-1.4, -1.4}, {1.4, 1.4}},
       collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
       selection_priority = 40,
       vehicle_impact_sound = sounds.generic_impact,
@@ -147,3 +147,22 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
     )
   end
 end
+
+
+data:extend{{
+  -- https://wiki.factorio.com/Prototype/Shortcut#small_icon
+  type = "shortcut",
+  name = "af-reverse-lab-worth",
+  localised_name = { "shortcut-name.af-reverse-lab-see-worth"},
+  localised_description = { "shortcut-description.af-reverse-lab-see-worth"},
+  -- associated_control_input = "__xyz__", TODO: add this?
+  order = "def",
+  action = "lua",
+  style = "blue",
+  icon = {
+    filename = "__Reverse-Engineering__/graphics/shortcut-worth.png",
+    size = 64,
+    scale = 1,
+    priority = "extra-high-no-scale",
+  },
+}}

@@ -142,7 +142,9 @@ local function handle_input(rlab, item_info, prod_bonus)
     done = play_prob_big(rlab, item_info, prob)
   end
   if done then
-    if math.random() < item_info.prob/200 then
+    local res_prob = settings.global["af-reverse-lab-research-revprob"].value
+    res_prob = (res_prob > 0) and (1 / res_prob) or 0
+    if math.random() < item_info.prob*res_prob then
       local candidates = {tech}
       merge(candidates, tech.prerequisites)
       for index, name in pairs(item_info.ingredients) do
@@ -154,7 +156,7 @@ local function handle_input(rlab, item_info, prod_bonus)
       for _, tech in pairs(candidates) do
         if not tech.researched then
           rlab.force.play_sound{path = "utility/research_completed"}
-          rlab.force.print({"af-reverse-lab-researched", tech.name})
+          rlab.force.print({"af-reverse-lab.researched", tech.name})
           tech.researched = true
           break
         end
@@ -197,7 +199,7 @@ local function process_a_lab(rlab)
         and have >= item_info.need
         and rlab.output_packs.get_inventory(defines.inventory.chest).count_empty_stacks() >= 1
       then
-        handle_input(rlab, item_info, scale * (grade_info.prod_bonus or 1))
+        handle_input(rlab, item_info, scale * (grade_info.prod_bonus or 1) * settings.global["af-reverse-lab-prob-mult"].value)
         rlab.input.remove_item({name=item_name, count=item_info.need*scale})
         local pollution_value = item_info.need * item_info.price *0.02
         rlab.surface.pollute(rlab.position, pollution_value)
@@ -245,21 +247,8 @@ local function process_labs()
 end
 
 lib:on_event(defines.events.on_tick, process_labs)
-
-lib:on_event({
-  defines.events.on_built_entity,
-  defines.events.on_robot_built_entity,
-  defines.events.script_raised_built,
-  defines.events.script_raised_revive,
-  defines.events.on_entity_cloned,
-}, on_any_built)
-
-lib:on_event({
-  defines.events.on_player_mined_entity,
-  defines.events.on_robot_mined_entity,
-  defines.events.on_entity_died,
-  defines.events.script_raised_destroy,
-}, on_any_remove)
+lib:on_any_built(on_any_built)
+lib:on_any_remove(on_any_remove)
 
 -- lib:on_init(function()
 -- end)
@@ -271,13 +260,16 @@ lib:on_configuration_changed(function()
   global.add_override_items = nil
 end)
 
--- TODO: add re-register function to reset global.reverse_labs
+-- TODO: add re-register function to reset global.reverse_labs?
 
 local interface = {
   add_ignore_items = function(names)
     deep_merge(global.add_ignore_items, from_key_list(names, true))
   end,
+  -- item_info must contain at leas .ingredients and .prob
   add_override_item = function(item_name, item_info)
+    item_info.need = item_info.need or 1
+    item_info.price = item_info.price or 1
     global.add_override_items[item_name] = item_info
   end,
 }

@@ -26,6 +26,7 @@ ignore_item = from_key_list({
 override_items = {
   ["gun-turret"] = { ingredients = {red, grey}, need=10, price=1, prob=0.1 },
   ["solid-fuel"] = { ingredients = {red, green, blue}, need=50 },
+  ["raw-fish"] = { ingredients = {white}, need=100, prob=0.1 },
 }
 
 local function get_tech_worth(source_tech_values)
