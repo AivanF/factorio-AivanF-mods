@@ -339,7 +339,7 @@ function lib.register_bunker(centity)
     uid = centity.unit_number
   end
 
-  local assembler = bucket[uid] or {
+  local assembler = bucks.get(ctrl_data.assembler_buckets, building_update_rate, uid) or {
     -- Assembler states
     force = centity.force,
     surface = centity.surface,
@@ -703,7 +703,7 @@ local function process_an_assembler(assembler)
     end
     if assembler.music_step == 1 and math.random(0, 1) == 0 then
       assembler.surface.play_sound{
-        path="wh40k-titans-assembly-add",
+        path="wh40k-titans-random-work",
         position=assembler.position, volume_modifier=1
       }
     end

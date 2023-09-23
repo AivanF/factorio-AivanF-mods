@@ -5,11 +5,18 @@ local lib = Lib.new()
 
 exc_update_rate = UPS
 local exc_unit_time = heavy_debugging and 5 or 60
-local exc_half_size = 2
+local exc_half_size = 4
+local exc_offsets = {
+  {exc_half_size, 0}, {-exc_half_size, 0},
+  {0, exc_half_size}, {0, -exc_half_size}
+}
+
+local main_frame_name = "wh40k_titans_extractor"
+local act_main_frame_close = "wh40k-titans-extractor-frame-close"
 
 function lib.register_excavator(entity)
   local world, sector, ruin_entity, ruin_info
-  ruin_entity = entity.surface.find_entity(shared.mod_prefix.."titan-corpse", entity.position)
+  ruin_entity = entity.surface.find_entity(shared.corpse, entity.position)
   world = ctrl_data.by_surface[entity.surface.index]
   sector = lib_ruins.get_sector(world, entity.position)
 
@@ -24,6 +31,8 @@ function lib.register_excavator(entity)
     ruin_entity = ruin_entity,
     ruin_info = ruin_info,
     progress = 0,
+    leftover = nil,
+    guis = {}, -- player.index => main_frame
   }
   ctrl_data.excavator_index[entity.unit_number] = exc_info
   bucks.save(ctrl_data.excavator_buckets, exc_update_rate, entity.unit_number, exc_info)
@@ -49,10 +58,42 @@ function lib.excavator_removed(unit_number)
   bucks.remove(ctrl_data.excavator_buckets, exc_update_rate, unit_number)
 end
 
+local function put_leftovers(exc_info)
+  for _, chest in pairs(exc_info.chests) do
+    if chest.can_insert(exc_info.leftovers) then
+      chest.insert(exc_info.leftovers)
+      chest.surface.create_entity{
+        name="flying-text", position=chest.position,
+        text={"item-name."..exc_info.leftovers.name},
+      }
+      exc_info.leftovers = nil
+      break
+    end
+  end
+end
+
+local function calc_expected_time(exc_info)
+  local secs = 0
+  for _, couple in pairs(exc_info.ruin_info.details) do
+    secs = secs + couple.count * exc_unit_time
+  end
+  for _, couple in pairs(exc_info.ruin_info.ammo) do
+    secs = secs + math.ceil(couple.count/lib_ruins.ammo_unit) * exc_unit_time
+  end
+  secs = secs - exc_info.progress * exc_unit_time
+  exc_info.expected_time = util.formattime(secs * UPS)
+end
+
 local function process_an_excavator(exc_info)
   local entity = exc_info.entity
-  local recipe = entity.get_recipe()
-  if recipe and recipe.name == shared.excavation_recipe then
+  exc_info.chests = {}
+  for _, offset in pairs(exc_offsets) do
+    table.extend(exc_info.chests, entity.surface.find_entities_filtered{
+      type = "container", position = math2d.position.add(entity.position, offset),
+    })
+  end
+
+  if not exc_info.leftovers then
     if not exc_info.ruin_entity then 
       entity.active = false
       return
@@ -63,18 +104,28 @@ local function process_an_excavator(exc_info)
       return
     end
 
-    ----- Doing
-    exc_info.progress = exc_info.progress + exc_update_rate/UPS /exc_unit_time
+    local satisfaction = entity.energy / entity.electric_buffer_size
+    exc_info.progress = exc_info.progress + satisfaction * exc_update_rate/UPS /exc_unit_time
     entity.active = true
+    calc_expected_time(exc_info)
+
+    if satisfaction > 0.35 and math.random() < 0.1 then
+      entity.surface.play_sound{
+        path="wh40k-titans-random-work",
+        position=entity.position, volume_modifier=1
+      }
+    end
 
     if exc_info.progress >= 1 then
-      ----- Done
       local item_name, count = lib_ruins.ruin_extract(exc_info.ruin_info, exc_info.ruin_entity)
       if item_name and count > 0 then
-        game.print("excavator done, changing the recipe to "..serpent.line(item_name).." x"..count)
-        entity.set_recipe(item_name)
-        local inv = entity.get_output_inventory()
-        inv.insert({name=item_name, count=count})
+        exc_info.leftovers = {name=item_name, count=count}
+        put_leftovers(exc_info)
+      else
+        entity.surface.create_entity{
+          name="flying-text", position=entity.position,
+          text={"WH40k-Titans-gui.msg-exc-fail"},
+        }
       end
       exc_info.progress = 0
 
@@ -90,22 +141,17 @@ local function process_an_excavator(exc_info)
     entity.crafting_progress = exc_info.progress
 
   else
-    ----- Waiting
     entity.active = false
-    local inv = entity.get_output_inventory()
-    if inv.get_item_count() < 1 then
-      inv = entity.get_inventory(defines.inventory.assembling_machine_input)
-      if inv.get_item_count() < 1 then
-        entity.surface.create_entity{
-          name="flying-text", position=entity.position,
-          text="Excavator resterted",
-        }
-        exc_info.progress = 0
-        entity.set_recipe(shared.excavation_recipe)
-      end
+    put_leftovers(exc_info)
+  end
+
+  for player_index, main_frame in pairs(exc_info.guis) do
+    if main_frame.valid then
+      lib.gui_update(exc_info, main_frame)
+    else
+      exc_info.guis[player_index] = nil
     end
   end
-  -- TODO: update guis?
 end
 
 local function process_excavators()
@@ -122,12 +168,116 @@ end
 
 lib:on_event(defines.events.on_tick, process_excavators)
 
+function lib.gui_update(exc_info, main_frame)
+  main_frame.status.caption = {"virtual-signal-name.signal-unknown"}
+  main_frame.expected.caption = ""
+  main_frame.results_line.clear()
+  main_frame.progress.value = exc_info.progress
+
+  local satisfaction = exc_info.entity.energy / exc_info.entity.electric_buffer_size
+  if satisfaction < 0.2 then
+    main_frame.status.caption = {"entity-status.low-power"}
+    return
+  end
+
+  if exc_info.ruin_entity and exc_info.ruin_info then
+    main_frame.status.caption = {"entity-status.working"}
+    if exc_info.expected_time then
+      main_frame.expected.caption = {"WH40k-Titans-gui.extracting-time", exc_info.expected_time}
+    end
+    for _, couple in pairs(exc_info.ruin_info.details) do
+      main_frame.results_line.add{
+        type = "sprite-button", sprite = ("item/"..couple.name),
+        tooltip = {"item-name."..couple.name},
+        number = couple.count,
+      }
+    end
+    for _, couple in pairs(exc_info.ruin_info.ammo) do
+      main_frame.results_line.add{
+        type = "sprite-button", sprite = ("item/"..couple.name),
+        tooltip = {"item-name."..couple.name},
+        number = couple.count,
+      }
+    end
+  elseif exc_info.ruin_entity and not exc_info.ruin_info then
+    main_frame.status.caption = {"entity-status.working"}
+  else
+    main_frame.status.caption = {"entity-status.no-minable-resources"}
+  end
+
+  if exc_info.leftovers then
+    main_frame.status.caption = {"?", {"WH40k-Titans-gui.extracting-leftovers"}, {"entity-status.waiting-for-space-in-destination"}}
+  end
+end
+
+local function gui_create(exc_info, player)
+  local main_frame
+  if player.gui.screen[main_frame_name] then
+    main_frame = player.gui.screen[main_frame_name]
+    -- player.gui.screen[main_frame_name].destroy(); main_frame = nil
+    lib.gui_update(exc_info, main_frame)
+    return
+  end
+
+  if not main_frame then
+    main_frame = player.gui.screen.add{ type="frame", name=main_frame_name, direction="vertical", }
+    main_frame.style.minimal_width = 256
+    main_frame.style.maximal_width = 320
+    main_frame.style.minimal_height = 128
+    main_frame.style.maximal_height = 320
+  end
+
+  -- TODO: don't close usual machine window, but stick to it?
+  main_frame.auto_center = true
+  player.opened = main_frame
+  main_frame.focus()
+  main_frame.bring_to_front()
+  exc_info.guis[player.index] = main_frame
+
+  local flowtitle = main_frame.add{ type="flow", name="title" }
+  local title = flowtitle.add{ type="label", style="frame_title", caption={"entity-name.wh40k-titans-extractor"} }
+  title.drag_target = main_frame
+  local pusher = flowtitle.add{ type="empty-widget", style="draggable_space_header" }
+  pusher.style.vertically_stretchable = true
+  pusher.style.horizontally_stretchable = true
+  pusher.drag_target = main_frame
+  pusher.style.maximal_height = 24
+  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
+
+  main_frame.add{ type="label", name="status", caption="" }
+  main_frame.add{ type="label", name="expected", caption="" }
+  -- Replace to text-box if there are any issues
+  main_frame.status.style.maximal_height = 64
+  main_frame.status.style.single_line = false
+  main_frame.add{ type="progressbar", name="progress", direction="horizontal", value=exc_info.progress }
+  main_frame.progress.style.maximal_width = 320
+  -- main_frame.add{ type="label", caption={""} }
+  -- main_frame.add{ type="flow", name="results_line", direction="horizontal" }
+  main_frame.add{ type="table", name="results_line", column_count=7 }
+  lib.gui_update(exc_info, main_frame)
+end
+
+lib:on_event(defines.events.on_gui_click, function(event)
+  local player = game.get_player(event.player_index)
+  if event.element.tags.action == act_main_frame_close then
+    if player.gui.screen[main_frame_name] then
+      player.gui.screen[main_frame_name].destroy()
+    end
+  end
+end)
 
 lib:on_event(defines.events.on_gui_opened, function(event)
   local player = game.get_player(event.player_index)
   if event.entity and ctrl_data.excavator_index[event.entity.unit_number] then
-    -- player.opened = nil
-    -- TODO: add custom GUI
+    local exc_info = ctrl_data.excavator_index[event.entity.unit_number]
+    gui_create(exc_info, player)
+  end
+end)
+
+lib:on_event(defines.events.on_gui_closed, function(event)
+  local player = game.get_player(event.player_index)
+  if event.element and event.element.name == main_frame_name then
+    event.element.destroy()
   end
 end)
 

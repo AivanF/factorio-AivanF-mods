@@ -1,4 +1,5 @@
 require("script/common")
+local lib_ruins = require("script/ruins")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
@@ -60,6 +61,15 @@ local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, ta
 end
 
 
+local function opt_play(entity, sound)
+  if not sound then return end
+  entity.surface.play_sound{
+    path=sound,
+    position=entity.position, volume_modifier=1
+  }
+end
+
+
 local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
   -- TODO: add some time before attack
   -- TODO: calculate gun muzzle position
@@ -67,6 +77,7 @@ local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type,
     cannon.attack_number = cannon.attack_number - 1
   elseif weapon_type.attack_size > 1 then
     cannon.attack_number = (weapon_type.attack_size-1) or 0
+    opt_play(entity, weapon_type.attack_start_sound)
   end
   cannon.ammo_count = math.max(0, cannon.ammo_count - weapon_type.per_shot)
   local target = cannon.target
@@ -78,6 +89,8 @@ local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type,
   attacker(entity, titan_type, cannon, weapon_type, gunpos, target)
   cannon.gun_cd = tick + weapon_type.cd * UPS
   -- log("gun_do_attack name: "..cannon.name..", attack_number: "..cannon.attack_number)
+
+  opt_play(entity, weapon_type.attack_sound)
 
   if (cannon.attack_number or 0) <= 0 then
     cannon.target = nil
@@ -400,6 +413,7 @@ function lib.register_titan(entity)
     foots = {}, -- 2 foot entities
     guns = {}, -- should be added by bunker script
   }
+  -- entity.health = entity.health/100
 
   if titan_type.class == shared.class_warhound then
     titan_info.guns = {
@@ -430,12 +444,12 @@ function lib.register_titan(entity)
   --   }
   else
     titan_info.guns = {
-      init_gun(shared.weapon_plasma_destructor),
-      -- init_gun(shared.weapon_plasma_annihilator),
       init_gun(shared.weapon_turbolaser),
+      -- init_gun(shared.weapon_plasma_destructor),
+      init_gun(shared.weapon_plasma_annihilator),
       -- init_gun(shared.weapon_lascannon),
-      init_gun(shared.weapon_apocalypse_missiles),
       init_gun(shared.weapon_missiles),
+      init_gun(shared.weapon_apocalypse_missiles),
     }
   end
 
@@ -455,15 +469,14 @@ end
 ----- OUTRO -----
 
 function lib.titan_death(titan_info)
-
-  -- TODO: create corpse
-
   local source = titan_info.entity.position
   local target
-  local scatter = titan_info.class / 5
-  for i = 0, titan_info.class/10 do
+  local scatter = titan_info.class / 3
+  local explo_count = titan_info.class/10
+  for i = 0, explo_count do
     target = math2d.position.add(
       titan_info.entity.position,
+      -- point_orientation_shift(i/explo_count, 0, scatter)
       {math.random(-scatter, scatter), math.random(-scatter, scatter)}
     )
     titan_info.entity.surface.create_entity{
@@ -471,6 +484,26 @@ function lib.titan_death(titan_info)
       position=source, source=source, target=target, speed=10,
     }
   end
+
+  local titan_type = shared.titan_types[titan_info.class]
+  local detailses = {}
+  local ammo = {}
+  table.insert(detailses, titan_type.ingredients)
+  for k, cannon in pairs(titan_info.guns) do
+    weapon_type = shared.weapons[cannon.name]
+    table.insert(detailses, weapon_type.ingredients)
+    table.insert(ammo, {name=weapon_type.ammo, count=cannon.ammo_count})
+  end
+  lib_ruins.spawn_ruin(titan_info.entity.surface, {
+    position = source,
+    class = titan_type.class,
+    details = remove_ingredients_doubles(iter_chain(detailses)),
+    ammo = remove_ingredients_doubles(ammo),
+  })
+
+  titan_info.entity.force.print(
+    {"WH40k-Titans-gui.msg-titan-destroyed", {"entity-name."..titan_type.entity}},
+    {1, 0.1, 0.1})
 end
 
 
@@ -499,8 +532,15 @@ end
 
 
 local function far_seeing(titan_info)
-  local dst = (titan_info.class + 5) * 5
-  local size = titan_info.class + 8
+  local dst = (titan_info.class + 10) * 5
+  local size = (titan_info.class + 20) * 3
+
+  titan_info.entity.force.chart(titan_info.entity.surface,
+    math2d.bounding_box.create_from_centre(
+      titan_info.entity.position,
+      size, size)
+  )
+
   titan_info.entity.force.chart(titan_info.entity.surface,
     math2d.bounding_box.create_from_centre(
       math2d.position.add(
@@ -551,6 +591,8 @@ local function process_single_titan(titan_info)
   local oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3
   -- titan_info.oris = oris
   local shadow_shift = {2 * (1+0.1*class), 1}
+
+  far_seeing(titan_info) -- it's here to make it not so often
 
   ----- Body
 
@@ -706,7 +748,6 @@ local function process_single_titan(titan_info)
     if titan_info.track_cd < tick then
       titan_info.track_cd = tick + 20 + 2*class
       titan_info.track_rot = not titan_info.track_rot
-      far_seeing(titan_info) -- it's here to make it not so often
 
       if class < 20 then
         img = shared.mod_prefix.."step-small"
@@ -844,6 +885,7 @@ local function handle_attack_order(event, kind)
         cannon.ordered = tick
         -- cannon.attack_number = 0
         done = true
+        opt_play(entity, weapon_type.pre_attack_sound)
         break
       end
     end

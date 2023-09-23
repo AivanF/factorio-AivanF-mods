@@ -1,9 +1,12 @@
 local shared = require("shared")
+local misc = require("prototypes.misc")
+
+local hsz = 4
 
 data:extend({
   {
     type = "simple-entity-with-owner",
-    name = shared.mod_prefix.."titan-corpse",
+    name = shared.corpse,
     icon = shared.mock_icon.icon, icon_size = shared.mock_icon.icon_size, icon_mipmaps = shared.mock_icon.icon_mipmaps,
     flags = {
       "not-rotatable", "placeable-neutral", "placeable-off-grid",
@@ -12,14 +15,11 @@ data:extend({
     health = 10000,
     resistances = technomagic_resistances,
     selectable_in_game = false,
-    resistances = full_resistances,
-    selection_box = {{-3, -3}, {3, 3}},
-    collision_box = {{-3, -3}, {3, 3}},
+    map_color = {1.0, 0.6, 0.1},
+    selection_box = {{-hsz, -hsz}, {hsz, hsz}},
+    collision_box = {{-hsz, -hsz}, {hsz, hsz}},
     collision_mask = {},
     render_layer = "floor",
-    picture = {
-      filename = shared.media_prefix.."graphics/entity/titan-corpse-mock.png",
-      width = 240, height = 240,
-    },
+    picture = misc.empty_sprite,
   }
 })

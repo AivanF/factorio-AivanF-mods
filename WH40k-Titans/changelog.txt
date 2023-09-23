@@ -1,13 +1,23 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.13
+Date: 2023-09-21
+  Features:
+    - Corpses of broken titans are naturally spawning.
+    - Also your own titans create ruins on death.
+    - Added excavation machine for dead titans ^_^ It has a useful interface!
+  Graphics:
+    - Plasma Destructor got reworked.
+    - Weapons and explosions sounds!
+---------------------------------------------------------------------------------------------------
 Version: 0.9.12
 Date: 2023-09-20
   Features:
-    - Leftovers chests created on Assembly Bunker picking tries to align so that it's easy to put the content back with an anserter.
+    - Leftovers chests created on Assembly Bunker picking tries to align so that it's easy to put the content back with an inserter.
   Minor Features:
     - Auto refresh of Assembly Bunker GUI.
     - Better weapons description.
   Bugfixes:
-    - Fixed crash on picking not implemented weapon.
+    - Fixed crash on specifying not implemented weapon.
   Balance:
     - Higher damage of plasma weapons.
 ---------------------------------------------------------------------------------------------------
@@ -27,6 +37,8 @@ Date: 2023-09-19
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.9
 Date: 2023-09-15
+  Features:
+    - Titan class 2 Reaver, thanks to The King Jo.
   Info:
     - Balance and recipes fixes. Bridge Technologies / Common Industries integrated! Lots of overhaul mods are supported now :)
 ---------------------------------------------------------------------------------------------------

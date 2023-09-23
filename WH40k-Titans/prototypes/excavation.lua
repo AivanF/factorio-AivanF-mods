@@ -1,6 +1,17 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
+local entity_icon = {
+  icon = shared.media_prefix.."graphics/icons/excavator.png",
+  icon_size = 64,
+  icon_mipmaps = 1,
+}
+local process_icon = {
+  icon = shared.media_prefix.."graphics/icons/excavating.png",
+  icon_size = 64,
+  icon_mipmaps = 1,
+}
+
 local special_flags = {
   "not-rotatable", "placeable-neutral", --"placeable-off-grid",
   "not-blueprintable", "not-deconstructable", "not-flammable",
@@ -35,20 +46,63 @@ local drill_animation = {{
   }
 }}
 
+local patch_sprite = {
+  filename = shared.media_prefix.."graphics/entity/Excavator-patch.png",
+  priority = "high",
+  width = 224,
+  height = 224,
+  scale = 1,
+  shift = util.by_pixel(0, 0),
+  frame_count = 1,
+}
+local integration_patch = {
+  north = patch_sprite,
+  east = patch_sprite,
+  south = patch_sprite,
+  west = patch_sprite,
+}
+
+local excavator_layers = {
+  {
+    filename = shared.media_prefix.."graphics/entity/Excavator.png",
+    priority = "extra-high",
+    width = 448,
+    height = 448,
+    scale = 0.5,
+    shift = util.by_pixel(0, 0),
+    frame_count = 1,
+  },
+}
+local excavator_animation = {{
+  animated_shift = true,
+  always_draw = true,
+  north_animation = {
+    layers = excavator_layers
+  },
+  east_animation = {
+    layers = excavator_layers
+  },
+  south_animation = {
+    layers = excavator_layers
+  },
+  west_animation = {
+    layers = excavator_layers
+  }
+}}
+
 data:extend({
   {
     type = "assembling-machine",
     name = shared.excavator,
-    -- name = shared.excavator_active,
 
-    icon = shared.mock_icon.icon, icon_size = shared.mock_icon.icon_size, icon_mipmaps = shared.mock_icon.icon_mipmaps,
+    icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
     flags = special_flags,
     max_health = 3000,
     resistances = strong_resistances,
     corpse = "electric-mining-drill-remnants",
     dying_explosion = "massive-explosion",
-    collision_box = {{ -1.4, -1.4}, {1.4, 1.4}},
-    selection_box = {{ -1.5, -1.5}, {1.5, 1.5}},
+    collision_box = {{ -3.4, -3.4}, {3.4, 3.4}},
+    selection_box = {{ -3.5, -3.5}, {3.5, 3.5}},
     vehicle_impact_sound = sounds.generic_impact,
     open_sound = sounds.electric_network_open,
     close_sound = sounds.electric_network_close,
@@ -56,14 +110,16 @@ data:extend({
 
     working_sound = {
       sound = {
-        filename = "__base__/sound/electric-mining-drill.ogg",
-        volume = 1
+        filename = shared.media_prefix.."sounds/extracting.wav",
+        volume = 0.8,
       },
       audible_distance_modifier = 0.6,
       fade_in_ticks = 4,
       fade_out_ticks = 20
     },
-    working_visualisations = drill_animation,
+    integration_patch = integration_patch,
+    -- working_visualisations = drill_animation,
+    working_visualisations = excavator_animation,
     module_specification = {
       module_slots = 0,
     },
@@ -80,34 +136,10 @@ data:extend({
     energy_usage = "20MW",
     fixed_recipe = shared.excavation_recipe,
   },
-  -- {
-  --   type = "container",
-  --   name = shared.excavator,
-
-  --   icon = shared.mock_icon.icon, icon_size = shared.mock_icon.icon_size, icon_mipmaps = shared.mock_icon.icon_mipmaps,
-  --   flags = special_flags,
-  --   max_health = 3000,
-  --   resistances = strong_resistances,
-  --   corpse = "electric-mining-drill-remnants",
-  --   dying_explosion = "massive-explosion",
-  --   collision_box = {{ -1.4, -1.4}, {1.4, 1.4}},
-  --   selection_box = {{ -1.5, -1.5}, {1.5, 1.5}},
-  --   vehicle_impact_sound = sounds.generic_impact,
-  --   open_sound = sounds.electric_network_open,
-  --   close_sound = sounds.electric_network_close,
-  --   minable = {mining_time = 2.0, result = shared.excavator},
-
-  --   inventory_size = 10,
-  --   picture = {
-  --     layers = {
-  --       electric_mining_drill_animation(),
-  --     }
-  --   },
-  -- },
   {
     type = "item",
     name = shared.excavator,
-    icon = shared.mock_icon.icon, icon_size = shared.mock_icon.icon_size, icon_mipmaps = shared.mock_icon.icon_mipmaps,
+    icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
     subgroup = shared.subg_build,
     order = "c[excavator]",
     place_result = shared.excavator,
@@ -119,6 +151,7 @@ data:extend({
     enabled = false,
     energy_required = 10,
     ingredients = {
+      {"concrete", 400},
       {"electric-mining-drill", 20},
       {"laser-turret", 20},
       {"filter-inserter", 20},
@@ -129,7 +162,7 @@ data:extend({
   },
   {
     type = "recipe",
-    icon = shared.mock_icon.icon, icon_size = shared.mock_icon.icon_size, icon_mipmaps = shared.mock_icon.icon_mipmaps,
+    icon = process_icon.icon, icon_size = process_icon.icon_size, icon_mipmaps = process_icon.icon_mipmaps,
     name = shared.excavation_recipe,
     subgroup = shared.subg_parts,
     enabled = false,

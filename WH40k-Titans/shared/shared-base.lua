@@ -52,6 +52,7 @@ shared.subg_parts = "wh40k-titan-parts"
 shared.subg_titans = "wh40k-titan-classes"
 shared.subg_weapons = "wh40k-titan-weapons-"
 
+shared.corpse = shared.mod_prefix.."titan-corpse"
 shared.excavator = shared.mod_prefix.."extractor"
 shared.excavation_recipe = shared.mod_prefix.."extracting"
 
@@ -63,5 +64,8 @@ shared.mock_icon = {
   icon_size = 64,
   icon_mipmaps = 1,
 }
+
+--------- Other Mods
+shared.SE = "space-exploration"
 
 return shared

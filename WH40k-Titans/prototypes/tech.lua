@@ -34,6 +34,8 @@ local tech_researches = {
       }
     },
     effects = {
+      { type = "unlock-recipe", recipe = shared.excavator },
+      { type = "unlock-recipe", recipe = "af-reverse-lab-2" },
       { type = "unlock-recipe", recipe = shared.sp },
       { type = "unlock-recipe", recipe = shared.lab },
     },
@@ -285,7 +287,7 @@ local tech_researches = {
     type = "technology",
     icons = {
       {
-      icon = shared.media_prefix.."graphics/tech/grade-2.png",
+      icon = shared.media_prefix.."graphics/tech/grade-3.png",
       icon_size = 256,
       icon_mipmaps = 1,
       }

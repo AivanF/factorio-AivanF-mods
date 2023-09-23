@@ -180,8 +180,8 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class3.png",
     guns = {
-      [1] = { oris=-0.22, shift=10, layer=shared.rl_arm, grade=2 },
-      [2] = { oris= 0.22, shift=10, layer=shared.rl_arm, grade=2 },
+      [1] = { oris=-0.2, shift=11, layer=shared.rl_arm, grade=2 },
+      [2] = { oris= 0.2, shift=11, layer=shared.rl_arm, grade=2 },
       [3] = { oris=-0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
       [4] = { oris= 0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_shoulder=true },
     },

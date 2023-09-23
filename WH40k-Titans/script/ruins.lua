@@ -2,7 +2,10 @@ require("script/common")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
-local sector_size = heavy_debugging and 20 or 1000
+local debug_many = false
+debug_many = true
+local base_ruin_prob = heavy_debugging and 0.8 or 0.05
+local sector_size = (heavy_debugging and debug_many and 2 or 20) * 32
 local blank_world = {
   surface = nil,
   mod = nil, -- name
@@ -10,11 +13,16 @@ local blank_world = {
   ruins = {},  -- array of ruin_info
   sectors = {}, -- contains: ghosts = {}, -- array of ruin_info
   sector_size = nil,
-  ruin_prob = heavy_debugging and 0.1 or 0.35,
+  ruin_prob_cf = 1,
+  deaths = 0,
+  created_ruins = 0,
+  finished_ruins = 0,
 }
 local blank_ruin_info = {
   -- world = nil,
   -- sector = nil,
+  died = nil,
+  class = nil,
   entity = nil,
   details = {}, -- [{name=, count=}]
   ammo = {}, -- [{name=, count=}]
@@ -25,6 +33,8 @@ local blank_sector = {
   ruin_ghosts = {},
 }
 
+lib.ammo_unit = 50
+
 function lib.initial_index()
   ctrl_data.by_surface = {}
   ctrl_data.by_zones = {}
@@ -33,15 +43,76 @@ function lib.initial_index()
   end
 end
 
-function lib.spawn_ruin(world, ruin_info)
+-- Tries to find existing world for new surface
+function lib.opt_new_world(data)
+  if not data.surface then
+    error("Missing surface")
+  end
+  if heavy_debugging then
+    game.print("WH40k_Titans-opt_new_world: "..serpent.line(data.surface.name))
+  end
+
+  local world
+
+  -- Update settings if it already exists
+  if ctrl_data.by_surface[data.surface.index] then
+    world = merge(ctrl_data.by_surface[data.surface.index], data, true)
+  end
+
+  -- Try to restore persistent world from integrated mods
+  if data.mod and data.zone then
+    if ctrl_data.by_zones[data.mod] and ctrl_data.by_zones[data.mod][data.zone] then
+      world = ctrl_data.by_zones[data.mod][data.zone]
+    end
+  end
+
+  if not world then
+    world = merge(data or {}, table.deepcopy(blank_world), false)
+    -- TODO: consider world.surface.map_gen_settings.width&height?
+  end
+  ctrl_data.by_surface[world.surface.index] = world
+
+  -- Save persistent world
+  if data.mod and data.zone then
+    ctrl_data.by_zones[data.mod] = ctrl_data.by_zones[data.mod] or {}
+    ctrl_data.by_zones[data.mod][data.zone] = world
+  end
+
+  return world
+end
+
+function lib.materialise_ruin(world, ruin_info)
   local position = ruin_info.position
   -- TODO: try adjust position, check there are no player buildings
-  -- TODO: add enemies?
+  -- TODO: add enemies if a new chunk
   ruin_info.entity = world.surface.create_entity{
-    name=shared.mod_prefix.."titan-corpse", force="neutral", position=position,
+    name=shared.corpse, force="neutral", position=position,
+  }
+  -- TODO: consider .class to pick a picture
+  rendering.draw_sprite{
+    sprite=shared.mod_prefix.."corpse-1",
+    -- https://lua-api.factorio.com/latest/concepts.html#RenderLayer
+    x_scale=1, y_scale=1, render_layer=110,
+    surface=world.surface, target=ruin_info.entity,
   }
   ruin_info.entity.destructible = false
   ctrl_data.ruins[ruin_info.entity.unit_number] = ruin_info
+
+  for _, obj in pairs(world.surface.find_entities_filtered{
+    position=position, radius=6, type="cliff"
+  }) do
+    obj.destroy()
+  end
+end
+
+function lib.spawn_ruin(surface, ruin_info)
+  local world = lib.opt_new_world({surface=surface, ruin_prob_cf=0})
+  local sector = lib.get_sector(world, ruin_info.position)
+  -- TODO: add type/class?
+  merge(ruin_info, blank_ruin_info, false)
+  ruin_info.died = true
+  world.deaths = (world.deaths or 0) + 1
+  lib.materialise_ruin(world, ruin_info)
 end
 
 function lib.ruin_removed(unit_number)
@@ -70,56 +141,31 @@ function lib.ruin_extract(ruin_info, ruin_entity)
       else
         position = math.random(#ruin_info.ammo)
         name = ruin_info.ammo[position].name
-        count = math.min(50, ruin_info.ammo[position].count)
+        count = math.min(lib.ammo_unit, ruin_info.ammo[position].count)
         ruin_info.ammo[position].count = ruin_info.ammo[position].count - count
         if ruin_info.ammo[position].count < 1 then
           table.remove(ruin_info.ammo, position)
         end
       end
-      return name, count
+      if math.random() < 0.5 then
+        return name, count
+      else
+        return nil, 0
+      end
     else
       -- Pass
     end
   else
     -- Pass
   end
+
+  local world = ctrl_data.by_surface[ruin_entity.surface.index]
+  if world then
+    world.finished_ruins = (world.finished_ruins or 0) + 1
+  end
+
   ruin_entity.destroy()
   return shared.frame_part, 1
-end
-
--- Tries to find existing world for new surface
-function lib.opt_new_world(data)
-  if not data.surface then
-    error("Missing surface")
-  end
-  game.print("WH40k_Titans-opt_new_world: "..serpent.line(data.surface.name))
-
-  local world
-
-  -- Update settings if it already exists
-  if ctrl_data.by_surface[data.surface.index] then
-    world = merge(ctrl_data.by_surface[data.surface.index], data, true)
-  end
-
-  -- Try to restore persistent world from integrated mods
-  if data.mod and data.zone then
-    if ctrl_data.by_zones[data.mod] and ctrl_data.by_zones[data.mod][data.zone] then
-      world = ctrl_data.by_zones[data.mod][data.zone]
-    end
-  end
-
-  if not world then
-    world = merge(data or {}, table.deepcopy(blank_world), false)
-  end
-  ctrl_data.by_surface[world.surface.index] = world
-
-  -- Save persistent world
-  if data.mod and data.zone then
-    ctrl_data.by_zones[data.mod] = ctrl_data.by_zones[data.mod] or {}
-    ctrl_data.by_zones[data.mod][data.zone] = world
-  end
-
-  return world
 end
 
 local function handle_deleted_surface(event)
@@ -128,38 +174,65 @@ local function handle_deleted_surface(event)
   ctrl_data.by_surface[event.surface_index] = nil
 end
 
-function lib.create_ruin_info(position)
+local function create_random_ruin_info(position)
+  local detailses = {}
+  local ammo = {}
+  local class
+  if math.random() < 0.5 then
+    class = shared.class_warhound
+    table.insert(detailses, shared.titan_types[shared.titan_warhound].ingredients)
+  else
+    class = shared.class_reaver
+    table.insert(detailses, shared.titan_types[shared.titan_reaver].ingredients)
+  end
+  if math.random() < 0.5 then
+    table.insert(detailses, shared.weapons[shared.weapon_plasma_blastgun].ingredients)
+    table.insert(ammo, {
+      name =shared.weapons[shared.weapon_plasma_blastgun].ammo,
+      count=shared.weapons[shared.weapon_plasma_blastgun].inventory * (0.2 + 0.5*math.random())
+    })
+  end
+  if math.random() < 0.5 then
+    table.insert(detailses, shared.weapons[shared.weapon_inferno].ingredients)
+    table.insert(ammo, {
+      name =shared.weapons[shared.weapon_inferno].ammo,
+      count=shared.weapons[shared.weapon_inferno].inventory * (0.2 + 0.5*math.random())
+    })
+  end
+  if math.random() < 0.5 then
+    table.insert(detailses, shared.weapons[shared.weapon_turbolaser].ingredients)
+    table.insert(ammo, {
+      name =shared.weapons[shared.weapon_turbolaser].ammo,
+      count=shared.weapons[shared.weapon_turbolaser].inventory * (0.2 + 0.5*math.random())
+    })
+  end
   local ruin_info = {
-    -- TODO: add class/picture/variant opt argument?
-    -- TODO: make random values
+    died = false,
+    class = class,
     position = position,
     entity = nil,
-    details = remove_ingredients_doubles(iter_chain{
-      shared.titan_types[shared.titan_warhound].ingredients,
-      shared.weapons[shared.weapon_plasma_blastgun].ingredients,
-      shared.weapons[shared.weapon_inferno].ingredients,
-    }),
-    ammo = {
-      {
-        name =shared.weapons[shared.weapon_plasma_blastgun].ammo,
-        count=shared.weapons[shared.weapon_plasma_blastgun].inventory/4
-      },
-      {
-        name =shared.weapons[shared.weapon_inferno].ammo,
-        count=shared.weapons[shared.weapon_inferno].inventory/3
-      },
-    },
+    details = remove_ingredients_doubles(iter_chain(detailses)),
+    ammo = remove_ingredients_doubles(ammo),
   }
   return ruin_info
 end
 
 local function create_sector(world, position)
   local sector = table.deepcopy(blank_sector)
-  if math.random() < world.ruin_prob then
+  local ruin_prob = 0
+  if math2d.position.distance(position, {0, 0}) > 2*sector_size then
+    ruin_prob = (world.ruin_prob_cf or 1) * base_ruin_prob
+  end
+  if ruin_prob > 0 and math.random() < ruin_prob then
+    -- Place a ghost ruin
     sector.ruin_ghosts = {
-      -- TODO: make random ruins count, their type & position
-      lib.create_ruin_info(position),
+      -- TODO: maybe several?
+      create_random_ruin_info(position),
     }
+    world.created_ruins = (world.created_ruins or 0) + #sector.ruin_ghosts
+    if heavy_debugging and not debug_many then
+      game.print("Planned a titan ruin!")
+    end
   end
   return sector
 end
@@ -185,7 +258,7 @@ local function handle_created_chunk(event)
   local sector = lib.get_sector(world, position)
   for _, ruin_info in pairs(sector.ruin_ghosts) do
     if math2d.position.distance(position, ruin_info.position) < sector_size/2 then
-      lib.spawn_ruin(world, ruin_info)
+      lib.materialise_ruin(world, ruin_info)
     end
   end
 end

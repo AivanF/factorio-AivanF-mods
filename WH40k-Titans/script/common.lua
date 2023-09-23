@@ -110,10 +110,13 @@ function merge(a, b, over)
   return a
 end
 
+
+
 -- Long live the Functional programming!
 function iter_len(list)
   return #list
 end
+
 function iter_chain(lists)
   -- Like Python's itertools.chain
   local result = {}
@@ -124,6 +127,7 @@ function iter_chain(lists)
   end
   return result
 end
+
 function iter_zip(lists)
   -- local common_len = math.min(table.unpack(func_map(iter_len, lists)))
   local result = {}
@@ -146,6 +150,7 @@ function iter_zip(lists)
   end
   return result
 end
+
 function partial(func, args_pre, args_post)
   args_pre = args_pre or {}
   args_post = args_post or {}
@@ -154,6 +159,7 @@ function partial(func, args_pre, args_post)
     func(table.unpack(new_args))
   end
 end
+
 function func_map(func, args)
   local results = {}
   for _, value in pairs(args) do
@@ -161,6 +167,7 @@ function func_map(func, args)
   end
   return results
 end
+
 function func_maps(func, args_arrays)
   local results = {}
   for _, args in pairs(args_arrays) do
@@ -168,6 +175,8 @@ function func_maps(func, args_arrays)
   end
   return results
 end
+
+
 
 function points_to_orientation(a, b)
   return 0.25 +math.atan2(b.y-a.y, b.x-a.x) /math.pi /2
@@ -187,6 +196,12 @@ end
 
 function math.clamp(v, mn, mx)
   return math.max(math.min(v, mx), mn)
+end
+
+function table.extend(ar1, ar2)
+  for _, v in pairs(ar2) do
+    table.insert(ar1, v)
+  end
 end
 
 function die_all(list, global_storage)

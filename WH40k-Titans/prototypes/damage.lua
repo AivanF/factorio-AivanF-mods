@@ -2,6 +2,10 @@ local shared = require("shared")
 local sounds = require("__base__.prototypes.entity.sounds")
 local fireutil = require("__base__.prototypes.fire-util")
 
+local function find_sound(name)
+  return data.raw.sound[name]
+end
+
 data:extend({
   {
     type = "custom-input",
@@ -159,14 +163,14 @@ data:extend({
               type = "create-entity",
               entity_name = "medium-explosion"
             },
-            -- {
-            --   type = "play-sound",
-            --   sound = sounds.nuclear_explosion(0.9),
-            --   play_on_target_position = false,
-            --   max_distance = 800,
-            --   -- volume_modifier = 1,
-            --   audible_distance_modifier = 3
-            -- },
+            {
+              type = "play-sound",
+              sound = find_sound("wh40k-titans-explo-1"),
+              play_on_target_position = false,
+              max_distance = 800,
+              -- volume_modifier = 1,
+              audible_distance_modifier = 3
+            },
           }
         }
       },
@@ -261,8 +265,8 @@ data:extend({
             },
             {
               type = "play-sound",
-              sound = sounds.nuclear_explosion(0.9),
-              play_on_target_position = false,
+              sound = find_sound("wh40k-titans-explo-2"),
+              play_on_target_position = true,
               max_distance = 600,
               -- volume_modifier = 1,
               audible_distance_modifier = 3
@@ -376,8 +380,8 @@ data:extend({
             },
             {
               type = "play-sound",
-              sound = sounds.nuclear_explosion(0.9),
-              play_on_target_position = false,
+              sound = find_sound("wh40k-titans-explo-2"),
+              play_on_target_position = true,
               max_distance = 800,
               -- volume_modifier = 1,
               audible_distance_modifier = 3
@@ -490,8 +494,8 @@ data:extend({
             },
             {
               type = "play-sound",
-              sound = sounds.nuclear_explosion(0.9),
-              play_on_target_position = false,
+              sound = find_sound("wh40k-titans-explo-3"),
+              play_on_target_position = true,
               max_distance = 1000,
               -- volume_modifier = 1,
               audible_distance_modifier = 3

@@ -99,9 +99,11 @@ add_weapon({
   category = shared.wc_plasma,
   min_dst = 6, max_dst = dst_s,
   ammo = shared.plasma_ammo,
-  per_shot = 2, inventory = 500,
+  speed = 7, barrel = 10,
+  per_shot = 2, inventory = 1000,
   cd = 1,
   bolt_type = bolt_types.bolt_plasma_1,
+  attack_sound = "wh40k-titans-plasma-1",
   ingredients = {
     -- {shared.melta_pump, 2},
     {shared.he_emitter, 2},
@@ -136,7 +138,7 @@ add_weapon({
   animation = shared.mod_prefix.."Inferno",
 })
 
-wname = "vulcan-mega-bolter"  -- 2 guns with 6 big bolters
+wname = "vulcan-mega-bolter"  -- 2 guns with 5 big bolters
 shared.weapon_megabolter = wname
 add_weapon({
   name = wname,
@@ -144,16 +146,19 @@ add_weapon({
   category = shared.wc_bolter,
   min_dst = 6, max_dst = dst_s,
   ammo = shared.big_bolt,
-  per_shot = 1, inventory = 2000,
-  cd = 0.1, attack_size = 3,
+  per_shot = 1, inventory = 5000,
+  cd = 0.2, attack_size = 5,
+  ammo = shared.missile_ammo,
+  bolt_type = bolt_types.bolt_rocket,
+  attack_start_sound = "wh40k-titans-bolter-big",
   ingredients = {
     {shared.bolter_engine, 2},
-    {shared.barrel, 12},
+    {shared.barrel, 10},
     {shared.frame_part, 2},
   },
   icon = "__base__/graphics/icons/gun-turret.png",
   icon_size = 64, icon_mipmaps = 4,
-  animation = nil,  -- TODO: here!
+  animation = shared.mod_prefix.."Bolter-Vulcan",
 })
 
 wname = "mauler-bolt-cannon"  -- 1 huge bolter
@@ -165,7 +170,8 @@ add_weapon({
   min_dst = 6, max_dst = dst_s,
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 500,
-  cd = 2,
+  cd = 0.2,
+  attack_sound = "wh40k-titans-bolter-huge",
   ingredients = {
     {shared.bolter_engine, 3},
     {shared.barrel, 4},
@@ -188,6 +194,7 @@ add_weapon({
   per_shot = 2, inventory = 2000,
   cd = 0.4,
   bolt_type = bolt_types.bolt_laser,
+  attack_sound = "wh40k-titans-laser",
   ingredients = {
     {shared.las_engine, 1},
     {shared.barrel, 2},
@@ -210,6 +217,7 @@ add_weapon({
   per_shot = 3, inventory = 6000,
   cd = 0.15, attack_size = 3, scatter = 2,
   bolt_type = bolt_types.bolt_laser,
+  attack_sound = "wh40k-titans-laser",
   ingredients = {
     {shared.las_engine, 2},
     {shared.barrel, 4},
@@ -226,12 +234,13 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
-  min_dst = 8, max_dst = (dst_m+dst_l)/2,
+  min_dst = 8, max_dst = (dst_m+dst_l)/2, max_dst = dst_l,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 3000,
   attack_size = 3, scatter = 4,
-  cd = 0.4, bolt_type = bolt_types.bolt_rocket,
+  cd = 0.3, bolt_type = bolt_types.bolt_rocket,
+  attack_sound = "wh40k-titans-rocket",
   ingredients = {
     {shared.rocket_engine, 4},
     {shared.barrel, 4},
@@ -248,12 +257,13 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_small,
   category = shared.wc_rocket,
-  min_dst = 8, max_dst = dst_l,
+  min_dst = 8, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 8000,
   cd = 0.15, attack_size = 8, scatter = 6,
   bolt_type = bolt_types.bolt_rocket,
+  attack_sound = "wh40k-titans-rocket",
   ingredients = {
     {shared.rocket_engine, 10},
     {shared.barrel, 10},
@@ -275,9 +285,12 @@ add_weapon({
   category = shared.wc_plasma,
   min_dst = 8, max_dst = dst_m,
   ammo = shared.plasma_ammo,
-  per_shot = 4, inventory = 900,
+  speed = 7, barrel = 12,
+  per_shot = 4, inventory = 2000,
   cd = 3,
   bolt_type = bolt_types.bolt_plasma_2,
+  pre_attack_sound = "wh40k-titans-plasma-pre",
+  attack_sound = "wh40k-titans-plasma-2",
   ingredients = {
     -- {shared.melta_pump, 4},
     {shared.he_emitter, 6},
@@ -285,7 +298,7 @@ add_weapon({
     {shared.barrel, 6},
     {shared.frame_part, 5},
   },
-  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Destructor.png",
   icon_size = 64, icon_mipmaps = 3,
   animation = shared.mod_prefix.."Plasma-Destructor",
 })
@@ -300,6 +313,7 @@ add_weapon({
   ammo = shared.huge_bolt,
   per_shot = 1, inventory = 1000,
   attack_size = 3,
+  attack_sound = "wh40k-titans-bolter-huge",
   ingredients = {
     {shared.bolter_engine, 9},
     {shared.barrel, 12},
@@ -404,6 +418,7 @@ add_weapon({
   per_shot = 10, inventory = 50000,
   cd = 6,
   bolt_type = bolt_types.bolt_plasma_3,
+  attack_sound = "wh40k-titans-plasma-2", -- TODO: replace
   ingredients = {
     -- {shared.melta_pump, 18},
     {shared.he_emitter, 18},
@@ -411,9 +426,9 @@ add_weapon({
     {shared.barrel, 10},
     {shared.frame_part, 10},
   },
-  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-BlastGun.png", -- TODO: replace
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Destructor.png",  -- TODO: replace
   icon_size = 64, icon_mipmaps = 3,
-  animation = shared.mod_prefix.."Plasma-Destructor",  -- TODO: replace
+  animation = shared.mod_prefix.."Plasma-Destructor", -- TODO: replace
 })
 
 wname = "hellstorm-cannon"

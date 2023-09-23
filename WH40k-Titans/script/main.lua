@@ -156,7 +156,9 @@ local function update_configuration()
 
   global.ctrl_data = merge(global.ctrl_data or {}, blank_ctrl_data, false)
   ctrl_data = global.ctrl_data
-  clean_drawings()
+
+  -- TODO: correct them to work with assemblers, excavators, ruins
+  -- clean_drawings()
   total_reload()
 
   if ctrl_data.by_surface == nil then
@@ -173,11 +175,6 @@ lib:on_configuration_changed(update_configuration)
 lib:on_any_built(on_any_built)
 lib:on_any_remove(on_any_remove)
 
-commands.add_command(
-  "titans-clean-draw",
-  "Remove all WH40k Titans drawings",
-  clean_drawings
-)
 commands.add_command(
   "titans-reload",
   "Reload all WH40k Titans",
