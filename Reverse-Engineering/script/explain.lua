@@ -45,9 +45,10 @@ lib.add_commands = function()
     explain)
 end
 
-local function gui_create(player)
+local function gui_create(player, toggle)
   if player.gui.screen[main_frame_name] then
     player.gui.screen[main_frame_name].destroy()
+    if toggle then return end
   end
 
   local main_frame = player.gui.screen.add{ type="frame", name=main_frame_name, direction="vertical", }
@@ -147,7 +148,9 @@ end)
 
 lib:on_event(defines.events.on_lua_shortcut, function (event)
   local player = game.get_player(event.player_index)
-  gui_create(player)
+  if event.prototype_name == "af-reverse-lab-worth" then
+    gui_create(player, toggle)
+  end
 end)
 
 return lib
