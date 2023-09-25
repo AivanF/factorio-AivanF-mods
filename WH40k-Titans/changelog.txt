@@ -1,6 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.14
+Date: 2023-09-25
+  Bugfixes:
+    - Fixed UI crashes.
+    - Removed SE research ingredients getting automatically added.
+    - Fixed issue with non-transparent titan corpse border and never-ending mining.
+  Changes:
+    - Now Inferno weapon uses flamethrower ammo instead of rocket fuel, as it has x10 bigger stack size.
+  Balance:
+    - Increased Inferno ammo storage from 2k to 4k.
+    - Reduced cost of titans class 1 and weapons grade 1 researches from 50 to 10. And of some later techs too.
+    - Increased research unit time of all technologies from 30 to 60 sec.
+    - Increased corpses extraction machine pollution emission from 2 to 5 per minute.
+    - Higher extracting rate for ammo: from 50 to 100.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.13
-Date: 2023-09-21
+Date: 2023-09-23
   Features:
     - Corpses of broken titans are naturally spawning.
     - Also your own titans create ruins on death.

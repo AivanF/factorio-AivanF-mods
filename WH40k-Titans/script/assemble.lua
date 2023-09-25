@@ -961,13 +961,14 @@ lib:on_event(defines.events.on_gui_click, function(event)
   if ctrl_data.assembler_gui[event.player_index] then
     assembler = ctrl_data.assembler_gui[event.player_index].assembler
   end
+  local action = event.element and event.element.valid and event.element.tags.action
 
-  if event.element.tags.action == act_main_frame_close then
-    if player.gui.screen[main_frame_name] then
+  if action == act_main_frame_close then
+    if player.gui.screen[main_frame_name] and player.gui.screen[main_frame_name].valid then
       player.gui.screen[main_frame_name].destroy()
       ctrl_data.assembler_gui[event.player_index] = nil
     end
-  elseif event.element.tags.action == act_change_state then
+  elseif action == act_change_state then
     if event.element.tags.need_confirm then
       -- TODO: save goal, create a model window, return
     end
@@ -999,7 +1000,7 @@ end)
 
 lib:on_event(defines.events.on_gui_closed, function(event)
   local player = game.get_player(event.player_index)
-  if event.element and event.element.name == main_frame_name then
+  if event.element and event.element.valid and event.element.name == main_frame_name then
     event.element.destroy()
     ctrl_data.assembler_gui[event.player_index] = nil
   end

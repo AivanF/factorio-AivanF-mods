@@ -17,7 +17,7 @@ shared.las_engine    = shared.he_emitter
 -- shared.quake_proj = shared.mod_prefix.."quake-projectile"
 --- Builtin ones and the Bridge
 shared.laser_ammo   = "battery"
-shared.flamer_ammo  = "rocket-fuel"
+shared.flamer_ammo  = "flamethrower-ammo"
 shared.melta_ammo   = "rocket-fuel"
 shared.hell_ammo    = "nuclear-fuel"
 shared.missile_ammo = "explosive-rocket"
@@ -125,7 +125,7 @@ add_weapon({
   min_dst = 6, max_dst = dst_s,
   speed = 18, barrel = 9,
   ammo = shared.flamer_ammo,
-  per_shot = 1, inventory = 2000,
+  per_shot = 1, inventory = 4000,
   cd = 0.05, attack_size = 5, scatter = 5,
   bolt_type = bolt_types.bolt_fire,
   ingredients = {

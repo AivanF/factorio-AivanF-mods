@@ -20,6 +20,15 @@ function lib.register_excavator(entity)
   world = ctrl_data.by_surface[entity.surface.index]
   sector = lib_ruins.get_sector(world, entity.position)
 
+  local bodies = entity.surface.find_entities_filtered{position=entity.position, name=shared.corpse}
+  if #bodies > 1 then
+    -- game.print("Found "..cnt.." bodies!")
+    for i = 2, #bodies do
+      bodies[i].destroy()
+    end
+    ruin_entity = bodies[1]
+  end
+
   if world and ruin_entity then
     ruin_info = ctrl_data.ruins[ruin_entity.unit_number]
   end
@@ -34,6 +43,7 @@ function lib.register_excavator(entity)
     leftover = nil,
     guis = {}, -- player.index => main_frame
   }
+  -- game.print("Placed excavator "..entity.unit_number.." on ruin "..ruin_entity.unit_number.." with info: "..serpent.line(not not ruin_info))
   ctrl_data.excavator_index[entity.unit_number] = exc_info
   bucks.save(ctrl_data.excavator_buckets, exc_update_rate, entity.unit_number, exc_info)
   if ruin_info then
@@ -259,7 +269,8 @@ end
 
 lib:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
-  if event.element.tags.action == act_main_frame_close then
+  local action = event.element and event.element.valid and event.element.tags.action
+  if action == act_main_frame_close then
     if player.gui.screen[main_frame_name] then
       player.gui.screen[main_frame_name].destroy()
     end
@@ -276,7 +287,7 @@ end)
 
 lib:on_event(defines.events.on_gui_closed, function(event)
   local player = game.get_player(event.player_index)
-  if event.element and event.element.name == main_frame_name then
+  if event.element and event.element.valid and event.element.name == main_frame_name then
     event.element.destroy()
   end
 end)

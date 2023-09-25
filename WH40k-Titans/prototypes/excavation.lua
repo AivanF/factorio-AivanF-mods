@@ -12,11 +12,6 @@ local process_icon = {
   icon_mipmaps = 1,
 }
 
-local special_flags = {
-  "not-rotatable", "placeable-neutral", --"placeable-off-grid",
-  "not-blueprintable", "not-deconstructable", "not-flammable",
-}
-
 local drill_animation = {{
   animated_shift = true,
   always_draw = true,
@@ -96,7 +91,7 @@ data:extend({
     name = shared.excavator,
 
     icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
-    flags = special_flags,
+    -- flags = { "not-rotatable", "not-flammable" },
     max_health = 3000,
     resistances = strong_resistances,
     corpse = "electric-mining-drill-remnants",
@@ -127,7 +122,7 @@ data:extend({
     crafting_categories = {shared.craftcat_empty},
     energy_source = {
       type = "electric",
-      emissions_per_minute = 2,
+      emissions_per_minute = 5,
       usage_priority = "secondary-input",
       buffer_capacity = "50MJ",
       input_flow_limit = "25MW",

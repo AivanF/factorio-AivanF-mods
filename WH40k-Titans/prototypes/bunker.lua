@@ -256,6 +256,7 @@ data:extend({
       {"processing-unit", 200},
     },
     result = shared.bunker_minable,
+    energy_required = 10,
   },
 })
 

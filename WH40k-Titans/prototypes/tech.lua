@@ -54,7 +54,7 @@ local tech_researches = {
         -- {"production-science-pack", 1},
         -- {"space-science-pack", 1},
       },
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -75,7 +75,7 @@ local tech_researches = {
     unit = {
       count = 10,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -118,7 +118,7 @@ local tech_researches = {
     unit = {
       count = 500,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -142,9 +142,9 @@ local tech_researches = {
     effects = get_titan_effects(1),
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
-      count = 50,
+      count = 10,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -164,9 +164,9 @@ local tech_researches = {
     effects = get_titan_effects(2),
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
-      count = 100,
+      count = 50,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -186,9 +186,9 @@ local tech_researches = {
     effects = get_titan_effects(3),
     prerequisites = {shared.mod_prefix.."2-class"},
     unit = {
-      count = 250,
+      count = 150,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -208,9 +208,9 @@ local tech_researches = {
     effects = get_titan_effects(4),
     prerequisites = {shared.mod_prefix.."3-class"},
     unit = {
-      count = 400,
+      count = 350,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -231,9 +231,9 @@ local tech_researches = {
     effects = get_titan_effects(5),
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
-      count = 600,
+      count = 500,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -257,9 +257,9 @@ local tech_researches = {
       shared.mod_prefix.."1-class",
     },
     unit = {
-      count = 50,
+      count = 10,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -278,7 +278,7 @@ local tech_researches = {
     unit = {
       count = 200,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },
@@ -295,9 +295,9 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_big),
     prerequisites = {shared.mod_prefix.."2-grade", shared.mod_prefix.."5-class"},
     unit = {
-      count = 400,
+      count = 300,
       ingredients = {{shared.sp, 1}},
-      time = 30
+      time = 60
     },
     order = name
   },

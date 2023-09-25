@@ -4,7 +4,7 @@ local lib = Lib.new()
 
 local debug_many = false
 debug_many = true
-local base_ruin_prob = heavy_debugging and 0.8 or 0.05
+local base_ruin_prob = heavy_debugging and 0.8 or 0.04
 local sector_size = (heavy_debugging and debug_many and 2 or 20) * 32
 local blank_world = {
   surface = nil,
@@ -33,7 +33,7 @@ local blank_sector = {
   ruin_ghosts = {},
 }
 
-lib.ammo_unit = 50
+lib.ammo_unit = 100
 
 function lib.initial_index()
   ctrl_data.by_surface = {}
@@ -82,6 +82,7 @@ function lib.opt_new_world(data)
 end
 
 function lib.materialise_ruin(world, ruin_info)
+  if ruin_info.entity then return end
   local position = ruin_info.position
   -- TODO: try adjust position, check there are no player buildings
   -- TODO: add enemies if a new chunk
@@ -162,10 +163,18 @@ function lib.ruin_extract(ruin_info, ruin_entity)
   local world = ctrl_data.by_surface[ruin_entity.surface.index]
   if world then
     world.finished_ruins = (world.finished_ruins or 0) + 1
+    for i, obj in pairs(world.ruins) do
+      if obj == ruin_info then
+        world.ruins[i] = nil
+        break
+      end
+    end
   end
 
+  ruin_entity.destructible = true
   ruin_entity.destroy()
-  return shared.frame_part, 1
+  -- return shared.frame_part, 1
+  return nil, 0
 end
 
 local function handle_deleted_surface(event)
@@ -185,6 +194,7 @@ local function create_random_ruin_info(position)
     class = shared.class_reaver
     table.insert(detailses, shared.titan_types[shared.titan_reaver].ingredients)
   end
+  table.insert(detailses, {{name=shared.frame_part, count=math.random(7)}})
   if math.random() < 0.5 then
     table.insert(detailses, shared.weapons[shared.weapon_plasma_blastgun].ingredients)
     table.insert(ammo, {
