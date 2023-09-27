@@ -4,8 +4,8 @@ local lib = Lib.new()
 
 local debug_many = false
 -- debug_many = true
-local base_ruin_prob = heavy_debugging and debug_many and 0.8 or 0.04
-local sector_size = (heavy_debugging and debug_many and 2 or 20) * 32
+local base_ruin_prob = heavy_debugging and debug_many and 0.8 or settings.startup["wh40k-titans-ruin-prob"].value
+local sector_size = (heavy_debugging and debug_many and 2 or 10) * 32
 local blank_world = {
   surface = nil,
   mod = nil, -- name

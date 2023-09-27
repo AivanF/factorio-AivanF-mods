@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.16
+Date: 2023-09-27
+  Balance:
+    - Increased titans ruins frequency, x6. Also you can adjust it with a startup setting.
+    - Increased corpses extraction machine pollution emission from 5 to 10 per minute.
+  Info:
+    - Added King Jo servo-skull mod as an optional dependency, for the sake of grid-dark aesthetics and my gratitude!
+---------------------------------------------------------------------------------------------------
 Version: 0.9.15
 Date: 2023-09-27
   Features:

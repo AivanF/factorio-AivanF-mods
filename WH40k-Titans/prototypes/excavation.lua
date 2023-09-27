@@ -122,7 +122,7 @@ data:extend({
     crafting_categories = {shared.craftcat_empty},
     energy_source = {
       type = "electric",
-      emissions_per_minute = 5,
+      emissions_per_minute = 10,
       usage_priority = "secondary-input",
       buffer_capacity = "50MJ",
       input_flow_limit = "25MW",
