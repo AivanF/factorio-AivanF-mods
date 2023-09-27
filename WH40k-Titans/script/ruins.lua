@@ -3,8 +3,8 @@ local Lib = require("script/event_lib")
 local lib = Lib.new()
 
 local debug_many = false
-debug_many = true
-local base_ruin_prob = heavy_debugging and 0.8 or 0.04
+-- debug_many = true
+local base_ruin_prob = heavy_debugging and debug_many and 0.8 or 0.04
 local sector_size = (heavy_debugging and debug_many and 2 or 20) * 32
 local blank_world = {
   surface = nil,
@@ -179,8 +179,10 @@ end
 
 local function handle_deleted_surface(event)
   local world = ctrl_data.by_surface[event.surface_index]
-  world.surface = nil
-  ctrl_data.by_surface[event.surface_index] = nil
+  if world then
+    world.surface = nil
+    ctrl_data.by_surface[event.surface_index] = nil
+  end
 end
 
 local function create_random_ruin_info(position)

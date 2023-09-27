@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.15
+Date: 2023-09-27
+  Features:
+    - Titan remote control! Integrated AAI Programmable Vehicles.
+    - Titan weapons auto attack AI also now works!
+    - Assembly Bunker: a button to enable or disable auto start.
+  Bugfixes:
+    - Fixed crashes on: surface delete, interrupting titan assembling process.
+  Balance:
+    - Yet another slight increase of Titans speed.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.14
 Date: 2023-09-25
   Bugfixes:

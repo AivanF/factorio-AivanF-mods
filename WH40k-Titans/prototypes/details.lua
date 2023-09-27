@@ -1,6 +1,5 @@
 local shared = require("shared")
 
--- TODO: move into separate reusable mod? AivanF Medium/Bridge Industry (c) :D
 local parts = {
   {
     name = shared.servitor,

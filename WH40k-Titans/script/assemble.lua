@@ -263,8 +263,12 @@ end
 local function put_items_to_entity(entity, items)
   local finished = true
   local done
-  for key, stack in pairs(items) do
-    done = entity.insert({name=stack[1], count=stack[2]})
+  for key, stack in ipairs(items) do
+    if stack[2] > 0 then
+      done = entity.insert({name=stack[1], count=stack[2]})
+    else
+      done = 0
+    end
     stack[2] = stack[2] - done
     if stack[2] <= 0 then
       items[key] = nil
@@ -351,8 +355,8 @@ function lib.register_bunker(centity)
     assembly_progress_max = 0,
     class_recipe = nil,
     weapon_recipes = {},
-    items_main = {},
-    items_guns = {},
+    items_main = {}, -- ingredients array
+    items_guns = {}, -- k => union: ingredients array + ammo_count
     auto_build = false,
 
     -- Bunker entities
@@ -557,8 +561,7 @@ function state_handler.idle(assembler)
 end
 
 function state_pre_handler.prepare_assembly(assembler)
-  -- TODO: make false by default + add a UI flag
-  assembler.auto_build = true
+  assembler.auto_build = false
 end
 
 function state_handler.prepare_assembly(assembler)
@@ -579,8 +582,13 @@ function state_handler.assembling(assembler)
   else
     local titan_type = shared.titan_types[assembler.class_recipe]
     assembler.force.print({"WH40k-Titans-gui.msg-titan-created", {"entity-name."..titan_type.entity}})
+    local name = titan_type.entity
+    -- Try change to AAI Programmable Vehicles
+    if game.entity_prototypes[name.."-0"] then
+      name = name.."-0"
+    end
     titan_entity = assembler.surface.create_entity{
-      name=titan_type.entity, force=assembler.force, position=assembler.position,
+      name=name, force=assembler.force, position=assembler.position, raise_built=true,
     }
     local titan_info = titan.register_titan(titan_entity)
     local weapon_type
@@ -598,7 +606,8 @@ function state_handler.waiting_disassembly(assembler)
   local titan_entity = find_titan(assembler, true)
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
   if titan_entity and titan_info then
-    local titan_type = shared.titan_types[titan_entity.name]
+    local titan_type = titan.titan_type_by_entity(titan_entity)
+    -- local titan_type = shared.titan_types[titan_entity.name]
     assembler.force.print({"WH40k-Titans-gui.msg-titan-removed", {"entity-name."..titan_type.entity}})
     titan_to_bunker_internal(assembler, titan_info)
     titan_entity.destroy({raise_destroy=true})
@@ -627,7 +636,7 @@ function state_handler.restock(assembler)
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
 
   if titan_entity and titan_info then
-    local titan_type = shared.titan_types[titan_entity.name]
+    local titan_type = shared.titan_types[titan_info.name or titan_entity.name]
     local weapon_type, cannon, need_ammo, have_ammo, got_ammo
     local done_ws, done_ammo = 0, 0
     for k, _ in pairs(titan_type.guns) do
@@ -749,6 +758,7 @@ local act_main_frame_close = "wh40k-titans-assembly-frame-close"
 local act_change_state = "wh40k-titans-assembly-change-state"
 local act_set_class = "wh40k-titans-assembly-set-class"
 local act_set_weapon = "wh40k-titans-assembly-set-weapon"
+local act_toggle_auto = "wh40k-titans-assembly-toggle-auto-build"
 
 local gui_maker = {}
 local gui_updater = {}
@@ -796,6 +806,7 @@ end
 function gui_updater.prepare_assembly(assembler, main_frame)
   -- TODO: update other elements?
   main_frame.main_room.label.caption = {"", "Status: ", assembler.message or "unknown"}
+  main_frame.last_line.auto_toggler.sprite = assembler.auto_build and "virtual-signal/signal-green" or "virtual-signal/signal-grey"
 end
 
 function gui_maker.prepare_assembly(assembler, main_frame)
@@ -846,6 +857,13 @@ function gui_maker.prepare_assembly(assembler, main_frame)
       end
     end
   end
+
+  main_frame.add{ type="flow", name="last_line", direction="horizontal" }
+  main_frame.last_line.add{ type="label", name="label", caption={"WH40k-Titans-gui.assembly-auto"} }
+  main_frame.last_line.add{
+    type="sprite-button", name="auto_toggler", tags={action=act_toggle_auto},
+    sprite=assembler.auto_build and "virtual-signal/signal-green" or "virtual-signal/signal-grey",
+  }
 end
 
 function gui_maker.assembling(assembler, main_frame)
@@ -968,6 +986,8 @@ lib:on_event(defines.events.on_gui_click, function(event)
       player.gui.screen[main_frame_name].destroy()
       ctrl_data.assembler_gui[event.player_index] = nil
     end
+  elseif action == act_toggle_auto then
+    assembler.auto_build = not assembler.auto_build
   elseif action == act_change_state then
     if event.element.tags.need_confirm then
       -- TODO: save goal, create a model window, return

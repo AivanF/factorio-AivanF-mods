@@ -105,7 +105,7 @@ end
 local function control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
   if cannon.target ~= nil and tick < cannon.ordered + order_ttl then
     local dst = math2d.position.distance(gunpos, cannon.target)
-    if cannon.gun_cd < tick and dst > 4 and dst < calc_max_dst(titan_type, k, weapon_type) then
+    if cannon.gun_cd < tick and dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type) then
       gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
     end
 
@@ -127,7 +127,7 @@ local function control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_
     if true
       and math.abs(orid) < 0.015
       and cannon.gun_cd < tick
-      and dst > 4 and dst < calc_max_dst(titan_type, k, weapon_type)
+      and dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type)
     then
       gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
     end
@@ -237,7 +237,12 @@ local function create_titan_gui(player, titan_info)
     type="frame", name=main_frame_name, caption={"WH40k-Titans-gui.titan-dashboard-title"},
     direction="horizontal",
   }
-  guiobj.main_frame.style.size = {340, 180}
+  -- guiobj.main_frame.style.size = {340, 180}
+  guiobj.main_frame.style.minimal_width = 200
+  guiobj.main_frame.style.maximal_width = 480
+  -- guiobj.main_frame.style.minimal_height = 128
+  -- guiobj.main_frame.style.maximal_height = 320
+
   -- guiobj.main_frame.auto_center = true
   player.opened = guiobj.main_frame
 
@@ -391,17 +396,31 @@ end)
 
 ----- Intro -----
 
+function lib.titan_type_by_entity(entity)
+  local name = entity.name
+  local titan_type = shared.titan_types[name]
+  if not titan_type and string.sub(entity.name, -2, -1) == "-0" then 
+    name = string.sub(entity.name, 1, -3)
+    titan_type = shared.titan_types[name]
+  end
+  return titan_type, name
+end
+
 function lib.register_titan(entity)
   if ctrl_data.titans[entity.unit_number] then
     return ctrl_data.titans[entity.unit_number]
   end
-  local titan_type = shared.titan_types[entity.name]
+  local titan_type, name = lib.titan_type_by_entity(entity)
   if not titan_type then
     game.print("Got bad titan "..entity.name)
     return
   end
   local titan_info = {
+    name = name,
+    unit_number = entity.unit_number,
     entity = entity,
+    force = entity.force,
+    surface = entity.surface,
     class = titan_type.class,
     shield = titan_type.max_shield /2, -- void shield health amount
     voice_cd = 0, -- phrases muted till
@@ -589,8 +608,9 @@ local function process_single_titan(titan_info)
   end
   local ori = entity.orientation
   local oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3
-  -- titan_info.oris = oris
+  titan_info.oris = oris
   local shadow_shift = {2 * (1+0.1*class), 1}
+  titan_info.position = titan_info.entity.position
 
   far_seeing(titan_info) -- it's here to make it not so often
 
@@ -665,6 +685,7 @@ local function process_single_titan(titan_info)
     weapon_type = shared.weapons[cannon.name]
     gunpos = math2d.position.add(entity.position, point_orientation_shift(ori, titan_type.guns[k].oris, titan_type.guns[k].shift))
     wc_control[weapon_type.category](entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
+    cannon.position = gunpos
 
     rendering.draw_animation{
       animation=weapon_type.animation,
@@ -797,15 +818,46 @@ local function process_single_titan(titan_info)
 end
 
 
-local function process_titans()
-  for unit_number, titan_info in pairs(ctrl_data.titans) do
-    if titan_info.entity.valid then
-      process_single_titan(titan_info)
-    else
-      game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
-      ctrl_data.titans[unit_number] = nil
+local function reregister_titan(titan_info)
+  if titan_info.entity.valid then return end
+  -- ctrl_data.titans[titan_info.unit_number] = nil
+  titan_info.entity = nil
+  -- log(serpent.block(titan_info))
+  -- In case when AAI Programmable Vehicles change the entity. Sadly, they have no suitable API
+  if titan_info.surface and titan_info.position and titan_info.name then
+    local options = titan_info.surface.find_entities_filtered{
+      position=titan_info.position, radius=1,
+      type=shared.titan_base_type, force=titan_info.force,
+    }
+    for _, obj in pairs(options) do
+      if true
+        and not ctrl_data.titans[obj.unit_number]
+        and obj.name:find(titan_info.name, 1, true)
+      then
+        titan_info.entity = obj
+        -- ctrl_data.titans[obj.unit_number] = titan_info -- Not changing table while iterating!
+        return
+      end
     end
   end
+end
+
+
+local function process_titans()
+  local titans_old = ctrl_data.titans
+  local titans_new = {}
+  for unit_number, titan_info in pairs(titans_old) do
+    reregister_titan(titan_info)
+    if titan_info.entity then
+      titans_new[titan_info.entity.unit_number] = titan_info
+      process_single_titan(titan_info)
+      lib.handle_attack_ai(titan_info) -- TODO: not so often!
+    else
+      game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
+    end
+  end
+  ctrl_data.titans = titans_new
+
   for index, info in pairs(ctrl_data.foots) do
     if info.entity.valid then
       rendering.draw_animation{
@@ -846,6 +898,91 @@ end
 
 
 ----- Attack Order -----
+
+local enemies
+local attack_ori_shifts = {0, 0.07, -0.07, 0.15, -0.15}
+local ai_attack_radius = 6
+
+local function find_ai_target(titan_info, entity, weapon_type, cannon)
+  local enemy_number, target_option, new_oris
+  local max_number = 0
+  local result = nil
+  if weapon_type.start_far then
+    for _, oris in ipairs(attack_ori_shifts) do
+      dst = weapon_type.max_dst
+      while 0 < dst and weapon_type.min_dst*1.5 < dst do
+        dst = dst * 0.75
+        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
+        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
+        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
+        if enemy_number > max_number then
+          max_number = enemy_number
+          result = target_option
+        end
+      end
+    end
+  else
+    for _, oris in ipairs(attack_ori_shifts) do
+      dst = weapon_type.min_dst*1.5
+      while 0 < dst and dst < weapon_type.max_dst do
+        dst = dst * 1.25
+        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
+        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
+        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
+        if enemy_number > max_number then
+          max_number = enemy_number
+          result = target_option
+        end
+      end
+    end
+  end
+  return result
+end
+
+function lib.handle_attack_ai(titan_info)
+  local tick = game.tick
+  local entity = titan_info.entity
+  local titan_type = shared.titan_types[titan_info.class]
+  enemies = {}
+  for _, f in pairs(game.forces) do
+    if f.is_enemy(titan_info.force) then
+      table.insert(enemies, f)
+    end
+  end
+
+  local enemy_number = entity.surface.count_entities_filtered{
+    position=math2d.position.add(titan_info.entity.position, point_orientation_shift(entity.orientation, 0, titan_info.class)),
+    radius=48 + titan_info.class, force=enemies, is_military_target=true
+  }
+  if enemy_number <= 1 then return end
+
+  local weapon_type, dst, target_option
+  local done = false
+  for k, cannon in pairs(table.shallow_copy(titan_info.guns)) do
+    if cannon.ai and (cannon.target == nil or cannon.ordered+order_ttl < tick) then
+      weapon_type = shared.weapons[cannon.name]
+      target_option = find_ai_target(titan_info, entity, weapon_type, cannon)
+      if target_option then
+        cannon.target = target_option
+        cannon.ordered = tick
+        opt_play(entity, weapon_type.pre_attack_sound)
+        done = true
+      end
+    end
+  end
+
+  if done then
+    if titan_info.voice_cd < tick then
+      if math.random(100) < 80 then
+        entity.surface.play_sound{
+          path="wh40k-titans-phrase-attack",
+          position=entity.position, volume_modifier=1
+        }
+      end
+      titan_info.voice_cd = tick + 450 + 15*titan_info.class
+    end
+  end
+end
 
 local function handle_attack_order(event, kind)
   -- https://lua-api.factorio.com/latest/events.html#CustomInputEvent

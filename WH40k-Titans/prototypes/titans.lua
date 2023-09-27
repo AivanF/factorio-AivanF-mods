@@ -45,7 +45,8 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       enabled = false,
       category = shared.craftcat_titan..math.floor(titan_type.class/10),
       ingredients = shared.preprocess_recipe(titan_type.ingredients),
-      results = minable_titans and {name} or {},
+      -- results = minable_titans and {{name, 1}} or {},
+      results = {{name, 1}},
       energy_required = 60*60*24,
     },
     {

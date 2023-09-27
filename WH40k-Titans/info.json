@@ -1,6 +1,6 @@
 {
   "name": "WH40k-Titans",
-  "version": "0.9.14",
+  "version": "0.9.15",
   "title": "WH40k: Titans",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
@@ -9,6 +9,7 @@
     "Reverse-Engineering",
     "Common-Industries = 0.9.2",
     "WH40k-Titans-media = 1.0.8",
+    "? aai-programmable-vehicles",
     "? Mechanicus"
   ],
   "factorio_version": "1.1",
