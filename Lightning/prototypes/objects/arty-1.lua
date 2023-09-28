@@ -5,8 +5,8 @@ local name = shared.art1
 local icon = "__Lightning__/graphics/icons/arty1.png"
 local icon_size = 64
 local icon_mipmaps = 3
-local acc_input = "20MW"
-local acc_capacity = "5GJ"
+local acc_input = (10*settings.startup["af-tsl-arty-en-cf"].value).."MW"
+local acc_capacity = (2500*settings.startup["af-tsl-arty-en-cf"].value).."MJ"
 
 local picture_base = {
   layers = {

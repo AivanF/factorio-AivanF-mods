@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.14
+Date: 2023-09-28
+  Features:
+    - Startup setting for scaling artillery towers power capacity.
+  Balance:
+    - Increased overall lightnings catch probability for all rods and handlers.
+  Info:
+    - Some smaller fixes for arty and sounds.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.13
 Date: 2023-09-15
   Features:

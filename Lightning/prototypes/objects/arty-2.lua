@@ -5,8 +5,8 @@ local name = shared.art2
 local icon = "__Lightning__/graphics/icons/arty2.png"
 local icon_size = 64
 local icon_mipmaps = 3
-local acc_input = "200MW"
-local acc_capacity = "50GJ"
+local acc_input = (100*settings.startup["af-tsl-arty-en-cf"].value).."MW"
+local acc_capacity = (25*settings.startup["af-tsl-arty-en-cf"].value).."GJ"
 
 local ingredients = {
   {"steel-plate", 2000},

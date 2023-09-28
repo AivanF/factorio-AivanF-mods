@@ -89,6 +89,7 @@ local function on_player_selected_area(event)
   local single_energy = level_to_energy_attack(power_level)
   local req_pc = 0.05
   local req_en = (is_bombarding and 10 or 1) * single_energy
+  local act_en = req_en * 0.95
   local matched = 0
   local nearby = 0
   local max_dst
@@ -104,8 +105,8 @@ local function on_player_selected_area(event)
         todo = dst > 8 and dst < info.max_dst and dst < closest_dst
       end if todo then nearby = nearby + 1 end
       if todo then todo = script_data.arty_tasks[entity.unit_number] == nil end
-      if todo then todo = entity.energy > req_en end
-      if todo then todo = entity.energy/entity.electric_buffer_size > req_pc end
+      if todo then todo = entity.energy > act_en end
+      -- if todo then todo = entity.energy/entity.electric_buffer_size > req_pc end
       if todo and not alt then
         dst = math.sqrt( (entity.position.x-target.x)^2 + (entity.position.y-target.y)^2 )
         todo = dst > 8 and dst < info.max_dst and dst < closest_dst
@@ -114,7 +115,7 @@ local function on_player_selected_area(event)
         closest_arty = entity
         closest_dst = dst
         matched = matched + 1
-        attacks = attacks + math.floor(entity.energy / req_en)
+        attacks = attacks + math.floor(entity.energy / act_en)
       end
     end
   end

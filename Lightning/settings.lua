@@ -21,6 +21,15 @@ data:extend{
         order = "a-main-2",
     },
     {
+        type = "int-setting",
+        name = "af-tsl-arty-en-cf",
+        setting_type = "startup",
+        minimum_value = 1,
+        default_value = 2,
+        maximum_value = 5,
+        order = "a-main-3",
+    },
+    {
         type = "bool-setting",
         name = "af-tsl-support-surfaces",
         setting_type = "startup",

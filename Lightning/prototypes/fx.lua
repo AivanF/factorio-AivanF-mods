@@ -136,7 +136,7 @@ data:extend({
       {filename="__Lightning__/sounds/lightning-2.wav", min_speed=0.8, max_speed=1.2},
       {filename="__Lightning__/sounds/lightning-3.wav", min_speed=0.8, max_speed=1.2},
     },
-    audible_distance_modifier=10,
+    audible_distance_modifier=5,
   },
   {
     type="sound",
