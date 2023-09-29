@@ -52,6 +52,13 @@ data:extend({
     width = 400,
     height = 400,
   },
+  {
+    type = "sprite",
+    name = shared.mod_prefix.."corpse-3",
+    filename = shared.media_prefix.."graphics/entity/titan-corpse-3.png",
+    width = 600,
+    height = 600,
+  },
 
   -- https://wiki.factorio.com/Prototype/Animation
   {
@@ -122,12 +129,21 @@ data:extend({
   },
   {
     type = "animation",
+    name = shared.mod_prefix.."Bolter-Adrex",
+    filename = shared.media_prefix.."graphics/weapons/Bolter-Adrex.png",
+    frame_count = 1,
+    width = 80,
+    height = 160,
+    shift = util.by_pixel(0, -60),
+  },
+  {
+    type = "animation",
     name = shared.mod_prefix.."Bolter-Vulcan",
     filename = shared.media_prefix.."graphics/weapons/Bolter-Vulcan.png",
     frame_count = 1,
-    width = 240,
-    height = 560,
-    shift = util.by_pixel(0, -140),
+    width = 160,
+    height = 320,
+    shift = util.by_pixel(0, -120),
   },
   {
     type = "animation",

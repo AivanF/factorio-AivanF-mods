@@ -152,6 +152,15 @@ data:extend({
   },
   {
     type = "sound",
+    name = "wh40k-titans-bolter-big-pre",
+    category = "environment",
+    variations = {
+      {filename=shared.media_prefix.."sounds/weapons/bolt-big-x5-pre.wav"},
+    },
+    audible_distance_modifier = 3,
+  },
+  {
+    type = "sound",
     name = "wh40k-titans-bolter-huge",
     category = "environment",
     variations = {

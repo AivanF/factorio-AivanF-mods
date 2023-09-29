@@ -84,13 +84,15 @@ end
 
 local function calc_expected_time(exc_info)
   local secs = 0
-  for _, couple in pairs(exc_info.ruin_info.details) do
-    secs = secs + couple.count * exc_unit_time
+  if exc_info.ruin_info then
+    for _, couple in pairs(exc_info.ruin_info.details) do
+      secs = secs + couple.count * exc_unit_time
+    end
+    for _, couple in pairs(exc_info.ruin_info.ammo) do
+      secs = secs + math.ceil(couple.count/lib_ruins.ammo_unit) * exc_unit_time
+    end
+    secs = secs - exc_info.progress * exc_unit_time
   end
-  for _, couple in pairs(exc_info.ruin_info.ammo) do
-    secs = secs + math.ceil(couple.count/lib_ruins.ammo_unit) * exc_unit_time
-  end
-  secs = secs - exc_info.progress * exc_unit_time
   exc_info.expected_time = util.formattime(secs * UPS)
 end
 

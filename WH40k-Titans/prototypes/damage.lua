@@ -26,6 +26,221 @@ data:extend({
     action = "lua",
   },
 
+  {
+    type = "projectile",
+    name = shared.mod_prefix.."bolt-big",
+    flags = {"not-on-map"},
+    collision_box = {{-0.5, -1.5}, {0.5, 1.5}},
+    acceleration = 0,
+    piercing_damage = 300,
+    action = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          {
+            type = "damage",
+            damage = {amount = 350 , type = "physical"}
+          },
+          -- TODO: add some cannon explo?
+          -- {
+          --   type = "create-entity",
+          --   entity_name = "uranium-cannon-explosion"
+          -- }
+        }
+      }
+    },
+    final_action = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          {
+            type = "create-entity",
+            entity_name = "big-explosion"
+          },
+          {
+            type = "nested-result",
+            action = {
+              type = "area",
+              radius = 5,
+              action_delivery = {
+                type = "instant",
+                target_effects = {
+                  {
+                    type = "damage",
+                    damage = {amount = 500, type = "explosion"}
+                  },
+                  {
+                    type = "create-entity",
+                    entity_name = "big-explosion"
+                  }
+                }
+              }
+            }
+          },
+          {
+            type = "create-entity",
+            entity_name = "medium-scorchmark-tintable",
+            check_buildability = true
+          },
+          {
+            type = "invoke-tile-trigger",
+            repeat_count = 1
+          },
+          {
+            type = "destroy-decoratives",
+            from_render_layer = "decorative",
+            to_render_layer = "object",
+            include_soft_decoratives = true, -- soft decoratives are decoratives with grows_through_rail_path = true
+            include_decals = false,
+            invoke_decorative_trigger = true,
+            decoratives_with_trigger_only = false, -- if true, destroys only decoratives that have trigger_effect set
+            radius = 3.25 -- large radius for demostrative purposes
+          }
+        }
+      }
+    },
+    animation = {
+      filename = shared.media_prefix.."graphics/fx/rocket.png",
+      draw_as_glow = true,
+      frame_count = 8,
+      line_length = 8,
+      width = 18,
+      height = 70,
+      shift = {0, 0},
+      priority = "high"
+    },
+    shadow = {
+      filename = shared.media_prefix.."graphics/fx/rocket-shadow.png",
+      frame_count = 1,
+      width = 14,
+      height = 28,
+      priority = "high",
+      shift = {0, 0}
+    },
+    smoke = {
+      {
+        name = "smoke-fast",
+        deviation = {0.15, 0.15},
+        frequency = 2,
+        position = {0, 1},
+        slow_down_factor = 1,
+        starting_frame = 3,
+        starting_frame_deviation = 5,
+        starting_frame_speed = 0,
+        starting_frame_speed_deviation = 5
+      }
+    }
+  },
+
+  {
+    type = "projectile",
+    name = shared.mod_prefix.."bolt-huge",
+    flags = {"not-on-map"},
+    collision_box = {{-0.5, -1.5}, {0.5, 1.5}},
+    acceleration = 0,
+    piercing_damage = 750,
+    action = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          {
+            type = "damage",
+            damage = {amount = 500 , type = "physical"}
+          },
+          -- TODO: add some cannon explo?
+          -- {
+          --   type = "create-entity",
+          --   entity_name = "uranium-cannon-explosion"
+          -- }
+        }
+      }
+    },
+    final_action = {
+      type = "direct",
+      action_delivery = {
+        type = "instant",
+        target_effects = {
+          {
+            type = "create-entity",
+            entity_name = "big-explosion"
+          },
+          {
+            type = "nested-result",
+            action = {
+              type = "area",
+              radius = 5,
+              action_delivery = {
+                type = "instant",
+                target_effects = {
+                  {
+                    type = "damage",
+                    damage = {amount = 1500, type = "explosion"}
+                  },
+                  {
+                    type = "create-entity",
+                    entity_name = "big-explosion"
+                  }
+                }
+              }
+            }
+          },
+          {
+            type = "create-entity",
+            entity_name = "medium-scorchmark-tintable",
+            check_buildability = true
+          },
+          {
+            type = "invoke-tile-trigger",
+            repeat_count = 1
+          },
+          {
+            type = "destroy-decoratives",
+            from_render_layer = "decorative",
+            to_render_layer = "object",
+            include_soft_decoratives = true, -- soft decoratives are decoratives with grows_through_rail_path = true
+            include_decals = false,
+            invoke_decorative_trigger = true,
+            decoratives_with_trigger_only = false, -- if true, destroys only decoratives that have trigger_effect set
+            radius = 3.25 -- large radius for demostrative purposes
+          }
+        }
+      }
+    },
+    animation = {
+      filename = shared.media_prefix.."graphics/fx/rocket.png",
+      draw_as_glow = true,
+      frame_count = 8,
+      line_length = 8,
+      width = 18,
+      height = 70,
+      shift = {0, 0},
+      priority = "high"
+    },
+    shadow = {
+      filename = shared.media_prefix.."graphics/fx/rocket-shadow.png",
+      frame_count = 1,
+      width = 14,
+      height = 28,
+      priority = "high",
+      shift = {0, 0}
+    },
+    smoke = {
+      {
+        name = "smoke-fast",
+        deviation = {0.15, 0.15},
+        frequency = 2,
+        position = {0, 1},
+        slow_down_factor = 1,
+        starting_frame = 3,
+        starting_frame_deviation = 5,
+        starting_frame_speed = 0,
+        starting_frame_speed_deviation = 5
+      }
+    }
+  },
 
   {
     type = "projectile",
@@ -34,14 +249,11 @@ data:extend({
     acceleration = 0.01,
     turn_speed = 0.005,
     turning_speed_increases_exponentially_with_projectile_speed = true,
-    action =
-    {
+    action = {
       type = "direct",
-      action_delivery =
-      {
+      action_delivery = {
         type = "instant",
-        target_effects =
-        {
+        target_effects = {
           {
             type = "create-entity",
             entity_name = "big-explosion"
@@ -63,23 +275,20 @@ data:extend({
             type = "destroy-decoratives",
             from_render_layer = "decorative",
             to_render_layer = "object",
-            include_soft_decoratives = true, -- soft decoratives are decoratives with grows_through_rail_path = true
+            include_soft_decoratives = true,
             include_decals = false,
             invoke_decorative_trigger = true,
-            decoratives_with_trigger_only = false, -- if true, destroys only decoratives that have trigger_effect set
+            decoratives_with_trigger_only = false,
             radius = 3.5 -- large radius for demostrative purposes
           },
           {
             type = "nested-result",
-            action =
-            {
+            action = {
               type = "area",
               radius = 7,
-              action_delivery =
-              {
+              action_delivery = {
                 type = "instant",
-                target_effects =
-                {
+                target_effects = {
                   {
                     type = "damage",
                     damage = {amount = 300, type = "explosion"}
@@ -96,8 +305,7 @@ data:extend({
       }
     },
     light = {intensity = 0.5, size = 4},
-    animation =
-    {
+    animation = {
       filename = shared.media_prefix.."graphics/fx/rocket.png",
       draw_as_glow = true,
       frame_count = 8,
@@ -107,8 +315,7 @@ data:extend({
       shift = {0, 0},
       priority = "high"
     },
-    shadow =
-    {
+    shadow = {
       filename = shared.media_prefix.."graphics/fx/rocket-shadow.png",
       frame_count = 1,
       width = 14,
@@ -116,8 +323,7 @@ data:extend({
       priority = "high",
       shift = {0, 0}
     },
-    smoke =
-    {
+    smoke = {
       {
         name = "smoke-fast",
         deviation = {0.15, 0.15},
@@ -565,11 +771,9 @@ stream.action = {
   {
     type = "area",
     radius = 5,
-    action_delivery =
-    {
+    action_delivery = {
       type = "instant",
-      target_effects =
-      {
+      target_effects = {
         {
           type = "create-sticker",
           sticker = "fire-sticker",
@@ -594,11 +798,9 @@ stream.action = {
   },
   {
     type = "direct",
-    action_delivery =
-    {
+    action_delivery = {
       type = "instant",
-      target_effects =
-      {
+      target_effects = {
         {
           type = "create-fire",
           entity_name = "titanic-fire-flame",

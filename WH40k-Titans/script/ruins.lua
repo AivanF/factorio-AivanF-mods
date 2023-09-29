@@ -89,9 +89,13 @@ function lib.materialise_ruin(world, ruin_info)
   ruin_info.entity = world.surface.create_entity{
     name=shared.corpse, force="neutral", position=position,
   }
-  -- TODO: consider .class to pick a picture
+  local img = shared.mod_prefix.."corpse-1"
+  ruin_info.class = ruin_info.class or 0
+  if true or ruin_info.class >= shared.class_warlord then
+    img = shared.mod_prefix.."corpse-3"
+  end
   rendering.draw_sprite{
-    sprite=shared.mod_prefix.."corpse-1",
+    sprite=img,
     -- https://lua-api.factorio.com/latest/concepts.html#RenderLayer
     x_scale=1, y_scale=1, render_layer=110,
     surface=world.surface, target=ruin_info.entity,
@@ -197,7 +201,7 @@ local function create_random_ruin_info(position)
     table.insert(detailses, shared.titan_types[shared.titan_reaver].ingredients)
   end
   table.insert(detailses, {{name=shared.frame_part, count=math.random(7)}})
-  if math.random() < 0.5 then
+  if math.random() < 0.35 then
     table.insert(detailses, shared.weapons[shared.weapon_plasma_blastgun].ingredients)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_plasma_blastgun].ammo,
@@ -216,6 +220,13 @@ local function create_random_ruin_info(position)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_turbolaser].ammo,
       count=shared.weapons[shared.weapon_turbolaser].inventory * (0.2 + 0.5*math.random())
+    })
+  end
+  if math.random() < 0.65 then
+    table.insert(detailses, shared.weapons[shared.weapon_vulcanbolter].ingredients)
+    table.insert(ammo, {
+      name =shared.weapons[shared.weapon_vulcanbolter].ammo,
+      count=shared.weapons[shared.weapon_vulcanbolter].inventory * (0.2 + 0.5*math.random())
     })
   end
   local ruin_info = {

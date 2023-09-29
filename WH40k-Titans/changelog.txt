@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.17
+Date: 2023-09-29
+  Features:
+    - Bolt cannons finally here! Vulcan Mega Bolter and its simpler version Adrex Defendor Mega Bolter (though looks a bit funny small). They have nice sounds!
+    - New smaller grade of titan weaponary.
+    - Assembly Bunker: added verification of correctly specified weapon grades.
+  Bugfixes:
+    - Fixed a crash of the Bridge / Common Industries.
+  Info:
+    - Some other smaller changes.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.16
 Date: 2023-09-27
   Balance:

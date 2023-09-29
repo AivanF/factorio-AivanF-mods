@@ -8,8 +8,7 @@ shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
 shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
 shared.bridge_prefix = "afci-"
 
--- afci_bridge = require("__Common-Industries__.export") -- TODO: update
-afci_bridge = require("__Common-Industries__.bridge3-item")
+afci_bridge = require("__Common-Industries__.export") -- TODO: update
 
 --------- Titan parts
 -- Body
@@ -47,9 +46,10 @@ shared.craftcat_empty = shared.mod_prefix.."empty"
 shared.craftcat_titan = shared.mod_prefix.."titan-"
 shared.craftcat_weapon = shared.mod_prefix.."weapon-"
 
-shared.subg_build = "wh40k-titan-buildings"
-shared.subg_parts = "wh40k-titan-parts"
-shared.subg_titans = "wh40k-titan-classes"
+shared.subg_build   = "wh40k-titan-buildings"
+shared.subg_parts   = "wh40k-titan-parts"
+shared.subg_titans  = "wh40k-titan-classes"
+shared.subg_ammo    = "wh40k-titan-ammo"
 shared.subg_weapons = "wh40k-titan-weapons-"
 
 shared.corpse = shared.mod_prefix.."titan-corpse"

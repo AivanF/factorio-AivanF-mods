@@ -91,7 +91,7 @@ data:extend({
     selection_box = {{-2, -1}, {2, 1}},
     collision_box = {{-2, -1}, {2, 1}},
     collision_mask = {},
-    inventory_size = 250,
+    inventory_size = 300,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -115,7 +115,7 @@ data:extend({
     selection_box = {{-1, -2}, {1, 2}},
     collision_box = {{-1, -2}, {1, 2}},
     collision_mask = {},
-    inventory_size = 250,
+    inventory_size = 300,
     picture = {
       layers = {
         misc.empty_sprite,

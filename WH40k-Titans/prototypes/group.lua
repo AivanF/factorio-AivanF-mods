@@ -7,7 +7,7 @@ for i = 1, 5 do
     name = shared.craftcat_titan..i
   }}
 end
-for i = 1, 3 do
+for i = 0, 3 do
   data:extend{
     {
       type = "recipe-category",
@@ -17,7 +17,7 @@ for i = 1, 3 do
       type = "item-subgroup",
       name = shared.subg_weapons..i,
       group = group_name,
-      order = "a-40-"..i,
+      order = "a-42-"..i,
     },
   }
 end
@@ -52,5 +52,11 @@ data:extend{
     name = shared.subg_titans,
     group = group_name,
     order = "a-30",
+  },
+  {
+    type = "item-subgroup",
+    name = shared.subg_ammo,
+    group = group_name,
+    order = "a-40",
   },
 }

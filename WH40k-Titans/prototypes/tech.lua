@@ -135,10 +135,6 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    -- effects = {
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warhound].entity },
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_direwolf].entity },
-    -- },
     effects = get_titan_effects(1),
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
@@ -158,9 +154,6 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    -- effects = {
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_reaver].entity },
-    -- },
     effects = get_titan_effects(2),
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
@@ -180,9 +173,6 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    -- effects = {
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warlord].entity },
-    -- },
     effects = get_titan_effects(3),
     prerequisites = {shared.mod_prefix.."2-class"},
     unit = {
@@ -202,9 +192,6 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    -- effects = {
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_warmaster].entity },
-    -- },
     effects = get_titan_effects(4),
     prerequisites = {shared.mod_prefix.."3-class"},
     unit = {
@@ -224,10 +211,6 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    -- effects = {
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.titan_imperator].entity },
-    --   { type = "unlock-recipe", recipe = shared.titan_types[shared.class_warmonger].entity },
-    -- },
     effects = get_titan_effects(5),
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
@@ -242,6 +225,25 @@ local tech_researches = {
 
   ------- Weapon grades
   {
+    name = shared.mod_prefix.."0-grade",
+    type = "technology",
+    icons = {
+      {
+      icon = shared.media_prefix.."graphics/tech/grade-0.png",
+      icon_size = 256,
+      icon_mipmaps = 1,
+      }
+    },
+    effects = get_weapon_effects(shared.gun_grade_small),
+    prerequisites = {shared.mod_prefix.."1-class"},
+    unit = {
+      count = 1,
+      ingredients = {{shared.sp, 1}},
+      time = 60
+    },
+    order = name
+  },
+  {
     name = shared.mod_prefix.."1-grade",
     type = "technology",
     icons = {
@@ -251,11 +253,8 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_small),
-    prerequisites = {
-      -- shared.mod_prefix.."production",
-      shared.mod_prefix.."1-class",
-    },
+    effects = get_weapon_effects(shared.gun_grade_medium),
+    prerequisites = {shared.mod_prefix.."0-grade"},
     unit = {
       count = 10,
       ingredients = {{shared.sp, 1}},
@@ -273,7 +272,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_medium),
+    effects = get_weapon_effects(shared.gun_grade_big),
     prerequisites = {shared.mod_prefix.."1-grade", shared.mod_prefix.."3-class"},
     unit = {
       count = 200,
@@ -292,10 +291,37 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_big),
+    effects = get_weapon_effects(shared.gun_grade_huge),
     prerequisites = {shared.mod_prefix.."2-grade", shared.mod_prefix.."5-class"},
     unit = {
       count = 300,
+      ingredients = {{shared.sp, 1}},
+      time = 60
+    },
+    order = name
+  },
+
+
+
+  ------- Ammo
+  {
+    name = shared.mod_prefix.."ammo",
+    type = "technology",
+    icons = {
+      {
+      icon = shared.media_prefix.."graphics/tech/ammo.png",
+      icon_size = 256,
+      icon_mipmaps = 1,
+      }
+    },
+    effects = {
+      { type = "unlock-recipe", recipe = shared.big_bolt },
+      { type = "unlock-recipe", recipe = shared.huge_bolt },
+      { type = "unlock-recipe", recipe = shared.plasma_ammo },
+    },
+    prerequisites = {shared.mod_prefix.."0-grade"},
+    unit = {
+      count = 5,
       ingredients = {{shared.sp, 1}},
       time = 60
     },

@@ -13,4 +13,12 @@ for _, titan_type in ipairs(shared.titan_type_list) do
 	if obj then
 		obj.minable = nil
 	end
+	obj = data.raw.recipe[titan_type.entity.."-0"]
+	if obj then
+		obj.hidden = true
+	end
+	obj = data.raw.recipe[titan_type.entity.."-0-reverse"]
+	if obj then
+		obj.hidden = true
+	end
 end

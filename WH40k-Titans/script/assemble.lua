@@ -6,7 +6,7 @@ local lib = Lib.new()
 
 building_update_rate = UPS
 local quick_mode = heavy_debugging
-local required_ammo_ratio = 0.1
+local required_ammo_ratio = 0.05
 
 local states = {}
 states.disabled = "disabled"
@@ -169,8 +169,18 @@ local function check_bunker_correct_details(assembler)
         set_message(assembler, "excessive weapon specified")
         weapon_fine = false
         lamp_color = color_red
-      elseif weapon_type and not (weapon_type ~= titan_type.guns[k].grade or weapon_type ~= titan_type.guns[k].grade-1) then
-        set_message(assembler, "improper weapon grade")
+
+      ----- Actual weapon placement rules are here -----
+      elseif weapon_type and not (weapon_type.grade == titan_type.guns[k].grade or weapon_type.grade == titan_type.guns[k].grade-1) then
+        set_message(assembler, "improper grade of "..weapon_type.name)
+        weapon_fine = false
+        lamp_color = color_red
+      elseif weapon_type and weapon_type.no_top and titan_type.guns[k].is_top then
+        set_message(assembler, weapon_type.name.." cannot be place on top")
+        weapon_fine = false
+        lamp_color = color_red
+      elseif weapon_type and weapon_type.top_only and not titan_type.guns[k].is_top then
+        set_message(assembler, weapon_type.name.." can be place on top only")
         weapon_fine = false
         lamp_color = color_red
       end
@@ -789,10 +799,10 @@ local no_recipes_filter = {
   {filter="enabled", mode="and"},
 }
 
-local function get_category_filters_by_research(player, category, research, count)
+local function get_category_filters_by_research(player, category, research, mn, mx)
   local has_character = not not player.character
   local filters = {}
-  for i = 1, count do
+  for i = mn, mx do
     if not has_character or player.force.technologies[shared.mod_prefix..i..research].researched then
       table.insert(filters, {filter="category", category=category..i, mode="or"})
     end
@@ -824,7 +834,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   local btn
   local grid = main_frame.main_room.add{ type="frame", direction="horizontal" }
 
-  filters = get_category_filters_by_research(player, shared.craftcat_titan, "-class", 5)
+  filters = get_category_filters_by_research(player, shared.craftcat_titan, "-class", 1, 5)
   btn = grid.add{
     type="choose-elem-button", name="", elem_type="recipe", elem_filters = filters,
     recipe = assembler.class_recipe,
@@ -834,7 +844,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
-  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 3)
+  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 0, 3)
   for k = 1, 6 do
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",

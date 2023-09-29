@@ -69,8 +69,8 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       track_coverage_during_build_by_moving = true,
       resistances = {
         { type = "impact", decrease=1000, percent=100 },
-        { type = "physical", decrease=500, percent=90 },
-        { type = "explosion", decrease=100, percent=50 },
+        { type = "physical", decrease=300, percent=90 },
+        { type = "explosion", decrease=300, percent=50 },
         { type = "fire", decrease=100, percent=90 },
         { type = "acid", decrease=100, percent=90 },
         { type = "poison", decrease=100, percent=99 },
