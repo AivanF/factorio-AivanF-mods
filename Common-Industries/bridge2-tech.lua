@@ -136,6 +136,7 @@ for _, tech_info in pairs(bridge.tech) do
     end
     bridge.preprocess(tech_info)
     if bridge.is_new(tech_info.name) then
+      log(bridge.log_prefix.."creating tech "..tech_info.short_name)
       data:extend({{
         name = tech_info.name,
         type = "technology",

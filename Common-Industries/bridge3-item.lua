@@ -34,12 +34,15 @@ local ordered = 0
 
 -- Generate items API, `bridge.get[short_name]()` returns item_info
 -- TODO: add recipe_anyway flag
-local function add_item(item_info)
+function bridge.add_item(item_info)
   ordered = ordered + 1
 
+  if bridge.item[item_info.short_name] then
+    error("Item "..tostring(item_info.short_name).." already registered!")
+  end
   item_info.is_bridge_item = true
   item_info.updated = bridge.not_updated
-  item_info.order = "abc-"..ordered
+  item_info.order = item_info.order or "abc-"..ordered
   item_info.prerequisite = item_info.prereq -- original custom prereq
   bridge.item[item_info.short_name] = item_info
 
@@ -79,7 +82,7 @@ local function add_item(item_info)
     end
 
     -- Preprocess required tech research
-    if item_info.prereq.is_bridge_item then
+    if item_info.prereq and item_info.prereq.is_bridge_item then
       -- Prerequisite can be a string or another item
       -- If so, let's recursively preprocess it and take its prerequisite
       ing_info = item_info.prereq
@@ -89,7 +92,7 @@ local function add_item(item_info)
       item_info.prereq = ing_info.prereq
     end
     -- Materialize required tech research if needed
-    if bridge.is_new(item_info.prerequisite) then
+    if item_info.prerequisite and bridge.is_new(item_info.prerequisite) then
       bridge.setup[bridge.tech[item_info.prerequisite].short_name]()
     end
     -- if bridge.is_new(item_info.prereq) then
@@ -106,7 +109,7 @@ local function add_item(item_info)
     -- Make actual item + recipe
     if bridge.is_new(item_info.name) then
       if data and data.raw and not data.raw.item[item_info.name] then
-        log(bridge.log_prefix.."creating "..item_info.short_name)
+        log(bridge.log_prefix.."creating item "..item_info.short_name)
         data:extend({
           {
             type = "item",
@@ -165,7 +168,10 @@ local function add_item(item_info)
   end
   item_info.getter = union_getter
   bridge.get[item_info.short_name] = union_getter
+  return item_info
 end
+
+local add_item = bridge.add_item
 
 --[[
 
@@ -777,96 +783,6 @@ add_item({
 prerequisite = bridge.tech.lategame.name
 subgroup = bridge.subg_late
 
-add_item({
-  -- Ammo could be used in runtime scripts, so the name must not be changed
-  short_name = "plasma_fuel",
-  name = bridge.prefix.."plasma-fuel",
-  icon = bridge.media_path.."icons/plasma-fuel.png",
-  icon_size = 64, icon_mipmaps = 4,
-  prereq = prerequisite,
-  subgroup = subgroup,
-  ingredients = {
-    {type="fluid", name="water", amount=500},
-    {"battery", 5},
-    {"steel-plate", 4}
-  },
-  -- results = {{"iron-ore", 1}, {"copper-ore", 1},},
-  category = "chemistry",
-  modded = {
-    {
-      mod = bridge.mods.k2,
-      prereq = "kr-atmosphere-condensation",
-      ingredients = {
-        {type="fluid", name="hydrogen", amount=500},
-        {"steel-plate", 4}
-      },
-    },
-    {
-      mod = bridge.mods.se,
-      prereq = "se-space-plasma-generator",
-      ingredients = {
-        {type="fluid", name="se-plasma-stream", amount=500},
-        {"steel-plate", 4}
-      },
-      -- results = { {"se-scrap", 4}, },
-    },
-    {
-      mod = bridge.mods.ir3,
-      -- prereq = "ir-hydrogen-battery",
-      -- name = "charged-hydrogen-battery",
-      -- prereq = "ir-natural-gas-processing",
-      prereq = "ir-cryogenics",
-      ingredients = {
-        {type="fluid", name="hydrogen-fluid", amount=500},
-        {"steel-plate", 4}
-      },
-      results = {},
-    },
-    {
-      mod = bridge.mods.exind,
-      prereq = "ei_ammonia",
-      ingredients = {
-        {type="fluid", name="ei_hydrogen-gas", amount=500},
-        {"steel-plate", 4}
-      },
-      results = {},
-    },
-    {
-      mod = bridge.mods.angelspetrochem,
-      prereq = "water-chemistry-2",
-      ingredients = {
-        {type="fluid", name="gas-deuterium", amount=500},
-        {"steel-plate", 4}
-      },
-      results = {},
-    },
-    {
-      mod = bridge.mods.py_alt,
-      prereq = "nuclear-power-mk03",
-    },
-    {
-      mod = bridge.mods._248k,
-      prereq = "fu_hydrogen_1_tech",
-      ingredients = {
-        {type="fluid", name="fu_hydrogen", amount=500},
-        {"steel-plate", 4}
-      },
-      results = {},
-    },
-    {
-      mod = bridge.mods.yit,
-      prereq = "yi-capsule",
-      continue = true,
-    }, {
-      mod = bridge.mods.yi,
-      ingredients = {
-        {"y-raw-fuelnium", 3},
-        {"steel-plate", 4}
-      },
-      results = {},
-    },
-  },
-})
 add_item({
   short_name = "he_provider",
   -- name = bridge.prefix.."high-energy-provider",

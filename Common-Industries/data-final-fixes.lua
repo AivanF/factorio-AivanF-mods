@@ -39,9 +39,9 @@ for short_name, item_info in pairs(bridge.item) do
   if data.raw.item[item_info.name] and bridge.is_new(item_info.name) then
     prereq = get_pre(item_info.prereq)
     prerequisite = item_info.prerequisite
-    if prereq and prereq ~= bridge.empty then
+    if prerequisite and prereq and prereq ~= bridge.empty then
       -- log(bridge.log_prefix.."Finals_Item "..serpent.line(item_info))
-      if data.raw["technology"][prereq] == nil then
+      if data.raw["technology"][prerequisite] == nil then
         error("No tech named "..serpent.line(prereq))
       end
       data.raw["technology"][prerequisite].effects = data.raw["technology"][prerequisite].effects or {}
