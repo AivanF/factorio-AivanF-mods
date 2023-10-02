@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.2
+Date: 2023-10-02
+  Combat Balancing:
+    - Higher uranium ammo damage: 240 instead of 160 (vanilla guns magazine gains even more growth).
+---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 2023-06-07
   Features:

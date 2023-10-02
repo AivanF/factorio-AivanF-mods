@@ -100,7 +100,7 @@ local item3 = {
                     },
                     {
                         type = "damage",
-                        damage = {amount = 160, type = "physical"}
+                        damage = {amount = 240, type = "physical"}
                     }
                 }
             }
