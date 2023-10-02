@@ -39,8 +39,10 @@ shared.bunker_wrecipev = shared.mod_prefix.."assembly-bunker-weapon-recipe-ver"
 shared.bunker_wstoreh = shared.mod_prefix.."assembly-bunker-weapon-storage-hor"
 shared.bunker_wstorev = shared.mod_prefix.."assembly-bunker-weapon-storage-ver"
 shared.bunker_bstore = shared.mod_prefix.."assembly-bunker-body-storage"
+shared.bunker_comb = shared.mod_prefix.."assembly-bunker-combinator"
 shared.bunker_lamp = shared.mod_prefix.."assembly-bunker-bunker-lamp"
 shared.leftovers_chest = shared.mod_prefix.."leftovers-chest"
+shared.bunker_comb_size = 20
 
 shared.craftcat_empty = shared.mod_prefix.."empty"
 shared.craftcat_titan = shared.mod_prefix.."titan-"

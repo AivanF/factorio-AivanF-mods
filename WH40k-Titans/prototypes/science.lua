@@ -5,6 +5,31 @@ local sounds = require("__base__.prototypes.entity.sounds")
 
 local tint = { r = .8, g = .7, b = .7, a = 1}
 
+local ingredients = {
+  {"automation-science-pack", 10},
+  {"logistic-science-pack", 10},
+  {"military-science-pack", 10},
+  {"chemical-science-pack", 10},
+  {"utility-science-pack", 10},
+  {"production-science-pack", 10},
+  {"space-science-pack", 10},
+}
+
+if mods[shared.SE] then
+  ingredients = {
+    -- {"automation-science-pack", 10},
+    -- {"logistic-science-pack", 10},
+    {"military-science-pack", 10},
+    -- {"chemical-science-pack", 10},
+    -- {"se-rocket-science-pack", 10},
+    {"space-science-pack", 10},
+    {"se-energy-science-pack-1", 10},
+    {"se-material-science-pack-1", 10},
+    {"utility-science-pack", 10},
+    {"production-science-pack", 10},
+  }
+end
+
 data:extend({
   {
     type = "tool",
@@ -22,16 +47,9 @@ data:extend({
     type = "recipe",
     name = shared.sp,
     enabled = false,
-    ingredients = {
-      {"automation-science-pack", 10},
-      {"logistic-science-pack", 10},
-      {"military-science-pack", 10},
-      {"chemical-science-pack", 10},
-      {"utility-science-pack", 10},
-      {"production-science-pack", 10},
-      {"space-science-pack", 10},
-    },
+    ingredients = ingredients,
     result = shared.sp,
+    energy_required = 10,
   },
 
   {

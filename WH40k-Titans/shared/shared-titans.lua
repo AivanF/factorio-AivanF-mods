@@ -21,9 +21,10 @@ shared.titan_warmonger = "warmonger"
 shared.class_warmonger = 55
 
 
--- Foots / tracks
+-- Foots/tracks, auxiliary turrets
 shared.titan_foot_small = shared.mod_prefix.."foot-small"
 shared.titan_foot_big   = shared.mod_prefix.."foot-big"
+shared.titan_aux_laser  = shared.mod_prefix.."aux-turret-laser"
 
 
 -- Render layers
@@ -80,6 +81,9 @@ shared.titan_type_list = {
       [1] = { oris=-0.25, shift=7, layer=shared.rl_arm, grade=1 },
       [2] = { oris= 0.25, shift=7, layer=shared.rl_arm, grade=1 },
     },
+    aux_laser = {
+      {1, 0},
+    },
   },
   -- {
   --   name = shared.titan_direwolf,
@@ -104,8 +108,8 @@ shared.titan_type_list = {
   --   icon_size = 64, icon_mipmaps = 3,
   --   plane = shared.media_prefix.."graphics/titans/class1.png",
   --   guns = {
-  --     [1] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0 },
-  --     [2] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0 },
+  --     [1] = { oris=-0.27, shift=8, layer=shared.rl_arm, grade=0 },
+  --     [2] = { oris= 0.27, shift=8, layer=shared.rl_arm, grade=0 },
   --     [3] = { oris= 0,    shift=0, layer=shared.rl_shoulder, grade=2, is_top=true },
   --   },
   -- },
@@ -136,6 +140,10 @@ shared.titan_type_list = {
       [2] = { oris= 0.2, shift=8, layer=shared.rl_arm, grade=2 },
       [3] = { oris= 0,   shift=2, layer=shared.rl_shoulder, grade=2, is_top=true },
     },
+    aux_laser = {
+      {2, 0.25},
+      {2,-0.25},
+    },
   },
   {
     name = shared.titan_warlord,
@@ -164,6 +172,11 @@ shared.titan_type_list = {
       [2] = { oris= 0.2, shift=11, layer=shared.rl_arm, grade=2 },
       [3] = { oris=-0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
       [4] = { oris= 0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
+    },
+    aux_laser = {
+      {3, 0.25},
+      {2, 0},
+      {3,-0.25},
     },
   },
   {
@@ -195,6 +208,12 @@ shared.titan_type_list = {
       [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
       [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
     },
+    aux_laser = {
+      {4, 0.15},
+      {4,-0.15},
+      {4, 0.35},
+      {4,-0.35},
+    },
   },
   {
     name = shared.titan_imperator,
@@ -225,6 +244,14 @@ shared.titan_type_list = {
       [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
       [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
     },
+    aux_laser = {
+      {4, 0.15},
+      {4,-0.15},
+      {4, 0.35},
+      {4,-0.35},
+      {6, 0.25},
+      {6,-0.25},
+    },
   },
   -- {
   --   name = shared.titan_warmonger,
@@ -252,8 +279,14 @@ shared.titan_type_list = {
   --     [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
   --     [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
   --     [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-  --     [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=2 },
-  --     [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=2 },
+  --     [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=2, is_top=true },
+  --     [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=2, is_top=true },
+  --   },
+  --   aux_laser = {
+  --     {4, 0.15},
+  --     {4,-0.15},
+  --     {4, 0.35},
+  --     {4,-0.35},
   --   },
   -- },
 }

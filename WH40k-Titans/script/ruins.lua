@@ -91,7 +91,7 @@ function lib.materialise_ruin(world, ruin_info)
   }
   local img = shared.mod_prefix.."corpse-1"
   ruin_info.class = ruin_info.class or 0
-  if true or ruin_info.class >= shared.class_warlord then
+  if ruin_info.class >= shared.class_warlord then
     img = shared.mod_prefix.."corpse-3"
   end
   rendering.draw_sprite{
@@ -113,7 +113,6 @@ end
 function lib.spawn_ruin(surface, ruin_info)
   local world = lib.opt_new_world({surface=surface, ruin_prob_cf=0})
   local sector = lib.get_sector(world, ruin_info.position)
-  -- TODO: add type/class?
   merge(ruin_info, blank_ruin_info, false)
   ruin_info.died = true
   world.deaths = (world.deaths or 0) + 1
@@ -152,9 +151,10 @@ function lib.ruin_extract(ruin_info, ruin_entity)
           table.remove(ruin_info.ammo, position)
         end
       end
-      if math.random() < 0.5 then
+      if math.random() < 0.65 then
         return name, count
       else
+        -- Extraction failed
         return nil, 0
       end
     else
@@ -192,43 +192,53 @@ end
 local function create_random_ruin_info(position)
   local detailses = {}
   local ammo = {}
-  local class
-  if math.random() < 0.5 then
+  local class = 0
+
+  if math.random() < 0.7 then
     class = shared.class_warhound
     table.insert(detailses, shared.titan_types[shared.titan_warhound].ingredients)
   else
-    class = shared.class_reaver
-    table.insert(detailses, shared.titan_types[shared.titan_reaver].ingredients)
+    class = shared.class_warlord
+    table.insert(detailses, shared.titan_types[shared.class_warlord].ingredients)
   end
   table.insert(detailses, {{name=shared.frame_part, count=math.random(7)}})
-  if math.random() < 0.35 then
+
+  if math.random() < class*3/120 then
     table.insert(detailses, shared.weapons[shared.weapon_plasma_blastgun].ingredients)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_plasma_blastgun].ammo,
       count=shared.weapons[shared.weapon_plasma_blastgun].inventory * (0.2 + 0.5*math.random())
     })
   end
-  if math.random() < 0.5 then
+  if math.random() < class*3/120 then
     table.insert(detailses, shared.weapons[shared.weapon_inferno].ingredients)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_inferno].ammo,
       count=shared.weapons[shared.weapon_inferno].inventory * (0.2 + 0.5*math.random())
     })
   end
-  if math.random() < 0.5 then
+  if math.random() < class*3/120 then
     table.insert(detailses, shared.weapons[shared.weapon_turbolaser].ingredients)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_turbolaser].ammo,
       count=shared.weapons[shared.weapon_turbolaser].inventory * (0.2 + 0.5*math.random())
     })
   end
-  if math.random() < 0.65 then
+  if math.random() < class*2/120 then
+    table.insert(detailses, shared.weapons[shared.weapon_missiles].ingredients)
+    table.insert(ammo, {
+      name =shared.weapons[shared.weapon_missiles].ammo,
+      count=shared.weapons[shared.weapon_missiles].inventory * (0.2 + 0.5*math.random())
+    })
+  end
+  if math.random() < class*5/120 then
     table.insert(detailses, shared.weapons[shared.weapon_vulcanbolter].ingredients)
     table.insert(ammo, {
       name =shared.weapons[shared.weapon_vulcanbolter].ammo,
       count=shared.weapons[shared.weapon_vulcanbolter].inventory * (0.2 + 0.5*math.random())
     })
   end
+
   local ruin_info = {
     died = false,
     class = class,

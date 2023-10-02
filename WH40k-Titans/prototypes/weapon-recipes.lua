@@ -7,6 +7,7 @@ for _, info in pairs(shared.weapons) do
   stats_descr = {
     (info.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
     -- Args:
+    info.grade,
     {"item-name."..ammo}, -- "__ITEM__"..ammo.."__",
     info.per_shot,
     shorten_number(info.inventory),

@@ -23,6 +23,16 @@ for _, titan_type in ipairs(shared.titan_type_list) do
   local icon_size = titan_type.icon_size
   local icon_mipmaps = titan_type.icon_mipmaps
   local place_result = titan_type.plane and name or shared.titan_prefix..shared.titan_warhound
+  local about_guns = ""
+  for k, gun in ipairs(titan_type.guns) do
+    about_guns = about_guns.." "..(gun.is_top and "t" or "")..gun.grade
+  end
+  local description = {
+    "",
+    titan_type.available and {"entity-description."..name} or {"item-description.wh40k-titans-not-yet"},
+    " ",
+    {"entity-description.wh40k-titans-pattern", about_guns},
+  }
 
   data:extend({
     {
@@ -38,7 +48,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       type = "recipe",
       name = name,
       localised_name = {"entity-name."..name},
-      localised_description = titan_type.available and {"entity-description."..name} or {"item-description.wh40k-titans-not-yet"},
+      localised_description = description,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       subgroup = shared.subg_titans,
       order = "b[dummy-titan-item-"..class.."]",
@@ -52,6 +62,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
     {
       type = shared.titan_base_type,
       name = name,
+      localised_description = description,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       flags = {
         "placeable-neutral", "player-creation", "placeable-off-grid",
@@ -94,8 +105,8 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       weight = titan_type.class * 5000,
       consumption = math.floor(titan_type.spd * math.pow(titan_type.class, 0.5)).."MW",
       braking_power = "2MW",
-      terrain_friction_modifier = 0.2,
-      friction = 0.03,
+      terrain_friction_modifier = 0.05,
+      friction = 0.05,
       breaking_speed = 0.1,
       rotation_speed = (titan_type.class < shared.class_reaver) and 0.005 or 0.004,
 
@@ -175,13 +186,7 @@ data:extend({
     selection_box = {{-foot_size_1, -foot_size_1}, {foot_size_1, foot_size_1}},
     selection_priority = 60,
     max_health = 5000,
-    resistances = {
-      { type = "impact", decrease=1000, percent=100 },
-      { type = "explosion", decrease=1000, percent=100 },
-      { type = "fire", decrease=1000, percent=100 },
-      { type = "acid", decrease=1000, percent=100 },
-      { type = "poison", decrease=1000, percent=100 },
-    },
+    resistances = technomagic_resistances,
     picture = { layers = {misc.empty_sprite} },
   },
   {
@@ -194,13 +199,54 @@ data:extend({
     selection_box = {{-foot_size_2, -foot_size_2}, {foot_size_2, foot_size_2}},
     selection_priority = 60,
     max_health = 5000,
-    resistances = {
-      { type = "impact", decrease=1000, percent=100 },
-      { type = "explosion", decrease=1000, percent=100 },
-      { type = "fire", decrease=1000, percent=100 },
-      { type = "acid", decrease=1000, percent=100 },
-      { type = "poison", decrease=1000, percent=100 },
-    },
+    resistances = technomagic_resistances,
     picture = { layers = {misc.empty_sprite} }
+  },
+  {
+    type = "electric-turret",
+    name = shared.titan_aux_laser,
+    icon = "__base__/graphics/icons/laser-turret.png",
+    icon_size = 64, icon_mipmaps = 4,
+    flags = {"placeable-neutral", "placeable-off-grid"},
+    max_health = 10000,
+    resistances = technomagic_resistances,
+    selectable_in_game = false,
+    collision_mask = {},
+    collision_box = {{-0.7, -0.7 }, {0.7, 0.7}},
+    selection_box = {{ -1, -1}, {1, 1}},
+    map_color = {0,0,0,0},
+    rotation_speed = 0.03,
+    preparing_speed = 0.1,
+    folding_speed = 0.1,
+    energy_source = { type = "void" },
+    glow_light_intensity = 1,
+    folded_animation = { layers = {misc.empty_sprite} },
+    preparing_animation = { layers = {misc.empty_sprite} },
+    prepared_animation = { layers = {misc.empty_sprite} },
+    folding_animation = { layers = {misc.empty_sprite} },
+    base_picture = { layers = {misc.empty_sprite} },
+    call_for_help_radius = 2,
+    attack_parameters = {
+      type = "beam",
+      cooldown = 40,
+      range = 24,
+      source_direction_count = 64,
+      source_offset = {0, -3.423489 / 4},
+      damage_modifier = 4,
+      ammo_type = {
+        category = "laser",
+        energy_consumption = "800kJ",
+        action = {
+          type = "direct",
+          action_delivery = {
+            type = "beam",
+            beam = "laser-beam",
+            max_length = 24,
+            duration = 40,
+            source_offset = {0, -0.5 }
+          }
+        }
+      },
+    },
   },
 })

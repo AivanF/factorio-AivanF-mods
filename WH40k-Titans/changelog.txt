@@ -1,9 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.18
+Date: 2023-10-02
+  Features:
+    - Now titans have smaller laser turrets!
+    - Assembly Bunker now 1. supports signal wires on its storages, 2. outputs required details. So, you can automate loading of precise amounts of prerequisites!
+  Balancing:
+    - Space Exploration integration: Titans science pack recipe to includes SE sci packs.
+  Optimizations:
+    - Better performance of titans weaponry AI (now it works once per 20 updates).
+  Info:
+    - Many fixes and minor features like internationalisation, showing more detailed info, etc.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.17
 Date: 2023-09-29
   Features:
     - Bolt cannons finally here! Vulcan Mega Bolter and its simpler version Adrex Defendor Mega Bolter (though looks a bit funny small). They have nice sounds!
-    - New smaller grade of titan weaponary.
+    - New smaller grade of titan weaponry.
     - Assembly Bunker: added verification of correctly specified weapon grades.
   Bugfixes:
     - Fixed a crash of the Bridge / Common Industries.
@@ -12,7 +24,7 @@ Date: 2023-09-29
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.16
 Date: 2023-09-27
-  Balance:
+  Balancing:
     - Increased titans ruins frequency, x6. Also you can adjust it with a startup setting.
     - Increased corpses extraction machine pollution emission from 5 to 10 per minute.
   Info:
@@ -26,7 +38,7 @@ Date: 2023-09-27
     - Assembly Bunker: a button to enable or disable auto start.
   Bugfixes:
     - Fixed crashes on: surface delete, interrupting titan assembling process.
-  Balance:
+  Combat Balancing:
     - Yet another slight increase of Titans speed.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.14
@@ -37,7 +49,7 @@ Date: 2023-09-25
     - Fixed issue with non-transparent titan corpse border and never-ending mining.
   Changes:
     - Now Inferno weapon uses flamethrower ammo instead of rocket fuel, as it has x10 bigger stack size.
-  Balance:
+  Combat Balancing:
     - Increased Inferno ammo storage from 2k to 4k.
     - Reduced cost of titans class 1 and weapons grade 1 researches from 50 to 10. And of some later techs too.
     - Increased research unit time of all technologies from 30 to 60 sec.
@@ -63,7 +75,7 @@ Date: 2023-09-20
     - Better weapons description.
   Bugfixes:
     - Fixed crash on specifying not implemented weapon.
-  Balance:
+  Combat Balancing:
     - Higher damage of plasma weapons.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.11
@@ -96,7 +108,7 @@ Version: 0.9.7
 Date: 2023-09-10
   Bugfixes:
     - Fixed a couple of SE crashes.
-  Balance:
+  Combat Balancing:
     - Titans are faster now.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.6
@@ -116,8 +128,8 @@ Date: 2023-09-06
     - Attack radius visualization.
     - 3 attack hotkeys, by default: Z, X, C.
     - Titan dashboard and weapons control to map hotkeys and zoom out button.
-  Balance:
-    - Much better game balance now.
+  Combat Balancing:
+    - Even better game balance now.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.4
 Date: 2023-09-01
@@ -130,14 +142,14 @@ Version: 0.9.3
 Date: 2023-08-31
   Features:
     - Void Shields activated!
-  Balance:
+  Combat Balancing:
     - Way much better balance now. Damage also got slightly increased.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.2
 Date: 2023-08-27
   Features:
     - Titan class 3 WarLord
-  Balance:
+  Combat Balancing:
     - Lots of balance fixes
   Info:
     - Tserup and The King Jo joined the team!

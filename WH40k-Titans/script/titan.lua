@@ -306,7 +306,7 @@ end)
 local function update_gui()
   local tick = game.tick
   for _, guiobj in pairs(ctrl_data.titan_gui) do
-    if not guiobj.player.valid or not guiobj.titan_info.entity.valid then
+    if not guiobj.player.valid or not guiobj.titan_info.entity or not guiobj.titan_info.entity.valid then
       remove_titan_gui_by_player(guiobj.player)
     else
       local player_settings = ctrl_data.by_player[guiobj.player.index] or {}
@@ -396,6 +396,16 @@ end)
 
 ----- Intro -----
 
+local function init_aux_laser(titan_type, titan_info, entity)
+  for k, shift in ipairs(titan_type.aux_laser) do
+    titan_info.aux_laser[k] = entity.surface.create_entity{
+      name=shared.titan_aux_laser, position=entity.position,
+      force=entity.force,
+    }
+    titan_info.aux_laser[k].destructible = false
+  end
+end
+
 function lib.titan_type_by_entity(entity)
   local name = entity.name
   local titan_type = shared.titan_types[name]
@@ -431,8 +441,11 @@ function lib.register_titan(entity)
     foot_rot = false, -- R or L
     foots = {}, -- 2 foot entities
     guns = {}, -- should be added by bunker script
+    aux_laser = {},
+    ai_cd = 0,
   }
   -- entity.health = entity.health/100
+  init_aux_laser(titan_type, titan_info, entity)
 
   if titan_type.class == shared.class_warhound then
     titan_info.guns = {
@@ -444,9 +457,9 @@ function lib.register_titan(entity)
     }
   elseif titan_type.class == shared.class_direwolf then
     titan_info.guns = {
+      init_gun(shared.weapon_adrexbolter),
+      init_gun(shared.weapon_adrexbolter),
       init_gun(shared.weapon_plasma_blastgun),
-      init_gun(shared.weapon_plasma_blastgun),
-      init_gun(shared.weapon_turbolaser),
     }
   elseif titan_type.class == shared.class_reaver then
     titan_info.guns = {
@@ -488,17 +501,17 @@ end
 ----- OUTRO -----
 
 function lib.titan_death(titan_info)
-  local source = titan_info.entity.position
+  local source = titan_info.position
   local target
   local scatter = titan_info.class / 3
   local explo_count = titan_info.class/10
   for i = 0, explo_count do
     target = math2d.position.add(
-      titan_info.entity.position,
+      source,
       -- point_orientation_shift(i/explo_count, 0, scatter)
       {math.random(-scatter, scatter), math.random(-scatter, scatter)}
     )
-    titan_info.entity.surface.create_entity{
+    titan_info.surface.create_entity{
       name=titan_explo_bolt,
       position=source, source=source, target=target, speed=10,
     }
@@ -513,16 +526,23 @@ function lib.titan_death(titan_info)
     table.insert(detailses, weapon_type.ingredients)
     table.insert(ammo, {name=weapon_type.ammo, count=cannon.ammo_count})
   end
-  lib_ruins.spawn_ruin(titan_info.entity.surface, {
+  lib_ruins.spawn_ruin(titan_info.surface, {
     position = source,
     class = titan_type.class,
     details = remove_ingredients_doubles(iter_chain(detailses)),
     ammo = remove_ingredients_doubles(ammo),
   })
 
-  titan_info.entity.force.print(
+  titan_info.force.print(
     {"WH40k-Titans-gui.msg-titan-destroyed", {"entity-name."..titan_type.entity}},
     {1, 0.1, 0.1})
+
+  for _, obj in pairs(titan_info.aux_laser or {}) do
+    if obj and obj.valid then
+      obj.destructible = true
+      obj.destroy()
+    end
+  end
 end
 
 
@@ -534,7 +554,6 @@ local collision_mask_util_extended = require("cmue.collision-mask-util-control")
 local function try_remove_small_water(surface, position, radius)
   local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
   local total = surface.count_tiles_filtered{position=position, radius=radius}
-  -- TODO: count shallow water as 0.5
   local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={only_water_layer}}
   local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
   -- game.print("Found water "..water.." and shallow "..shallow.." of total "..total)
@@ -637,6 +656,14 @@ local function process_single_titan(titan_info)
     surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 6)),
   }
 
+  if not titan_info.aux_laser then
+    titan_info.aux_laser = {}
+    init_aux_laser(titan_type, titan_info, entity)
+  end
+  for k, shift in ipairs(titan_type.aux_laser) do
+    -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1]))
+    titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1])))
+  end
 
   ----- Void Shield
   -- TODO: consider energy spent on guns?
@@ -747,7 +774,7 @@ local function process_single_titan(titan_info)
         name=titan_type.foot, force="neutral", position=foot_pos,
       }
       foot.destructible = false
-      ctrl_data.foots[#ctrl_data.foots+1] = {  -- TODO: is this buggy?!?
+      ctrl_data.foots[#ctrl_data.foots+1] = {
         owner = entity, entity=foot,
         animation=img, ori=ori, sc=sc,
       }
@@ -759,8 +786,6 @@ local function process_single_titan(titan_info)
       -- if titan_info.foots[titan_info.leg and 2 or 1] then
       --   game.print("Placed foot: "..serpent.line(foot.valid).." / "..serpent.line(titan_info.foots[titan_info.leg and 2 or 1].valid))
       -- end
-
-      -- TODO: if not over_water, apply landfill/shallow-water if small (deep)water found
     end
 
 
@@ -851,9 +876,14 @@ local function process_titans()
     if titan_info.entity then
       titans_new[titan_info.entity.unit_number] = titan_info
       process_single_titan(titan_info)
-      lib.handle_attack_ai(titan_info) -- TODO: not so often!
+
+      titan_info.ai_cd = ((titan_info.ai_cd or 0) + 1) % 20
+      if titan_info.ai_cd == 0 then
+        lib.handle_attack_ai(titan_info)
+      end
     else
       game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
+      lib.titan_death(titan_info)
     end
   end
   ctrl_data.titans = titans_new
@@ -1016,7 +1046,7 @@ local function handle_attack_order(event, kind)
         todo = dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type)
       end
 
-      -- TODO: make priority choice: if there is gun_cd, save for secondary task order, trying to find a free cannon
+      -- TODO: make priority choice: if there is gun_cd, save for secondary trying to find a free cannon
       if todo then
         cannon.target = event.cursor_position
         cannon.ordered = tick

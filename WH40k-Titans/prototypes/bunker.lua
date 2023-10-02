@@ -14,14 +14,29 @@ local special_flags = {
 local lamp = table.deepcopy(data.raw["lamp"]["small-lamp"])
 lamp.name = shared.bunker_lamp
 lamp.max_health = 10000
-lamp.healing_per_tick = 10000
+lamp.resistances = technomagic_resistances
 lamp.flags = special_flags
 lamp.selectable_in_game = false
 lamp.collision_mask = {}
 lamp.energy_source = { type = "void" }
-lamp.resistances = technomagic_resistances
 lamp.next_upgrade = nil
 data:extend({ lamp })
+
+local comb = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
+comb.name = shared.bunker_comb
+comb.max_health = 10000
+comb.resistances = technomagic_resistances
+comb.flags = special_flags
+comb.selection_box = {{-1, -1}, {1, 1}}
+comb.collision_mask = {}
+comb.selection_priority = 60
+comb.energy_source = { type = "void" }
+comb.sprites = misc.empty_sprite
+comb.activity_led_sprites = misc.empty_sprite
+comb.fast_replaceable_group = nil
+comb.circuit_wire_max_distance = 16
+comb.item_slot_count = shared.bunker_comb_size
+data:extend({ comb })
 
 local idle_sprite = {
   filename = shared.media_prefix.."graphics/entity/Bunker.png",
@@ -54,24 +69,36 @@ local idle_working_visualisations = {
   }
 }
 
-local empty_working_visualisations = {
+local circuit_connector_wstoreh = circuit_connector_definitions.create(
+  universal_connector_template,
   {
-    always_draw = true,
-    render_layer = "object",
-    north_animation = {
-      layers = {misc.empty_sprite}
-    },
-    east_animation = {
-      layers = {misc.empty_sprite}
-    },
-    south_animation = {
-      layers = {misc.empty_sprite}
-    },
-    west_animation = {
-      layers = {misc.empty_sprite}
+    { variation = 26,
+      main_offset = util.by_pixel(-32, 24),
+      shadow_offset = util.by_pixel(7.5, 7.5),
+      -- show_shadow = true
     }
   }
-}
+)
+local circuit_connector_wstorev = circuit_connector_definitions.create(
+  universal_connector_template,
+  {
+    { variation = 26,
+      main_offset = util.by_pixel(16, 48),
+      shadow_offset = util.by_pixel(7.5, 7.5),
+      -- show_shadow = true
+    }
+  }
+)
+local circuit_connector_bstore = circuit_connector_definitions.create(
+  universal_connector_template,
+  {
+    { variation = 26,
+      main_offset = util.by_pixel(-48, 48),
+      shadow_offset = util.by_pixel(7.5, 7.5),
+      -- show_shadow = true
+    }
+  }
+)
 
 data:extend({
   {
@@ -97,6 +124,9 @@ data:extend({
         misc.empty_sprite,
       }
     },
+    circuit_wire_connection_point = circuit_connector_wstoreh.points,
+    circuit_connector_sprites = circuit_connector_wstoreh.sprites,
+    circuit_wire_max_distance = default_circuit_wire_max_distance,
   },
   {
     type = "container",
@@ -121,6 +151,9 @@ data:extend({
         misc.empty_sprite,
       }
     },
+    circuit_wire_connection_point = circuit_connector_wstorev.points,
+    circuit_connector_sprites = circuit_connector_wstorev.sprites,
+    circuit_wire_max_distance = default_circuit_wire_max_distance,
   },
   -- {
   --   type = "assembling-machine",
@@ -142,7 +175,7 @@ data:extend({
   --   vehicle_impact_sound = sounds.generic_impact,
   --   open_sound = sounds.electric_network_open,
   --   close_sound = sounds.electric_network_close,
-  --   working_visualisations = empty_working_visualisations,
+  --   working_visualisations = misc.empty_4way_animation,
   --   module_specification = {
   --     module_slots = 0,
   --   },
@@ -170,7 +203,7 @@ data:extend({
   --   vehicle_impact_sound = sounds.generic_impact,
   --   open_sound = sounds.electric_network_open,
   --   close_sound = sounds.electric_network_close,
-  --   working_visualisations = empty_working_visualisations,
+  --   working_visualisations = misc.empty_4way_animation,
   --   module_specification = {
   --     module_slots = 0,
   --   },
@@ -203,6 +236,9 @@ data:extend({
         misc.empty_sprite,
       }
     },
+    circuit_wire_connection_point = circuit_connector_bstore.points,
+    circuit_connector_sprites = circuit_connector_bstore.sprites,
+    circuit_wire_max_distance = default_circuit_wire_max_distance,
   },
   {
     type = "assembling-machine",
@@ -223,7 +259,7 @@ data:extend({
     vehicle_impact_sound = sounds.generic_impact,
     open_sound = sounds.electric_network_open,
     close_sound = sounds.electric_network_close,
-    working_visualisations = empty_working_visualisations,
+    working_visualisations = misc.empty_4way_animation,
     module_specification = {
       module_slots = 0,
     },

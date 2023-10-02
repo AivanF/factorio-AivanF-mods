@@ -64,6 +64,16 @@ local bunker_lamps = {
   {-b1, -b1}, { b1, -b1},
   {-b1,  b1}, { b1,  b1},
 }
+local b1, b2 = 2.5, 7
+local bunker_signal_outputs = {
+  {-b1, -b2}, -- w1
+  { b1, -b2}, -- w2
+  {-b2, -b1}, -- w3  
+  { b2, -b1}, -- w4
+  {-b2,  b1}, -- w5
+  { b2,  b1}, -- w6
+  {  0,  b2}, -- b
+}
 
 
 local function draw_assembler_lamp(assembler, k, lamp_color)
@@ -86,7 +96,6 @@ end
 
 local function change_assembler_state(assembler, new_state)
   if assembler.state == new_state then return end
-  -- TODO: if force has >1 members, do notify them all
   if lib.state_post_handler[assembler.state] then
     lib.state_post_handler[assembler.state](assembler)
   end
@@ -123,6 +132,25 @@ local function set_message(assembler, text)
   assembler.message = assembler.message or text
 end
 
+local function check_weapon_is_appropriate(titan_type, k, weapon_type)
+  if not weapon_type then return nil end
+  local name = {"item-name."..weapon_type.name}
+
+  if not (
+    weapon_type.grade == titan_type.guns[k].grade or
+    weapon_type.grade == titan_type.guns[k].grade-1
+  ) then
+    return {"WH40k-Titans-gui.assembly-er-wrong-grade", name}
+
+  elseif weapon_type.no_top and titan_type.guns[k].is_top then
+    return {"WH40k-Titans-gui.assembly-er-cant-top", name}
+
+  elseif weapon_type.top_only and not titan_type.guns[k].is_top then
+    return {"WH40k-Titans-gui.assembly-er-must-top", name}
+  end
+  return nil
+end
+
 local function check_bunker_correct_details(assembler)
   local result = true
   assembler.message = nil
@@ -154,7 +182,7 @@ local function check_bunker_correct_details(assembler)
   draw_assembler_lamp(assembler, 7, lamp_color)
   draw_assembler_lamp(assembler, 8, lamp_color)
 
-  local weapon_type, weapon_fine
+  local weapon_type, weapon_fine, msg
   for k = 1, 6 do
     weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
     weapon_fine = true
@@ -169,20 +197,13 @@ local function check_bunker_correct_details(assembler)
         set_message(assembler, "excessive weapon specified")
         weapon_fine = false
         lamp_color = color_red
-
-      ----- Actual weapon placement rules are here -----
-      elseif weapon_type and not (weapon_type.grade == titan_type.guns[k].grade or weapon_type.grade == titan_type.guns[k].grade-1) then
-        set_message(assembler, "improper grade of "..weapon_type.name)
-        weapon_fine = false
-        lamp_color = color_red
-      elseif weapon_type and weapon_type.no_top and titan_type.guns[k].is_top then
-        set_message(assembler, weapon_type.name.." cannot be place on top")
-        weapon_fine = false
-        lamp_color = color_red
-      elseif weapon_type and weapon_type.top_only and not titan_type.guns[k].is_top then
-        set_message(assembler, weapon_type.name.." can be place on top only")
-        weapon_fine = false
-        lamp_color = color_red
+      elseif weapon_type then
+        msg = check_weapon_is_appropriate(titan_type, k, weapon_type)
+        if msg then
+          set_message(assembler, msg)
+          weapon_fine = false
+          lamp_color = color_red
+        end
       end
     end
     if not assembler.wstore[k] then
@@ -323,6 +344,52 @@ local function safe_destroy_chest(entity, shifts)
   entity.destroy()
 end
 
+local function init_combinators(assembler)
+  assembler.output_combinators = assembler.output_combinators or {}
+  for i, pos in ipairs(bunker_signal_outputs) do
+    assembler.output_combinators[i] = assembler.output_combinators[i] or assembler.surface.create_entity{
+      name=shared.bunker_comb, force="neutral",
+      position={x=assembler.position.x+pos[1], y=assembler.position.y+pos[2]},
+    }
+  end
+  preprocess_entities(assembler.output_combinators)
+end
+
+local function set_signals_from_ingredients(comb, ingredients, ammo)
+  local ctrl = comb.get_or_create_control_behavior()
+  for pos = 1, shared.bunker_comb_size do
+    if ingredients and pos <= #ingredients then
+      ctrl.set_signal(pos, {signal={type="item", name=ingredients[pos][1]}, count=ingredients[pos][2]})
+    elseif ammo and pos == #ingredients+1 then
+      ctrl.set_signal(pos, {signal={type="item", name=ammo[1]}, count=ammo[2]})
+    else
+      ctrl.set_signal(pos, nil)
+    end
+  end
+end
+
+local function set_all_signals(assembler)
+  local titan_type = shared.titan_types[assembler.class_recipe]
+  set_signals_from_ingredients(assembler.output_combinators[7], titan_type and titan_type.ingredients or nil)
+
+  for k = 1, 6 do
+    local weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
+    if weapon_type then
+      set_signals_from_ingredients(assembler.output_combinators[k], weapon_type.ingredients, {weapon_type.ammo, weapon_type.inventory})
+    else
+      set_signals_from_ingredients(assembler.output_combinators[k])
+    end
+  end
+end
+
+local function clean_all_signals(assembler)
+  for _, obj in pairs(assembler.output_combinators) do
+    for pos = 1, shared.bunker_comb_size do
+      -- TODO: set empty signal!
+    end
+  end
+end
+
 
 
 
@@ -389,6 +456,8 @@ function lib.register_bunker(centity)
     }
   end
   preprocess_entities(assembler.lamps)
+
+  init_combinators(assembler)
 
   local b1, b2 = 2.5, 9.5
   assembler.wstore[1] = assembler.wstore[1] or surface.create_entity{
@@ -466,7 +535,6 @@ end
 function lib.bunker_removed(assembler)
   bucks.remove(ctrl_data.assembler_buckets, building_update_rate, assembler.uid)
 
-  -- TODO: add desired shift options, to simplify bunker replacement
   func_maps(safe_destroy_chest, iter_zip{
     iter_chain({assembler.wstore, {assembler.bstore}}),
     bunker_store_shifts
@@ -474,6 +542,7 @@ function lib.bunker_removed(assembler)
 
   die_all({assembler.wentity, assembler.sentity}, ctrl_data.assembler_index)
   die_all(assembler.lamps)
+  die_all(assembler.output_combinators)
   die_all(assembler.wstore)
   die_all(assembler.wrecipe, ctrl_data.entities)
   die_all({assembler.brecipe, assembler.bstore}, ctrl_data.entities)
@@ -506,13 +575,14 @@ end
 function state_pre_handler.initialising(assembler)
   if assembler.wentity and assembler.wentity.valid then
     -- Change entity to not minable, stable/active
-    -- TODO: copy health!
     ctrl_data.assembler_index[assembler.wentity.unit_number] = nil
+    local health = assembler.wentity.health
     assembler.wentity.destroy()
     assembler.wentity = nil
     assembler.sentity = assembler.surface.create_entity{
       name=shared.bunker_active, position=assembler.position, force=assembler.force,
     }
+    assembler.sentity.health = health
   end
 end
 
@@ -531,12 +601,13 @@ function state_post_handler.deactivating(assembler)
   if assembler.sentity and assembler.sentity.valid then
     -- Change entity to minable
     ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
+    local health = assembler.sentity.health
     assembler.sentity.destroy()
     assembler.sentity = nil
-    -- TODO: copy health!
     assembler.wentity = assembler.surface.create_entity{
       name=shared.bunker_minable, position=assembler.position, force=assembler.force,
     }
+    assembler.wentity.health = health
     ctrl_data.assembler_index[assembler.wentity.unit_number] = assembler
   end
 end
@@ -552,16 +623,6 @@ function state_handler.deactivating(assembler)
   if assembler.init_progress > 0 then
     update_assembler_guis(assembler)
   else
-    -- if assembler.sentity then
-    --   -- Change entity to minable
-    --   ctrl_data.assembler_index[assembler.sentity.unit_number] = nil
-    --   assembler.sentity.destroy()
-    --   assembler.sentity = nil
-    --   assembler.wentity = assembler.surface.create_entity{
-    --     name=shared.bunker_minable, position=assembler.position, force=assembler.force,
-    --   }
-    --   ctrl_data.assembler_index[assembler.wentity.unit_number] = assembler
-    -- end
     change_assembler_state(assembler, states.disabled)
   end
 end
@@ -575,6 +636,7 @@ function state_pre_handler.prepare_assembly(assembler)
 end
 
 function state_handler.prepare_assembly(assembler)
+  init_combinators(assembler)
   if check_bunker_correct_details(assembler) and assembler.auto_build then
     collect_bunker_details(assembler)
     assembler.assembly_progress = 0
@@ -582,7 +644,12 @@ function state_handler.prepare_assembly(assembler)
     change_assembler_state(assembler, states.assembling)
   else
     update_assembler_guis(assembler)
+    set_all_signals(assembler)
   end
+end
+
+function state_post_handler.prepare_assembly(assembler)
+  clean_all_signals(assembler)
 end
 
 function state_handler.assembling(assembler)
@@ -660,7 +727,6 @@ function state_handler.restock(assembler)
         done_ammo = done_ammo + got_ammo
         assembler.wstore[k].remove_item({name=weapon_type.ammo, count=need_ammo})
         cannon.ammo_count = cannon.ammo_count + got_ammo
-        -- TODO: increase stats?
       end
     end
     if done_ammo > 0 then
@@ -683,8 +749,6 @@ states_for_music[states.initialising] = true
 states_for_music[states.deactivating] = true
 states_for_music[states.assembling] = true
 states_for_music[states.disassembling] = true
--- TODO: dynamically consider game.speed?
-
 
 local states_to_corner_colors = {}
 states_to_corner_colors[states.initialising] = color_green
@@ -700,7 +764,7 @@ local function process_an_assembler(assembler)
   -- game.print("Handling "..assembler.state.." for assembler "..assembler.uid)
   state_handler[assembler.state](assembler)
   if not states_no_need_clean[assembler.state] then
-    -- TODO: shine lamps if chests aren't empty!
+    -- TODO: shine lamps if chests aren't empty?
   end
 
   local lamp_color = states_to_corner_colors[assembler.state]
@@ -821,7 +885,6 @@ end
 
 function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
-  -- TODO: add auto-build setting, show button for states.assembling
   -- TODO: show expected assembly time
 
   main_frame.main_room.add{
@@ -862,8 +925,10 @@ function gui_maker.prepare_assembly(assembler, main_frame)
       end
       if weapon_type and not titan_type.guns[k] then
         btn.tooltip = {"WH40k-Titans-gui.assembly-er-extra-weapon"}
-      elseif weapon_type and not (weapon_type ~= titan_type.guns[k].grade or weapon_type ~= titan_type.guns[k].grade-1) then
-        btn.tooltip = {"WH40k-Titans-gui.assembly-er-wrong-grade"}
+      else
+        local error = check_weapon_is_appropriate(titan_type, k, weapon_type)
+        -- nil value gets considered as a string :(
+        if error then btn.tooltip = error end
       end
     end
   end
