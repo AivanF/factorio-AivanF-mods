@@ -1,8 +1,10 @@
 local shared = {}
 shared.rod1 = "lightning-rod-1"
 shared.rod2 = "lightning-rod-1-mk2"
+shared.handler_type = "accumulator"
 shared.han1 = "lightning-rod-2-accumulator"
 shared.han2 = "lightning-rod-3-mighty"
+shared.arty_type = "roboport"
 shared.art1 = "lightning-arty-1"
 shared.art2 = "lightning-arty-2"
 shared.remote_name = "lightning-arty-remote"
@@ -40,7 +42,7 @@ shared.default_presets = {
   {"coal", nil},
   {"crude-oil", nil},
   {"se-vitamelange", nil},
-  {"se-cryonite", shared.PRESET_MOVING},
+  {"se-cryonite", nil},
   {"se-vulcanite", shared.PRESET_MOVING},
 }
 

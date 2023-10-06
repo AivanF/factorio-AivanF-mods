@@ -75,7 +75,7 @@ data:extend({
     result = name,
   },
   {
-    type = "roboport",
+    type = shared.arty_type,
     name = name,
     icon = icon,
     icon_size = icon_size, icon_mipmaps = icon_mipmaps,

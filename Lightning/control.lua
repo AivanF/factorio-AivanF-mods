@@ -85,7 +85,7 @@ local function process_min()
     --- But seems like during the event, SE doesn't have surface linked to zone yet
     for _, surface in pairs(game.surfaces) do
       if not script_data.surfSettings[surface.index] then
-        se_register_zone(surface.index)
+        se_register_zone(surface)
       end
     end
   end

@@ -78,7 +78,6 @@ local function on_player_selected_area(event)
   local bombarding_count = (bombarding_level > 3) and bomb_size_3 or (bombarding_level > 1) and bomb_size_2 or bomb_size_1
   local closest_arty = nil
   local closest_dst = math.huge
-  local dst, todo
 
   -- local chunk = {x=math.floor(target.x/32), y=math.floor(target.y/32)}
   -- -- local chunk_is = surface.is_chunk_generated({chunk.x, chunk.y})
@@ -87,34 +86,37 @@ local function on_player_selected_area(event)
 
   local power_level = get_player_power_level(player, is_bombarding)
   local single_energy = level_to_energy_attack(power_level)
-  local req_pc = 0.05
   local req_en = (is_bombarding and 10 or 1) * single_energy
   local act_en = req_en * 0.95
-  local matched = 0
   local nearby = 0
-  local max_dst
   local attacks = 0
+  local todo, dst, max_dst
+  local matched = 0
+  local matched_details = {}
 
-  -- TODO: cache arty entities by surface?
+  -- TODO: optimise the search!!! Calc simple dist? Cache?
   for _, info in ipairs(arty_protos_ordered) do
-    for _, entity in pairs(surface.find_entities_filtered{name=info.name}) do
+    matched_details[info.name] = 0
+    for _, entity in pairs(surface.find_entities_filtered{type=info.type, name=info.name}) do
       todo = entity.force == force
       max_dst = info.max_dst * (1 + 0.25 * (script_data.technologies[shared.tech_arty_range][entity.force_index] or 0))
       if todo and alt then
         dst = math.sqrt( (entity.position.x-target.x)^2 + (entity.position.y-target.y)^2 )
-        todo = dst > 8 and dst < info.max_dst and dst < closest_dst
-      end if todo then nearby = nearby + 1 end
-      if todo then todo = script_data.arty_tasks[entity.unit_number] == nil end
-      if todo then todo = entity.energy > act_en end
-      -- if todo then todo = entity.energy/entity.electric_buffer_size > req_pc end
+        todo = dst > 8 and dst < max_dst and dst < closest_dst
+      end
+      if todo then nearby = nearby + 1 end
+      if todo then todo = todo and script_data.arty_tasks[entity.unit_number] == nil end
+      if todo then todo = todo and entity.energy > act_en end
       if todo and not alt then
         dst = math.sqrt( (entity.position.x-target.x)^2 + (entity.position.y-target.y)^2 )
-        todo = dst > 8 and dst < info.max_dst and dst < closest_dst
+        todo = dst > 8 and dst < max_dst and dst < closest_dst
       end
+      -- TODO: choose the most approppriate somehow; what criterias?
       if todo then
         closest_arty = entity
         closest_dst = dst
         matched = matched + 1
+        matched_details[info.name] = matched_details[info.name] + 1
         attacks = attacks + math.floor(entity.energy / act_en)
       end
     end

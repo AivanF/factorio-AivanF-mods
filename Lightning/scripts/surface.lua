@@ -16,7 +16,7 @@ local surfPresets = {
 }
 
 local zone_ore_to_preset = {}
-local function reload_preset_mappings()
+function reload_preset_mappings()
   local preset_name
   for index, info in ipairs(shared.default_presets) do
     preset_name = settings.global[shared.preset_setting_name_for_resource(info[1])].value
@@ -96,11 +96,12 @@ local function apply_preset(surface_index, preset_name, seed)
   end
 end
 
-function se_register_zone(surface_index)
+function se_register_zone(surface)
+  local surface_index = surface.index
   local zone = remote.call(SE, "get_zone_from_surface_index", {surface_index=surface_index})
   if zone then
     local preset_name = se_zone_to_preset(zone)
-    -- debug_print("TSL se_register_zone, index: "..surface_index..", type: "..serpent.line(zone.type)..", preset: "..serpent.line(preset_name))
+    debug_print("TSL se_register_zone, name: "..surface.name..", index: "..surface_index..", type: "..serpent.line(zone.type)..", preset: "..serpent.line(preset_name))
     if not preset_name then return false end
     -- if name == shared.PRESET_NIL then return false end  -- Should be handled by reload_preset_mappings
     apply_preset(surface_index, preset_name, zone.seed)
@@ -112,7 +113,7 @@ end
 function se_add_zones()
   local done = 0
   for _, surface in pairs(game.surfaces) do
-    done = done + (se_register_zone(surface.index) and 1 or 0)
+    done = done + (se_register_zone(surface) and 1 or 0)
   end
   debug_print("TSL+SE added "..done.." surfaces of "..#game.surfaces)
 end
@@ -138,11 +139,11 @@ function update_nauvis_settings()
   apply_updated_preset(shared.PRESET_HOME)
 end
 
-local function surface_clean_cmd(command)
+local function surface_clean_cmd(cmd)
   -- TODO: check if player is admin or nil
-  local surface_name = tonumber(command.parameter) or command.parameter
-  local surface = command.parameter and game.surfaces[surface_name]
-  local player = game.get_player(command.player_index)
+  local surface_name = tonumber(cmd.parameter) or cmd.parameter
+  local surface = cmd.parameter and game.surfaces[surface_name]
+  local player = game.get_player(cmd.player_index)
 
   if not player.admin then
     player.print("You are not an admin!")
@@ -156,16 +157,16 @@ local function surface_clean_cmd(command)
 
   if script_data.surfSettings[surface.index] then
     script_data.surfSettings[surface.index] = nil
-    player.print("Cleaned surface '"..surface_name.."'")
+    player.print("Removed lightnings from the surface '"..surface_name.."'")
   else
     player.print("Surface '"..surface_name.."' exists but not registered")
   end
 end
 
-function surface_add_cmd(command)
+function surface_add_cmd(cmd)
   -- TODO: check if player is admin or nil
-  local args = shared.split(command.parameter or "")
-  local player = game.get_player(command.player_index)
+  local args = shared.split(cmd.parameter or "")
+  local player = game.get_player(cmd.player_index)
 
   if not player.admin then
     player.print("You are not an admin!")

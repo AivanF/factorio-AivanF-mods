@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.15
+Date: 2023-10-06
+  Bugfixes:
+    - Sometimes artillery towers and arty distance research didn't work correctly – fixed this! Feels much more powerful now :)
+    - SE: no more crashing when a planet's surface get removed.
+  Balance:
+    - SE: removed lightnings from cryonite planets.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.14
 Date: 2023-09-28
   Features:

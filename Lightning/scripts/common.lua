@@ -5,6 +5,7 @@ max_natural_power_level = 4
 
 set_main_debug = false --settings.global["af-tsl-debug-main"].value
 set_perf_debug = false --settings.global["af-tsl-debug-perf"].value
+-- set_main_debug = true
 
 function perf_print(txt)
   if set_perf_debug then
@@ -47,10 +48,10 @@ rod_protos_ordered = {
 }
 -- Weakest towers first to save strongest for farther attacks
 arty_protos_ordered = {
-  {name=shared.han2, max_dst=256, },
-  {name=shared.art1, max_dst=480, },
-  {name=shared.art2, max_dst=960, },
+  {name=shared.han2, max_dst=256, type=shared.handler_type, },
+  {name=shared.art1, max_dst=480, type=shared.arty_type, },
+  {name=shared.art2, max_dst=960, type=shared.arty_type, },
 }
 if settings.startup["af-tsl-early-arty"].value then
-  table.insert(arty_protos_ordered, 1, {name=shared.han1, max_dst=128, })
+  table.insert(arty_protos_ordered, 1, {name=shared.han1, max_dst=128, type=shared.handler_type, })
 end
