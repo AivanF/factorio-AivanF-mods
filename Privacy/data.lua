@@ -148,6 +148,7 @@ data:extend({
     ingredients = {
       {"steel-plate", 1},
       {"plastic-bar", 1},
+      {"electronic-circuit", 2},
     },
     result = S.car_key_item,
   },
@@ -320,11 +321,12 @@ data:extend({
   {
     type = "recipe",
     name = S.personal_chest_name,
-    enabled = true,
+    enabled = false,
     ingredients = {
       {"steel-chest", 1},
       {S.lock_item, 1},
-      {"electronic-circuit", 10},
+      -- {"electronic-circuit", 10},
+      {"advanced-circuit", 10},
     },
     result = S.personal_chest_name,
   },
@@ -449,12 +451,13 @@ data:extend({
   {
     type = "recipe",
     name = S.bank_name,
-    enabled = true,
+    enabled = false,
     ingredients = {
       {"concrete", 200},
       {"steel-chest", 50},
       {S.lock_item, 50},
       {"processing-unit", 10},
+      -- {"advanced-circuit", 50},
     },
     result = S.bank_name,
   },
@@ -482,9 +485,9 @@ data:extend({
     }, {
     {
       filename = S.mod_path.."/graphics/Bank-HR.png",
-      width = 288,
-      height = 288,
-      shift = {0, -0.6},
+      width = 228,
+      height = 228,
+      shift = {0, -0.2},
       scale = 0.5,
       -- hr_version = {
       --   filename = S.mod_path.."/graphics/Bank-HR.png",
@@ -543,4 +546,19 @@ data:extend({
   },
 })
 
--- TODO: disable recipes by default, add required technologies
+table.insert(
+  data.raw.technology["advanced-electronics"].effects,
+  { type = "unlock-recipe", recipe = S.personal_chest_name }
+)
+table.insert(
+  data.raw.technology["automobilism"].effects,
+  { type = "unlock-recipe", recipe = S.car_key_item }
+)
+table.insert(
+  data.raw.technology["advanced-electronics-2"].effects,
+  { type = "unlock-recipe", recipe = S.bank_name }
+)
+table.insert(
+  data.raw.technology["advanced-electronics-2"].effects,
+  { type = "unlock-recipe", recipe = S.nfc_key_item }
+)

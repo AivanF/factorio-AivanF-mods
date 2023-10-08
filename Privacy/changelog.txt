@@ -1,5 +1,18 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.0
+Version: 0.9.1
+Date: 2023-10-08
+  Featues:
+    - Passwords hashing.
+    - Wrote remote API & docs.
+  Info:
+    - Code refactoring.
+    - More descriptions and localisation.
+    - Some better artworks.
+---------------------------------------------------------------------------------------------------
+Version: 0.9.0
 Date: 2023-10-07
   Info:
-    - Initial release by AivanF!
+    - Initial release by AivanF! Designed the idea and made 2k+ lines of code and artworks in 1 day.
+  Locale:
+    - English 🇬🇧
+    - Russian / Русский 🇷🇺

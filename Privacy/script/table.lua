@@ -1,33 +1,72 @@
 local S = require("shared")
+require("script/utils")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
 local table_frame_name = "af_engraving_table"
-local act_engrave = "af-privacy-engrave"
-local act_copy = "af-privacy-copy-key"
-local act_merge = "af-privacy-merge-keys"
-local act_split = "af-privacy-split-keys"
+local act_engrave = "af-privacy-table-engrave"
+local act_engrave_open = "af-privacy-table-engrave-open"
+local act_back = "af-privacy-table-main"
+local act_copy = "af-privacy-table-copy-key"
+local act_merge = "af-privacy-table-merge-keys"
+local act_split = "af-privacy-table-split-keys"
 local color_error = {0.8, 0.2, 0.2}
 
-function setup_key_description(stack)
-  -- TODO: translate everything here
-  local tag_info = stack.tags[S.key_tag_name]
-  if not tag_info or #tag_info.pws < 1 then
-    stack.custom_description = "Empty key"
+
+local function main_menu(frame)
+  frame.clear()
+  frame.add{ type="label", caption={"af-privacy.lbl-pick-cmd"} }
+  frame.add{ type="button", direction="horizontal", tags={action=act_engrave_open}, caption={"af-privacy.btn-engrave"} }
+  frame.add{ type="button", direction="horizontal", tags={action=act_copy}, caption={"af-privacy.btn-copy"} }
+  frame.add{ type="button", direction="horizontal", tags={action=act_merge}, caption={"af-privacy.btn-merge"} }
+  frame.add{ type="button", direction="horizontal", tags={action=act_split}, caption={"af-privacy.btn-split"} }
+end
+
+
+local function engrave_menu(frame)
+  frame.clear()
+  frame.add{ type="label", caption={"af-privacy.lbl-name"} }
+  frame.add{ type="textfield", name="input_name" }
+  frame.input_name.style.minimal_width = 64
+  frame.add{ type="label", caption={"af-privacy.lbl-pw"} }
+  frame.add{ type="textfield", name="input_pw" }
+  frame.input_pw.style.minimal_width = 64
+  frame.add{ type="button", direction="horizontal", tags={action=act_engrave}, caption={"af-privacy.btn-engrave"} }
+  frame.add{ type="button", direction="horizontal", tags={action=act_back}, caption={"af-privacy.btn-back"} }
+end
+
+
+function do_engrave(player, frame, table_info, entity)
+  local name = frame.input_name.text
+  local pw = frame.input_pw.text
+  if false
+    or #pw < 2 or #pw > 64
+    or #name < 2 or #name > 32
+  then
+    player.print({"af-privacy.error-lengths", 2, 32}, color_error)
     return
   end
 
-  if #tag_info.pws > 1 then
-    -- TODO: append all the names
-    stack.custom_description = "Bunch of "..#tag_info.pws.." keys"
-  else
-    if tag_info.pws[1].name then
-      stack.custom_description = tag_info.pws[1].name
-    else
-      stack.custom_description = "Untitled key"
+  local table_keycats = dict_from_keys_array(table_info.keycats, true)
+  local inv = entity.get_inventory(defines.inventory.chest)
+  local done = 0
+  local stack, tag_info
+
+  for i = 1, #inv do
+    stack = inv[i]
+    if check_raw_key_stack(stack, table_keycats) then
+      engrave_key_item(stack, name, pw)
+      done = done + 1
     end
   end
+
+  if done > 0 then
+    player.print({"af-privacy.engrave-done"})
+  else
+    player.print({"af-privacy.no-key-to-engrave"})
+  end
 end
+
 
 lib:on_event(defines.events.on_gui_opened, function(event)
   local player = game.get_player(event.player_index)
@@ -37,73 +76,39 @@ lib:on_event(defines.events.on_gui_opened, function(event)
       position=defines.relative_gui_position.right,
     }
     local frame = player.gui.relative.add{ type="frame", name=table_frame_name, anchor=anchor, direction="vertical" }
-    -- TODO: translate everything here!
-    -- frame.add{ type="label", caption="Pick a command:" }
-    -- frame.add{ type="button", direction="horizontal", tags={action=act_copy}, caption="Copy" }
-    -- frame.add{ type="button", direction="horizontal", tags={action=act_merge}, caption="Merge" }
-    -- frame.add{ type="button", direction="horizontal", tags={action=act_split}, caption="Split" }
-
-    -- TODO: make it a separate window state?
-    frame.add{ type="label", caption="Name:" }
-    frame.add{ type="textfield", name="input_name" }
-    frame.input_name.style.minimal_width = 64
-    frame.add{ type="label", caption="Password:" }
-    frame.add{ type="textfield", name="input_pw" }
-    frame.input_pw.style.minimal_width = 64
-    frame.add{ type="button", direction="horizontal", tags={action=act_engrave}, caption="Engrave" }
+    main_menu(frame)
   end
 end)
+
 
 lib:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
   local action = event.element and event.element.valid and event.element.tags.action
   local entity = player.opened
-  if entity.name ~= S.table_item then return end
+  local table_info = S.registered_tables[entity.name]
+  if not table_info then return end
   local frame = player.gui.relative[table_frame_name]
   if not frame then return end
 
-  -- TODO: consider keycat of the table
-
   if action == act_engrave then
-    local name = frame.input_name.text
-    local pw = frame.input_pw.text
-    if false
-      or #pw < 4 or #pw > 64
-      or #name < 4 or #name > 64
-    then
-      player.print("Name and password need length in range 4:64", color_error) -- TODO: translate
-      return
-    end
+    do_engrave(player, frame, table_info, entity)
 
-    local done = 0
-    local inv = entity.get_inventory(defines.inventory.chest)
-    local stack, tag_info
+  elseif action == act_back then
+    main_menu(frame)
 
-    for i = 1, #inv do
-      stack = inv[i]
-      if stack.valid_for_read and S.registered_keys[stack.name] then
-        tag_info = stack.get_tag(S.key_tag_name)
-        if tag_info == nil or #tag_info.pws == 0 then
-          stack.set_tag(S.key_tag_name, {pws = {{pw=pw, name=name}}})
-          setup_key_description(stack)
-          done = done + 1
-        end
-      end
-    end
-
-    if done > 0 then
-      player.print("Engraved "..done.." keys!") -- TODO: translate
-    else
-      player.print("No appropriate keys found to engrave") -- TODO: translate
-    end
+  elseif action == act_engrave_open then
+    engrave_menu(frame)
 
   elseif action == act_copy then
+    player.print("Not implemented yet, wait a bit")
     -- TODO: take first key, check it's single, copy its pw to other keys with no tags
 
   elseif action == act_merge then
+    player.print("Not implemented yet, wait a bit")
     -- TODO: take first key to merge other into considering the same key category and max number per keycat, update custom description
 
   elseif action == act_split then
+    player.print("Not implemented yet, wait a bit")
     -- TODO: find a key with multiple pws, split until there is enough space trying to keep item name, update custom descriptions
   end
 end)

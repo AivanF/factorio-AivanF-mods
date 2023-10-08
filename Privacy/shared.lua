@@ -8,17 +8,19 @@ S.key_tag_name = "af-privacy-key"
 
 S.lock_item = "af-privacy-lock-mechanism"
 S.table_item = "af-privacy-engraving-table"
+S.el_table_item = "af-privacy-engraving-table-el"
 
 -- Key categories
 S.keycat_mech = "mechanical"
 S.keycat_el   = "electronical"
 S.keycat_q    = "quantum"
 S.keycat_mag  = "magic"
+S.keycat_mag  = S.keycat_q -- Clarke's 3rd law -- kinda easter egg
 
 -- Key items
 S.iron_key_item   = "af-privacy-key-iron"
 S.bronze_key_item = "af-privacy-key-bronze"
-S.noble_key_item = "af-privacy-key-noble"
+S.noble_key_item = "af-privacy-key-noble" -- for quests
 S.car_key_item    = "af-privacy-key-car"
 S.nfc_key_item    = "af-privacy-key-nfc"
 
@@ -26,9 +28,13 @@ S.nfc_key_item    = "af-privacy-key-nfc"
 S.registered_keys = {
   [S.iron_key_item] = S.keycat_mech,
   [S.bronze_key_item] = S.keycat_mech,
-  [S.noble_key_item] = S.keycat_mech,
   [S.car_key_item] = S.keycat_mech,
   [S.nfc_key_item] = S.keycat_el,
+}
+
+S.registered_tables = {
+  [S.table_item] = {keycats = {S.keycat_mech}},
+  [S.el_table_item] = {keycats = {S.keycat_mech, S.keycat_el}},
 }
 
 -- Storages subtypes

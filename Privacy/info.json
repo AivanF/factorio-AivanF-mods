@@ -1,11 +1,11 @@
 {
 	"name": "Privacy",
-	"version": "0.9.0",
-	"title": "Privacy: key locked chest, personal storage, and more",
+	"version": "0.9.1",
+	"title": "Privacy: key-locked chest, personal storage, bank safes",
 	"author": "AivanF",
 	"factorio_version": "1.1",
 	"dependencies": [
 		"base >= 1.1.0"
 	],
-	"description": "The mod adds a range of private and restricted storage options that can be opened with different conditions, to protect your stuff and make the game even more fun:\n1. Locked chest requiring appropriate key.\n2. Personal chest only available to specific player.\n3. Bank that provides separate safe strongbox inventories for different players.\nThe storages cannot be mined until emptied, they block automatic item putting/removing by inserters and drones, and they are durable to prevent accident destruction. Intended for multiplayer games and to be used by mods like RPG/quests. WIP, more features will be added!"
+	"description": "A range of private and secured storages to protect your stuff and make the game even more fun:\n\n1. Locked chest requiring appropriate key.\n2. Personal chest only available to specific player.\n3. Bank that provides separate safe strongbox inventories for different players and a set of key-lockable safes.\n\nKeys can be crafted and engraved on a worktable or found from the integrated mods."
 }
