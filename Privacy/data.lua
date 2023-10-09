@@ -66,7 +66,7 @@ data:extend({
     type = "item-subgroup",
     name = subgroup,
     group = "logistics",
-    order = "a-2",
+    order = "af-priv-10Ks-2",
   },
 
   ----------- Lock detail
@@ -76,7 +76,7 @@ data:extend({
     icon = S.mod_path.."/graphics/lock.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "b-2-"..S.lock_item,
+    order = "af-priv-40Dtls-01-"..S.lock_item,
     stack_size = 20,
   },
   {
@@ -89,6 +89,7 @@ data:extend({
       {"copper-cable", 20},
     },
     result = S.lock_item,
+    energy_required = 10,
   },
 
 
@@ -99,7 +100,7 @@ data:extend({
     icon = S.mod_path.."/graphics/key-iron.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "a-1-"..S.iron_key_item,
+    order = "af-priv-10Ks-01-"..S.iron_key_item,
     stack_size = 20,
   },
   {
@@ -110,6 +111,7 @@ data:extend({
       {"iron-plate", 2},
     },
     result = S.iron_key_item,
+    energy_required = 4,
   },
 
   {
@@ -118,7 +120,7 @@ data:extend({
     icon = S.mod_path.."/graphics/key-bronze.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "a-2-"..S.bronze_key_item,
+    order = "af-priv-10Ks-02-"..S.bronze_key_item,
     stack_size = 20,
   },
   {
@@ -130,6 +132,27 @@ data:extend({
       {"copper-plate", 1},
     },
     result = S.bronze_key_item,
+    energy_required = 4,
+  },
+
+  {
+    type = "item-with-tags",
+    name = S.steel_key_item,
+    icon = S.mod_path.."/graphics/key-steel.png",
+    icon_size = 64,
+    subgroup = subgroup,
+    order = "af-priv-10Ks-03-"..S.steel_key_item,
+    stack_size = 10,
+  },
+  {
+    type = "recipe",
+    name = S.steel_key_item,
+    enabled = false,
+    ingredients = {
+      {"steel-plate", 2},
+    },
+    result = S.steel_key_item,
+    energy_required = 4,
   },
 
   {
@@ -138,7 +161,7 @@ data:extend({
     icon = S.mod_path.."/graphics/key-car.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "a-3-"..S.car_key_item,
+    order = "af-priv-10Ks-04-"..S.car_key_item,
     stack_size = 10,
   },
   {
@@ -146,21 +169,13 @@ data:extend({
     name = S.car_key_item,
     enabled = false,
     ingredients = {
-      {"steel-plate", 1},
+      {"steel-plate", 2},
       {"plastic-bar", 1},
       {"electronic-circuit", 2},
     },
     result = S.car_key_item,
-  },
-
-  {
-    type = "item-with-tags",
-    name = S.noble_key_item,
-    icon = S.mod_path.."/graphics/key-noble.png",
-    icon_size = 64,
-    subgroup = subgroup,
-    order = "a-4-"..S.noble_key_item,
-    stack_size = 10,
+    category = "advanced-crafting",
+    energy_required = 4,
   },
 
   {
@@ -169,7 +184,7 @@ data:extend({
     icon = S.mod_path.."/graphics/key-nfc.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "a-4-"..S.nfc_key_item,
+    order = "af-priv-10Ks-31-"..S.nfc_key_item,
     stack_size = 100,
   },
   {
@@ -181,6 +196,18 @@ data:extend({
       {"advanced-circuit", 1},
     },
     result = S.nfc_key_item,
+    energy_required = 4,
+    category = "advanced-crafting",
+  },
+
+  {
+    type = "item-with-tags",
+    name = S.noble_key_item,
+    icon = S.mod_path.."/graphics/key-noble.png",
+    icon_size = 64,
+    subgroup = subgroup,
+    order = "af-priv-05QKs-01-"..S.noble_key_item,
+    stack_size = 10,
   },
 
 
@@ -195,6 +222,7 @@ data:extend({
       {"stone-brick", 20},
     },
     result = S.table_item,
+    energy_required = 10,
   },
   {
     type = "item",
@@ -202,7 +230,7 @@ data:extend({
     icon = S.mod_path.."/graphics/engraving-table-HR.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "b-1-"..S.table_item,
+    order = "af-priv-30Tbl-1-"..S.table_item,
     place_result = S.table_item,
     stack_size = 10,
   },
@@ -217,10 +245,80 @@ data:extend({
     corpse = "small-remnants",
     collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
     selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+    inventory_size = 10,
+    picture = {
+      layers = {
+        {
+          filename = S.mod_path.."/graphics/engraving-table-HR.png",
+          width = 76,
+          height = 76,
+          shift = util.by_pixel(0, -0.5),
+          scale = 0.5,
+          -- hr_version = {
+          --   filename = S.mod_path.."/graphics/engraving-table-HR.png",
+          --   width = 76,
+          --   height = 76,
+          --   shift = util.by_pixel(0, -0.5),
+          --   scale = 0.5,
+          -- }
+        },
+        {
+          filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
+          width = 56,
+          height = 26,
+          shift = util.by_pixel(10, 6.5),
+          draw_as_shadow = true,
+          hr_version = {
+            filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
+            width = 110,
+            height = 50,
+            shift = util.by_pixel(10.5, 6),
+            draw_as_shadow = true,
+            scale = 0.5,
+          }
+        },
+      },
+    },
+  },
+
+  {
+    type = "recipe",
+    name = S.el_table_item,
+    enabled = true,
+    ingredients = {
+      {S.table_item, 1},
+      {"steel-plate", 20},
+      {"advanced-circuit", 20},
+    },
+    result = S.el_table_item,
+    energy_required = 10,
+  },
+  {
+    type = "item",
+    name = S.el_table_item,
+    icon = S.mod_path.."/graphics/engraving-table-HR.png",
+    icon_size = 64,
+    subgroup = subgroup,
+    order = "af-priv-30Tbl-0-"..S.el_table_item,
+    place_result = S.el_table_item,
+    stack_size = 10,
+  },
+  {
+    type = "container",
+    name = S.el_table_item,
+    icon = S.mod_path.."/graphics/Chest-Locked-HR.png",
+    icon_size = 64,
+    flags = {"placeable-player", "player-creation"},
+    minable = {mining_time = 0.5, result = S.el_table_item},
+    max_health = 500,
+    corpse = "small-remnants",
+    collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
+    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
     inventory_size = 20,
     picture = {
       layers = {
         {
+          -- TODO: make new graphics
           filename = S.mod_path.."/graphics/engraving-table-HR.png",
           width = 76,
           height = 76,
@@ -264,6 +362,7 @@ data:extend({
       {S.lock_item, 1},
     },
     result = S.keylocked_chest_name,
+    energy_required = 5,
   },
   {
     type = "item",
@@ -271,7 +370,7 @@ data:extend({
     icon = S.mod_path.."/graphics/icon-lock.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "c1-"..S.keylocked_chest_name,
+    order = "af-priv-50St-10-"..S.keylocked_chest_name,
     place_result = S.keylocked_chest_name,
     stack_size = 50,
   },
@@ -329,6 +428,7 @@ data:extend({
       {"advanced-circuit", 10},
     },
     result = S.personal_chest_name,
+    energy_required = 10,
   },
   {
     type = "item",
@@ -336,7 +436,7 @@ data:extend({
     icon = S.mod_path.."/graphics/icon-fingerprint.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "c2-"..S.personal_chest_name,
+    order = "af-priv-50St-20-"..S.personal_chest_name,
     place_result = S.personal_chest_name,
     stack_size = 50,
   },
@@ -382,72 +482,7 @@ data:extend({
     },
   }),
 
-  ----------- 3. Team
-  -- {
-  --   type = "recipe",
-  --   name = S.team_storage_name,
-  --   enabled = true,
-  --   ingredients = {
-  --     {"steel-plate", 50},
-  --     {"stone-brick", 50},
-  --     {S.lock_item, 5},
-  --     {"advanced-circuit", 10},
-  --   },
-  --   result = S.team_storage_name,
-  -- },
-  -- {
-  --   type = "item",
-  --   name = S.team_storage_name,
-  --   icon = S.mod_path.."/graphics/Chest-Locked-HR.png",
-  --   icon_size = 64,
-  --   subgroup = subgroup,
-  --   order = "c3-"..S.team_storage_name,
-  --   place_result = S.team_storage_name,
-  --   stack_size = 20,
-  -- },
-  -- make_private_storage({
-  --     type = S.storage_base_type,
-  --     name = S.team_storage_name,
-  --     icon = S.mod_path.."/graphics/Chest-Locked-HR.png",
-  --     icon_size = 64,
-  --     minable = {mining_time = 1.5, result = S.team_storage_name},
-  --     max_health = 1500,
-  --     corpse = "small-remnants",
-  --     collision_box = {{-1.35, -1.35}, {1.35, 1.35}},
-  --     selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
-  --   }, {
-  --   {
-  --     filename = S.mod_path.."/graphics/Chest-Locked-HR.png",
-  --     width = 76,
-  --     height = 76,
-  --     shift = util.by_pixel(0, 0),
-  --     scale = 0.5,
-  --     -- hr_version = {
-  --     --   filename = S.mod_path.."/graphics/Chest-Locked-HR.png",
-  --     --   width = 66,
-  --     --   height = 76,
-  --     --   shift = util.by_pixel(-0.5, -0.5),
-  --     --   scale = 0.5,
-  --     -- }
-  --   },
-  --   {
-  --     filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
-  --     width = 56,
-  --     height = 26,
-  --     shift = util.by_pixel(10, 6.5),
-  --     draw_as_shadow = true,
-  --     hr_version = {
-  --       filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
-  --       width = 110,
-  --       height = 50,
-  --       shift = util.by_pixel(10.5, 6),
-  --       draw_as_shadow = true,
-  --       scale = 0.5,
-  --     }
-  --   },
-  -- }),
-
-  ----------- 4. Bank
+  ----------- 3. Bank
   {
     type = "recipe",
     name = S.bank_name,
@@ -460,6 +495,7 @@ data:extend({
       -- {"advanced-circuit", 50},
     },
     result = S.bank_name,
+    energy_required = 60,
   },
   {
     type = "item",
@@ -467,7 +503,7 @@ data:extend({
     icon = S.mod_path.."/graphics/icon-bank.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "c4-"..S.bank_name,
+    order = "af-priv-50St-40-"..S.bank_name,
     place_result = S.bank_name,
     stack_size = 1,
   },
@@ -524,7 +560,7 @@ data:extend({
     variations = {
       {filename=S.mod_path.."/sounds/lock.wav"},
     },
-    audible_distance_modifier = 1,
+    volume = 0.5,
   },
   {
     type = "sound",
@@ -533,19 +569,57 @@ data:extend({
     variations = {
       {filename=S.mod_path.."/sounds/safe.wav"},
     },
-    audible_distance_modifier = 1,
+    volume = 0.5,
   },
   {
     type = "sound",
-    name = "af-privacy-locked",
+    name = "af-privacy-cannot-open",
+    category = "environment",
+    variations = {
+      {filename="__core__/sound/cannot-build.ogg"},
+    },
+  },
+  {
+    type = "sound",
+    name = "af-open-unlocked",
     category = "environment",
     variations = {
       {filename="__core__/sound/gui-red-button.ogg"},
     },
-    audible_distance_modifier = 1,
+  },
+  {
+    type = "sound",
+    name = "af-open-personal",
+    category = "environment",
+    variations = {
+      {filename="__base__/sound/programmable-speaker/plucked-23.ogg"},
+    },
+    volume = 0.5,
+  },
+  {
+    type = "sound",
+    name = "af-bank-on",
+    category = "environment",
+    variations = {
+      {filename="__base__/sound/spidertron/spidertron-activate.ogg"},
+    },
+    audible_distance_modifier = 2,
+  },
+  {
+    type = "sound",
+    name = "af-bank-off",
+    category = "environment",
+    variations = {
+      {filename="__base__/sound/spidertron/spidertron-deactivate.ogg"},
+    },
+    audible_distance_modifier = 2,
   },
 })
 
+table.insert(
+  data.raw.technology["steel-processing"].effects,
+  { type = "unlock-recipe", recipe = S.steel_key_item }
+)
 table.insert(
   data.raw.technology["advanced-electronics"].effects,
   { type = "unlock-recipe", recipe = S.personal_chest_name }
@@ -561,4 +635,8 @@ table.insert(
 table.insert(
   data.raw.technology["advanced-electronics-2"].effects,
   { type = "unlock-recipe", recipe = S.nfc_key_item }
+)
+table.insert(
+  data.raw.technology["advanced-electronics-2"].effects,
+  { type = "unlock-recipe", recipe = S.el_table_item }
 )

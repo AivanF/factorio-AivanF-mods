@@ -3,9 +3,14 @@ require("script/storage_classes")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 
+---@shape player_opened_info
+  -- @field storage_info storage_info
+  ---@field inv_type     string?      Nil if bank main menu is opened
+  ---@field index        integer?     For lockable safes
+
 local blank_ctrl_data = {
-  storages = {}, -- uid of main LuaEntity => storage_info
-  opened = {}, -- player.index => their last storage_info
+  storages = {}, -- LuaEntity.unit_number => storage_info
+  opened = {}, -- player.name => player_opened_info
 }
 ctrl_data = nil
 
@@ -17,13 +22,13 @@ function lib.register_storage(entity, subtype, data)
     entity = entity,
     subtype = subtype,
   }
-  ctrl_data.storages[entity.unit_number] = storage_info
-  storage_classes[subtype]:init(storage_info)
   if data then
     for k, v in pairs(data) do
       storage_info[k] = v
     end
   end
+  storage_classes[subtype]:init(storage_info)
+  ctrl_data.storages[entity.unit_number] = storage_info
 end
 
 lib:on_any_built(function(event)
@@ -58,9 +63,6 @@ lib:on_event(defines.events.on_gui_opened, function(event)
   if storage_info then
     player.opened = nil
     storage_classes[storage_info.subtype]:try_open(storage_info, player)
-    if player.opened ~= nil then
-      ctrl_data.opened[player.index] = storage_info
-    end
   end
 end)
 

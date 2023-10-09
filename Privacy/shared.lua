@@ -20,16 +20,18 @@ S.keycat_mag  = S.keycat_q -- Clarke's 3rd law -- kinda easter egg
 -- Key items
 S.iron_key_item   = "af-privacy-key-iron"
 S.bronze_key_item = "af-privacy-key-bronze"
-S.noble_key_item = "af-privacy-key-noble" -- for quests
+S.steel_key_item  = "af-privacy-key-steel"
+S.noble_key_item  = "af-privacy-key-noble" -- for quests
 S.car_key_item    = "af-privacy-key-car"
 S.nfc_key_item    = "af-privacy-key-nfc"
 
 -- Category can be overriden inside the tag
 S.registered_keys = {
-  [S.iron_key_item] = S.keycat_mech,
+  [S.iron_key_item]   = S.keycat_mech,
   [S.bronze_key_item] = S.keycat_mech,
-  [S.car_key_item] = S.keycat_mech,
-  [S.nfc_key_item] = S.keycat_el,
+  [S.steel_key_item]  = S.keycat_mech,
+  [S.car_key_item]    = S.keycat_mech,
+  [S.nfc_key_item]    = S.keycat_el,
 }
 
 S.registered_tables = {

@@ -85,10 +85,11 @@ lib:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
   local action = event.element and event.element.valid and event.element.tags.action
   local entity = player.opened
+  if not entity or entity.object_name ~= "LuaEntity" then return end
   local table_info = S.registered_tables[entity.name]
   if not table_info then return end
   local frame = player.gui.relative[table_frame_name]
-  if not frame then return end
+  if not frame      then return end
 
   if action == act_engrave then
     do_engrave(player, frame, table_info, entity)

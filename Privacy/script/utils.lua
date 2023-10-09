@@ -61,9 +61,9 @@ function check_raw_key_stack(stack, keycat_filter)
   return nil
 end
 
-function engrave_key_item(stack, name, pw)
-  pw = af_simple_hash(pw, S.pwlen)
-  stack.set_tag(S.key_tag_name, {pws = {{pw=pw, name=name}}})
+function engrave_key_item(stack, name, pw, cat)
+  pw = af_simple_hash(pw)
+  stack.set_tag(S.key_tag_name, {pws={{pw=pw, name=name}}, cat=cat})
   setup_key_description(stack)
 end
 
