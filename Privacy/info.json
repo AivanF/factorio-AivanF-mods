@@ -1,7 +1,7 @@
 {
 	"name": "Privacy",
-	"version": "0.9.2",
-	"title": "Privacy: key-locked chest, personal storage, bank safes",
+	"version": "0.9.3",
+	"title": "Privacy: key lockable chest, personal storage, bank safes",
 	"author": "AivanF",
 	"factorio_version": "1.1",
 	"dependencies": [

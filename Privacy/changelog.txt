@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.3
+Date: 2023-10-13
+  Featues:
+    - All engraving commands are implemented now! You can: 1. engrave, 2. copy, 3. merge, 4. split or 5. clean keys.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.2
 Date: 2023-10-09
   Featues:
@@ -7,6 +12,7 @@ Date: 2023-10-09
     - Extra title line to depict what storage is open right now.
     - More description texts and different sounds.
     - New engraving station to deal with electronic keys too. No separate graphics yet.
+    - Extended remote API.
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.1
 Date: 2023-10-08

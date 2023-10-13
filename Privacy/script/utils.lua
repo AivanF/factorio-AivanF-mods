@@ -28,8 +28,23 @@ function setup_key_description(stack)
   end
 
   if #tag_info.pws > 1 then
-    -- TODO: append all the names
-    stack.custom_description = {"af-privacy.bunch-keys", #tag_info.pws}
+    local names = {}
+    local untitled = 0
+    for _, pw_info in pairs(tag_info.pws) do
+      if pw_info.name then
+        if pw_info.item then
+          table.insert(names, "[item="..pw_info.item.."] "..pw_info.name)
+        else
+          table.insert(names, pw_info.name)
+        end
+      else
+        untitled = untitled + 1
+      end
+    end
+    if untitled > 0 then
+      table.insert(names, {"", untitled, {"af-privacy.untitled"}})
+    end
+    stack.custom_description = {"af-privacy.bunch-keys", #tag_info.pws, table.concat(names, ", ")}
   else
     if tag_info.pws[1].name then
       stack.custom_description = tag_info.pws[1].name
@@ -39,10 +54,14 @@ function setup_key_description(stack)
   end
 end
 
+function get_key_category(stack, tag_info)
+  return tag_info and tag_info.cat or S.registered_keys[stack.name]
+end
+
 function get_ready_key_stack_info(stack, keycat_filter)
   if stack.valid_for_read then
     local tag_info = stack.type == "item-with-tags" and stack.get_tag(S.key_tag_name)
-    if tag_info and keycat_filter[tag_info.cat or S.registered_keys[stack.name]] then
+    if tag_info and keycat_filter[get_key_category(stack, tag_info)] then
       return tag_info
     end
   end
@@ -52,7 +71,7 @@ end
 function check_raw_key_stack(stack, keycat_filter)
   if stack.valid_for_read then
     local tag_info = stack.get_tag(S.key_tag_name)
-    if keycat_filter[tag_info and tag_info.cat or S.registered_keys[stack.name] or ""] then
+    if keycat_filter[get_key_category(stack, tag_info)] then
       if tag_info == nil or #tag_info.pws == 0 then
         return true
       end
@@ -62,8 +81,7 @@ function check_raw_key_stack(stack, keycat_filter)
 end
 
 function engrave_key_item(stack, name, pw, cat)
-  pw = af_simple_hash(pw)
-  stack.set_tag(S.key_tag_name, {pws={{pw=pw, name=name}}, cat=cat})
+  stack.set_tag(S.key_tag_name, {pws={{pw=pw, name=name, item=stack.name}}, cat=cat})
   setup_key_description(stack)
 end
 

@@ -34,6 +34,11 @@ S.registered_keys = {
   [S.nfc_key_item]    = S.keycat_el,
 }
 
+S.registered_keycats = {
+  [S.keycat_mech] = {max_merge= 10},
+  [S.keycat_el]   = {max_merge=128},
+}
+
 S.registered_tables = {
   [S.table_item] = {keycats = {S.keycat_mech}},
   [S.el_table_item] = {keycats = {S.keycat_mech, S.keycat_el}},

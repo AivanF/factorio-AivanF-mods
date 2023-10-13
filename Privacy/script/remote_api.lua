@@ -62,7 +62,7 @@ remote.add_interface(S.mod_name, {
   -- TODO: get_lockable_inv; validate bounds even if create=true, but skip if lockables_number<0
 
 
-  ----------- Startup time
+  ----------- Load time
 
   -- Registers a storage entity prototype.
   -- This will automatically call register_storage when entity get placed.

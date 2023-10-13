@@ -104,6 +104,7 @@ function add_locked_side(player, storage_or_safe_info)
   }
   local frame = player.gui.relative.add{ type="frame", name=locking_frame_name, anchor=anchor, direction="vertical" }
   frame.add{ type="label", name="label", caption={"af-privacy.lbl-locked-with", #storage_or_safe_info.pws} }
+  -- TODO: show name if single!
 end
 
 
@@ -114,7 +115,7 @@ function make_gui_select_key(class_spec, storage_info, player)
     if #pws < 1 then
       show_msg(storage_info, player, {"af-privacy.no-key-init-error"}, color_error)
       storage_info.entity.surface.play_sound{
-        path="af-privacy-locked",
+        path="af-privacy-cannot-open",
         position=storage_info.entity.position,
       }
       return
@@ -260,7 +261,7 @@ storage_lib:on_event(defines.events.on_gui_click, function(event)
       else
         show_msg(storage_info, player, {"af-privacy.no-key-error"}, color_error)
         storage_info.entity.surface.play_sound{
-          path="af-privacy-locked",
+          path="af-privacy-cannot-open",
           position=storage_info.entity.position,
         }
       end
@@ -286,6 +287,10 @@ storage_lib:on_event(defines.events.on_gui_click, function(event)
       end
     end
 
+    if #pws > 5 then
+      show_msg(storage_info, player, {"af-privacy.too-many-keys-error", 5}, color_error)
+      return
+    end
     if #pws > 0 then
       player.gui.screen[main_frame_name].destroy()
 
@@ -306,7 +311,7 @@ storage_lib:on_event(defines.events.on_gui_click, function(event)
     else
       player.print({"af-privacy.at-least-1-key"})
       storage_info.entity.surface.play_sound{
-        path="af-privacy-locked",
+        path="af-privacy-cannot-open",
         position=storage_info.entity.position,
       }
     end
