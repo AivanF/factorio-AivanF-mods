@@ -320,6 +320,9 @@ end)
 
 
 storage_lib:on_event(defines.events.on_gui_closed, function(event)
+  local player = game.get_player(event.player_index)
+  local player_opened_info = ctrl_data.opened[player.name]
+
   if event.element and event.element.valid and event.element.name == main_frame_name then
     event.element.destroy()
     ctrl_data.opened[event.player_index] = nil
@@ -335,7 +338,6 @@ storage_lib:on_event(defines.events.on_gui_closed, function(event)
     player.gui.relative[extra_title_frame_name].destroy()
   end
 
-  local player_opened_info = ctrl_data.opened[event.player_index]
   if not player_opened_info then return end
   local storage_info = player_opened_info.storage_info
   local class_spec = storage_classes[storage_info.subtype]

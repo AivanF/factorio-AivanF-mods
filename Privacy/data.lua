@@ -227,7 +227,7 @@ data:extend({
   {
     type = "item",
     name = S.table_item,
-    icon = S.mod_path.."/graphics/engraving-table-HR.png",
+    icon = S.mod_path.."/graphics/icon-engraving-table.png",
     icon_size = 64,
     subgroup = subgroup,
     order = "af-priv-30Tbl-1-"..S.table_item,
@@ -237,30 +237,30 @@ data:extend({
   {
     type = "container",
     name = S.table_item,
-    icon = S.mod_path.."/graphics/Chest-Locked-HR.png",
+    icon = S.mod_path.."/graphics/icon-engraving-table.png",
     icon_size = 64,
     flags = {"placeable-player", "player-creation"},
     minable = {mining_time = 0.5, result = S.table_item},
-    max_health = 500,
+    max_health = 300,
     corpse = "small-remnants",
-    collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
-    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+    collision_box = {{-0.55, -0.55}, {0.55, 0.55}},
+    selection_box = {{-0.75, -0.75}, {0.75, 0.75}},
     inventory_size = 10,
     picture = {
       layers = {
         {
-          filename = S.mod_path.."/graphics/engraving-table-HR.png",
+          filename = S.mod_path.."/graphics/engraving-table.png",
           width = 76,
           height = 76,
           shift = util.by_pixel(0, -0.5),
           scale = 0.5,
-          -- hr_version = {
-          --   filename = S.mod_path.."/graphics/engraving-table-HR.png",
-          --   width = 76,
-          --   height = 76,
-          --   shift = util.by_pixel(0, -0.5),
-          --   scale = 0.5,
-          -- }
+          hr_version = {
+            filename = S.mod_path.."/graphics/engraving-table-HR.png",
+            width = 152,
+            height = 152,
+            shift = util.by_pixel(0, 0),
+            scale = 0.25,
+          }
         },
         {
           filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
@@ -284,7 +284,7 @@ data:extend({
   {
     type = "recipe",
     name = S.el_table_item,
-    enabled = true,
+    enabled = false,
     ingredients = {
       {S.table_item, 1},
       {"steel-plate", 20},
@@ -296,41 +296,40 @@ data:extend({
   {
     type = "item",
     name = S.el_table_item,
-    icon = S.mod_path.."/graphics/engraving-table-HR.png",
+    icon = S.mod_path.."/graphics/icon-engraving-station.png",
     icon_size = 64,
     subgroup = subgroup,
-    order = "af-priv-30Tbl-0-"..S.el_table_item,
+    order = "af-priv-30Tbl-2-"..S.el_table_item,
     place_result = S.el_table_item,
     stack_size = 10,
   },
   {
     type = "container",
     name = S.el_table_item,
-    icon = S.mod_path.."/graphics/Chest-Locked-HR.png",
+    icon = S.mod_path.."/graphics/icon-engraving-station.png",
     icon_size = 64,
     flags = {"placeable-player", "player-creation"},
     minable = {mining_time = 0.5, result = S.el_table_item},
     max_health = 500,
     corpse = "small-remnants",
-    collision_box = {{-0.35, -0.35}, {0.35, 0.35}},
-    selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
+    collision_box = {{-0.55, -0.55}, {0.55, 0.55}},
+    selection_box = {{-0.75, -0.75}, {0.75, 0.75}},
     inventory_size = 20,
     picture = {
       layers = {
         {
-          -- TODO: make new graphics
-          filename = S.mod_path.."/graphics/engraving-table-HR.png",
+          filename = S.mod_path.."/graphics/engraving-station.png",
           width = 76,
           height = 76,
           shift = util.by_pixel(0, -0.5),
           scale = 0.5,
-          -- hr_version = {
-          --   filename = S.mod_path.."/graphics/engraving-table-HR.png",
-          --   width = 76,
-          --   height = 76,
-          --   shift = util.by_pixel(0, -0.5),
-          --   scale = 0.5,
-          -- }
+          hr_version = {
+            filename = S.mod_path.."/graphics/engraving-station-HR.png",
+            width = 152,
+            height = 152,
+            shift = util.by_pixel(0, 0),
+            scale = 0.25,
+          }
         },
         {
           filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",

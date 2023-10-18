@@ -37,6 +37,7 @@ end
 
 function default_closed(class_spec, storage_info)
   storage_info.entity.minable = storage_info.inv.is_empty()
+  -- game.print("Minable: "..serpent.line(storage_info.entity.minable))
 end
 
 function default_inventory_audit(class_spec, storage_info)
@@ -195,6 +196,7 @@ function class_spec.inventory_audit(class_spec, storage_info)
 end
 
 function class_spec.closed(class_spec, storage_info, player)
+  -- game.print("Minable: "..serpent.line(storage_info.entity.minable))
   if class_spec.collapsing then
     -- TODO: find inventory from ctrl_data.opened, .sort_and_merge() then .resize() or destroy() and set to nil
   end

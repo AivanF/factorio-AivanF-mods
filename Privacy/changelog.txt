@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.4
+Date: 2023-10-18
+  Graphics:
+    - Remastered engraving worktable and station entities and icons.
+  Bugfixes:
+    - Fixed a couple of minor engraving table bugs.
+    - Storages minable attribute didn't work in previous version.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.3
 Date: 2023-10-13
   Featues:

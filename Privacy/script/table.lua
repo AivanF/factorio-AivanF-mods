@@ -257,7 +257,7 @@ function do_clean(player, frame, table_info, entity)
     end
   end
   if done > 0 then
-    player.print({"af-privacy.clean-done", done + 1})
+    player.print({"af-privacy.clean-done", done})
   else
     player.print({"af-privacy.no-suitable-to-clean"}, color_error)
   end
@@ -266,7 +266,7 @@ end
 
 lib:on_event(defines.events.on_gui_opened, function(event)
   local player = game.get_player(event.player_index)
-  if event.entity and event.entity.name == S.table_item then
+  if event.entity and S.registered_tables[event.entity.name] then
     local anchor = {
       gui=defines.relative_gui_type.container_gui,
       position=defines.relative_gui_position.right,
