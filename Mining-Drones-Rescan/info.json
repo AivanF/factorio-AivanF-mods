@@ -1,0 +1,14 @@
+{
+    "name": "Mining-Drones-Rescan",
+    "version": "1.0.0",
+    "title": "Mining Drones Rescan",
+    "author": "AivanF",
+    "contact": "https://discord.gg/7QCXn35mU5",
+    "homepage": "https://mods.factorio.com/mod/Mining-Drones-Rescan",
+    "factorio_version": "1.1",
+    "dependencies": [
+        "base >= 1.1.0",
+        "Mining_Drones_Remastered"
+    ],
+    "description": "In case your mods configuration leads to weird problems requiring you to periodically call Mining Drones rescan manually – this tiny mod will work for you calling resources rescan automatically. By default it activates each 5 seconds, see startup settings to adjust, also there is a runtime/map setting to enable printing so that you can verify that it works as intended."
+}
