@@ -1,0 +1,10 @@
+{
+  "name": "reverse-chemistry",
+  "version": "1.0.0",
+  "title": "Reverse Chemistry: compression from gas to heavy oil",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": ["? space-exploration"],
+  "factorio_version": "1.1",
+  "description": "Provides reverse recipes for compression:\n- Methane gas (if SE is installed) =>\n- Petroleum gas (aka propane gas) =>\n- Light oil =>\n- Heavy oil.\n\nMeant to be not cheaty, it's totally resource inefficient in a basic workflow, but can be greatly useful with mods that provide excess production of one resource. Configurable with startup settings: enable or disable any new recipe."
+}
