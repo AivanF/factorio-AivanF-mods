@@ -290,9 +290,10 @@ data:extend({
       {"stack-filter-inserter", 50},
       {"small-lamp", 12},
       {"processing-unit", 200},
+      {"concrete", 1000},
     },
     result = shared.bunker_minable,
-    energy_required = 10,
+    energy_required = 100,
   },
 })
 

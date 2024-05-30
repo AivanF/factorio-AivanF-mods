@@ -1,4 +1,23 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.19
+Date: 2024-05-31
+  Graphics:
+    - Animated Titan Excavation machine!
+  Features:
+    - Titan class 1x Dire Wolf is now available!
+    - Map/Runtime setting to make Titans silent.
+    - Tech researches to increase Titan ruins excavation speed, and efficiency/productivity.
+  Balancing:
+    - Initial speed & efficiency of Titans extraction are smaller: were 100% and 65%, now 25% and 40%, but can be researched up to 100% and 90%.
+    - Increased required time and ingredients for some recipes.
+    - Increased pollution emission of Titans corpses excavation.
+    - Titans now have higher resistances.
+  Bugfixes:
+    - Fixed infinite ammo when AI is on.
+  Info:
+    - Extractor machine now shows its speed & efficiency.
+    - Text notification on excavation completed event.
+---------------------------------------------------------------------------------------------------
 Version: 0.9.18
 Date: 2023-10-02
   Features:

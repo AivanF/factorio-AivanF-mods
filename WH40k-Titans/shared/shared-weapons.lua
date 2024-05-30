@@ -293,7 +293,7 @@ wname = "apocalypse-missiles"
 shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_big,
   top_only = true,
   category = shared.wc_rocket,
   min_dst = 10, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2,

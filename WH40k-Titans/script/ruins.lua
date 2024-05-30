@@ -1,6 +1,7 @@
 require("script/common")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
+local lib_tech = require("script/tech")
 
 local debug_many = false
 -- debug_many = true
@@ -129,11 +130,21 @@ function lib.ruin_removed(unit_number)
   ctrl_data.ruins[unit_number] = nil
 end
 
+function lib.calc_extract_success_prob(force)
+  local cf = shared.exc_efficiency_by_level[0]
+  if force then
+    local level = lib_tech.get_research_level(force.index, shared.exc_efficiency_research)
+    cf = shared.exc_efficiency_by_level[level]
+  end
+  return cf
+end
+
 function lib.ruin_extract(ruin_info, ruin_entity)
   if ruin_info then
     local total = #ruin_info.details + #ruin_info.ammo
     local position, name, count
     if total > 0 then
+      -- Detail or ammo?
       if math.random() < #ruin_info.details / total then
         position = math.random(#ruin_info.details)
         name = ruin_info.details[position].name
@@ -151,10 +162,10 @@ function lib.ruin_extract(ruin_info, ruin_entity)
           table.remove(ruin_info.ammo, position)
         end
       end
-      if math.random() < 0.65 then
+      -- Success or failed extraction?
+      if math.random() < lib.calc_extract_success_prob(ruin_info.exc_info.force) then
         return name, count
       else
-        -- Extraction failed
         return nil, 0
       end
     else

@@ -49,7 +49,7 @@ data:extend({
     enabled = false,
     ingredients = ingredients,
     result = shared.sp,
-    energy_required = 10,
+    energy_required = 100,
   },
 
   {
@@ -60,7 +60,7 @@ data:extend({
     subgroup = shared.subg_build,
     order = "a[lab]",
     place_result = shared.lab,
-    stack_size = 10,
+    stack_size = 4,
   },
   {
     type = "lab",
@@ -256,6 +256,7 @@ data:extend({
     }
   },
   {
+    -- TODO: use advanced labs from K2, SE, etc.?
     type = "recipe",
     name = shared.lab,
     enabled = false,
@@ -264,6 +265,7 @@ data:extend({
       {"steel-plate", 100},
       {"processing-unit", 100},
     },
+    energy_required = 10,
     result = shared.lab,
   },
 })

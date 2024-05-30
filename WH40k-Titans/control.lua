@@ -3,6 +3,7 @@ handler.add_lib(require("script/titan"):export())
 handler.add_lib(require("script/assemble"):export())
 handler.add_lib(require("script/ruins"):export())
 handler.add_lib(require("script/exc"):export())
+handler.add_lib(require("script/tech"):export())
 handler.add_lib(require("script/main"):export())
 
 -- Informatron = require("script/informatron")

@@ -2,9 +2,10 @@ require("script/common")
 local lib_ruins = require("script/ruins")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
+local lib_tech = require("script/tech")
 
 exc_update_rate = UPS
-local exc_unit_time = heavy_debugging and 5 or 60
+local global_exc_unit_time = heavy_debugging and 5 or 60
 local exc_half_size = 4
 local exc_offsets = {
   {exc_half_size, 0}, {-exc_half_size, 0},
@@ -82,8 +83,22 @@ local function put_leftovers(exc_info)
   end
 end
 
+local function get_exc_speed(force)
+  local cf = shared.exc_speed_by_level[0]
+  if force then
+    local level = lib_tech.get_research_level(force.index, shared.exc_speed_research)
+    cf = shared.exc_speed_by_level[level]
+  end
+  return cf
+end
+
+local function get_exc_unit_time(exc_info)
+  return global_exc_unit_time / get_exc_speed(exc_info.entity.force)
+end
+
 local function calc_expected_time(exc_info)
   local secs = 0
+  local exc_unit_time = get_exc_unit_time(exc_info)
   if exc_info.ruin_info then
     for _, couple in pairs(exc_info.ruin_info.details) do
       secs = secs + couple.count * exc_unit_time
@@ -113,9 +128,15 @@ local function process_an_excavator(exc_info)
     if not exc_info.ruin_entity.valid then
       entity.active = false
       exc_info.ruin_entity = nil
+      entity.surface.create_entity{
+        name="flying-text", position=entity.position,
+        text="Excavation finished!",
+      }
+      entity.force.print({"WH40k-Titans-gui.msg-exc-done", {"", entity.position.x}, {"", entity.position.y}})
       return
     end
 
+    local exc_unit_time = get_exc_unit_time(exc_info)
     local satisfaction = entity.energy / entity.electric_buffer_size
     exc_info.progress = exc_info.progress + satisfaction * exc_update_rate/UPS /exc_unit_time
     entity.active = true
@@ -142,17 +163,14 @@ local function process_an_excavator(exc_info)
       exc_info.progress = 0
 
       if exc_info.ruin_entity == nil then
-        -- TODO: notify force?
-        entity.surface.create_entity{
-          name="flying-text", position=entity.position,
-          text="Excavator finished!",
-        }
+        entity.active = false
       end
     end
 
     entity.crafting_progress = exc_info.progress
 
   else
+    -- There are extracted but not outputted items
     entity.active = false
     put_leftovers(exc_info)
   end
@@ -186,6 +204,9 @@ function lib.gui_update(exc_info, main_frame)
   main_frame.results_line.clear()
   main_frame.progress.value = exc_info.progress
 
+  -- game.print(shared.exc_speed_research..": "..lib_tech.get_research_level(exc_info.entity.force.index, shared.exc_speed_research))
+  -- game.print(shared.exc_efficiency_research..": "..lib_tech.get_research_level(exc_info.entity.force.index, shared.exc_efficiency_research))
+
   local satisfaction = exc_info.entity.energy / exc_info.entity.electric_buffer_size
   if satisfaction < 0.2 then
     main_frame.status.caption = {"entity-status.low-power"}
@@ -195,7 +216,12 @@ function lib.gui_update(exc_info, main_frame)
   if exc_info.ruin_entity and exc_info.ruin_info then
     main_frame.status.caption = {"entity-status.working"}
     if exc_info.expected_time then
-      main_frame.expected.caption = {"WH40k-Titans-gui.extracting-time", exc_info.expected_time}
+      main_frame.expected.caption = {
+        "WH40k-Titans-gui.extracting-info",
+        math.floor(100*get_exc_speed(exc_info.entity.force)),
+        math.floor(100*lib_ruins.calc_extract_success_prob(exc_info.entity.force)),
+        exc_info.expected_time,
+      }
     end
     for _, couple in pairs(exc_info.ruin_info.details) do
       main_frame.results_line.add{
@@ -259,8 +285,10 @@ local function gui_create(exc_info, player)
   main_frame.add{ type="label", name="status", caption="" }
   main_frame.add{ type="label", name="expected", caption="" }
   -- Replace to text-box if there are any issues
-  main_frame.status.style.maximal_height = 64
+  main_frame.status.style.maximal_height = 128
   main_frame.status.style.single_line = false
+  main_frame.expected.style.maximal_height = 128
+  main_frame.expected.style.single_line = false
   main_frame.add{ type="progressbar", name="progress", direction="horizontal", value=exc_info.progress }
   main_frame.progress.style.maximal_width = 320
   -- main_frame.add{ type="label", caption={""} }

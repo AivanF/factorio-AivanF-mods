@@ -21,6 +21,7 @@ data:extend({
       {"steel-plate", 2},
       {"electronic-circuit", 1},
     },
+    energy_required = 10,
     result = shared.big_bolt,
     category = "advanced-crafting",
   },
@@ -44,6 +45,7 @@ data:extend({
       {"steel-plate", 4},
       {"advanced-circuit", 1},
     },
+    energy_required = 30,
     result = shared.huge_bolt,
     category = "advanced-crafting",
   },
@@ -90,6 +92,7 @@ bridge.add_item({
     {"battery", 5},
     {"steel-plate", 4}
   },
+  energy_required = 30,
   stack_size = 100,
   -- results = {{"iron-ore", 1}, {"copper-ore", 1},},
   category = "chemistry",

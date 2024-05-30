@@ -2,6 +2,7 @@ local lib_titan = require("script/titan")
 local lib_assemble = require("script/assemble")
 local lib_ruins = require("script/ruins")
 local lib_exc = require("script/exc")
+local lib_tech = require("script/tech")
 
 local Lib = require("script/event_lib")
 local lib = Lib.new()
@@ -23,6 +24,8 @@ local blank_ctrl_data = {
 
   excavator_buckets = {}, -- unit_number => bucket => exc_info
   excavator_index = {}, -- unit_number => exc_info
+
+  researches = {}, -- force_index => tech_name => level
 }
 ctrl_data = table.deepcopy(blank_ctrl_data)
 
@@ -114,6 +117,8 @@ local function total_reload()
     end
   end
   shared.used_specials = nil
+
+  lib_tech.update_configuration()
 
   local txt = "WH40k_Titans.reload: "..table.concat({
       "Ti="..titan_count,

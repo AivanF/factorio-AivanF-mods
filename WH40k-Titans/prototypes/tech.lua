@@ -329,6 +329,137 @@ local tech_researches = {
   },
 }
 
+
+
+------- Excavation improvements
+local exc_speed_name = shared.exc_speed_research
+local exc_speed_levels = {
+  [1] = 2,
+  [2] = 20,
+  [3] = 100,
+}
+for k, price in pairs(exc_speed_levels) do
+  local technology =
+  {
+    name = shared.exc_speed_research.."-"..k,
+    localised_name = {"technology-name."..shared.exc_speed_research},
+    type = "technology",
+    icons =
+    {
+      {
+        icon = shared.media_prefix.."graphics/tech/exc-impr-spd.png",
+        icon_size = 256,
+        icon_mipmaps = 1,
+      },
+      {
+        icon = "__core__/graphics/icons/technology/constants/constant-movement-speed.png",
+        icon_size = 128,
+        icon_mipmaps = 3,
+        shift = {100, 100},
+      }
+    },
+    upgrade = true,
+    effects = {
+      {
+        type = "nothing",
+        effect_description = {"", {
+          "modifier-description.titans-excavation-speed",
+          math.floor(100*shared.exc_speed_by_level[k-1]),
+          math.floor(100*shared.exc_speed_by_level[k]),
+        }},
+        icons = {
+          {
+            icon = shared.media_prefix.."graphics/tech/exc-impr-spd.png",
+            icon_size = 256,
+            icon_mipmaps = 1,
+          },
+          {
+            icon = "__core__/graphics/icons/technology/constants/constant-speed.png",
+            icon_size = 128,
+            icon_mipmaps = 3,
+            shift = {10, 10},
+          }
+        }
+      },
+    },
+    prerequisites = k > 1 and {shared.exc_speed_research.."-"..k - 1} or {shared.mod_prefix.."base"},
+    unit =
+    {
+      count = price,
+      ingredients = {{shared.sp, 1}},
+      time = 30
+    },
+    order = shared.exc_speed_research,
+  }
+  table.insert(tech_researches, technology)
+end
+
+
+local exc_efficiency_name = shared.exc_efficiency_research
+local exc_efficiency_levels = {
+  [1] = 3,
+  [2] = 15,
+  [3] = 100,
+}
+for k, price in pairs(exc_efficiency_levels) do
+  local technology =
+  {
+    name = shared.exc_efficiency_research.."-"..k,
+    localised_name = {"technology-name."..shared.exc_efficiency_research},
+    type = "technology",
+    icons =
+    {
+      {
+        icon = shared.media_prefix.."graphics/tech/exc-impr-eff.png",
+        icon_size = 256,
+        icon_mipmaps = 1,
+      },
+      {
+        icon = "__core__/graphics/icons/technology/constants/constant-mining-productivity.png",
+        icon_size = 128,
+        icon_mipmaps = 3,
+        shift = {100, 100},
+      }
+    },
+    upgrade = true,
+    effects = {
+      {
+        type = "nothing",
+        effect_description = {"", {
+          "modifier-description.titans-excavation-efficiency",
+          math.floor(100*shared.exc_efficiency_by_level[k-1]),
+          math.floor(100*shared.exc_efficiency_by_level[k]),
+        }},
+        icons = {
+          {
+            icon = shared.media_prefix.."graphics/tech/exc-impr-eff.png",
+            icon_size = 256,
+            icon_mipmaps = 1,
+          },
+          {
+            icon = "__core__/graphics/icons/technology/constants/constant-mining-productivity.png",
+            icon_size = 128,
+            icon_mipmaps = 3,
+            shift = {10, 10},
+          }
+        }
+      },
+    },
+    prerequisites = k > 1 and {shared.exc_efficiency_research.."-"..k - 1} or {shared.mod_prefix.."base"},
+    unit =
+    {
+      count = price,
+      ingredients = {{shared.sp, 1}},
+      time = 30
+    },
+    order = shared.exc_efficiency_research,
+  }
+  table.insert(tech_researches, technology)
+end
+
+
+
+------- Outro
 data:extend(tech_researches)
 
 se_prodecural_tech_exclusions = se_prodecural_tech_exclusions or {}

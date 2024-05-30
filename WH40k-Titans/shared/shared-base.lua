@@ -1,5 +1,5 @@
 local shared = {}
-shared.debug_mod = true
+shared.debug_mod = false
 shared.mod_name = "WH40k-Titans"
 shared.path_prefix = "__"..shared.mod_name.."__/"
 shared.media_prefix = "__"..shared.mod_name.."-media__/"
@@ -65,6 +65,25 @@ shared.mock_icon = {
   icon = shared.media_prefix.."graphics/icons/titan-mock.png",
   icon_size = 64,
   icon_mipmaps = 1,
+}
+
+--------- Tech researches & effects
+shared.exc_speed_research = shared.mod_prefix.."excavation-speed"
+shared.exc_speed_by_level = {
+  [0] = 0.25,
+  [1] = 0.50,
+  [2] = 0.75,
+  [3] = 1.00,
+}
+shared.exc_efficiency_research = shared.mod_prefix.."excavation-efficiency"
+shared.exc_efficiency_by_level = {
+  [0] = 0.40,
+  [1] = 0.55,
+  [2] = 0.75,
+  [3] = 0.90,
+}
+shared.track_researches = {
+  shared.exc_speed_research, shared.exc_efficiency_research,
 }
 
 --------- Other Mods

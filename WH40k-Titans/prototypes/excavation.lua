@@ -4,42 +4,13 @@ local shared = require("shared")
 local entity_icon = {
   icon = shared.media_prefix.."graphics/icons/excavator.png",
   icon_size = 64,
-  icon_mipmaps = 1,
+  icon_mipmaps = 3,
 }
 local process_icon = {
   icon = shared.media_prefix.."graphics/icons/excavating.png",
   icon_size = 64,
   icon_mipmaps = 1,
 }
-
-local drill_animation = {{
-  animated_shift = true,
-  always_draw = true,
-  north_animation = {
-    layers = {
-      electric_mining_drill_animation(),
-      electric_mining_drill_shadow_animation()
-    }
-  },
-  east_animation = {
-    layers = {
-      electric_mining_drill_horizontal_animation(),
-      electric_mining_drill_horizontal_shadow_animation()
-    }
-  },
-  south_animation = {
-    layers = {
-      electric_mining_drill_animation(),
-      electric_mining_drill_shadow_animation()
-    }
-  },
-  west_animation = {
-    layers = {
-      electric_mining_drill_horizontal_animation(),
-      electric_mining_drill_horizontal_shadow_animation()
-    }
-  }
-}}
 
 local patch_sprite = {
   filename = shared.media_prefix.."graphics/entity/Excavator-patch.png",
@@ -57,33 +28,27 @@ local integration_patch = {
   west = patch_sprite,
 }
 
-local excavator_layers = {
-  {
-    filename = shared.media_prefix.."graphics/entity/Excavator.png",
-    priority = "extra-high",
-    width = 448,
-    height = 448,
-    scale = 0.5,
+local excavator_animation = {
+  layers = {{
+    filename = shared.media_prefix.."graphics/entity/Excavator-sheet.png",
+    priority = "high",
+    width = 224,
+    height = 224,
+    frame_count = 252,
+    line_length = 14,
     shift = util.by_pixel(0, 0),
-    frame_count = 1,
-  },
+    hr_version = {
+      filename = shared.media_prefix.."graphics/entity/Excavator-sheet-HR.png",
+      priority = "high",
+      width = 448,
+      height = 448,
+      scale = 0.5,
+      frame_count = 252,
+      line_length = 14,
+      shift = util.by_pixel(0, 0),
+    },
+  }},
 }
-local excavator_animation = {{
-  animated_shift = true,
-  always_draw = true,
-  north_animation = {
-    layers = excavator_layers
-  },
-  east_animation = {
-    layers = excavator_layers
-  },
-  south_animation = {
-    layers = excavator_layers
-  },
-  west_animation = {
-    layers = excavator_layers
-  }
-}}
 
 data:extend({
   {
@@ -113,16 +78,15 @@ data:extend({
       fade_out_ticks = 20
     },
     integration_patch = integration_patch,
-    -- working_visualisations = drill_animation,
-    working_visualisations = excavator_animation,
+    animation = excavator_animation,
     module_specification = {
       module_slots = 0,
     },
-    crafting_speed = 0.01,
+    crafting_speed = 1,
     crafting_categories = {shared.craftcat_empty},
     energy_source = {
       type = "electric",
-      emissions_per_minute = 10,
+      emissions_per_minute = 50,
       usage_priority = "secondary-input",
       buffer_capacity = "50MJ",
       input_flow_limit = "25MW",
@@ -144,7 +108,7 @@ data:extend({
     type = "recipe",
     name = shared.excavator,
     enabled = false,
-    energy_required = 10,
+    energy_required = 100,
     ingredients = {
       {"concrete", 400},
       {"electric-mining-drill", 20},

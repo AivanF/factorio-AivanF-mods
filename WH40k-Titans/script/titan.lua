@@ -488,6 +488,7 @@ function lib.register_titan(entity)
   titan_info.guns = table.slice(titan_info.guns, 1, #titan_type.guns)
 
   ctrl_data.titans[entity.unit_number] = titan_info
+  -- if settings.global["wh40k-titans-talk"].value
   entity.surface.play_sound{
     path="wh40k-titans-phrase-init",
     position=entity.position, volume_modifier=1
@@ -501,6 +502,7 @@ end
 ----- OUTRO -----
 
 function lib.titan_death(titan_info)
+  -- For death only
   local source = titan_info.position
   local target
   local scatter = titan_info.class / 3
@@ -533,10 +535,15 @@ function lib.titan_death(titan_info)
     ammo = remove_ingredients_doubles(ammo),
   })
 
+  lib.titan_removed(titan_info)
+
   titan_info.force.print(
     {"WH40k-Titans-gui.msg-titan-destroyed", {"entity-name."..titan_type.entity}},
     {1, 0.1, 0.1})
+end
 
+function lib.titan_removed(titan_info)
+  -- For any object remove
   for _, obj in pairs(titan_info.aux_laser or {}) do
     if obj and obj.valid then
       obj.destructible = true
@@ -544,6 +551,14 @@ function lib.titan_death(titan_info)
     end
   end
 end
+
+lib:on_event(defines.events.script_raised_destroy, function(event)
+  local titan_entity = event.entity
+  local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
+  if titan_info then
+    lib.titan_removed(titan_info)
+  end
+end)
 
 
 
@@ -824,7 +839,7 @@ local function process_single_titan(titan_info)
       titan_info.body_cd = tick + 30 + 1.5*class
     end
     if titan_info.voice_cd < tick then
-      if math.random(100) < 30 then
+      if settings.global["wh40k-titans-talk"].value and (math.random(100) < 30) then
         surface.play_sound{
           path="wh40k-titans-phrase-walk",
           position=entity.position, volume_modifier=1
@@ -840,7 +855,7 @@ local function process_single_titan(titan_info)
       if st.valid then st.destroy() end
     end
   end
-end
+end -- process_single_titan
 
 
 local function reregister_titan(titan_info)
@@ -991,19 +1006,21 @@ function lib.handle_attack_ai(titan_info)
   for k, cannon in pairs(table.shallow_copy(titan_info.guns)) do
     if cannon.ai and (cannon.target == nil or cannon.ordered+order_ttl < tick) then
       weapon_type = shared.weapons[cannon.name]
-      target_option = find_ai_target(titan_info, entity, weapon_type, cannon)
-      if target_option then
-        cannon.target = target_option
-        cannon.ordered = tick
-        opt_play(entity, weapon_type.pre_attack_sound)
-        done = true
+      if cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size then
+        target_option = find_ai_target(titan_info, entity, weapon_type, cannon)
+        if target_option then
+          cannon.target = target_option
+          cannon.ordered = tick
+          opt_play(entity, weapon_type.pre_attack_sound)
+          done = true
+        end
       end
     end
   end
 
   if done then
     if titan_info.voice_cd < tick then
-      if math.random(100) < 80 then
+      if settings.global["wh40k-titans-talk"].value and math.random(100) < 80 then
         entity.surface.play_sound{
           path="wh40k-titans-phrase-attack",
           position=entity.position, volume_modifier=1
@@ -1060,7 +1077,7 @@ local function handle_attack_order(event, kind)
 
   if done then
     if titan_info.voice_cd < tick then
-      if math.random(100) < 80 then
+      if settings.global["wh40k-titans-talk"].value and math.random(100) < 80 then
         entity.surface.play_sound{
           path="wh40k-titans-phrase-attack",
           position=entity.position, volume_modifier=1
