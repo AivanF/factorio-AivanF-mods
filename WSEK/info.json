@@ -1,0 +1,33 @@
+{
+	"title": "WSEK: Warptorio + Space Exploration + Krastorio",
+	"name": "WSEK",
+	"version": "0.1.0",
+	"author": "AivanF",
+	"homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+	"dependencies": [
+		"base >= 1.1.0",
+		"warptorio2x",
+		"space-exploration",
+		"(?) space-exploration-postprocess",
+		"? Krastorio2",
+
+		"? factorissimo-2-notnotmelon",
+		"? Reverse-Engineering",
+		"? WH40k-Titans",
+		"? Powered-by-Biters",
+		"? Active-Looter-Chest",
+
+		"? Crafting_Speed_Research",
+		"? better-long-inserters",
+		"? no-wall-repair",
+		"? reverse-factory",
+		"? AbandonedRuins",
+		"? AbandonedRuins-Krastorio2",
+
+		"? SchallCircuitGroup",
+		"? SchallTransportGroup",
+		"? barreling-group-ex"
+	],
+	"description": "Merges W2 with SE + K2: sometimes you will get teleported onto planets from Space Exploration universe! And many balance fixes to make it playable :)\n\nSee optional dependencies for a list of recommended mods. By the way, Factorissimo buildings are cheaper here!\n\nWARNING: it's really early draft version, balance is not fully corrected yet, in case of problems or suggestions, reach me on Discord.",
+	"factorio_version": "1.1"
+}
