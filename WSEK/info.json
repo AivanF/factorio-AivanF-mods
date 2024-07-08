@@ -1,7 +1,7 @@
 {
 	"title": "WSEK: Warptorio + Space Exploration + Krastorio",
 	"name": "WSEK",
-	"version": "0.1.0",
+	"version": "0.1.2",
 	"author": "AivanF",
 	"homepage": "https://github.com/AivanF/factorio-AivanF-mods",
 	"dependencies": [
@@ -9,13 +9,10 @@
 		"warptorio2x",
 		"space-exploration",
 		"(?) space-exploration-postprocess",
-		"? Krastorio2",
+		"Krastorio2",
 
 		"? factorissimo-2-notnotmelon",
-		"? Reverse-Engineering",
-		"? WH40k-Titans",
-		"? Powered-by-Biters",
-		"? Active-Looter-Chest",
+		"? Mining_Drones_Remastered",
 
 		"? Crafting_Speed_Research",
 		"? better-long-inserters",

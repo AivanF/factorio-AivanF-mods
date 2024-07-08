@@ -1,5 +1,9 @@
 require("utils")
 
+-- Allow space building on the warp platform and floors
+data.raw.tile["warp-tile-concrete"].collision_mask = {}
+-- TODO: prevent SE from replacing buildings with ground versions without space recipes
+
 
 ----- Reactor start -----
 
@@ -75,10 +79,13 @@ data.raw.technology["warptorio-homeworld"].unit = {
 -- TODO: warptorio-teleporter-
 -- TODO: warptorio-logistics-1/4
 -- TODO: warptorio-dualloader-1
--- TODO: warptorio-teleporter-portal
 -- TODO: warptorio-accumulator
+-- TODO: warptorio-teleporter-portal
+-- TODO: warptorio-teleporter-1/5
 -- TODO: warptorio-rail-se/ne/sw/nw
--- TODO: warptorio-boiler-s/n/e/w
+-- TODO: warptorio-factory-s/n/e/w Giga Floor
+-- TODO: warptorio-boiler-s/n/e/w Giga Floor
+-- TODO: warptorio-boiler-water-1/3  -- make it more expensive!!
 -- TODO: warptorio-turret-ne/se/nw/sw
 
 -- TODO: warptorio-toolbar (spacetime)

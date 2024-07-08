@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2024-07-08
+  Features:
+    - Respawn point is set for all the players to the Warp Platform after each teleportation.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2024-07-07
+  Info:
+    - Krastorio is now a required dependency – its compatibility requires lots of changes going together with changes for Space Exploration, it's too hard to separate them, and K2 is quite cool anyway.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2024-07-07
+  Info:
+    - Initial release by AivanF!
+  Features:
+    - Warptorio teleportation over Space Exploration planets universe!
+    - Start items to boost early game.
+    - Lots of balance fixes to make the game possible and to simplify your life.

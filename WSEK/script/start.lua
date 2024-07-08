@@ -39,6 +39,9 @@ local function main(event)
 
 	player.insert{name="construction-robot", count=50}
 
+	-- player.insert{name="warptorio-warpmodule", count=2}
+	-- player.insert{name="effectivity-module-7", count=2}
+
 	player.insert{name="processed-fuel", count=100}
 	player.insert{name="burner-mining-drill", count=10}
 	player.insert{name="steel-furnace", count=10}
