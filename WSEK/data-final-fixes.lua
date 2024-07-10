@@ -46,3 +46,6 @@ data.raw.recipe["military-science-pack"].category = "crafting"
 if data.raw.technology["factory-architecture-t1"] then
 	require("prototypes/update_factorissimo")
 end
+if data.raw.technology["space-factory-liz-architecture-t1"] then
+	require("prototypes/update_factorissimo_liz")
+end

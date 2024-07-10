@@ -92,6 +92,13 @@ end
 
 
 
+local function discover_with_parents(zone, surface)
+	remote.call("space-exploration", "discover_zone", {force_name = game.forces.player.name, surface=surface, zone_name=zone.name})
+	if zone.parent_index then
+		discover_with_parents(remote.call("space-exploration", "get_zone_from_zone_index", {zone_index = zone.parent_index}), nil)
+	end
+end
+
 remote.add_interface("WSEK", {
 	-- Link W2 with SE
 	warptorio2_provide_planet = function(args)
@@ -114,12 +121,11 @@ remote.add_interface("WSEK", {
 		end
 
 		local surface = remote.call("space-exploration", "zone_get_make_surface", {zone_index = zone.index})
-		-- remote.call("space-exploration", "discover_zone", {force_name = game.player.force.name, surface=nil, zone_name=zone.name})
 
 		surface.request_to_generate_chunks({0, 0}, 5) surface.force_generate_chunk_requests()
 
 		if game.forces.player.technologies["warptorio-charting"].researched then
-			remote.call("space-exploration", "discover_zone", {force_name = game.forces.player.name, surface=surface, zone_name=zone.name})
+			discover_with_parents(zone, surface)
 		end
 
 		local warp_multiply = nil

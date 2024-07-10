@@ -2,6 +2,7 @@ require("utils")
 
 -- Allow space building on the warp platform and floors
 data.raw.tile["warp-tile-concrete"].collision_mask = {}
+data.raw.tile["hazard-concrete-left"].collision_mask = {"ground-tile"}
 -- TODO: prevent SE from replacing buildings with ground versions without space recipes
 
 
@@ -64,7 +65,67 @@ data.raw.technology["warptorio-reactor-8"].unit = {
 
 
 
+----- Planet Teleporter start -----
+
+data.raw.technology["warptorio-teleporter-portal"].prerequisites = {"warptorio-reactor-1", "warptorio-factory-0"}
+data.raw.technology["warptorio-teleporter-portal"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-1"].unit.ingredients}
+
+data.raw.technology["warptorio-teleporter-1"].prerequisites = {"warptorio-teleporter-portal", "warptorio-reactor-2"}
+data.raw.technology["warptorio-teleporter-1"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-2"].unit.ingredients}
+
+data.raw.technology["warptorio-teleporter-2"].prerequisites = {"warptorio-teleporter-1", "warptorio-reactor-3", "electric-energy-distribution-1"}
+data.raw.technology["warptorio-teleporter-2"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-3"].unit.ingredients}
+
+data.raw.technology["warptorio-teleporter-3"].prerequisites = {"warptorio-teleporter-2", "warptorio-reactor-4", "electric-energy-distribution-2"}
+data.raw.technology["warptorio-teleporter-3"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-4"].unit.ingredients}
+
+data.raw.technology["warptorio-teleporter-4"].prerequisites = {"warptorio-teleporter-3", "warptorio-reactor-5"}
+data.raw.technology["warptorio-teleporter-4"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-5"].unit.ingredients}
+
+data.raw.technology["warptorio-teleporter-5"].prerequisites = {"warptorio-teleporter-4", "warptorio-reactor-6"}
+data.raw.technology["warptorio-teleporter-5"].unit = {
+	count = 30, time = 20, ingredients = data.raw.technology["warptorio-reactor-6"].unit.ingredients}
+
+----- Planet Teleporter end -----
+
+
+
 ----- Logistics start -----
+
+data.raw.technology["warptorio-logistics-1"].prerequisites = {"warptorio-reactor-1", "warptorio-factory-0", "basic-logistics"}
+data.raw.technology["warptorio-logistics-1"].unit = {
+	count = 100, time = 20, ingredients = data.raw.technology["warptorio-reactor-1"].unit.ingredients}
+
+data.raw.technology["warptorio-logistics-2"].prerequisites = {"warptorio-logistics-1", "warptorio-reactor-3", "logistics"}
+data.raw.technology["warptorio-logistics-2"].unit = {
+	count = 200, time = 20, ingredients = data.raw.technology["warptorio-reactor-3"].unit.ingredients}
+
+data.raw.technology["warptorio-logistics-3"].prerequisites = {"warptorio-logistics-2", "warptorio-reactor-5", "logistics-2"}
+data.raw.technology["warptorio-logistics-3"].unit = {
+	count = 300, time = 20, ingredients = data.raw.technology["warptorio-reactor-5"].unit.ingredients}
+
+data.raw.technology["warptorio-logistics-4"].prerequisites = {"warptorio-logistics-3", "warptorio-reactor-7", "logistics-3", "logistic-system"}
+data.raw.technology["warptorio-logistics-4"].unit = {
+	count = 400, time = 20, ingredients = data.raw.technology["warptorio-reactor-7"].unit.ingredients}
+
+data.raw.technology["warptorio-dualloader-1"].prerequisites = {"warptorio-logistics-1"}
+data.raw.technology["warptorio-dualloader-1"].unit = {
+	count = 1000, time = 10, ingredients = data.raw.technology["warptorio-reactor-2"].unit.ingredients}
+
+data.raw.technology["warptorio-triloader"].prerequisites = {"warptorio-dualloader-1", "warptorio-reactor-4"}
+data.raw.technology["warptorio-triloader"].unit = {
+	count = 3000, time = 10, ingredients = data.raw.technology["warptorio-reactor-4"].unit.ingredients}
+
+----- Logistics end -----
+
+
+
+----- Additions start -----
 
 data.raw.technology["warptorio-homeworld"].prerequisites = {"warptorio-reactor-8"}
 data.raw.technology["warptorio-homeworld"].unit = {
@@ -76,23 +137,21 @@ data.raw.technology["warptorio-homeworld"].unit = {
 
 -- TODO: warptorio-beacon-
 -- TODO: warptorio-bridgesize-
--- TODO: warptorio-teleporter-
--- TODO: warptorio-logistics-1/4
--- TODO: warptorio-dualloader-1
+
 -- TODO: warptorio-accumulator
--- TODO: warptorio-teleporter-portal
--- TODO: warptorio-teleporter-1/5
+
 -- TODO: warptorio-rail-se/ne/sw/nw
+
+-- TODO: warptorio-turret-ne/se/nw/sw
 -- TODO: warptorio-factory-s/n/e/w Giga Floor
 -- TODO: warptorio-boiler-s/n/e/w Giga Floor
 -- TODO: warptorio-boiler-water-1/3  -- make it more expensive!!
--- TODO: warptorio-turret-ne/se/nw/sw
 
 -- TODO: warptorio-toolbar (spacetime)
 -- TODO: warptorio-warpport (spacetime)
 -- TODO: warptorio-warploader (spacetime)
 
------ Logistics end -----
+----- Additions end -----
 
 
 
@@ -261,7 +320,12 @@ data.raw.technology["warptorio-factory-5"].prerequisites = {"warptorio-factory-4
 data.raw.technology["warptorio-factory-5"].unit = {
 	count = 200, time = 30, ingredients = data.raw.technology["warptorio-reactor-5"].unit.ingredients}
 
-data.raw.technology["warptorio-factory-6"].prerequisites = {"warptorio-factory-5", "warptorio-reactor-6", "automation-3"}
+data.raw.technology["warptorio-factory-6"].prerequisites = {
+	"warptorio-factory-5", "warptorio-reactor-6",
+	-- "automation-3",  -- it requires space science pack
+	-- "se-rocket-science-pack",
+	"robotics",
+}
 data.raw.technology["warptorio-factory-6"].unit = {
 	count = 250, time = 30, ingredients = data.raw.technology["warptorio-reactor-6"].unit.ingredients}
 
@@ -299,7 +363,11 @@ data.raw.technology["warptorio-harvester-size-4"].prerequisites = {"warptorio-ha
 data.raw.technology["warptorio-harvester-size-4"].unit = {
 	count = 200, time = 30, ingredients = data.raw.technology["warptorio-reactor-4"].unit.ingredients}
 
-data.raw.technology["warptorio-harvester-size-5"].prerequisites = {"warptorio-harvester-size-4", "warptorio-reactor-5", "mining-productivity-3"}
+data.raw.technology["warptorio-harvester-size-5"].prerequisites = {
+	"warptorio-harvester-size-4", "warptorio-reactor-5",
+	-- "mining-productivity-3",  -- it requires space science pack
+	-- "warp-mining-prod-4",
+}
 data.raw.technology["warptorio-harvester-size-5"].unit = {
 	count = 200, time = 30, ingredients = data.raw.technology["warptorio-reactor-5"].unit.ingredients}
 
