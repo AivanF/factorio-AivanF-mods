@@ -54,6 +54,17 @@ function merge(a, b, over)
   return a
 end
 
+function deep_get(obj, keys)
+  for i, k in pairs(keys) do
+    if obj[k] then
+      obj = obj[k]
+    else
+      return nil
+    end
+  end
+  return obj
+end
+
 
 
 -- Long live the Functional programming!
@@ -63,6 +74,7 @@ end
 
 function iter_chain(lists)
   -- Like Python's itertools.chain
+  -- Example: iter_chain({ {3, 14}, {15, 92} }) = {3, 14, 15, 92}
   local result = {}
   for _, ar in pairs(lists) do
     for _, value in pairs(ar) do
@@ -73,6 +85,7 @@ function iter_chain(lists)
 end
 
 function iter_zip(lists)
+  -- Example: iter_zip({ {3, 14, 15}, {2, 71, 82} }) = { {3, 2}, {14, 71}, {15, 82} }
   -- local common_len = math.min(table.unpack(func_map(iter_len, lists)))
   local result = {}
   local index = 1
@@ -96,15 +109,25 @@ function iter_zip(lists)
 end
 
 function partial(func, args_pre, args_post)
-  args_pre = args_pre or {}
-  args_post = args_post or {}
+  -- Example: partial(math.pow, {}, {2})(3) = 9
+  -- Example: partial(math.pow, {2}, {})(3) = 8
+  local _args_pre = args_pre or {}
+  local _args_post = args_post or {}
   return function(...)
-    local new_args = iter_chain(args_pre, {{...}, args_post})
-    func(table.unpack(new_args))
+    local new_args = iter_chain({_args_pre, {...}, _args_post})
+    return func(table.unpack(new_args))
   end
 end
 
+--[[
+-- Complex example:
+local forces = {{name="enemy"}}
+local result = func_map(partial(deep_get, {}, {{"name"}}), forces)
+serpent.line(result)  -- {"enemy"}
+]] --
+
 function func_map(func, args)
+  -- Example: func_map(math.floor, {3.141592, 2.818281}) = {3, 2}
   local results = {}
   for _, value in pairs(args) do
     results[#results+1] = func(value)
@@ -113,6 +136,7 @@ function func_map(func, args)
 end
 
 function func_maps(func, args_arrays)
+  -- Example: func_maps(math.pow, {{3, 2}, {2, 3}}) = {9, 8}
   local results = {}
   for _, args in pairs(args_arrays) do
     results[#results+1] = func(table.unpack(args))

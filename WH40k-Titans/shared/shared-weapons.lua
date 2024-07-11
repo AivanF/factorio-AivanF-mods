@@ -46,31 +46,31 @@ shared.wc_melee  = 21
 local bolt_types = {}
 bolt_types.bolt_big = {
   entity = shared.mod_prefix.."bolt-big",
-  single_damage = 750,
+  single_damage = 1000,
 }
 bolt_types.bolt_huge = {
   entity = shared.mod_prefix.."bolt-huge",
-  single_damage = 2500,
+  single_damage = 3000,
 }
 bolt_types.bolt_plasma_1 = {
   entity = shared.mod_prefix.."bolt-plasma-1",
-  single_damage = 7000,
+  single_damage = 10 *1000,
 }
 bolt_types.bolt_plasma_2 = {
   entity = shared.mod_prefix.."bolt-plasma-2",
-  single_damage = 20000,
+  single_damage = 25 *1000,
 }
 bolt_types.bolt_plasma_3 = {
   entity = shared.mod_prefix.."bolt-plasma-3",
-  single_damage = 60000,
+  single_damage = 100 *1000,
 }
 bolt_types.bolt_rocket = {
   entity = shared.mod_prefix.."explosive-rocket",
-  single_damage = 400,
+  single_damage = 1000,
 }
 bolt_types.bolt_fire = {
   entity = "titanic-fire-stream",
-  single_damage = 50+30*5,
+  single_damage = 100+50*5,
 }
 bolt_types.bolt_laser = {
   entity = shared.mod_prefix.."bolt-laser",
@@ -80,7 +80,7 @@ bolt_types.bolt_laser = {
 --------- Weapon types
 shared.weapons = {}
 local dst_s, dst_m, dst_l, dst_xl
-dst_s, dst_m, dst_l, dst_xl = 64, 96, 128, 192
+dst_s, dst_m, dst_l, dst_xl = 80, 128, 160, 220
 local wname = nil
 local order_index = 1
 
@@ -184,7 +184,7 @@ add_weapon({
   speed = 18, barrel = 9,
   ammo = shared.flamer_ammo,
   per_shot = 1, inventory = 4000,
-  cd = 0.05, attack_size = 5, scatter = 5,
+  cd = 0.03, attack_size = 9, scatter = 6,
   bolt_type = bolt_types.bolt_fire,
   ingredients = {
     {shared.melta_pump, 3},

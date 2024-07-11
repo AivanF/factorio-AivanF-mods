@@ -9,6 +9,13 @@ data:extend{
     maximum_value = 0.1,
     order = "a-1",
   },
+  {
+   type = "bool-setting",
+    name = "wh40k-titans-aai-vehicle",
+    setting_type = "startup",
+    default_value = true,
+    order = "a-2",
+  },
 
   -- Map/global
   {

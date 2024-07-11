@@ -953,9 +953,10 @@ local function find_ai_target(titan_info, entity, weapon_type, cannon)
   local max_number = 0
   local result = nil
   if weapon_type.start_far then
+    -- Going inside
     for _, oris in ipairs(attack_ori_shifts) do
       dst = weapon_type.max_dst
-      while 0 < dst and weapon_type.min_dst*1.5 < dst do
+      while 0 < dst and weapon_type.min_dst*1.3 < dst do
         dst = dst * 0.75
         new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
         target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
@@ -967,8 +968,9 @@ local function find_ai_target(titan_info, entity, weapon_type, cannon)
       end
     end
   else
+    -- Going outside
     for _, oris in ipairs(attack_ori_shifts) do
-      dst = weapon_type.min_dst*1.5
+      dst = weapon_type.min_dst*1.3
       while 0 < dst and dst < weapon_type.max_dst do
         dst = dst * 1.25
         new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
@@ -994,12 +996,13 @@ function lib.handle_attack_ai(titan_info)
       table.insert(enemies, f)
     end
   end
+  -- game.print("enemies: "..serpent.line(func_map(partial(deep_get, {}, {{"name"}}), enemies)))
 
   local enemy_number = entity.surface.count_entities_filtered{
     position=math2d.position.add(titan_info.entity.position, point_orientation_shift(entity.orientation, 0, titan_info.class)),
     radius=48 + titan_info.class, force=enemies, is_military_target=true
   }
-  if enemy_number <= 1 then return end
+  if enemy_number < 1 then return end
 
   local weapon_type, dst, target_option
   local done = false

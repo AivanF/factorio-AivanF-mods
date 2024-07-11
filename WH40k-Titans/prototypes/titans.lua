@@ -79,16 +79,16 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       dying_explosion = "medium-explosion",
       track_coverage_during_build_by_moving = true,
       resistances = {
-        { type = "impact", decrease=5000, percent=100 },
-        { type = "fire", decrease=5000, percent=100 },
-        { type = "poison", decrease=5000, percent=100 },
+        { type = "impact", decrease=500 * titan_type.class, percent=100 },
+        { type = "fire", decrease=500 * titan_type.class, percent=100 },
+        { type = "poison", decrease=500 * titan_type.class, percent=100 },
 
-        { type = "acid", decrease=300, percent=90 },
-        { type = "laser", decrease=300, percent=90 },
-        { type = "electric", decrease=300, percent=90 },
+        { type = "acid", decrease=25 * titan_type.class, percent=90 },
+        { type = "laser", decrease=25 * titan_type.class, percent=90 },
+        { type = "electric", decrease=25 * titan_type.class, percent=90 },
 
-        { type = "explosion", decrease=500, percent=70 },
-        { type = "physical", decrease=400, percent=80 },
+        { type = "explosion", decrease=25 * titan_type.class, percent=80 },
+        { type = "physical", decrease=25 * titan_type.class, percent=90 },
       },
       collision_mask = titan_type.over_water and {} or {only_water_layer},
       collision_box = {{-4, -4}, {4, 4}},
@@ -101,6 +101,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       has_belt_immunity = true,
       -- tank_driving = true,
       selection_priority = 70,
+      is_military_target = true,
 
       energy_source = { type = "void" },
       effectivity = 1,

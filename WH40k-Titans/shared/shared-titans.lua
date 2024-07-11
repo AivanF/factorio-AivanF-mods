@@ -58,7 +58,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warhound,
     class = shared.class_warhound,
-    dst = 1, dmg = 1, spd = 10,
+    dst = 1, dmg = 1, spd = 12,
     ingredients = {
       {shared.energy_core, 1},
       {shared.servitor,    1},
@@ -88,7 +88,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_direwolf,
     class = shared.class_direwolf,
-    dst = 1, dmg = 1, spd = 9,
+    dst = 1, dmg = 1, spd = 10,
     ingredients = {
       {shared.energy_core, 2},
       {shared.servitor,    1},
@@ -108,8 +108,8 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class1-dw.png",
     guns = {
-      [1] = { oris=-0.27, shift=8, layer=shared.rl_arm, grade=0 },
-      [2] = { oris= 0.27, shift=8, layer=shared.rl_arm, grade=0 },
+      [1] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0 },
+      [2] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0 },
       [3] = { oris= 0,    shift=0, layer=shared.rl_shoulder, grade=2, is_top=true },
     },
     aux_laser = {
@@ -119,7 +119,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_reaver,
     class = shared.class_reaver,
-    dst = 1.25, dmg = 1.25, spd = 8,
+    dst = 1.25, dmg = 1.25, spd = 9,
     ingredients = {
       {shared.energy_core, 3},
       {shared.servitor,    2},
@@ -151,7 +151,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warlord,
     class = shared.class_warlord,
-    dst = 1.5, dmg = 1.5, spd = 7,
+    dst = 1.5, dmg = 1.5, spd = 8,
     ingredients = {
       {shared.energy_core, 5},
       {shared.servitor,    4},
@@ -185,7 +185,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warmaster,
     class = shared.class_warmaster,
-    dst = 1.75, dmg = 1.75, spd = 6,
+    dst = 1.75, dmg = 1.75, spd = 7,
     ingredients = {
       {shared.energy_core, 7},
       {shared.servitor,    6},
@@ -221,7 +221,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_imperator,
     class = shared.class_imperator,
-    dst = 2, dmg = 2, spd = 6,
+    dst = 2, dmg = 2, spd = 7,
     ingredients = {
       {shared.energy_core, 15},
       {shared.servitor,    12},

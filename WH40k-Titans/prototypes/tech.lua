@@ -256,7 +256,7 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_medium),
     prerequisites = {shared.mod_prefix.."0-grade"},
     unit = {
-      count = 10,
+      count = 15,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
@@ -275,7 +275,7 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_big),
     prerequisites = {shared.mod_prefix.."1-grade", shared.mod_prefix.."3-class"},
     unit = {
-      count = 200,
+      count = 150,
       ingredients = {{shared.sp, 1}},
       time = 60
     },

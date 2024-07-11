@@ -31,7 +31,7 @@ data:extend{
   {
     type = "item-group",
     name = group_name,
-    order = "am",
+    order = "d-d",
     icon = shared.media_prefix.."graphics/tech/legio-titanicus.png",
     icon_size = 256, icon_mipmaps = 1,
   },

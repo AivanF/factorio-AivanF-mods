@@ -40,7 +40,7 @@ data:extend({
         target_effects = {
           {
             type = "damage",
-            damage = {amount = 350 , type = "physical"}
+            damage = {amount = 500 , type = "physical"}
           },
           -- TODO: add some cannon explo?
           -- {
@@ -148,7 +148,7 @@ data:extend({
         target_effects = {
           {
             type = "damage",
-            damage = {amount = 500 , type = "physical"}
+            damage = {amount = 750 , type = "physical"}
           },
           -- TODO: add some cannon explo?
           -- {
@@ -177,7 +177,7 @@ data:extend({
                 target_effects = {
                   {
                     type = "damage",
-                    damage = {amount = 1500, type = "explosion"}
+                    damage = {amount = 2000, type = "explosion"}
                   },
                   {
                     type = "create-entity",
@@ -260,7 +260,7 @@ data:extend({
           },
           {
             type = "damage",
-            damage = {amount = 250, type = "explosion"}
+            damage = {amount = 300, type = "physical"}
           },
           {
             type = "create-entity",
@@ -291,7 +291,7 @@ data:extend({
                 target_effects = {
                   {
                     type = "damage",
-                    damage = {amount = 300, type = "explosion"}
+                    damage = {amount = 700, type = "explosion"}
                   },
                   {
                     type = "create-entity",
@@ -494,7 +494,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 3000, type = "explosion"}
+              damage = {amount = 5000, type = "explosion"}
             },
             {
               type = "damage",
@@ -503,7 +503,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 2000, type = "fire"}
+              damage = {amount = 3000, type = "fire"}
             },
             {
               type = "damage",
@@ -512,7 +512,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 2000, type = "electric"}
+              damage = {amount = 3000, type = "electric"}
             },
           }
         }
@@ -609,7 +609,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "explosion"}
+              damage = {amount = 11000, type = "explosion"}
             },
             {
               type = "damage",
@@ -618,7 +618,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 4000, type = "fire"}
+              damage = {amount = 6000, type = "fire"}
             },
             {
               type = "damage",
@@ -627,7 +627,7 @@ data:extend({
               upper_distance_threshold = 16,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 6000, type = "electric"}
+              damage = {amount = 8000, type = "electric"}
             },
           }
         }
@@ -723,7 +723,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 25000, type = "explosion"}
+              damage = {amount = 45000, type = "explosion"}
             },
             {
               type = "damage",
@@ -732,7 +732,7 @@ data:extend({
               upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
-              damage = {amount = 15000, type = "fire"}
+              damage = {amount = 25000, type = "fire"}
             },
             {
               type = "damage",
@@ -741,7 +741,7 @@ data:extend({
               -- upper_distance_threshold = 24,
               -- lower_damage_modifier = 1,
               -- upper_damage_modifier = 0.2,
-              damage = {amount = 20000, type = "electric"}
+              damage = {amount = 35000, type = "electric"}
             },
           }
         }
@@ -763,10 +763,10 @@ data:extend({
 
 local fire = table.deepcopy(data.raw["fire"]["fire-flame"])
 fire.name = "titanic-fire-flame"
-fire.damage_per_tick = {amount = 30 / 60, type = "fire"}
+fire.damage_per_tick = {amount = 50 / 60, type = "fire"}
 local stream = table.deepcopy(data.raw["stream"]["flamethrower-fire-stream"])
 stream.name = "titanic-fire-stream"
-stream.particle_horizontal_speed = stream.particle_horizontal_speed * 3
+stream.particle_horizontal_speed = stream.particle_horizontal_speed * 5
 stream.action = {
   {
     type = "area",
@@ -785,12 +785,12 @@ stream.action = {
         },
         {
           type = "damage",
-          damage = { amount = 25, type = "fire" },
+          damage = { amount = 50, type = "fire" },
           apply_damage_to_trees = true,
         },
         {
           type = "damage",
-          damage = { amount = 25, type = "laser" },
+          damage = { amount = 50, type = "laser" },
           apply_damage_to_trees = true,
         },
       }

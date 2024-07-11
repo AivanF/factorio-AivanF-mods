@@ -149,10 +149,10 @@ function list_players(values)
   local result = {}
   for _, obj in pairs(values) do
     if obj then
-      if obj.player then
-        table.insert(result, obj.player)
-      elseif obj.object_name == "LuaPlayer" then
+      if obj.object_name == "LuaPlayer" then
         table.insert(result, obj)
+      elseif obj.player then
+        table.insert(result, obj.player)
       end
     end
   end

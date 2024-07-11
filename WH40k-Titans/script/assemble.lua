@@ -661,7 +661,7 @@ function state_handler.assembling(assembler)
     assembler.force.print({"WH40k-Titans-gui.msg-titan-created", {"entity-name."..titan_type.entity}})
     local name = titan_type.entity
     -- Try change to AAI Programmable Vehicles
-    if game.entity_prototypes[name.."-0"] then
+    if settings.startup["wh40k-titans-aai-vehicle"].value and game.entity_prototypes[name.."-0"] then
       name = name.."-0"
     end
     titan_entity = assembler.surface.create_entity{
