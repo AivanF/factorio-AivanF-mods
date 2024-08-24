@@ -2,7 +2,6 @@ local bridge = require("bridge1-base")
 
 bridge.tech = {}
 local function add_tech(tech_info)
-  tech_info.updated = "none"
   bridge.tech[tech_info.short_name] = tech_info
   bridge.tech[tech_info.name] = tech_info
 end
@@ -13,6 +12,7 @@ bridge.midgame = bridge.prefix.."midgame"
 bridge.lategame = bridge.prefix.."lategame"
 bridge.endgame = bridge.prefix.."endgame"
 
+-- Age 1. Early-game, old technologies, hand crafting
 add_tech({
   short_name = "early",
   name = bridge.early,
@@ -25,6 +25,8 @@ add_tech({
   },
 })
 
+-- Age 2. Mid-game: more modern technologies, steam-punk, advanced metal alloys
+-- Space Exploration analogue: Rocket Science packs
 add_tech({
   short_name = "midgame",
   name = bridge.midgame,
@@ -34,7 +36,7 @@ add_tech({
     -- bridge.tech.early.name,
     "chemical-science-pack",
   },
-  count = 500,
+  count = 200,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},
@@ -58,6 +60,8 @@ add_tech({
   },
 })
 
+-- Age 3. Late-game: nano-technologies, high-energy, sci-fi
+-- Space Exploration analogue: Production + Utility Science packs
 add_tech({
   short_name = "lategame",
   name = bridge.lategame,
@@ -68,7 +72,7 @@ add_tech({
     "production-science-pack",
     "utility-science-pack",
   },
-  count = 1000,
+  count = 500,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},
@@ -99,6 +103,8 @@ add_tech({
   },
 })
 
+-- Age 4. End-game: extra-high-energy, space-time warping, pure sci-fi
+-- Space Exploration analogue: Deep Space Science packs
 add_tech({
   short_name = "endgame",
   name = bridge.endgame,
@@ -108,7 +114,7 @@ add_tech({
     -- bridge.tech.lategame.name,
     "space-science-pack",
   },
-  count = 5000,
+  count = 1000,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},

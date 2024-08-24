@@ -1,6 +1,6 @@
 {
   "name": "Common-Industries",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "title": "Bridge Technologies",
   "author": "AivanF", 
   "homepage": "https://mods.factorio.com/mod/Common-Industries",
@@ -17,5 +17,5 @@
     "? Recipes-Reload"
   ],
   "factorio_version": "1.1",
-  "description": "Mediator for overhaul mods. When requested by other mods, the Bridge adds ingredients, items and recipes that will get replaced or adjusted if compatible big mods are presented. The goal is to make a single dependency, simple connection and integration of small and overhaul mods. See Home Page for more details. Known as Bridge Technologies and Common Industries."
+  "description": "Mediator for overhaul mods. When requested by other mods, the Bridge provides ingredients that will get replaced or adjusted if compatible big mods are presented. It's NOT a compatibility of overhaul mods with each other! Instead, it's a utility for developers to integrate their smaller mods with any big modpack. See Home Page for more details."
 }

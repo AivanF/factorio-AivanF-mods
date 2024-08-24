@@ -22,31 +22,29 @@ afci_bridge = bridge
 bridge.debug_all = false
 -- bridge.debug_all = true
 
+
+-- Constants
 bridge.media_path = "__Common-Industries__/graphics/"
 bridge.prefix = "afci-"
 bridge.log_prefix = "AFCI: "
 bridge.empty = ""
 bridge.not_updated = "none"
 
-function bridge.is_new(name)
-  return name:find(bridge.prefix, 1, true)
-end
+-- bridge.group_name = "afci-common-industries"
+bridge.group_name = "intermediate-products"
+bridge.subg_early = "afci-early"
+bridge.subg_mid   = "afci-midgame"
+bridge.subg_late  = "afci-lategame"
+bridge.subg_end   = "afci-endgame"
 
-function bridge.clean_prerequisites(given)
-  local already = {}
-  local result = {}
-  for _, name in pairs(given) do
-    if given ~= bridge.empty then
-      if not already[name] then
-        table.insert(result, name)
-        already[name] = true
-      end
-    end
-  end
-  return result
-end
+-- TODO: add own recipe categories & related buildings
+-- TODO: resolve these for mods too?
+bridge.cat_nano_crafting = "advanced-crafting"
+bridge.cat_he_crafting   = "advanced-crafting"
+bridge.cat_org_crafting  = "chemistry"
 
 
+-- Supported mods
 bridge.mods_list = {
   -- SE    https://mods.factorio.com/user/Earendel
   { short_name = "se",    name = "space-exploration" },
@@ -132,14 +130,48 @@ bridge.mods_list = {
 }
 
 
+----- Primary mechanic:
+-- Resolve abstract prototype declarations (be it item, technology, any dictionary)
+-- into specific ones considering enabled mods.
+
 bridge.mods = {}
 for _, mod_info in pairs(bridge.mods_list) do
   bridge.mods[mod_info.short_name] = mod_info
 end
 
+function bridge.is_new(name)
+  return name:find(bridge.prefix, 1, true)
+end
+
+function bridge.clean_prerequisites(given)
+  local already = {}
+  local result = {}
+  for _, name in pairs(given) do
+    if given ~= bridge.empty then
+      if not already[name] then
+        table.insert(result, name)
+        already[name] = true
+      end
+    end
+  end
+  return result
+end
+
 bridge.active_mods_cache = nil
-function bridge.have_required_mod(mod_info)
-  local active_mods = bridge.active_mods_cache or mods or game.active_mods
+function bridge.have_required_mod(mod_info)  
+  -- Treat the argument as a list of mods
+  -- for recipes with dependencies and ingredients
+  -- from popular modpacks like K2+SE
+  if mod_info.short_name == nil then
+    for _, v in ipairs(mod_info) do
+      if not bridge.have_required_mod(v) then
+        return false
+      end
+    end
+    return true
+  end
+
+  local active_mods = bridge.active_mods_cache or mods or script.active_mods
   if mod_info.name then
     return not not active_mods[mod_info.name]
   elseif mod_info.names then
@@ -150,9 +182,8 @@ function bridge.have_required_mod(mod_info)
   return false
 end
 
+-- Updates given object declaration depending on enabled mods
 bridge.preprocessed = {}
-
--- Updates given object depending on enabled mods
 function bridge.preprocess(obj_info)
   -- Already done or nothing to do
   if bridge.preprocessed[obj_info.short_name] then
@@ -177,5 +208,7 @@ function bridge.preprocess(obj_info)
   bridge.preprocessed[obj_info.short_name] = true
   return obj_info
 end
+
+-- TODO: implement dynamic items migrations comparing cached and actual resolved names of mods and items.
 
 return bridge

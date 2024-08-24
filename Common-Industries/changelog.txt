@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.4
+Date: 2024-08-23
+  Graphics:
+    - New pretty icons for existing details: 1. carbon fiber, 2. hard alloy powder, 3. stong alloy ingot, 4. electro-magnetic field controller, 5. high-energy emitter, 6. extra-high-energy emitter, 7. spacetime-operator.
+  Features:
+    - New items: brain-computer interface (BCI), rocket engine. To be used by WH40k Titans mod.
+  Changes:
+    - Some recipes changed.
+    - No dedicated group tab for Common Industries items, now they are in the Intermediates group, for minimalistic design.
+    - Refactored the code.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.3
 Date: 2023-09-29
   Bugfixes:
@@ -8,11 +20,13 @@ Date: 2023-09-29
     - It's possible to declare adjustable items from other mods!
   Changes:
     - Moved plasma fuel to WH40k-Titans mod.
+
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.2
 Date: 2023-09-17
   Features:
     - Can be used at runtime, from control scripts. As usual, made for my WH40k-Titans mod :)
+
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.1
 Date: 2023-09-15
@@ -20,6 +34,7 @@ Date: 2023-09-15
     - Added new items: ceramic, meat, brain, optical emitter.
     - Added support for 248k, 5Dim, ModMash, Omni.
     - Many other changes.
+
 ---------------------------------------------------------------------------------------------------
 Version: 0.9.0
 Date: 2023-09-13

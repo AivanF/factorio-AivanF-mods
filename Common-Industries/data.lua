@@ -10,36 +10,36 @@ data:extend{
   --   name = cat_he_crafting
   -- },
 
-  {
-    type = "item-group",
-    name = bridge.group_name,
-    order = "ak",
-    icon = bridge.media_path.."group.png",
-    icon_size = 256, icon_mipmaps = 1,
-  },
+  -- {
+  --   type = "item-group",
+  --   name = bridge.group_name,
+  --   order = "ak",
+  --   icon = bridge.media_path.."group.png",
+  --   icon_size = 256, icon_mipmaps = 1,
+  -- },
   {
     type = "item-subgroup",
     name = bridge.subg_early,
     group = bridge.group_name,
-    order = "a-10",
+    order = "g-10",
   },
   {
     type = "item-subgroup",
     name = bridge.subg_mid,
     group = bridge.group_name,
-    order = "a-20",
+    order = "g-20",
   },
   {
     type = "item-subgroup",
     name = bridge.subg_late,
     group = bridge.group_name,
-    order = "a-30",
+    order = "g-30",
   },
   {
     type = "item-subgroup",
     name = bridge.subg_end,
     group = bridge.group_name,
-    order = "a-40",
+    order = "g-40",
   },
 }
 
