@@ -1105,7 +1105,6 @@ lib:on_event(defines.events.on_entity_damaged, function(event)
   local entity = event.entity
   local unit_number = entity.valid and entity.unit_number
   if unit_number == nil then return end
-  -- TODO: pass half of each 1/Nth?
   if ctrl_data.titans[unit_number] then
     local tctrl = ctrl_data.titans[unit_number]
     entity.health = event.final_health + event.final_damage_amount

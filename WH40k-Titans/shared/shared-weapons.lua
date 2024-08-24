@@ -2,7 +2,7 @@ local shared = require("shared.shared-base")
 
 -- Aliases
 shared.bolter_engine = shared.proj_engine
-shared.rocket_engine = shared.proj_engine
+shared.rocketer_engine = shared.proj_engine
 shared.quake_engine  = shared.proj_engine
 shared.las_engine    = shared.he_emitter
 -- shared.melta_engine  = he_emitter + melta_pump
@@ -280,7 +280,7 @@ add_weapon({
   start_far = true,
   attack_sound = "wh40k-titans-rocket",
   ingredients = {
-    {shared.rocket_engine, 4},
+    {shared.rocketer_engine, 4},
     {shared.barrel, 4},
     {shared.frame_part, 3},
   },
@@ -305,7 +305,7 @@ add_weapon({
   start_far = true,
   attack_sound = "wh40k-titans-rocket",
   ingredients = {
-    {shared.rocket_engine, 10},
+    {shared.rocketer_engine, 10},
     {shared.barrel, 10},
     {shared.frame_part, 6},
   },
@@ -503,7 +503,7 @@ add_weapon({
 --   ammo = shared.doom_rocket,
 --   per_shot = 1, inventory = 16,
 --   ingredients = {
---     {shared.rocket_engine, 16},
+--     {shared.rocketer_engine, 16},
 --     {shared.barrel, 16},
 --     {shared.frame_part, 11},
 --   },

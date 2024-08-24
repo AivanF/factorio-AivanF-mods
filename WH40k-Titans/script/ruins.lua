@@ -163,7 +163,7 @@ function lib.ruin_extract(ruin_info, ruin_entity)
         end
       end
       -- Success or failed extraction?
-      if math.random() < lib.calc_extract_success_prob(ruin_info.exc_info.force) then
+      if math.random() < lib.calc_extract_success_prob(ruin_info.exc_info.entity.force) then
         return name, count
       else
         return nil, 0

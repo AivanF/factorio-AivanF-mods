@@ -29,6 +29,8 @@ shared.melta_pump  = shared.part_prefix.."titanic-melta-pump" -- mostly mechanic
 shared.emfc = afci_bridge.item.emfc
 shared.he_emitter  = afci_bridge.item.he_emitter
 shared.ehe_emitter = afci_bridge.item.ehe_emitter
+-- shared.rocket_engine = "engine-unit" -- TODO: replace with a proper rocket engine
+shared.rocket_engine = afci_bridge.item.rocket_engine
 
 --------- Buildings, Groups, Categories
 shared.bunker_minable = shared.mod_prefix.."assembly-bunker-minable"

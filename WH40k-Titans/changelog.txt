@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.21
+Date: 2024-08-23
+  Graphics:
+    - Many updated icons of details from the Bridge Technologies.
+  Bugfixes:
+    - Fixed a bug of not applying titan extraction efficiency/productivity. Thanks to Agent from Discord.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.20
 Date: 2024-07-11
   Graphics:
