@@ -7,6 +7,7 @@ local main_frame_name = "reverse_lab_worth"
 local act_main_frame_close = "af-reverse-lab-frame-close"
 local act_set_item = "af-reverse-lab-set-item"
 
+
 local function explain(cmd)
   local player = game.get_player(cmd.player_index)
   local item_name = cmd.parameter
@@ -38,12 +39,14 @@ local function explain(cmd)
   log(result)
 end
 
+
 lib.add_commands = function()
   commands.add_command(
     "reveng-explain",
     "Tells info about given item name. You can also find stats in a table in the script-output folder.",
     explain)
 end
+
 
 local function gui_create(player, toggle)
   if player.gui.screen[main_frame_name] then
@@ -80,6 +83,7 @@ local function gui_create(player, toggle)
   main_frame.add{ type="flow", name="packs_line", direction="horizontal" }
 end
 
+
 local function gui_explain(player, item_name)
   local main_frame = player.gui.screen[main_frame_name]
   if not main_frame_name then return end
@@ -111,7 +115,7 @@ local function gui_explain(player, item_name)
     main_frame.status.caption = {
       "af-reverse-lab.see-worth-info",
       -- string.format("%.0f", item_info.price),
-      string.format("%.0f%%", item_info.prob*100),
+      string.format("%.1f", prob_for_force(item_info, player.force)),
       item_info.need,
     }
     for _, pack_name in pairs(item_info.ingredients) do
@@ -122,6 +126,7 @@ local function gui_explain(player, item_name)
     end
   end
 end
+
 
 lib:on_event(defines.events.on_gui_closed, function(event)
   local player = game.get_player(event.player_index)
@@ -136,6 +141,9 @@ lib:on_event(defines.events.on_gui_click, function(event)
     if player.gui.screen[main_frame_name] then
       player.gui.screen[main_frame_name].destroy()
     end
+
+  elseif event.element.tags.action == "reverse-lab-open-worth-explain" then
+    gui_create(player, false)
   end
 end)
 
@@ -149,7 +157,7 @@ end)
 lib:on_event(defines.events.on_lua_shortcut, function (event)
   local player = game.get_player(event.player_index)
   if event.prototype_name == "af-reverse-lab-worth" then
-    gui_create(player, toggle)
+    gui_create(player, true)
   end
 end)
 

@@ -22,6 +22,11 @@ ignore_item = from_key_list({
   -- "discharge-defense-remote",
   -- "lightning-arty-remote",
 }, true)
+ignore_subgroup = {
+  ["raw-resource"] = true,
+  -- ["ai-vehicles"] = true,
+  ["ai-vehicles-reverse"] = true,
+}
 
 override_items = {
   ["gun-turret"] = { ingredients = {red, grey}, need=10, price=1, prob=0.1 },
@@ -29,17 +34,18 @@ override_items = {
   ["raw-fish"] = { ingredients = {white}, need=100, prob=0.1 },
 }
 
+
 local function get_tech_worth(source_tech_values)
-  source_tech_values = source_tech_values or {}
-  local tech_values = table.deepcopy(source_tech_values)
+  local tech_values = {}
   for tech_name, tech_data in pairs(game.technology_prototypes) do
-    tech_values[tech_name] = 1
+    tech_values[tech_name] = source_tech_values[tech_name] or (math.pow(#tech_data.research_unit_ingredients, 0.5) * tech_data.research_unit_count / 100)
     for tech2_name, tech2_data in pairs(tech_data.prerequisites) do
-      tech_values[tech_name] = tech_values[tech_name] + (source_tech_values[tech2_name] or 1)
+      tech_values[tech_name] = tech_values[tech_name] + (source_tech_values[tech2_name] or (tech2_data.research_unit_count / 200 + 1))
     end
   end
   return tech_values
 end
+
 
 local function try_stack(item_info, need, min_stack)
   if item_info.done then return end
@@ -56,10 +62,11 @@ local function try_stack(item_info, need, min_stack)
   end
 end
 
+
 local function finalise(item_info)
   local result = 1
   for _, value in pairs(item_info.prices) do
-    value = math.min(5.5, math.max(0.2, value))
+    value = math.min(8, math.max(0.2, value))
     -- result = math.max(result, value)
     result = result * value
   end
@@ -75,10 +82,20 @@ local function finalise(item_info)
   item_info.prob = item_info.price / 10
 end
 
+
 function cache_data()
-  local tech_values = get_tech_worth()
+  local tech_values = {}
   tech_values = get_tech_worth(tech_values)
   tech_values = get_tech_worth(tech_values)
+  tech_values = get_tech_worth(tech_values)
+  tech_values = get_tech_worth(tech_values)
+  tech_values = get_tech_worth(tech_values)
+  tech_values = get_tech_worth(tech_values)
+
+  for name, cost in pairs(tech_values) do
+    tech_values[name] = math.pow(cost, 0.5) * 0.25
+  end
+  -- log("reveng_tech_values: "..serpent.block(tech_values))
 
   local total = 0
   local item_opts, prices, total_price, ingredients, item_name, stack_size
@@ -93,9 +110,16 @@ function cache_data()
     for _, modifier in pairs(ignore_tech[tech_name] and {} or tech_data.effects) do
       if modifier.type == "unlock-recipe" then
         for _, prod in pairs(game.recipe_prototypes[modifier.recipe].products) do
-          if true or prod.type == "item" then
+          if  true
+            and prod.type == "item" and modifier.recipe
+            and not ignore_subgroup[game.recipe_prototypes[modifier.recipe].subgroup.name]
+            and not ignore_subgroup[game.item_prototypes[prod.name].subgroup.name]
+          then
             item_name = prod.name
             recipes_of[item_name] = game.recipe_prototypes[modifier.recipe]
+            -- if item_name == "iron-ore" then
+            --   game.print("Subgroup: "..game.item_prototypes[prod.name].subgroup.name)
+            -- end
             total = total + 1
             item_opts = reverse_items[item_name] or {}
             reverse_items[item_name] = item_opts
@@ -142,7 +166,7 @@ function cache_data()
     global.reverse_items[item_name] = result
   end
 
-  -- Calc prices considering ingredients
+  -- Calc prices considering ingredients tech prices
   for item_name, item_info in pairs(global.reverse_items) do
     local ingr_price = 0
     for _, ingr in pairs(recipes_of[item_name].ingredients) do
@@ -150,22 +174,80 @@ function cache_data()
       if item_info2 then
         ingr_price = ingr_price + tech_values[item_info2.tech_name]
       else
-        ingr_price = ingr_price + 0.2
+        ingr_price = ingr_price + 0.1
       end
     end
-    table.insert(item_info.prices, ingr_price/2)
+    table.insert(item_info.prices, ingr_price / 2)
     finalise(item_info)
+
     table.insert(texts, table.concat(
       chain_arrays({
         {item_info.tech_name, item_name, item_info.stack_size},
         item_info.prices, {item_info.price, item_info.need}}),
       delimiter))
+    item_info.prices = nil
+
     if ignore_item[item_name] or item_info.price < 1 then
       global.reverse_items[item_name] = nil
     end
   end
 
+  -- Calc better prices considering ingredients final prices x1
+  local prev_items = table.deepcopy(global.reverse_items)
+  for item_name, item_info in pairs(global.reverse_items) do
+    local ingr_price = 0
+    for _, ingr in pairs(recipes_of[item_name].ingredients) do
+      local item_info2 = prev_items[ingr.name]
+      if item_info2 then
+        -- TODO: multiply by amout of same science packs!
+        ingr_price = ingr_price + item_info2.price
+      else
+        ingr_price = ingr_price + 0.1
+      end
+    end
+    item_info.price = (item_info.price + ingr_price) / 2
+  end
+
+  -- Calc better prices considering ingredients final prices x2
+  local prev_items = table.deepcopy(global.reverse_items)
+  for item_name, item_info in pairs(global.reverse_items) do
+    local ingr_price = 0
+    for _, ingr in pairs(recipes_of[item_name].ingredients) do
+      local item_info2 = prev_items[ingr.name]
+      if item_info2 then
+        ingr_price = ingr_price + item_info2.price
+      else
+        ingr_price = ingr_price + 0.1
+      end
+    end
+    item_info.price = (item_info.price + ingr_price) / 2
+  end
+
+  -- Calc better prices considering ingredients final prices x3
+  local prev_items = table.deepcopy(global.reverse_items)
+  for item_name, item_info in pairs(global.reverse_items) do
+    local ingr_price = 0
+    for _, ingr in pairs(recipes_of[item_name].ingredients) do
+      local item_info2 = prev_items[ingr.name]
+      if item_info2 then
+        ingr_price = ingr_price + item_info2.price
+      else
+        ingr_price = ingr_price + 0.1
+      end
+    end
+    item_info.price = (item_info.price + ingr_price) / 2
+    item_info.prob = item_info.price / 10
+  end
+
   game.write_file("af-revlab-prices"..ext, table.concat(texts, "\n"))
   deep_merge(global.reverse_items, override_items, true)
   -- game.print("Cached "..total.." items")
+end
+
+
+function prob_for_force(item_info, force)
+  local prob = item_info.prob
+  local tech = force.technologies[item_info.tech_name]
+  prob = prob * (tech.researched and 1 or 5)
+  return prob
 end

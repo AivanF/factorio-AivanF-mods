@@ -1,8 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2024-08-25
+  Features:
+    - Informatron integration!
+  Balancing:
+    - Higher science packs output from the same items.
+    - Slower reverse labs.
+    - Ignoring recipes from some mods that break the balance.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2023-09-23
   Bugfixes:
     - Preventing unwanted openings of explaining shortcut.
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2023-09-22
@@ -13,6 +24,7 @@ Date: 2023-09-22
     - Better RevLab graphics and smaller collision box.
   Locales:
     - Added Russion language / русский язык.
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2023-09-18

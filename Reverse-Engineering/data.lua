@@ -149,20 +149,30 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
 end
 
 
-data:extend{{
-  -- https://wiki.factorio.com/Prototype/Shortcut#small_icon
-  type = "shortcut",
-  name = "af-reverse-lab-worth",
-  localised_name = { "shortcut-name.af-reverse-lab-see-worth"},
-  localised_description = { "shortcut-description.af-reverse-lab-see-worth"},
-  -- associated_control_input = "__xyz__", TODO: add this?
-  order = "def",
-  action = "lua",
-  style = "blue",
-  icon = {
+data:extend{
+  {
+    type = "sprite",
+    name = "af-reverse-lab-worth",
     filename = "__Reverse-Engineering__/graphics/shortcut-worth.png",
-    size = 64,
-    scale = 1,
-    priority = "extra-high-no-scale",
+    width = 64, height = 64,
   },
-}}
+  {
+    -- https://wiki.factorio.com/Prototype/Shortcut#small_icon
+    type = "shortcut",
+    name = "af-reverse-lab-worth",
+    localised_name = { "shortcut-name.af-reverse-lab-see-worth"},
+    localised_description = { "shortcut-description.af-reverse-lab-see-worth"},
+    -- associated_control_input = "__xyz__", TODO: add this?
+    order = "def",
+    action = "lua",
+    style = "blue",
+    icon = {
+      filename = "__Reverse-Engineering__/graphics/shortcut-worth.png",
+      size = 64,
+      scale = 1,
+      priority = "extra-high-no-scale",
+    },
+  },
+}
+
+informatron_make_image("reveng-info", "__Reverse-Engineering__/graphics/info-expl.png", 1024, 512)

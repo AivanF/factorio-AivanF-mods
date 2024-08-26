@@ -1,11 +1,13 @@
 require("shared")
 require("utils")
 require("script.worth")
+
 local Lib = require("event_lib")
 local lib = Lib.new()
 
 local lab_update_rate = 30
 local base_name = "af-reverse-lab"
+
 
 local function correct_chests(rlab)
   rlab.center = rlab.center or rlab.surface.create_entity{
@@ -25,6 +27,7 @@ local function correct_chests(rlab)
     position={x=rlab.position.x+1, y=rlab.position.y+1},
   }
 end
+
 
 local function on_any_built(event)
   local entity = event.created_entity or event.entity or event.destination
@@ -53,6 +56,7 @@ local function on_any_built(event)
   end
 end
 
+
 local function safe_destroy_chest(entity)
   if not entity.valid then return end
   if entity.get_item_count() > 0 then
@@ -67,6 +71,7 @@ local function safe_destroy_chest(entity)
   end
   entity.destroy()
 end
+
 
 local function on_any_remove(event)
   if rlabs[event.entity.name] then
@@ -83,6 +88,7 @@ local function on_any_remove(event)
   end
 end
 
+
 local function try_add_pack(rlab, name, count)
   local pack = {name=name, count=count}
   if rlab.output_packs.can_insert(pack) then
@@ -92,6 +98,7 @@ local function try_add_pack(rlab, name, count)
   end
   return false
 end
+
 
 local function play_prob_small(rlab, item_info, prob)
   local done = false
@@ -113,6 +120,7 @@ local function play_prob_small(rlab, item_info, prob)
   return done
 end
 
+
 local function play_prob_big(rlab, item_info, prob)
   local done = false
   -- game.print("play_prob_big for "..item_info.item_name.." with prob="..prob)
@@ -128,13 +136,10 @@ local function play_prob_big(rlab, item_info, prob)
   return done
 end
 
+
 local function handle_input(rlab, item_info, prod_bonus)
   shuffle(item_info.ingredients)
-  local prob = item_info.prob * prod_bonus
-  local tech = rlab.force.technologies[item_info.tech_name]
-  if tech.researched then
-    prob = prob / 2
-  end
+  local prob = prob_for_force(item_info, rlab.force) * prod_bonus
   local done = false
   if prob <= #item_info.ingredients then
     done = play_prob_small(rlab, item_info, prob)
@@ -165,6 +170,7 @@ local function handle_input(rlab, item_info, prod_bonus)
   end
 end
 
+
 local function process_a_lab(rlab)
   if not rlab.input.valid then rlab.input = nil end
   if not rlab.output_packs.valid then rlab.output_packs = nil end
@@ -177,12 +183,10 @@ local function process_a_lab(rlab)
   end
 
   local grade_info = rlabs[rlab.grade]
-  local max_scale = grade_info.max_scale
-  local max_items = grade_info.max_items
-
+  local pcs_limit = grade_info.max_pcs
   local power_usage = 0
-  local items_done = 0
-  local item_info, pack, scale
+  local item_info, pack, pcs
+
   for item_name, have in pairs(rlab.input.get_inventory(defines.inventory.chest).get_contents()) do
     item_info = not global.add_ignore_items[item_name] and (global.add_override_items[item_name] or global.reverse_items[item_name])
 
@@ -192,20 +196,19 @@ local function process_a_lab(rlab)
       rlab.input.remove_item({name=item_name, count=done})
 
     elseif item_info then
-      scale = 1
-      scale = math.min(math.floor(have / item_info.need), max_scale)
-      power_usage = power_usage + scale
+      pcs = math.min(math.floor(have / item_info.need), pcs_limit)
+      pcs_limit = pcs_limit - pcs
+      power_usage = power_usage + pcs
       if true
         and have >= item_info.need
         and rlab.output_packs.get_inventory(defines.inventory.chest).count_empty_stacks() >= 1
       then
-        handle_input(rlab, item_info, scale * (grade_info.prod_bonus or 1) * settings.global["af-reverse-lab-prob-mult"].value)
-        rlab.input.remove_item({name=item_name, count=item_info.need*scale})
+        handle_input(rlab, item_info, pcs * (grade_info.prod_bonus or 1) * settings.global["af-reverse-lab-prob-mult"].value)
+        rlab.input.remove_item({name=item_name, count=item_info.need*pcs})
         local pollution_value = item_info.need * item_info.price *0.02
         rlab.surface.pollute(rlab.position, pollution_value)
         game.pollution_statistics.on_flow(grade_info.name, pollution_value)
-        items_done = items_done + 1
-        if items_done >= max_items then break end
+        if pcs_limit <= 0 then break end
       end
 
     else
@@ -214,9 +217,11 @@ local function process_a_lab(rlab)
       rlab.input.remove_item({name=item_name, count=done})
     end
   end
+
   -- A bit less ugly charts
   rlab.main.power_usage = rlab.main.power_usage * 0.7 + 0.3 * power_usage * grade_info.usage / 60
 end
+
 
 local function correct_global()
   if not global.scipacks then global.scipacks = {} end
@@ -228,6 +233,7 @@ local function correct_global()
     cache_data()
   end
 end
+
 
 local function process_labs()
   correct_global()
@@ -245,6 +251,7 @@ local function process_labs()
     end
   end
 end
+
 
 lib:on_event(defines.events.on_tick, process_labs)
 lib:on_any_built(on_any_built)
@@ -273,6 +280,17 @@ local interface = {
     global.add_override_items[item_name] = item_info
   end,
 }
+
+function reload_cache()
+  cache_data()
+  game.print("Reverse Engineering cache reloaded")
+end
+
+commands.add_command(
+  "reveng-recache",
+  "Recalculate cache of items costs",
+  reload_cache
+)
 
 if not remote.interfaces["reverse_labs"] then
   remote.add_interface("reverse_labs", interface)
