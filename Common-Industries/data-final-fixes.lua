@@ -36,7 +36,7 @@ for short_name, item_info in pairs(bridge.item) do
   bridge.preprocess(item_info)
   if added[short_name] then return end
   -- Check item is materialised and handled by the Bridge
-  if data.raw.item[item_info.name] and bridge.is_new(item_info.name) then
+  if data.raw.item[item_info.name] and bridge.is_bridge_name(item_info.name) then
     prereq = get_pre(item_info.prereq)
     prerequisite = item_info.prerequisite
     if prerequisite and prereq and prereq ~= bridge.empty then

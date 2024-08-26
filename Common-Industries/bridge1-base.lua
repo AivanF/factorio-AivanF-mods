@@ -14,7 +14,7 @@ function table.get_keys(t)
 end
 
 local bridge = {
-  setup = {},
+  setup_tech = {},
   get = {},
 }
 afci_bridge = bridge
@@ -139,7 +139,7 @@ for _, mod_info in pairs(bridge.mods_list) do
   bridge.mods[mod_info.short_name] = mod_info
 end
 
-function bridge.is_new(name)
+function bridge.is_bridge_name(name)
   return name:find(bridge.prefix, 1, true)
 end
 
@@ -194,7 +194,7 @@ function bridge.preprocess(obj_info)
     if bridge.have_required_mod(specialised.mod) then
       table.merge(obj_info, specialised)
       bridge.preprocessed[obj_info.short_name] = true
-      obj_info.updated = bridge.is_new(obj_info.name) and "adjusted" or "replaced"
+      obj_info.updated = bridge.is_bridge_name(obj_info.name) and "adjusted" or "replaced"
       log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
       if not specialised.continue then
         return obj_info

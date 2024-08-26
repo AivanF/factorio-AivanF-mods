@@ -132,7 +132,7 @@ add_item({
   prereq = prerequisite,
   subgroup = subgroup,
   ingredients = {
-    { "copper-cable", 4 },
+    -- { "copper-cable", 4 },
     { bridge.item.glass, 1 },
     { "plastic-bar", 1 }
   },

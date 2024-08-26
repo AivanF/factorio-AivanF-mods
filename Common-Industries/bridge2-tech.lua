@@ -134,14 +134,14 @@ add_tech({
 })
 
 
--- Generate tech API, `bridge.setup[short_name]()` returns research name
+-- Generate tech API, `bridge.setup_tech[short_name]()` returns research name
 for _, tech_info in pairs(bridge.tech) do
-  bridge.setup[tech_info.short_name] = function()
+  bridge.setup_tech[tech_info.short_name] = function()
     if tech_info.done then
       return tech_info.name
     end
     bridge.preprocess(tech_info)
-    if bridge.is_new(tech_info.name) then
+    if bridge.is_bridge_name(tech_info.name) then
       log(bridge.log_prefix.."creating tech "..tech_info.short_name)
       data:extend({{
         name = tech_info.name,
@@ -165,8 +165,8 @@ for _, tech_info in pairs(bridge.tech) do
       }})
       tech_info.done = true
       for _, prereq in pairs(tech_info.prerequisites or {}) do
-        if bridge.is_new(prereq) then
-          bridge.setup[bridge.tech[prereq].short_name]()
+        if bridge.is_bridge_name(prereq) then
+          bridge.setup_tech[bridge.tech[prereq].short_name]()
         end
       end
     end

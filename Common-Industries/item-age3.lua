@@ -437,7 +437,7 @@ add_item({
   prereq = prerequisite,
   subgroup = subgroup,
   ingredients = {
-    {bridge.item.optic_cable, 3},
+    {bridge.item.optic_cable, 2},
     {"advanced-circuit", 1},
   },
   energy_required = 10,
@@ -452,7 +452,7 @@ add_item({
     {
       mod = bridge.mods.k2,
       ingredients = {
-        {bridge.item.optic_cable, 3},
+        {bridge.item.optic_cable, 2},
         {"quartz", 1},
         {"advanced-circuit", 1},
       },

@@ -28,6 +28,16 @@ if mods[shared.SE] then
     {"utility-science-pack", 10},
     {"production-science-pack", 10},
   }
+
+elseif mods[shared.K2] then
+  ingredients = {
+    { "production-science-pack", 10 },
+    { "utility-science-pack", 10 },
+    { "space-science-pack", 10 },
+    { "matter-tech-card", 10 },
+    { "advanced-tech-card", 10 },
+    { "singularity-tech-card", 10 },
+  }
 end
 
 data:extend({

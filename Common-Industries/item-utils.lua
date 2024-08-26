@@ -4,8 +4,9 @@ local bridge = require("bridge2-tech")
 bridge.item = {}
 local ordered = 0
 
--- Generate items API, `bridge.get[short_name]()` returns item_info
--- TODO: add recipe_anyway flag
+-- TODO: make recipe_anyway flag to add new recipe even if item and recipe already exist?
+
+-- Generate items API, so that `bridge.get[short_name]()` returns item_info
 function bridge.add_item(item_info)
   ordered = ordered + 1
 
@@ -32,12 +33,12 @@ function bridge.add_item(item_info)
 
     -- Materialize required components if needed
     local ing_info
-    if bridge.is_new(item_info.name) then
+    if bridge.is_bridge_name(item_info.name) then
       for _, row in pairs(item_info.ingredients) do
         -- Array style, and 1st is an item_info
         if row[1] and row[1].is_bridge_item then
           ing_info = row[1]
-          if bridge.is_new(ing_info.name) then
+          if bridge.is_bridge_name(ing_info.name) then
             ing_info.data_getter()
           end
           row[1] = ing_info.name
@@ -45,7 +46,7 @@ function bridge.add_item(item_info)
         -- Dict style, and name is an item_info
         if row.name and row.name.is_bridge_item then
           ing_info = row.name
-          if bridge.is_new(ing_info.name) then
+          if bridge.is_bridge_name(ing_info.name) then
             ing_info.data_getter()
           end
           row[1] = ing_info.name
@@ -58,17 +59,18 @@ function bridge.add_item(item_info)
       -- Prerequisite can be a string or another item
       -- If so, let's recursively preprocess it and take its prerequisite
       ing_info = item_info.prereq
-      if bridge.is_new(ing_info.name) then
+      if bridge.is_bridge_name(ing_info.name) then
         ing_info.data_getter()
       end
       item_info.prereq = ing_info.prereq
     end
+
     -- Materialize required tech research if needed
-    if item_info.prerequisite and bridge.is_new(item_info.prerequisite) then
-      bridge.setup[bridge.tech[item_info.prerequisite].short_name]()
+    if item_info.prerequisite and bridge.is_bridge_name(item_info.prerequisite) then
+      bridge.setup_tech[bridge.tech[item_info.prerequisite].short_name]()
     end
-    -- if bridge.is_new(item_info.prereq) then
-    --   bridge.setup[bridge.tech[item_info.prereq].short_name]()
+    -- if bridge.is_bridge_name(item_info.prereq) then
+    --   bridge.setup_tech[bridge.tech[item_info.prereq].short_name]()
     -- end
 
     -- Adjust results
@@ -79,7 +81,7 @@ function bridge.add_item(item_info)
     -- TODO: remove ores/scrap+sludge(SE)/slag(248k) if related startup setting is set
 
     -- Make actual item + recipe
-    if bridge.is_new(item_info.name) then
+    if bridge.is_bridge_name(item_info.name) then
       if data and data.raw and not data.raw.item[item_info.name] then
         log(bridge.log_prefix.."creating item "..item_info.short_name)
         data:extend({
@@ -108,7 +110,7 @@ function bridge.add_item(item_info)
           },
         })
         -- Note: tech research effects are added in data-final-fixes
-        if item_info.builder and bridge.is_new(item_info.builder) then
+        if item_info.builder and bridge.is_bridge_name(item_info.builder) then
           -- TODO: materialize builder entity; maybe it's better to consider crafting category
         end
       end
@@ -149,8 +151,8 @@ Ingredients names and prerequisite can be set as another
 previously defined item_info via `bridge.item.NAME`
 
 The modded sections should either:
-1. Replace item specifying `name` + `prerequisite`
-2. Adjust recipe specifying anything fields excepting name
+1. Replace item specifying `name` + `prereq`
+2. Adjust recipe specifying any fields except `name`
 
 If ingredients of an item already replaced/adjusted for other mods,
 there may be no need to replace item name or adjust ingredients,
