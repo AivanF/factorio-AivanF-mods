@@ -299,7 +299,7 @@ lib_asmb:on_event(defines.events.on_gui_elem_changed, function(event)
   elseif event.element.tags.action == act_set_weapon then
     assembler.weapon_recipes[event.element.tags.k] = event.element.elem_value
   end
-  update_assembler_guis(assembler)
+  lib_asmb.update_assembler_guis(assembler)
 end)
 
 

@@ -17,6 +17,7 @@ lamp.max_health = 10000
 lamp.resistances = technomagic_resistances
 lamp.flags = special_flags
 lamp.selectable_in_game = false
+lamp.minable = nil
 lamp.collision_mask = {}
 lamp.energy_source = { type = "void" }
 lamp.next_upgrade = nil
@@ -36,6 +37,7 @@ comb.activity_led_sprites = misc.empty_sprite
 comb.fast_replaceable_group = nil
 comb.circuit_wire_max_distance = 16
 comb.item_slot_count = shared.bunker_comb_size
+comb.minable = nil
 data:extend({ comb })
 
 local idle_sprite = {
