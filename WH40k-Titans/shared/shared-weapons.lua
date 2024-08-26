@@ -18,9 +18,25 @@ shared.huge_bolt = shared.mod_prefix.."bolt-huge"
 shared.laser_ammo   = "battery"
 shared.flamer_ammo  = "flamethrower-ammo"
 shared.melta_ammo   = "rocket-fuel"
-shared.hell_ammo    = "nuclear-fuel"
+shared.hell_ammo    = shared.mod_prefix.."hellstorm-ammo"
 shared.missile_ammo = "explosive-rocket"
 shared.plasma_ammo  = shared.bridge_prefix.."plasma-fuel"
+
+shared.ammo_weights = {
+  [shared.big_bolt] = 1,
+  [shared.huge_bolt] = 2,
+  [shared.laser_ammo] = 1,
+  [shared.flamer_ammo] = 1,
+  [shared.melta_ammo] = 1,
+  [shared.hell_ammo] = 3,
+  [shared.missile_ammo] = 1,
+  [shared.plasma_ammo] = 2,
+}
+
+shared.ammo_list = {
+  shared.big_bolt, shared.huge_bolt, shared.flamer_ammo, shared.laser_ammo,
+  shared.missile_ammo, shared.plasma_ammo, shared.melta_ammo, shared.hell_ammo,
+}
 
 --------- Titan weapon scaling
 -- Specified size also allows to use 1 grade lower

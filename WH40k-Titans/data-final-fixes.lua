@@ -34,3 +34,8 @@ for _, titan_type in ipairs(shared.titan_type_list) do
 		remove_recipe_effect(tech.effects, obj.name)
 	end
 end
+
+-- Allow turret equipment items be placed into Titans
+for name, obj in pairs(data.raw["active-defense-equipment"]) do
+  table.append(obj.categories, shared.equip_cat)
+end

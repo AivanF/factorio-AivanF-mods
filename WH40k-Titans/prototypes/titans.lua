@@ -19,6 +19,7 @@ end
 for _, titan_type in ipairs(shared.titan_type_list) do
   local name = titan_type.entity
   local class = titan_type.class
+  local class_precise = math.floor(titan_type.class/10)
   local icon = titan_type.icon
   local icon_size = titan_type.icon_size
   local icon_mipmaps = titan_type.icon_mipmaps
@@ -40,7 +41,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       name = name,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       subgroup = shared.subg_titans,
-      order = "b[dummy-titan-item-"..class.."]",
+      order = "c[dummy-titan-item-"..class.."]",
       place_result = place_result,
       stack_size = 1,
     },
@@ -51,9 +52,9 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       localised_description = description,
       icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
       subgroup = shared.subg_titans,
-      order = "b[dummy-titan-item-"..class.."]",
+      order = "c[dummy-titan-item-"..class.."]",
       enabled = false,
-      category = shared.craftcat_titan..math.floor(titan_type.class/10),
+      category = shared.craftcat_titan..class_precise,
       ingredients = shared.preprocess_recipe(titan_type.ingredients),
       -- results = minable_titans and {{name, 1}} or {},
       results = {{name, 1}},
@@ -67,12 +68,13 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       flags = {
         "placeable-neutral", "player-creation", "placeable-off-grid",
         "no-automated-item-removal", "no-automated-item-insertion",
+        "not-repairable",
       },
       minable = minable_titans and {mining_time = 1.5, result = name} or nil,
       energy_per_hit_point = 0.05,
       max_health = titan_type.health,
       minimap_representation = {
-        filename = shared.media_prefix.."graphics/icons/titan-map.png",
+        filename = shared.media_prefix.."graphics/icons/map-titan.png",
         width = 64,
         height = 80,
       },
@@ -112,7 +114,9 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       friction = 0.05,
       breaking_speed = 0.1,
       rotation_speed = (titan_type.class < shared.class_reaver) and 0.005 or 0.004,
+      repair_speed_modifier = 0.5,
 
+      equipment_grid = shared.mod_prefix.."t"..class_precise,
       inventory_size = math.ceil(20 * titan_type.class/10),
       chunk_exploration_radius = math.ceil(1 + titan_type.class/10),
       -- render_layer = "air-object",
@@ -210,7 +214,7 @@ data:extend({
     name = shared.titan_aux_laser,
     icon = "__base__/graphics/icons/laser-turret.png",
     icon_size = 64, icon_mipmaps = 4,
-    flags = {"placeable-neutral", "placeable-off-grid"},
+    flags = {"placeable-neutral", "placeable-off-grid", "hidden"},
     max_health = 10000,
     resistances = technomagic_resistances,
     selectable_in_game = false,

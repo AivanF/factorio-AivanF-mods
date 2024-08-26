@@ -1,4 +1,3 @@
-require("script/common")
 local Lib = require("script/event_lib")
 local lib = Lib.new()
 local lib_tech = require("script/tech")

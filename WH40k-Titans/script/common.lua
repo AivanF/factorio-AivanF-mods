@@ -108,16 +108,6 @@ function point_orientation_shift(ori, oris, length)
   return {length*math.cos(ori), -length*math.sin(ori)}
 end
 
-function math.clamp(v, mn, mx)
-  return math.max(math.min(v, mx), mn)
-end
-
-function table.extend(ar1, ar2)
-  for _, v in pairs(ar2) do
-    table.insert(ar1, v)
-  end
-end
-
 function die_all(list, global_storage)
   for _, special_entity in pairs(list) do
     if special_entity.valid then
@@ -144,6 +134,10 @@ function is_titan(name)
   return name:find(shared.titan_prefix, 1, true)
 end
 
+function is_supplier(name)
+  return name:find(shared.aircraft_supplier, 1, true)
+end
+
 function list_players(values)
   -- values is a list of player/character/nil
   local result = {}
@@ -157,4 +151,25 @@ function list_players(values)
     end
   end
   return result
+end
+
+function position_scatter(source, scatter)
+  return math2d.position.add(
+    source, {math.random(-scatter, scatter), math.random(-scatter, scatter)}
+  )
+end
+
+function show_ammo_transfer(entity_from, entity_to, ammo_name, ammo_count, scatter)
+  entity_to.surface.create_entity{
+    name="flying-text", position=position_scatter(entity_to.position, scatter),
+    -- text="[item="..ammo_name.."]",
+    text={"item-name."..ammo_name},
+  }
+
+  entity_from.surface.create_entity{
+    name = shared.item_proj,
+    position = entity_from.position,
+    target = position_scatter(entity_to.position, scatter),
+    speed = 0.2 + math.random() * 0.3,
+  }
 end

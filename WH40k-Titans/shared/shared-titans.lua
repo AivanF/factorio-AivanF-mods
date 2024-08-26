@@ -39,20 +39,24 @@ shared.rl_track = 122
 shared.rl_foot = 124 -- ="lower-object"
 
 --- Above aircrafts and projectiles, bad for shoulder weapons
-shared.rl_shadow = 144
-shared.rl_arm = 169
-shared.rl_body = 170
-shared.rl_shoulder = 171
-shared.rl_shield = 172
+-- shared.rl_shadow = 144
+-- shared.rl_arm = 169
+-- shared.rl_body = 170
+-- shared.rl_shoulder = 171
+-- shared.rl_shield = 172
 
 --- Under aircrafts, projectiles, explosions, bad for non-shoudler weapons
--- shared.rl_shadow = 136 -- ="wires-above"
--- shared.rl_arm = 139
--- shared.rl_body = 140
--- shared.rl_shoulder = 141
--- shared.rl_shield = 145
+shared.rl_shadow = 136 -- ="wires-above"
+shared.rl_arm = 139
+shared.rl_body = 140
+shared.rl_shoulder = 141
+shared.rl_shield = 145
 
 shared.titan_base_type = "car"
+shared.titan_breakable_details = {
+  [shared.motor] = true,
+  [shared.frame_part] = true,
+}
 
 shared.titan_type_list = {
   {
@@ -60,6 +64,7 @@ shared.titan_type_list = {
     class = shared.class_warhound,
     dst = 1, dmg = 1, spd = 12,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 1},
       {shared.servitor,    1},
       {shared.void_shield, 1},
@@ -90,6 +95,7 @@ shared.titan_type_list = {
     class = shared.class_direwolf,
     dst = 1, dmg = 1, spd = 10,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 2},
       {shared.servitor,    1},
       {shared.void_shield, 1},
@@ -121,6 +127,7 @@ shared.titan_type_list = {
     class = shared.class_reaver,
     dst = 1.25, dmg = 1.25, spd = 9,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 3},
       {shared.servitor,    2},
       {shared.void_shield, 2},
@@ -153,6 +160,7 @@ shared.titan_type_list = {
     class = shared.class_warlord,
     dst = 1.5, dmg = 1.5, spd = 8,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 5},
       {shared.servitor,    4},
       {shared.void_shield, 4},
@@ -187,6 +195,7 @@ shared.titan_type_list = {
     class = shared.class_warmaster,
     dst = 1.75, dmg = 1.75, spd = 7,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 7},
       {shared.servitor,    6},
       {shared.void_shield, 6},
@@ -223,6 +232,7 @@ shared.titan_type_list = {
     class = shared.class_imperator,
     dst = 2, dmg = 2, spd = 7,
     ingredients = {
+      {shared.bci,         1},
       {shared.energy_core, 15},
       {shared.servitor,    12},
       {shared.void_shield, 12},
@@ -261,6 +271,7 @@ shared.titan_type_list = {
   --   class = shared.class_warmonger,
   --   dst = 2, dmg = 2, spd = 6,
   --   ingredients = {
+  --     {shared.bci,          1},
   --     {shared.energy_core, 15},
   --     {shared.servitor,    12},
   --     {shared.void_shield, 10},

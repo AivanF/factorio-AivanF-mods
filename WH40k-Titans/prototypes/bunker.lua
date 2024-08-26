@@ -264,7 +264,11 @@ data:extend({
       module_slots = 0,
     },
     crafting_speed = 0.01,
-    crafting_categories = {shared.craftcat_empty},
+    crafting_categories = {
+      shared.craftcat_empty,
+      shared.craftcat_titan.."1", shared.craftcat_titan.."2", shared.craftcat_titan.."3",
+      shared.craftcat_titan.."4", shared.craftcat_titan.."5",
+    },
     energy_source = { type = "void" },
     energy_usage = "1W",
   },

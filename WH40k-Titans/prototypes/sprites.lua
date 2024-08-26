@@ -27,6 +27,21 @@ for _, titan_type in ipairs(shared.titan_type_list) do
 end
 
 data:extend({
+  {
+    type = "projectile",
+    name = shared.item_proj,
+    acceleration = 0.02,
+    light = {intensity = 0.1, size = 10},
+    animation = {
+        -- filename = "__base__/graphics/icons/coin.png",
+        -- width = 32, height = 32,
+        filename = shared.media_prefix.."graphics/icons/details/projectile-engine.png",
+        width = 64, height = 64, scale = 0.5,
+        frame_count = 1,
+    },
+    speed = 0.05
+  },
+
   -- https://wiki.factorio.com/Prototype/Sprite
   -- https://lua-api.factorio.com/latest/Concepts.html#SpritePath
   {

@@ -1,5 +1,6 @@
-local lib_titan = require("script/titan")
-local lib_assemble = require("script/assemble")
+local lib_ttn = require("script/titan")
+local lib_spl = require("script/supplier")
+local lib_asmb = require("script/assemble")
 local lib_ruins = require("script/ruins")
 local lib_exc = require("script/exc")
 local lib_tech = require("script/tech")
@@ -25,6 +26,10 @@ local blank_ctrl_data = {
   excavator_buckets = {}, -- unit_number => bucket => exc_info
   excavator_index = {}, -- unit_number => exc_info
 
+  supplier_buckets = {}, -- unit_number => bucket => supplier_info
+  supplier_index = {}, -- unit_number => supplier_info
+  supplier_gui = {},
+
   researches = {}, -- force_index => tech_name => level
 }
 ctrl_data = table.deepcopy(blank_ctrl_data)
@@ -34,11 +39,13 @@ local function on_any_built(event)
   local entity = event.created_entity or event.entity or event.destination
   if not (entity and entity.valid) then return end
   if is_titan(entity.name) then
-    lib_titan.register_titan(entity)
+    lib_ttn.register_titan(entity)
   elseif entity.name == shared.bunker_minable then
-    lib_assemble.register_bunker(entity)
+    lib_asmb.register_bunker(entity)
   elseif entity.name == shared.excavator then
     lib_exc.register_excavator(entity)
+  elseif is_supplier(entity.name) then
+    lib_spl.register_supplier(entity)
   end
 end
 
@@ -57,26 +64,49 @@ local function on_any_remove(event)
   if ctrl_data.titans[unit_number] then
     local titan_info = ctrl_data.titans[unit_number]
     if event.name == defines.events.on_entity_died then
-      lib_titan.titan_death(titan_info)
+      lib_ttn.titan_death(titan_info)
     end
-    remove_titan_gui_by_titan(titan_info)
+    lib_ttn.remove_titan_gui_by_titan(titan_info)
     die_all(titan_info.foots)
     ctrl_data.titans[unit_number] = nil
+  end
+
+  if ctrl_data.supplier_index[unit_number] then
+    lib_spl.supplier_removed(unit_number)
   end
 
   if ctrl_data.excavator_index[unit_number] then
     lib_exc.excavator_removed(unit_number)
   end
+
   if ctrl_data.ruins[unit_number] then
     lib_ruins.ruin_removed(unit_number)
   end
 
-  if event.name ~= defines.events.script_raised_destroy and ctrl_data.assembler_index[unit_number] then
-    lib_assemble.bunker_removed(ctrl_data.assembler_index[unit_number])
+  if ctrl_data.assembler_index[unit_number] then
+    if event.name ~= defines.events.script_raised_destroy then
+      lib_asmb.bunker_removed(ctrl_data.assembler_index[unit_number])
+    end
+    ctrl_data.assembler_index[unit_number] = nil
   end
-
-  ctrl_data.assembler_index[unit_number] = nil
 end
+
+
+remote.add_interface(shared.titan_prefix.."main", {
+  on_entity_replaced = function(data)
+    -- AAI Programmable Vehicles integration
+
+    -- game.print("Titans.on_entity_replaced: "..serpent.line(data))
+
+    if ctrl_data.titans[data.old_entity.unit_number] then
+      lib_ttn.titan_entity_replaced(data.old_entity, data.new_entity)
+    end
+
+    if ctrl_data.supplier_index[data.old_entity.unit_number] then
+      lib_spl.supplier_entity_replaced(data.old_entity, data.new_entity)
+    end
+  end,
+})
 
 
 local function total_reload()
@@ -89,18 +119,18 @@ local function total_reload()
   for _, surface in pairs(game.surfaces) do
     for _, titan_class in pairs(shared.titan_types) do
       for _, entity in pairs (surface.find_entities_filtered{name=titan_class.entity}) do
-        lib_titan.register_titan(entity)
+        lib_ttn.register_titan(entity)
         titan_count = titan_count + 1
       end
     end
 
     for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker_minable}) do
-      lib_assemble.register_bunker(entity)
+      lib_asmb.register_bunker(entity)
       bunker_count = bunker_count + 1
     end
 
     for _, entity in pairs (surface.find_entities_filtered{name=shared.bunker_active}) do
-      lib_assemble.register_bunker(entity)
+      lib_asmb.register_bunker(entity)
       bunker_count = bunker_count + 1
     end
 
@@ -140,7 +170,7 @@ local function on_init()
 end
 
 local function on_load()
-  log("WH40k_Titans.on_load: "..serpent.block(global.ctrl_data))
+  -- log("WH40k_Titans.on_load: "..serpent.block(global.ctrl_data))
   ctrl_data = global.ctrl_data
   preprocess_ingredients()
 end

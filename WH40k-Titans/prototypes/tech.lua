@@ -56,7 +56,6 @@ local tech_researches = {
       },
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."assembly",
@@ -77,7 +76,6 @@ local tech_researches = {
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."production",
@@ -91,6 +89,7 @@ local tech_researches = {
     },
     effects = {
       -- Body parts
+      { type = "unlock-recipe", recipe = afci_bridge.get.bci().name },
       { type = "unlock-recipe", recipe = shared.servitor },
       { type = "unlock-recipe", recipe = shared.brain },
       { type = "unlock-recipe", recipe = shared.energy_core },
@@ -110,6 +109,7 @@ local tech_researches = {
     },
     prerequisites = afci_bridge.clean_prerequisites{
       shared.mod_prefix.."base",
+      afci_bridge.get.bci().prerequisite,
       afci_bridge.get.emfc().prerequisite,
       afci_bridge.get.he_emitter().prerequisite,
       afci_bridge.get.ehe_emitter().prerequisite,
@@ -120,7 +120,6 @@ local tech_researches = {
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
 
 
@@ -138,11 +137,10 @@ local tech_researches = {
     effects = get_titan_effects(1),
     prerequisites = {shared.mod_prefix.."assembly"},
     unit = {
-      count = 10,
+      count = 20,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."2-class",
@@ -157,11 +155,10 @@ local tech_researches = {
     effects = get_titan_effects(2),
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
-      count = 50,
+      count = 100,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."3-class",
@@ -176,11 +173,10 @@ local tech_researches = {
     effects = get_titan_effects(3),
     prerequisites = {shared.mod_prefix.."2-class"},
     unit = {
-      count = 150,
+      count = 250,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."4-class",
@@ -195,11 +191,10 @@ local tech_researches = {
     effects = get_titan_effects(4),
     prerequisites = {shared.mod_prefix.."3-class"},
     unit = {
-      count = 350,
+      count = 500,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."5-class",
@@ -214,11 +209,10 @@ local tech_researches = {
     effects = get_titan_effects(5),
     prerequisites = {shared.mod_prefix.."4-class"},
     unit = {
-      count = 500,
+      count = 1000,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
 
 
@@ -237,11 +231,10 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_small),
     prerequisites = {shared.mod_prefix.."1-class"},
     unit = {
-      count = 1,
+      count = 5,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."1-grade",
@@ -256,11 +249,10 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_medium),
     prerequisites = {shared.mod_prefix.."0-grade"},
     unit = {
-      count = 15,
+      count = 25,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."2-grade",
@@ -279,7 +271,6 @@ local tech_researches = {
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
   {
     name = shared.mod_prefix.."3-grade",
@@ -294,11 +285,10 @@ local tech_researches = {
     effects = get_weapon_effects(shared.gun_grade_huge),
     prerequisites = {shared.mod_prefix.."2-grade", shared.mod_prefix.."5-class"},
     unit = {
-      count = 300,
+      count = 500,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
   },
 
 
@@ -318,6 +308,7 @@ local tech_researches = {
       { type = "unlock-recipe", recipe = shared.big_bolt },
       { type = "unlock-recipe", recipe = shared.huge_bolt },
       { type = "unlock-recipe", recipe = shared.plasma_ammo },
+      { type = "unlock-recipe", recipe = shared.hell_ammo },
     },
     prerequisites = {shared.mod_prefix.."0-grade"},
     unit = {
@@ -325,7 +316,33 @@ local tech_researches = {
       ingredients = {{shared.sp, 1}},
       time = 60
     },
-    order = name
+  },
+
+
+
+  ------- AirCraft
+  {
+    name = shared.mod_prefix.."aircraft-supplier",
+    type = "technology",
+    icons = {
+      {
+      icon = shared.media_prefix.."graphics/tech/aircraft-supplier.png",
+      icon_size = 256,
+      icon_mipmaps = 1,
+      }
+    },
+    effects = {
+      { type = "unlock-recipe", recipe = shared.mod_prefix.."aircraft-supplier" },
+    },
+    prerequisites = {
+      shared.mod_prefix.."1-class",
+      afci_bridge.get.rocket_engine().prerequisite,
+    },
+    unit = {
+      count = 50,
+      ingredients = {{shared.sp, 1}},
+      time = 60
+    },
   },
 }
 

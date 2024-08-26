@@ -1,397 +1,10 @@
-require("script/common")
 local lib_ruins = require("script/ruins")
+local collision_mask_util_extended = require("cmue.collision-mask-util-control")
+
 local Lib = require("script/event_lib")
-local lib = Lib.new()
-
-local shield_fill_time = 180 * UPS
-local order_ttl = 5 * UPS
-local gui_update_rate = 9
-local visual_ttl = 2
-
-local max_oris = { -- titan cannon max orientation shift
-  0.15, 0.15,
-  0.4, 0.4,
-  0.2, 0.2,
-}
+lib_ttn = Lib.new()
 
 local titan_explo_bolt = shared.mod_prefix.."bolt-plasma-3"
-
-
-
------ Weapons -----
-
-local function init_gun(name, weapon_type)
-  weapon_type = weapon_type or shared.weapons[name]
-  return  {
-    name = weapon_type.name,
-    cd = 0,
-    oris = 0, -- orientation shift of the cannon
-    target = nil, -- LuaEntity or position
-    ordered = 0, -- task creation tick for expiration
-    gun_cd = 0,
-    attack_number = 0, -- from weapon_type.attack_size
-    ammo_count = weapon_type.inventory,
-    ai = false,
-  }
-end
-lib.init_gun = init_gun
-
-
-local function calc_max_dst(titan_type, k, weapon_type)
-  return weapon_type.max_dst * (1 + 0.01*titan_type.class)
-end
-
-
-local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, target)
-  if weapon_type.bolt_type == nil then
-    error("Weapon "..weapon_type.name.." has no bolt type!")
-  end
-  local speed = weapon_type.speed or 10
-  local barrel = weapon_type.barrel or 12
-  if weapon_type.category == shared.wc_flamer then
-    source = math2d.position.add(source, {math.random(-1, 1), math.random(-1, 1)})
-  end
-  if barrel > 0 then
-    source = math2d.position.add(source, point_orientation_shift(entity.orientation, cannon.oris, barrel))
-  end
-  entity.surface.create_entity{
-    name=weapon_type.bolt_type.entity, force=entity.force,
-    position=source, source=source, target=target, speed=speed,
-  }
-end
-
-
-local function opt_play(entity, sound)
-  if not sound then return end
-  entity.surface.play_sound{
-    path=sound,
-    position=entity.position, volume_modifier=1
-  }
-end
-
-
-local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
-  -- TODO: add some time before attack
-  -- TODO: calculate gun muzzle position
-  if (cannon.attack_number or 0) >= 1 then
-    cannon.attack_number = cannon.attack_number - 1
-  elseif weapon_type.attack_size > 1 then
-    cannon.attack_number = (weapon_type.attack_size-1) or 0
-    opt_play(entity, weapon_type.attack_start_sound)
-  end
-  cannon.ammo_count = math.max(0, cannon.ammo_count - weapon_type.per_shot)
-  local target = cannon.target
-  if (weapon_type.scatter or 0) > 0 then
-    target = math2d.position.add(target, {
-      math.random(-weapon_type.scatter, weapon_type.scatter),
-      math.random(-weapon_type.scatter, weapon_type.scatter)})
-  end
-  attacker(entity, titan_type, cannon, weapon_type, gunpos, target)
-  cannon.gun_cd = tick + weapon_type.cd * UPS
-  -- log("gun_do_attack name: "..cannon.name..", attack_number: "..cannon.attack_number)
-
-  opt_play(entity, weapon_type.attack_sound)
-
-  if (cannon.attack_number or 0) <= 0 then
-    cannon.target = nil
-    cannon.attack_number = 0
-    cannon.when_can_rotate = tick + 90*weapon_type.grade
-  else
-    cannon.ordered = tick
-  end
-end
-
-
-local function control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
-  if cannon.target ~= nil and tick < cannon.ordered + order_ttl then
-    local dst = math2d.position.distance(gunpos, cannon.target)
-    if cannon.gun_cd < tick and dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type) then
-      gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
-    end
-
-  else
-    cannon.target = nil
-  end
-end
-
-
-local function control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
-  if cannon.target ~= nil and tick < cannon.ordered + order_ttl then
-    -- TODO: check if target is a LuaEntity
-    local tori = points_to_orientation(gunpos, cannon.target)
-    local orid = orientation_diff(ori+cannon.oris, tori)
-    cannon.oris = cannon.oris + (0.04-0.005*weapon_type.grade)*orid
-    cannon.oris = math.clamp(cannon.oris, -max_oris[k], max_oris[k])
-    local dst = math2d.position.distance(gunpos, cannon.target)
-
-    if true
-      and math.abs(orid) < 0.015
-      and cannon.gun_cd < tick
-      and dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type)
-    then
-      gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
-    end
-
-  else
-    cannon.target = nil
-    if (cannon.when_can_rotate or 0) < tick then
-      -- Smoothly remove oris
-      if math.abs(cannon.oris) > 0.005 then
-        cannon.oris = cannon.oris * 0.95
-      else
-        cannon.oris = 0
-      end
-    end
-  end
-end
-
-
-local function control_beam_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
-  control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
-end
-
-local function control_bolt_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
-  control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
-end
-
-local function control_rocket_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
-  control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
-end
-
-local function control_melta_gun(cannon, weapon_type, entity, ori, tick)
-  control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
-end
-
-local wc_control = {}
-wc_control[shared.wc_rocket] = control_rocket_gun
-wc_control[shared.wc_bolter] = control_bolt_gun
-wc_control[shared.wc_quake]  = control_bolt_gun
-wc_control[shared.wc_flamer] = control_bolt_gun
-wc_control[shared.wc_plasma] = control_bolt_gun
-wc_control[shared.wc_melta]  = control_melta_gun
-wc_control[shared.wc_laser]  = control_beam_gun
-wc_control[shared.wc_hell]   = control_beam_gun
-
-local wc_color = {}
-wc_color[shared.wc_rocket] = color_ltgrey
-wc_color[shared.wc_bolter] = color_dkgrey
-wc_color[shared.wc_quake]  = color_dkgrey
-wc_color[shared.wc_flamer] = color_orange
-wc_color[shared.wc_plasma] = color_blue
-wc_color[shared.wc_melta]  = color_cyan
-wc_color[shared.wc_laser]  = color_gold
-wc_color[shared.wc_hell]   = color_red
--- wc_color[shared.wc_gravy]  = color_purple
--- wc_color[shared.wc_warpm]  = color_green
-
-
-
------ Visual Interface -----
--- https://lua-api.factorio.com/latest/classes/LuaGuiElement.html
-
-local main_frame_name = "wh40k_titans_main_frame"
-local action_toggle_ammo_count = "titan_toggle_ammo_count"
-local action_toggle_gun_mod = "titan_toggle_gun_mod"
-local action_zoom_out = "titan_zoom_out"
-
-local function remove_titan_gui_by_player(player)
-  if ctrl_data.titan_gui[player.index] then
-    ctrl_data.titan_gui[player.index].main_frame.destroy()
-    ctrl_data.titan_gui[player.index] = nil
-  end
-end
-
-function remove_titan_gui_by_titan(titan_info)
-  for _, obj in pairs(ctrl_data.titan_gui) do
-    if obj.titan_info == titan_info then
-      remove_titan_gui_by_player(obj.player)
-    end
-  end
-end
-
-local function create_titan_gui(player, titan_info)
-  if ctrl_data.titan_gui[player.index] then
-    if ctrl_data.titan_gui[player.index].titan_info == titan_info then
-      -- The required GUI already exists
-      return
-    else
-      -- Some wrong GUI exists
-      remove_titan_gui_by_player(player)
-    end
-  end
-
-  ctrl_data.by_player[player.index] = ctrl_data.by_player[player.index] or {}
-  local player_settings = ctrl_data.by_player[player.index]
-  player_settings.guns = player_settings.guns or {}
-
-  local guiobj = {
-    player = player,
-    titan_info = titan_info,
-    guns = {},
-  }
-  ctrl_data.titan_gui[player.index] = guiobj
-  if player.gui.screen[main_frame_name] then
-    player.gui.screen[main_frame_name].destroy()
-  end
-  guiobj.main_frame = player.gui.screen.add{
-    type="frame", name=main_frame_name, caption={"WH40k-Titans-gui.titan-dashboard-title"},
-    direction="horizontal",
-  }
-  -- guiobj.main_frame.style.size = {340, 180}
-  guiobj.main_frame.style.minimal_width = 200
-  guiobj.main_frame.style.maximal_width = 480
-  -- guiobj.main_frame.style.minimal_height = 128
-  -- guiobj.main_frame.style.maximal_height = 320
-
-  -- guiobj.main_frame.auto_center = true
-  player.opened = guiobj.main_frame
-
-  guiobj.weapon_table = guiobj.main_frame.add{type="table", name="weapon_table", column_count=#titan_info.guns, style="filter_slot_table"}
-  -- guiobj.weapon_table.clear()
-  for k, cannon in pairs(titan_info.guns) do
-    if not player_settings.guns[k] then
-      player_settings.guns[k] = {mode = math.ceil(k/2)}
-    end
-    guiobj.guns[k] = {}
-    guiobj.guns[k].img = guiobj.weapon_table.add{
-      type="sprite-button", sprite=("recipe/"..shared.mod_prefix..cannon.name),
-      tooltip={"item-name."..shared.mod_prefix..cannon.name},
-      show_percent_for_small_numbers=true,
-    }
-  end
-  for k, cannon in pairs(titan_info.guns) do
-    guiobj.guns[k].ammo = guiobj.weapon_table.add{
-      type="sprite-button", sprite=("item/"..shared.weapons[cannon.name].ammo),
-      -- show_percent_for_small_numbers=true,
-      tags={action=action_toggle_ammo_count},
-    }
-  end
-  for k, cannon in pairs(titan_info.guns) do
-    guiobj.guns[k].mode = guiobj.weapon_table.add{
-      type="sprite-button", tags={action=action_toggle_gun_mod, index=k},
-    }
-  end
-
-  guiobj.titan_info_table = guiobj.main_frame.add{type="table", name="titan_info_table", column_count=1, style="filter_slot_table"}
-  guiobj.titan_info_table.add{
-    type="sprite-button", sprite="item/radar",
-    tooltip={"WH40k-Titans-gui.zoom-out"},
-    tags={action=action_zoom_out},
-  }
-  guiobj.health = guiobj.titan_info_table.add{
-    type="sprite-button", sprite="item/"..shared.frame_part,
-    tooltip={"WH40k-Titans-gui.health"},
-    tags={action=action_toggle_ammo_count},
-  }
-  guiobj.void_shield = guiobj.titan_info_table.add{
-    type="sprite-button", sprite="item/"..shared.void_shield,
-    tooltip={"WH40k-Titans-gui.vs-value"},
-    tags={action=action_toggle_ammo_count},
-  }
-end
-
-lib:on_event(defines.events.on_player_driving_changed_state, function(event)
-  local player = game.players[event.player_index]
-  if not player.character then return end
-  if player.character.vehicle then
-    local titan_info = ctrl_data.titans[player.character.vehicle.unit_number]
-    if not titan_info then return end
-
-    create_titan_gui(player, titan_info)
-  else
-    remove_titan_gui_by_player(player)
-  end
-end)
-
-local function update_gui()
-  local tick = game.tick
-  for _, guiobj in pairs(ctrl_data.titan_gui) do
-    if not guiobj.player.valid or not guiobj.titan_info.entity or not guiobj.titan_info.entity.valid then
-      remove_titan_gui_by_player(guiobj.player)
-    else
-      local player_settings = ctrl_data.by_player[guiobj.player.index] or {}
-      if guiobj.void_shield then
-        if player_settings.percent_ammo then
-          guiobj.void_shield.number = math.floor(100 * guiobj.titan_info.shield / shared.titan_types[guiobj.titan_info.class].max_shield)
-        else
-          guiobj.void_shield.number = math.floor(guiobj.titan_info.shield)
-        end
-      end
-      if guiobj.health then
-        if player_settings.percent_ammo then
-          guiobj.health.number = math.floor(100 * guiobj.titan_info.entity.health / shared.titan_types[guiobj.titan_info.class].health)
-        else
-          guiobj.health.number = math.floor(guiobj.titan_info.entity.health)
-        end
-      end
-      local still_cd
-      for k, cannon in pairs(guiobj.titan_info.guns) do
-        still_cd = cannon.gun_cd > tick
-        if still_cd then
-          guiobj.guns[k].img.number = 1- (cannon.gun_cd-tick) /shared.weapons[cannon.name].cd /UPS
-        else
-          guiobj.guns[k].img.number = nil
-        end
-        if guiobj.guns[k].img.toggled ~= nil then
-          guiobj.guns[k].img.toggled = still_cd or (cannon.target ~= nil) and (tick < cannon.ordered + order_ttl)
-        end
-        if player_settings.percent_ammo then
-          guiobj.guns[k].ammo.number = math.floor(100 *(cannon.ammo_count or 0) /shared.weapons[cannon.name].inventory)
-        else
-          guiobj.guns[k].ammo.number = cannon.ammo_count or 0
-        end
-        if guiobj.titan_info.guns[k].ai then
-          guiobj.guns[k].mode.sprite = "virtual-signal/signal-info"
-          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-ai"}
-        elseif player_settings.guns[k].mode == 1 then
-          guiobj.guns[k].mode.sprite = "virtual-signal/signal-1"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-1"}
-        elseif player_settings.guns[k].mode == 2 then
-          guiobj.guns[k].mode.sprite = "virtual-signal/signal-2"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-2"}
-        elseif player_settings.guns[k].mode == 3 then
-          guiobj.guns[k].mode.sprite = "virtual-signal/signal-3"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-3"}
-        else
-          guiobj.guns[k].mode.sprite = "virtual-signal/signal-red"
-          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-0"}
-        end
-      end
-    end
-  end
-end
-
-lib:on_nth_tick(gui_update_rate, update_gui)
-
-lib:on_event(defines.events.on_gui_click, function(event)
-  local player = game.get_player(event.player_index)
-  local player_settings = ctrl_data.by_player[event.player_index]
-  local titan_info = nil
-  if player.character and player.character.vehicle then
-    titan_info = ctrl_data.titans[player.character.vehicle.unit_number]
-  end
-
-  if event.element.tags.action == action_toggle_ammo_count then
-    player_settings.percent_ammo = not player_settings.percent_ammo
-
-  elseif event.element.tags.action == action_toggle_gun_mod then
-    local k = event.element.tags.index
-    if not titan_info then return end
-    if titan_info.guns[k].ai then
-      titan_info.guns[k].ai = false
-    else
-      player_settings.guns[k].mode = math.fmod((player_settings.guns[k].mode or 0) + 1, 4)
-      if player_settings.guns[k].mode == 0 then
-        titan_info.guns[k].ai = true
-      end
-    end
-
-  elseif event.element.tags.action == action_zoom_out then
-    if not titan_info then return end
-    player.zoom = 1 / (3 + titan_info.class/10)
-  end
-end)
-
 
 
 ----- Intro -----
@@ -406,25 +19,17 @@ local function init_aux_laser(titan_type, titan_info, entity)
   end
 end
 
-function lib.titan_type_by_entity(entity)
-  local name = entity.name
-  local titan_type = shared.titan_types[name]
-  if not titan_type and string.sub(entity.name, -2, -1) == "-0" then 
-    name = string.sub(entity.name, 1, -3)
-    titan_type = shared.titan_types[name]
-  end
-  return titan_type, name
-end
 
-function lib.register_titan(entity)
+function lib_ttn.register_titan(entity)
   if ctrl_data.titans[entity.unit_number] then
     return ctrl_data.titans[entity.unit_number]
   end
-  local titan_type, name = lib.titan_type_by_entity(entity)
+  local titan_type, name = lib_ttn.titan_type_by_entity(entity)
   if not titan_type then
     game.print("Got bad titan "..entity.name)
     return
   end
+
   local titan_info = {
     name = name,
     unit_number = entity.unit_number,
@@ -432,7 +37,7 @@ function lib.register_titan(entity)
     force = entity.force,
     surface = entity.surface,
     class = titan_type.class,
-    shield = titan_type.max_shield /2, -- void shield health amount
+    shield = titan_type.max_shield /5, -- void shield health amount
     voice_cd = 0, -- phrases muted till
     body_cd = 0, -- step and rotation sounds muted till
     track_cd = 0, -- footstep track drawing cooldown till
@@ -444,44 +49,46 @@ function lib.register_titan(entity)
     aux_laser = {},
     ai_cd = 0,
   }
+
   -- entity.health = entity.health/100
   init_aux_laser(titan_type, titan_info, entity)
 
+  -- Fill when placed in god/editor mode. Usually it's overriden by Assembly Bunker
   if titan_type.class == shared.class_warhound then
     titan_info.guns = {
-      init_gun(shared.weapon_inferno),
-      -- init_gun(shared.weapon_inferno),
-      init_gun(shared.weapon_plasma_blastgun),
-      -- init_gun(shared.weapon_turbolaser),
-      -- init_gun(shared.weapon_lascannon),
+      lib_ttn.init_gun(shared.weapon_inferno),
+      -- lib_ttn.init_gun(shared.weapon_inferno),
+      lib_ttn.init_gun(shared.weapon_plasma_blastgun),
+      -- lib_ttn.init_gun(shared.weapon_turbolaser),
+      -- lib_ttn.init_gun(shared.weapon_lascannon),
     }
   elseif titan_type.class == shared.class_direwolf then
     titan_info.guns = {
-      init_gun(shared.weapon_adrexbolter),
-      init_gun(shared.weapon_adrexbolter),
-      init_gun(shared.weapon_plasma_blastgun),
+      lib_ttn.init_gun(shared.weapon_adrexbolter),
+      lib_ttn.init_gun(shared.weapon_adrexbolter),
+      lib_ttn.init_gun(shared.weapon_plasma_blastgun),
     }
   elseif titan_type.class == shared.class_reaver then
     titan_info.guns = {
       -- TODO: use weapon_gatling_blaster
-      init_gun(shared.weapon_plasma_destructor),
-      init_gun(shared.weapon_turbolaser),
-      init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_plasma_destructor),
+      lib_ttn.init_gun(shared.weapon_turbolaser),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
     }
   -- elseif titan_type.class >= shared.class_warmaster then
   --   titan_info.guns = {
-  --     init_gun(shared.weapon_plasma_blastgun),
-  --     init_gun(shared.weapon_plasma_blastgun),
-  --     init_gun(shared.weapon_turbolaser),
+  --     lib_ttn.init_gun(shared.weapon_plasma_blastgun),
+  --     lib_ttn.init_gun(shared.weapon_plasma_blastgun),
+  --     lib_ttn.init_gun(shared.weapon_turbolaser),
   --   }
   else
     titan_info.guns = {
-      init_gun(shared.weapon_turbolaser),
-      -- init_gun(shared.weapon_plasma_destructor),
-      init_gun(shared.weapon_plasma_annihilator),
-      -- init_gun(shared.weapon_lascannon),
-      init_gun(shared.weapon_missiles),
-      init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_turbolaser),
+      -- lib_ttn.init_gun(shared.weapon_plasma_destructor),
+      lib_ttn.init_gun(shared.weapon_plasma_annihilator),
+      -- lib_ttn.init_gun(shared.weapon_lascannon),
+      lib_ttn.init_gun(shared.weapon_missiles),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
     }
   end
 
@@ -501,18 +108,14 @@ end
 
 ----- OUTRO -----
 
-function lib.titan_death(titan_info)
+function lib_ttn.titan_death(titan_info)
   -- For death only
   local source = titan_info.position
   local target
   local scatter = titan_info.class / 3
   local explo_count = titan_info.class/10
   for i = 0, explo_count do
-    target = math2d.position.add(
-      source,
-      -- point_orientation_shift(i/explo_count, 0, scatter)
-      {math.random(-scatter, scatter), math.random(-scatter, scatter)}
-    )
+    target = position_scatter(source, scatter)
     titan_info.surface.create_entity{
       name=titan_explo_bolt,
       position=source, source=source, target=target, speed=10,
@@ -535,14 +138,14 @@ function lib.titan_death(titan_info)
     ammo = remove_ingredients_doubles(ammo),
   })
 
-  lib.titan_removed(titan_info)
+  lib_ttn.titan_removed(titan_info)
 
   titan_info.force.print(
     {"WH40k-Titans-gui.msg-titan-destroyed", {"entity-name."..titan_type.entity}},
     {1, 0.1, 0.1})
 end
 
-function lib.titan_removed(titan_info)
+function lib_ttn.titan_removed(titan_info)
   -- For any object remove
   for _, obj in pairs(titan_info.aux_laser or {}) do
     if obj and obj.valid then
@@ -552,375 +155,56 @@ function lib.titan_removed(titan_info)
   end
 end
 
-lib:on_event(defines.events.script_raised_destroy, function(event)
+lib_ttn:on_event(defines.events.script_raised_destroy, function(event)
   local titan_entity = event.entity
   local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
   if titan_info then
-    lib.titan_removed(titan_info)
+    lib_ttn.titan_removed(titan_info)
   end
 end)
 
 
 
------ MAIN -----
+----- MISC -----
 
-local collision_mask_util_extended = require("cmue.collision-mask-util-control")
-
-local function try_remove_small_water(surface, position, radius)
-  local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
-  local total = surface.count_tiles_filtered{position=position, radius=radius}
-  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={only_water_layer}}
-  local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
-  -- game.print("Found water "..water.." and shallow "..shallow.." of total "..total)
-  water = water + 0.5*shallow
-  if water > 0 and water/total < 0.4 then
-    local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={only_water_layer}}
-    local new_tiles = {}
-    for _, tl in pairs(tiles) do
-      table.insert(new_tiles, {position=tl.position, name="water-shallow"})
-    end
-    surface.set_tiles(new_tiles, true)
+function lib_ttn.titan_type_by_entity(entity)
+  local name = entity.name
+  local titan_type = shared.titan_types[name]
+  if not titan_type and string.sub(entity.name, -2, -1) == "-0" then 
+    name = string.sub(entity.name, 1, -3)
+    titan_type = shared.titan_types[name]
   end
+  return titan_type, name
 end
 
 
-local function far_seeing(titan_info)
-  local dst = (titan_info.class + 10) * 5
-  local size = (titan_info.class + 20) * 3
-
-  titan_info.entity.force.chart(titan_info.entity.surface,
-    math2d.bounding_box.create_from_centre(
-      titan_info.entity.position,
-      size, size)
-  )
-
-  titan_info.entity.force.chart(titan_info.entity.surface,
-    math2d.bounding_box.create_from_centre(
-      math2d.position.add(
-        titan_info.entity.position,
-        point_orientation_shift(titan_info.entity.orientation, 0, dst)),
-      size, size)
-  )
-  if titan_info.class >= shared.class_warlord then
-  -- if dst >= 96 then
-    for i = 0, 3 do
-      titan_info.entity.force.chart(titan_info.entity.surface,
-        math2d.bounding_box.create_from_centre(
-          math2d.position.add(
-            titan_info.entity.position,
-            point_orientation_shift(titan_info.entity.orientation, i/4, dst/2)),
-          size, size)
-      )
-    end
-  end
-end
-
-
-local function notify_crew(titan_info, message, color)
-  color = color or {1,1,1}
-  local entity = titan_info.entity
+function lib_ttn.get_crew(titan_info)
   local crew = {}
-  crew[#crew+1] = entity.get_driver()
-  crew[#crew+1] = entity.get_passenger()
-  for _, player in pairs(list_players(crew)) do
+  crew[#crew+1] = titan_info.entity.get_driver()
+  crew[#crew+1] = titan_info.entity.get_passenger()
+  return crew
+end
+
+
+function lib_ttn.notify_crew(titan_info, message, color)
+  color = color or {1,1,1}
+  for _, player in pairs(list_players(lib_ttn.get_crew(titan_info))) do
     player.print(message, color)
   end
 end
-lib.notify_crew = notify_crew
 
 
-local function process_single_titan(titan_info)
-  local tick = game.tick
-  local titan_type = shared.titan_types[titan_info.class]
-  local class = titan_info.class
-  local name = titan_type.name
-  local entity = titan_info.entity
-  local surface = entity.surface
-  local spd = math.abs(entity.speed)
-  if entity.speed < 0 then
-    entity.speed = entity.speed * 0.99
-  end
-  local ori = entity.orientation
-  local oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3
-  titan_info.oris = oris
-  local shadow_shift = {2 * (1+0.1*class), 1}
-  titan_info.position = titan_info.entity.position
+function lib_ttn.titan_entity_replaced(old_entity, new_entity)
+  local titan_info = ctrl_data.titans[old_entity.unit_number]
+  -- game.print("titan_entity_replaced "..old_entity.unit_number.." to "..new_entity.unit_number.." as "..serpent.line(titan_info))
+  if titan_info == nil then return end
 
-  far_seeing(titan_info) -- it's here to make it not so often
+  titan_info.entity = new_entity
+  titan_info.unit_number = new_entity.unit_number
 
-  ----- Body
-
-  rendering.draw_animation{
-    animation=name.."-shadow",
-    x_scale=1, y_scale=1, render_layer=shared.rl_shadow,
-    time_to_live=visual_ttl,
-    surface=surface, target=entity, target_offset=shadow_shift,
-    orientation=ori+oris,
-  }
-  rendering.draw_animation{
-    animation=name,
-    x_scale=1, y_scale=1, render_layer=shared.rl_body,
-    time_to_live=visual_ttl,
-    surface=surface, target=entity, target_offset={0, 0},
-    orientation=ori+oris,
-  }
-  rendering.draw_light{
-    sprite=shared.mod_prefix.."light", scale=7+0.5*class,
-    intensity=1.5+0.1*class, minimum_darkness=0,
-    time_to_live=visual_ttl,
-    surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 6)),
-  }
-
-  if not titan_info.aux_laser then
-    titan_info.aux_laser = {}
-    init_aux_laser(titan_type, titan_info, entity)
-  end
-  for k, shift in ipairs(titan_type.aux_laser) do
-    -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1]))
-    titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1])))
-  end
-
-  ----- Void Shield
-  -- TODO: consider energy spent on guns?
-  -- 3 minutes for the full recharge
-  titan_info.shield = math.min((titan_info.shield or 0) + titan_type.max_shield /shield_fill_time, titan_type.max_shield)
-  local sc = 0.75 + 0.025*class
-
-  -- Main visual
-  if titan_info.shield > 100 then
-    rendering.draw_sprite{
-      sprite=shared.mod_prefix.."shield",
-      x_scale=sc, y_scale=sc, render_layer=shared.rl_shield,
-      time_to_live=visual_ttl,
-      surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 2)),
-    }
-  end
-
-  -- Ratio bar
-  local shield_cf = titan_info.shield/titan_type.max_shield
-    if shield_cf < 0.99 then
-    local w2 = 1 + class/10
-    local yy = 4 + class/10
-    local hh = 0.5
-    rendering.draw_rectangle{
-      color={0,0,0,1}, filled=true,
-      left_top=entity, left_top_offset={-w2-0.1,yy-0.1},
-      right_bottom=entity, right_bottom_offset={w2+0.1,yy+hh+0.1},
-      surface=surface, time_to_live=visual_ttl,
-      forces={entity.force}, only_in_alt_mode=true
-    }
-    rendering.draw_rectangle{
-      color={1,1,1,1}, filled=true,
-      left_top=entity, left_top_offset={-w2,yy},
-      right_bottom=entity, right_bottom_offset={-w2+2*w2*shield_cf,yy+hh},
-      surface=surface, time_to_live=visual_ttl,
-      forces={entity.force}, only_in_alt_mode=true
-    }
-  end
-
-
-  ----- The Guns
-  local weapon_type, gunpos, cannon
-  local for_whom = list_players({entity.get_driver(), entity.get_passenger()})
-  for k, _ in ipairs(titan_type.guns) do
-    cannon = titan_info.guns[k]
-    weapon_type = shared.weapons[cannon.name]
-    gunpos = math2d.position.add(entity.position, point_orientation_shift(ori, titan_type.guns[k].oris, titan_type.guns[k].shift))
-    wc_control[weapon_type.category](entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
-    cannon.position = gunpos
-
-    rendering.draw_animation{
-      animation=weapon_type.animation,
-      x_scale=1, y_scale=1, render_layer=titan_type.guns[k].layer,
-      time_to_live=visual_ttl,
-      surface=surface,
-      target=gunpos,
-      orientation=ori-oris/2 + cannon.oris,
-    }
-    if #for_whom > 0 then
-      rendering.draw_circle{
-        color=wc_color[weapon_type.category] or color_default_dst,
-        radius=calc_max_dst(titan_type, k, weapon_type) *0.95,
-        filled=false, width=10+0.5*class, time_to_live=visual_ttl,
-        surface=surface, target=gunpos, players=for_whom, --forces={entity.force},
-        draw_on_ground=true, only_in_alt_mode=true,
-      }
-    end
-    -- TODO: add weapons shadow
-  end
-
-  -- TODO: remove foots if too far
-
-  local img, sc, foot
-  if spd > 0.03 then
-
-
-    ----- Foots
-
-    if titan_info.foot_cd < tick then
-      titan_info.foot_cd = tick + 10 + class
-      titan_info.foot_rot = not titan_info.foot_rot
-
-      foot = titan_info.foots[titan_info.foot_rot and 1 or 2]
-      if foot and foot.valid then foot.destroy() end
-
-      local foot_oris, foot_shift
-      if entity.speed < 0 then
-        foot_oris = 0.4 * (titan_info.foot_rot and -1 or 1)
-        foot_shift = 6 + class/10
-      else
-        foot_oris = 0.1 * (titan_info.foot_rot and -1 or 1)
-        foot_shift = 8 + class/10
-      end
-      if class < 20 then
-        img = shared.mod_prefix.."foot-small"
-        sc = 1
-      else
-        img = shared.mod_prefix.."foot-big"
-        sc = (class+5) /20
-      end
-      local foot_pos = math2d.position.add(entity.position, point_orientation_shift(ori, foot_oris, foot_shift))
-      if not titan_type.over_water then
-        local earty_radius = 5 + class*0.1
-        try_remove_small_water(surface, foot_pos, earty_radius)
-        try_remove_small_water(surface, math2d.position.add(entity.position, point_orientation_shift(ori, 0, foot_shift)), earty_radius)
-      end
-      foot = surface.create_entity{
-        name=titan_type.foot, force="neutral", position=foot_pos,
-      }
-      foot.destructible = false
-      ctrl_data.foots[#ctrl_data.foots+1] = {
-        owner = entity, entity=foot,
-        animation=img, ori=ori, sc=sc,
-      }
-      surface.create_entity{
-        name=titan_type.foot.."-damage", force="neutral", speed=1,
-        position=foot.position, target=foot.position, source=math2d.position.add(foot.position, {x=0, y=-1})
-      }
-      titan_info.foots[titan_info.foot_rot and 1 or 2] = foot
-      -- if titan_info.foots[titan_info.leg and 2 or 1] then
-      --   game.print("Placed foot: "..serpent.line(foot.valid).." / "..serpent.line(titan_info.foots[titan_info.leg and 2 or 1].valid))
-      -- end
-    end
-
-
-    ----- Tracks
-
-    if titan_info.track_cd < tick then
-      titan_info.track_cd = tick + 20 + 2*class
-      titan_info.track_rot = not titan_info.track_rot
-
-      if class < 20 then
-        img = shared.mod_prefix.."step-small"
-        sc = 1
-      else
-        img = shared.mod_prefix.."step-big"
-        sc = class / 20
-      end
-
-      rendering.draw_animation{
-        animation=img, x_scale=sc, y_scale=sc,
-        render_layer=shared.rl_track, time_to_live=5*UPS,
-        surface=surface,
-        target=math2d.position.add(entity.position, point_orientation_shift(ori, 0.25 * (titan_info.track_rot and 1 or -1), 4+0.1*titan_info.class)),
-        target_offset={3, 0}, orientation=ori-oris/2,
-      }
-    end
-
-
-    ----- Movement sounds
-
-    local volume = math.min(1, spd/0.2) -- TODO: add class coef?
-    if titan_info.body_cd < tick then
-      surface.play_sound{
-        path="wh40k-titans-walk-step",
-        position=entity.position, volume_modifier=volume*0.8
-      }
-      titan_info.body_cd = tick + 30 + 1.5*class
-    end
-    if titan_info.voice_cd < tick then
-      if settings.global["wh40k-titans-talk"].value and (math.random(100) < 30) then
-        surface.play_sound{
-          path="wh40k-titans-phrase-walk",
-          position=entity.position, volume_modifier=1
-        }
-      end
-      titan_info.voice_cd = tick + 450 + 15*class
-    end
-  end -- if spd
-
-  -- Prevent slowing down
-  if entity.stickers then
-    for _, st in pairs(entity.stickers) do
-      if st.valid then st.destroy() end
-    end
-  end
-end -- process_single_titan
-
-
-local function reregister_titan(titan_info)
-  if titan_info.entity.valid then return end
-  -- ctrl_data.titans[titan_info.unit_number] = nil
-  titan_info.entity = nil
-  -- log(serpent.block(titan_info))
-  -- In case when AAI Programmable Vehicles change the entity. Sadly, they have no suitable API
-  if titan_info.surface and titan_info.position and titan_info.name then
-    local options = titan_info.surface.find_entities_filtered{
-      position=titan_info.position, radius=1,
-      type=shared.titan_base_type, force=titan_info.force,
-    }
-    for _, obj in pairs(options) do
-      if true
-        and not ctrl_data.titans[obj.unit_number]
-        and obj.name:find(titan_info.name, 1, true)
-      then
-        titan_info.entity = obj
-        -- ctrl_data.titans[obj.unit_number] = titan_info -- Not changing table while iterating!
-        return
-      end
-    end
-  end
+  ctrl_data.titans[old_entity.unit_number] = nil
+  ctrl_data.titans[new_entity.unit_number] = titan_info
 end
-
-
-local function process_titans()
-  local titans_old = ctrl_data.titans
-  local titans_new = {}
-  for unit_number, titan_info in pairs(titans_old) do
-    reregister_titan(titan_info)
-    if titan_info.entity then
-      titans_new[titan_info.entity.unit_number] = titan_info
-      process_single_titan(titan_info)
-
-      titan_info.ai_cd = ((titan_info.ai_cd or 0) + 1) % 20
-      if titan_info.ai_cd == 0 then
-        lib.handle_attack_ai(titan_info)
-      end
-    else
-      game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
-      lib.titan_death(titan_info)
-    end
-  end
-  ctrl_data.titans = titans_new
-
-  for index, info in pairs(ctrl_data.foots) do
-    if info.entity.valid then
-      rendering.draw_animation{
-        animation=info.animation,
-        x_scale=info.sc or 1, y_scale=info.sc or 1, render_layer=shared.rl_foot,
-        time_to_live=visual_ttl,
-        surface=info.entity.surface,
-        target=info.entity,
-        orientation=info.ori,
-      }
-    else
-      ctrl_data.foots[index] = nil
-    end
-  end
-end
-
-
-lib:on_event(defines.events.on_tick, process_titans)
 
 
 local function titans_debug_cmd(cmd)
@@ -942,166 +226,8 @@ local function titans_debug_cmd(cmd)
 end
 
 
------ Attack Order -----
-
-local enemies
-local attack_ori_shifts = {0, 0.07, -0.07, 0.15, -0.15}
-local ai_attack_radius = 6
-
-local function find_ai_target(titan_info, entity, weapon_type, cannon)
-  local enemy_number, target_option, new_oris
-  local max_number = 0
-  local result = nil
-  if weapon_type.start_far then
-    -- Going inside
-    for _, oris in ipairs(attack_ori_shifts) do
-      dst = weapon_type.max_dst
-      while 0 < dst and weapon_type.min_dst*1.3 < dst do
-        dst = dst * 0.75
-        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
-        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
-        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
-        if enemy_number > max_number then
-          max_number = enemy_number
-          result = target_option
-        end
-      end
-    end
-  else
-    -- Going outside
-    for _, oris in ipairs(attack_ori_shifts) do
-      dst = weapon_type.min_dst*1.3
-      while 0 < dst and dst < weapon_type.max_dst do
-        dst = dst * 1.25
-        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
-        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
-        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
-        if enemy_number > max_number then
-          max_number = enemy_number
-          result = target_option
-        end
-      end
-    end
-  end
-  return result
-end
-
-function lib.handle_attack_ai(titan_info)
-  local tick = game.tick
-  local entity = titan_info.entity
-  local titan_type = shared.titan_types[titan_info.class]
-  enemies = {}
-  for _, f in pairs(game.forces) do
-    if f.is_enemy(titan_info.force) then
-      table.insert(enemies, f)
-    end
-  end
-  -- game.print("enemies: "..serpent.line(func_map(partial(deep_get, {}, {{"name"}}), enemies)))
-
-  local enemy_number = entity.surface.count_entities_filtered{
-    position=math2d.position.add(titan_info.entity.position, point_orientation_shift(entity.orientation, 0, titan_info.class)),
-    radius=48 + titan_info.class, force=enemies, is_military_target=true
-  }
-  if enemy_number < 1 then return end
-
-  local weapon_type, dst, target_option
-  local done = false
-  for k, cannon in pairs(table.shallow_copy(titan_info.guns)) do
-    if cannon.ai and (cannon.target == nil or cannon.ordered+order_ttl < tick) then
-      weapon_type = shared.weapons[cannon.name]
-      if cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size then
-        target_option = find_ai_target(titan_info, entity, weapon_type, cannon)
-        if target_option then
-          cannon.target = target_option
-          cannon.ordered = tick
-          opt_play(entity, weapon_type.pre_attack_sound)
-          done = true
-        end
-      end
-    end
-  end
-
-  if done then
-    if titan_info.voice_cd < tick then
-      if settings.global["wh40k-titans-talk"].value and math.random(100) < 80 then
-        entity.surface.play_sound{
-          path="wh40k-titans-phrase-attack",
-          position=entity.position, volume_modifier=1
-        }
-      end
-      titan_info.voice_cd = tick + 450 + 15*titan_info.class
-    end
-  end
-end
-
-local function handle_attack_order(event, kind)
-  -- https://lua-api.factorio.com/latest/events.html#CustomInputEvent
-  local player = game.players[event.player_index]
-  -- try_remove_small_water(player.character.surface, event.cursor_position, 8)
-  if not (player.character and player.character.vehicle) then return end
-  local entity = player.character.vehicle
-  local titan_info = ctrl_data.titans[entity.unit_number]
-  if not titan_info then return end
-  local titan_type = shared.titan_types[titan_info.class]
-
-  local tick = game.tick
-  local target = event.cursor_position
-  local todo
-  local done = false
-  local weapon_type, dst
-
-  local player_settings = ctrl_data.by_player[event.player_index] or {}
-  player_settings.guns = player_settings.guns or {}
-
-  for k, cannon in pairs(table.shallow_copy(titan_info.guns)) do
-    if (player_settings.guns[k] or {}).mode == kind and not titan_info.guns[k].ai then
-      weapon_type = shared.weapons[titan_info.guns[k].name]
-      todo = true
-      todo = todo and cannon.gun_cd < tick
-      todo = todo and (cannon.target == nil or cannon.ordered+order_ttl < tick)
-      todo = todo and cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size
-
-      if todo then
-        dst = math2d.position.distance(entity.position, target)
-        todo = dst > weapon_type.min_dst and dst < calc_max_dst(titan_type, k, weapon_type)
-      end
-
-      -- TODO: make priority choice: if there is gun_cd, save for secondary trying to find a free cannon
-      if todo then
-        cannon.target = event.cursor_position
-        cannon.ordered = tick
-        -- cannon.attack_number = 0
-        done = true
-        opt_play(entity, weapon_type.pre_attack_sound)
-        break
-      end
-    end
-  end
-
-  if done then
-    if titan_info.voice_cd < tick then
-      if settings.global["wh40k-titans-talk"].value and math.random(100) < 80 then
-        entity.surface.play_sound{
-          path="wh40k-titans-phrase-attack",
-          position=entity.position, volume_modifier=1
-        }
-      end
-      titan_info.voice_cd = tick + 450 + 15*titan_info.class
-    end
-  else
-    -- game.print("No ready titan cannon")
-  end
-end
-
-lib:on_event(shared.mod_prefix.."attack-1", function(event) handle_attack_order(event, 1) end)
-lib:on_event(shared.mod_prefix.."attack-2", function(event) handle_attack_order(event, 2) end)
-lib:on_event(shared.mod_prefix.."attack-3", function(event) handle_attack_order(event, 3) end)
-
-
-
------ Void Shields absorbing
-
-lib:on_event(defines.events.on_entity_damaged, function(event)
+lib_ttn:on_event(defines.events.on_entity_damaged, function(event)
+  -- Void Shields absorbing
   local entity = event.entity
   local unit_number = entity.valid and entity.unit_number
   if unit_number == nil then return end
@@ -1125,4 +251,7 @@ commands.add_command(
 )
 
 
-return lib
+require("script/titan_ui")
+require("script/titan_mn")
+require("script/titan_at")
+return lib_ttn

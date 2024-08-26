@@ -1,4 +1,26 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.22
+Date: 2024-08-26
+  Features:
+    - Titan Ammo Supplier aircraft! It allows to restock Titans right on the battlefield, also has pretty graphics and night lights :)
+    - Titans now have equipment grids, and some details can be placed there, as well as laser turrets.
+    - When disassembling a damaged Titan, number of returned motors and frame parts will be decreased by ratio of health left.
+  Balancing:
+    - Titans are not repairable now.
+    - Initial filling of Titans Void Shields reduced from 50% to 20%.
+    - Some recipes and stack sizes changes.
+    - More output from the Reverse Engineering Lab.
+    - More expensive tech researches.
+  Graphics:
+    - New icons for Plasma and HellStorm ammo!
+    - Titan weapons range circles are now better visible at night.
+  Bugfixes:
+    - Fixed trailing redundant UI elements.
+  Info:
+    - Refactored the code as it got quite large already.
+    - Spoiler! In the upcoming updates, you will get: 1. nice GUI to see all of your Titans, 2. integration with Informatron to have help right in the game, 3. Titan Supplier aircraft ruins, 4. researches to strengthen the Supplier and your Titans!
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.21
 Date: 2024-08-23
   Graphics:

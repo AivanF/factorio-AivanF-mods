@@ -1,8 +1,8 @@
-require("script/common")
 local lib_ruins = require("script/ruins")
-local Lib = require("script/event_lib")
-local lib = Lib.new()
 local lib_tech = require("script/tech")
+
+local Lib = require("script/event_lib")
+lib_exc = Lib.new()
 
 exc_update_rate = UPS
 local global_exc_unit_time = heavy_debugging and 5 or 60
@@ -15,7 +15,7 @@ local exc_offsets = {
 local main_frame_name = "wh40k_titans_extractor"
 local act_main_frame_close = "wh40k-titans-extractor-frame-close"
 
-function lib.register_excavator(entity)
+function lib_exc.register_excavator(entity)
   local world, sector, ruin_entity, ruin_info
   ruin_entity = entity.surface.find_entity(shared.corpse, entity.position)
   world = ctrl_data.by_surface[entity.surface.index]
@@ -50,13 +50,14 @@ function lib.register_excavator(entity)
   if ruin_info then
     entity.surface.create_entity{
       name="flying-text", position=entity.position,
-      text="Expected details: "..bucks.total_count(ruin_info.details).." ammo: "..bucks.total_count(ruin_info.ammo),
+      text={"WH40k-Titans-gui.msg-exc-content", bucks.total_count(ruin_info.details), bucks.total_count(ruin_info.ammo)},
     }
     ruin_info.exc_info = exc_info
   else
     entity.surface.create_entity{
       name="flying-text", position=entity.position,
-      text="Placed excavator without a ruin...",
+      -- TODO: move into texts!
+      text={"WH40k-Titans-gui.msg-exc-placed-empty"},
     }
   end
   entity.set_recipe(shared.excavation_recipe)
@@ -64,7 +65,7 @@ function lib.register_excavator(entity)
   entity.active = false
 end
 
-function lib.excavator_removed(unit_number)
+function lib_exc.excavator_removed(unit_number)
   ctrl_data.excavator_index[unit_number] = nil
   bucks.remove(ctrl_data.excavator_buckets, exc_update_rate, unit_number)
 end
@@ -75,6 +76,7 @@ local function put_leftovers(exc_info)
       chest.insert(exc_info.leftovers)
       chest.surface.create_entity{
         name="flying-text", position=chest.position,
+        -- TODO: add icon!
         text={"item-name."..exc_info.leftovers.name},
       }
       exc_info.leftovers = nil
@@ -177,7 +179,7 @@ local function process_an_excavator(exc_info)
 
   for player_index, main_frame in pairs(exc_info.guis) do
     if main_frame.valid then
-      lib.gui_update(exc_info, main_frame)
+      lib_exc.gui_update(exc_info, main_frame)
     else
       exc_info.guis[player_index] = nil
     end
@@ -191,14 +193,14 @@ local function process_excavators()
     if exc_info.entity.valid then
       process_an_excavator(exc_info)
     else
-      lib.excavator_removed(exc_info.unit_number)
+      lib_exc.excavator_removed(exc_info.unit_number)
     end
   end
 end
 
-lib:on_event(defines.events.on_tick, process_excavators)
+lib_exc:on_event(defines.events.on_tick, process_excavators)
 
-function lib.gui_update(exc_info, main_frame)
+function lib_exc.gui_update(exc_info, main_frame)
   main_frame.status.caption = {"virtual-signal-name.signal-unknown"}
   main_frame.expected.caption = ""
   main_frame.results_line.clear()
@@ -253,7 +255,7 @@ local function gui_create(exc_info, player)
   if player.gui.screen[main_frame_name] then
     main_frame = player.gui.screen[main_frame_name]
     -- player.gui.screen[main_frame_name].destroy(); main_frame = nil
-    lib.gui_update(exc_info, main_frame)
+    lib_exc.gui_update(exc_info, main_frame)
     return
   end
 
@@ -294,10 +296,10 @@ local function gui_create(exc_info, player)
   -- main_frame.add{ type="label", caption={""} }
   -- main_frame.add{ type="flow", name="results_line", direction="horizontal" }
   main_frame.add{ type="table", name="results_line", column_count=7 }
-  lib.gui_update(exc_info, main_frame)
+  lib_exc.gui_update(exc_info, main_frame)
 end
 
-lib:on_event(defines.events.on_gui_click, function(event)
+lib_exc:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
   local action = event.element and event.element.valid and event.element.tags.action
   if action == act_main_frame_close then
@@ -307,7 +309,7 @@ lib:on_event(defines.events.on_gui_click, function(event)
   end
 end)
 
-lib:on_event(defines.events.on_gui_opened, function(event)
+lib_exc:on_event(defines.events.on_gui_opened, function(event)
   local player = game.get_player(event.player_index)
   if event.entity and ctrl_data.excavator_index[event.entity.unit_number] then
     local exc_info = ctrl_data.excavator_index[event.entity.unit_number]
@@ -315,11 +317,11 @@ lib:on_event(defines.events.on_gui_opened, function(event)
   end
 end)
 
-lib:on_event(defines.events.on_gui_closed, function(event)
+lib_exc:on_event(defines.events.on_gui_closed, function(event)
   local player = game.get_player(event.player_index)
   if event.element and event.element.valid and event.element.name == main_frame_name then
     event.element.destroy()
   end
 end)
 
-return lib
+return lib_exc

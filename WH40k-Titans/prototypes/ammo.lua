@@ -10,7 +10,7 @@ data:extend({
     icon_size = 64, icon_mipmaps = 1,
     subgroup = shared.subg_ammo,
     order = "a-1-bolt-big",
-    stack_size = 50,
+    stack_size = 100,
   },
   {
     type = "recipe",
@@ -34,7 +34,7 @@ data:extend({
     icon_size = 64, icon_mipmaps = 1,
     subgroup = shared.subg_ammo,
     order = "a-2-bolt-huge",
-    stack_size = 20,
+    stack_size = 50,
   },
   {
     type = "recipe",
@@ -81,16 +81,17 @@ data:extend({
 bridge.add_item({
   -- Ammo could be used in runtime scripts, so the name must not be changed
   short_name = "plasma_fuel",
-  name = bridge.prefix.."plasma-fuel",
+  name = shared.plasma_ammo,
   icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Fuel.png",
-  icon_size = 64, icon_mipmaps = 1,
+  icon_size = 64, icon_mipmaps = 3,
   prereq = nil,
   subgroup = shared.subg_ammo,
   order = "c-1-plasma-fuel",
   ingredients = {
     {type="fluid", name="water", amount=200},
-    {"battery", 5},
-    {"steel-plate", 4}
+    -- {"battery", 2},
+    {"steel-plate", 4},
+    {"advanced-circuit", 1},
   },
   energy_required = 30,
   stack_size = 100,
@@ -102,7 +103,8 @@ bridge.add_item({
       prereq = "kr-atmosphere-condensation",
       ingredients = {
         {type="fluid", name="hydrogen", amount=200},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
     },
     {
@@ -110,7 +112,8 @@ bridge.add_item({
       prereq = "se-space-plasma-generator",
       ingredients = {
         {type="fluid", name="se-plasma-stream", amount=100},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       -- results = { {"se-scrap", 4}, },
     },
@@ -122,7 +125,8 @@ bridge.add_item({
       prereq = "ir-cryogenics",
       ingredients = {
         {type="fluid", name="hydrogen-fluid", amount=200},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       results = {},
     },
@@ -131,7 +135,8 @@ bridge.add_item({
       prereq = "ei_ammonia",
       ingredients = {
         {type="fluid", name="ei_hydrogen-gas", amount=200},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       results = {},
     },
@@ -140,7 +145,8 @@ bridge.add_item({
       prereq = "water-chemistry-2",
       ingredients = {
         {type="fluid", name="gas-deuterium", amount=200},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       results = {},
     },
@@ -153,7 +159,8 @@ bridge.add_item({
       prereq = "fu_hydrogen_1_tech",
       ingredients = {
         {type="fluid", name="fu_hydrogen", amount=200},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       results = {},
     },
@@ -165,9 +172,38 @@ bridge.add_item({
       mod = bridge.mods.yi,
       ingredients = {
         {"y-raw-fuelnium", 3},
-        {"steel-plate", 4}
+        {"steel-plate", 4},
+        {"advanced-circuit", 1},
       },
       results = {},
     },
   },
 }).data_getter()
+
+
+data:extend({
+  -- Big bolt
+  {
+    type = "item",
+    name = shared.hell_ammo,
+    icon = shared.media_prefix.."graphics/icons/weapons/Hell-Fuel.png",
+    icon_size = 64, icon_mipmaps = 4,
+    subgroup = shared.subg_ammo,
+    order = "c-2-hellstorm-ammo",
+    stack_size = 20,
+  },
+  {
+    type = "recipe",
+    name = shared.hell_ammo,
+    enabled = false,
+    ingredients = {
+      {shared.plasma_ammo, 1},
+      {shared.melta_ammo, 1},
+      {shared.laser_ammo, 1},
+      {"uranium-fuel-cell", 1},
+    },
+    energy_required = 60,
+    result = shared.hell_ammo,
+    category = "advanced-crafting",
+  },
+})

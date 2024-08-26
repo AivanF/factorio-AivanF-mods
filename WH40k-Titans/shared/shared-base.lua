@@ -7,8 +7,9 @@ shared.mod_prefix = "wh40k-titans-"  -- Most entities
 shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
 shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
 shared.bridge_prefix = "afci-"
+shared.equip_cat = shared.mod_prefix
 
-afci_bridge = require("__Common-Industries__.export") -- TODO: update
+afci_bridge = require("__Common-Industries__.export")
 
 --------- Titan parts
 -- Body
@@ -29,8 +30,8 @@ shared.melta_pump  = shared.part_prefix.."titanic-melta-pump" -- mostly mechanic
 shared.emfc = afci_bridge.item.emfc
 shared.he_emitter  = afci_bridge.item.he_emitter
 shared.ehe_emitter = afci_bridge.item.ehe_emitter
--- shared.rocket_engine = "engine-unit" -- TODO: replace with a proper rocket engine
 shared.rocket_engine = afci_bridge.item.rocket_engine
+shared.bci = afci_bridge.item.bci
 
 --------- Buildings, Groups, Categories
 shared.bunker_minable = shared.mod_prefix.."assembly-bunker-minable"
@@ -59,6 +60,8 @@ shared.subg_weapons = "wh40k-titan-weapons-"
 shared.corpse = shared.mod_prefix.."titan-corpse"
 shared.excavator = shared.mod_prefix.."extractor"
 shared.excavation_recipe = shared.mod_prefix.."extracting"
+shared.aircraft_supplier = shared.mod_prefix.."aircraft-supplier"
+shared.item_proj = shared.mod_prefix.."item-projectile"
 
 shared.lab = "wh40k-lab"
 shared.sp = "wh40k-titan-science-pack"
@@ -89,6 +92,8 @@ shared.track_researches = {
 }
 
 --------- Other Mods
+shared.AIND = "aai-industry"
 shared.SE = "space-exploration"
+shared.K2 = "Krastorio2"
 
 return shared

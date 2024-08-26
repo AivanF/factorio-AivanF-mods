@@ -18,6 +18,11 @@ function shared.shuffle(t)
     local j = math.random(i)
     t[i], t[j] = t[j], t[i]
   end
+  return t
+end
+
+function math.clamp(v, mn, mx)
+  return math.max(math.min(v, mx), mn)
 end
 
 function table.shallow_copy(t)
@@ -34,6 +39,25 @@ function table.slice(tbl, first, last, step)
     sliced[#sliced+1] = tbl[i]
   end
   return sliced
+end
+
+function table.extend(ar1, ar2)
+  for _, v in pairs(ar2) do
+    table.insert(ar1, v)
+  end
+end
+
+function table.append(array, value)
+    array[#array+1] = value
+end
+
+function table.contains(array, target)
+    for index, value in ipairs(array) do
+        if value == target then
+            return true
+        end
+    end
+    return false
 end
 
 function get_keys(tbl)
