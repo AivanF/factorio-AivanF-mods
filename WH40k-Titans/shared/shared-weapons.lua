@@ -96,7 +96,7 @@ bolt_types.bolt_laser = {
 --------- Weapon types
 shared.weapons = {}
 local dst_s, dst_m, dst_l, dst_xl
-dst_s, dst_m, dst_l, dst_xl = 80, 128, 160, 220
+dst_s, dst_m, dst_l, dst_xl = 96, 140, 192, 256
 local wname = nil
 local order_index = 1
 
@@ -218,7 +218,7 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_bolter,
-  min_dst = 10, max_dst = dst_s,
+  min_dst = 10, max_dst = dst_m,
   ammo = shared.big_bolt,
   per_shot = 1, inventory = 5000,
   cd = 0.2, attack_size = 5, scatter = 3,
@@ -343,7 +343,7 @@ add_weapon({
   ammo = shared.plasma_ammo,
   speed = 7, barrel = 12,
   per_shot = 4, inventory = 2000,
-  cd = 3,
+  cd = 2,
   bolt_type = bolt_types.bolt_plasma_2,
   pre_attack_sound = "wh40k-titans-plasma-pre",
   attack_sound = "wh40k-titans-plasma-2",
@@ -473,7 +473,7 @@ add_weapon({
   min_dst = 20, max_dst = dst_l,
   ammo = shared.plasma_ammo,
   per_shot = 10, inventory = 50000,
-  cd = 6,
+  cd = 5,
   bolt_type = bolt_types.bolt_plasma_3,
   attack_sound = "wh40k-titans-plasma-2", -- TODO: replace
   ingredients = {

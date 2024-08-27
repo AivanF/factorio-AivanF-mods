@@ -1,6 +1,8 @@
 local shared = require("shared")
+
 -- Fix SE procedural updating
 data.raw.technology[shared.mod_prefix.."production"].unit.ingredients = {{shared.sp, 1}}
+
 
 local function remove_recipe_effect(effects, name)
 	for i = #effects, 1, -1 do
@@ -35,7 +37,40 @@ for _, titan_type in ipairs(shared.titan_type_list) do
 	end
 end
 
+
 -- Allow turret equipment items be placed into Titans
 for name, obj in pairs(data.raw["active-defense-equipment"]) do
   table.append(obj.categories, shared.equip_cat)
+end
+
+
+-- Updates after overhauls
+-- Supplier equipment categories
+local wanted_categories = {
+  "aircraft", "aircraft-equipment",
+  "universal-equipment", "vehicle-motor", "vehicle-robot-interaction-equipment",
+}
+local aircraft_grid = data.raw["equipment-grid"][shared.mod_prefix.."aircraft"]
+aircraft_grid.equipment_categories = {}
+for _, name in pairs(wanted_categories) do
+	if data.raw["equipment-category"][name] then
+		table.append(aircraft_grid.equipment_categories, name)
+	end
+end
+
+if not mods[shared.K2] then
+	table.append(aircraft_grid.equipment_categories, "armor")
+end
+
+-- Supplier can use any fuel you want
+local titan_supplier = data.raw.car[shared.aircraft_supplier]
+titan_supplier.burner.fuel_categories = {"chemical"}
+if mods[shared.AIND] then
+  table.append(titan_supplier.burner.fuel_categories, "processed-chemical")
+end
+if mods[shared.K2] then
+  table.append(titan_supplier.burner.fuel_categories, "vehicle-fuel")
+  table.append(titan_supplier.burner.fuel_categories, "nuclear-fuel")
+  table.append(titan_supplier.burner.fuel_categories, "fusion-fuel")
+  table.append(titan_supplier.burner.fuel_categories, "antimatter-fuel")
 end

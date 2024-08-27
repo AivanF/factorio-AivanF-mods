@@ -6,15 +6,6 @@ local shared = require("shared")
 local ICONPATH = shared.media_prefix.."graphics/icons/"
 local ENTITYPATH = shared.media_prefix.."graphics/entity/"
 
-local function find_existing_grid(list)
-  for _, name in ipairs(list) do
-    if data.raw["equipment-grid"][name] then
-      return name
-    end
-  end
-  error("No suitable equipment-grid found!")
-end
-
 local function addcommonanimlines(anim)
   for _,layer in pairs(anim.layers) do
     layer.width, layer.height = 448, 448
@@ -188,10 +179,7 @@ local titan_supplier = {
   },
   inventory_size = 50,
   guns = {},
-  equipment_grid = find_existing_grid({
-    "kr-flying-fortress-grid", "flying-fortress-equipment-grid",
-    "spidertronmk3-grid", "kr-car-grid", "spidertron-equipment-grid",
-  }),
+  equipment_grid = shared.mod_prefix.."aircraft",
   -- MOVEMENT
   effectivity = 0.9,
   braking_power = "3.5MW",
@@ -211,18 +199,14 @@ local titan_supplier = {
 
 add_recurrent_params(titan_supplier)
 
-if mods[shared.AIND] then
-  table.append(titan_supplier.burner.fuel_categories, "processed-chemical")
-end
-
-if mods[shared.K2] then
-  table.append(titan_supplier.burner.fuel_categories, "vehicle-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "nuclear-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "fusion-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "antimatter-fuel")
-end
-
 data:extend({
+  {
+    type = "equipment-grid",
+    name = shared.mod_prefix.."aircraft",
+    width = 12,
+    height = 8,
+    equipment_categories = {} -- Added in the final fixes
+  },
   {
     type = "trivial-smoke",
     name = "aircraft-trail",

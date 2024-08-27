@@ -4,7 +4,7 @@ lib_spl = Lib.new()
 local supplier_update_rate = UPS
 supplier_max_weight = 10 * 1000
 local supplier_transfer_limit = 50
-local supplying_radius = 16
+local supplying_radius = 20
 
 
 function lib_spl.register_supplier(entity)
@@ -25,7 +25,7 @@ function lib_spl.register_supplier(entity)
   bucks.save(ctrl_data.supplier_buckets, supplier_update_rate, entity.unit_number, supplier_info)
   ctrl_data.supplier_index[entity.unit_number] = supplier_info
 
-  game.print("register_supplier "..entity.unit_number)
+  -- game.print("register_supplier "..entity.unit_number)
 
   return supplier_info
 end
@@ -38,7 +38,7 @@ function lib_spl.supplier_removed(unit_number)
 
   lib_spl.remove_supplier_gui_by_supplier(supplier_info)
 
-  ctrl_data.supplier_index[entity.unit_number] = nil
+  ctrl_data.supplier_index[unit_number] = nil
   bucks.remove(ctrl_data.supplier_buckets, supplier_update_rate, unit_number)
 
   -- TODO: make a corpse!

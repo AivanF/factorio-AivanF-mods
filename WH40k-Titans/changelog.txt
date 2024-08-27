@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.24
+Date: 2024-08-27
+  Balancing:
+    - Higher range for most of Titans weapons.
+    - Enabled productivity modules for many recipes.
+  Bugfixes:
+    - Fixed Supplier aircraft mining error.
+  Changes:
+    - Void Shields cannot be put into equipment grid (which was added in previous version as an experiment). Reason: Factorio's energy shields pass impact damage type, and Titans decrease their equipment's shields just by walking, so Titans only use custom shields mechanic that considers resistances. WARNING: if you have already put Void Shields into a Titan's equipment grid, take it back before saving with this newer version.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.23
 Date: 2024-08-26
   Bugfixes:

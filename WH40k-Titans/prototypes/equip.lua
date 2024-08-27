@@ -1,7 +1,7 @@
 local shared = require("shared")
 
 data.raw.item[shared.energy_core].placed_as_equipment_result = shared.energy_core
-data.raw.item[shared.void_shield].placed_as_equipment_result = shared.void_shield
+-- data.raw.item[shared.void_shield].placed_as_equipment_result = shared.void_shield
 data.raw.item[shared.antigraveng].placed_as_equipment_result = shared.antigraveng
 data.raw.item[shared.motor].placed_as_equipment_result = shared.motor
 
@@ -72,28 +72,30 @@ data:extend({
     categories = {shared.equip_cat}
   },
 
-  {
-    name = shared.void_shield,
-    type = "energy-shield-equipment",
-    sprite = {
-      filename = shared.media_prefix.."graphics/icons/details/void-shield-gen.png",
-      width = 64, height = 64,
-    },
-    shape = {
-      width = 4,
-      height = 4,
-      type = "full"
-    },
-    max_shield_value = 1000,
-    energy_source = {
-      type = "electric",
-      buffer_capacity = "10MJ",
-      input_flow_limit = "4MW",
-      usage_priority = "primary-input"
-    },
-    energy_per_shield = "100kJ",
-    categories = {shared.equip_cat}
-  },
+  ----- It passes impact damage type, and Titans decrease their shields just by walking,
+  ----- so I made custom shields mechanic that considers resistances.
+  -- {
+  --   name = shared.void_shield,
+  --   type = "energy-shield-equipment",
+  --   sprite = {
+  --     filename = shared.media_prefix.."graphics/icons/details/void-shield-gen.png",
+  --     width = 64, height = 64,
+  --   },
+  --   shape = {
+  --     width = 4,
+  --     height = 4,
+  --     type = "full"
+  --   },
+  --   max_shield_value = 1000,
+  --   energy_source = {
+  --     type = "electric",
+  --     buffer_capacity = "10MJ",
+  --     input_flow_limit = "4MW",
+  --     usage_priority = "primary-input"
+  --   },
+  --   energy_per_shield = "100kJ",
+  --   categories = {shared.equip_cat}
+  -- },
 
   {
     name = shared.motor,

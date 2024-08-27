@@ -63,7 +63,7 @@ data:extend({
             type = "nested-result",
             action = {
               type = "area",
-              radius = 5,
+              radius = 7,
               action_delivery = {
                 type = "instant",
                 target_effects = {
@@ -171,7 +171,7 @@ data:extend({
             type = "nested-result",
             action = {
               type = "area",
-              radius = 5,
+              radius = 7,
               action_delivery = {
                 type = "instant",
                 target_effects = {
@@ -285,7 +285,7 @@ data:extend({
             type = "nested-result",
             action = {
               type = "area",
-              radius = 7,
+              radius = 9,
               action_delivery = {
                 type = "instant",
                 target_effects = {
@@ -382,7 +382,7 @@ data:extend({
       },
       {
         type = "area",
-        radius = 8,
+        radius = 9,
         ignore_collision_condition = true,
         action_delivery = {
           type = "instant",
@@ -482,7 +482,7 @@ data:extend({
       },
       {
         type = "area",
-        radius = 12,
+        radius = 15,
         ignore_collision_condition = true,
         action_delivery = {
           type = "instant",
@@ -572,7 +572,7 @@ data:extend({
               include_decals = true,
               invoke_decorative_trigger = true,
               decoratives_with_trigger_only = false,
-              radius = 12
+              radius = 15
             },
             {
               type = "create-entity",
@@ -597,7 +597,7 @@ data:extend({
       },
       {
         type = "area",
-        radius = 16,
+        radius = 20,
         ignore_collision_condition = true,
         action_delivery = {
           type = "instant",
@@ -686,7 +686,7 @@ data:extend({
               include_decals = true,
               invoke_decorative_trigger = true,
               decoratives_with_trigger_only = false,
-              radius = 24
+              radius = 27
             },
             {
               type = "create-entity",
@@ -711,7 +711,7 @@ data:extend({
       },
       {
         type = "area",
-        radius = 24,
+        radius = 25,
         ignore_collision_condition = true,
         action_delivery = {
           type = "instant",

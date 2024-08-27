@@ -79,7 +79,6 @@ data:extend({
 -- Plasma fuel
 
 bridge.add_item({
-  -- Ammo could be used in runtime scripts, so the name must not be changed
   short_name = "plasma_fuel",
   name = shared.plasma_ammo,
   icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Fuel.png",
@@ -87,6 +86,7 @@ bridge.add_item({
   prereq = nil,
   subgroup = shared.subg_ammo,
   order = "c-1-plasma-fuel",
+  allow_productivity = true,
   ingredients = {
     {type="fluid", name="water", amount=200},
     -- {"battery", 2},
@@ -97,6 +97,7 @@ bridge.add_item({
   stack_size = 100,
   -- results = {{"iron-ore", 1}, {"copper-ore", 1},},
   category = "chemistry",
+  afci_bridged = true,
   modded = {
     {
       mod = bridge.mods.k2,
@@ -181,29 +182,25 @@ bridge.add_item({
 }).data_getter()
 
 
-data:extend({
-  -- Big bolt
-  {
-    type = "item",
-    name = shared.hell_ammo,
-    icon = shared.media_prefix.."graphics/icons/weapons/Hell-Fuel.png",
-    icon_size = 64, icon_mipmaps = 4,
-    subgroup = shared.subg_ammo,
-    order = "c-2-hellstorm-ammo",
-    stack_size = 20,
+-- HellStorm fuel
+
+bridge.add_item({
+  short_name = "hell_ammo",
+  name = shared.hell_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Hell-Fuel.png",
+  icon_size = 64, icon_mipmaps = 4,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "c-2-hellstorm-ammo",
+  allow_productivity = true,
+  ingredients = {
+    {shared.plasma_ammo, 1},
+    {shared.melta_ammo, 1},
+    {shared.laser_ammo, 1},
+    {bridge.get.best_fuel().name, 1},
   },
-  {
-    type = "recipe",
-    name = shared.hell_ammo,
-    enabled = false,
-    ingredients = {
-      {shared.plasma_ammo, 1},
-      {shared.melta_ammo, 1},
-      {shared.laser_ammo, 1},
-      {"uranium-fuel-cell", 1},
-    },
-    energy_required = 60,
-    result = shared.hell_ammo,
-    category = "advanced-crafting",
-  },
-})
+  energy_required = 60,
+  stack_size = 20,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
