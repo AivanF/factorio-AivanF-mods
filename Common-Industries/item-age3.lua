@@ -26,6 +26,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     { bridge.item.meat, 4 },
     -- { "advanced-circuit", 1 },
@@ -76,6 +77,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 3,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.heavy_material, 9},
     {"engine-unit", 6},
@@ -95,10 +97,15 @@ add_item({
 
 add_item({
   short_name = "he_provider",
-  -- name = bridge.prefix.."high-energy-provider",
   name = "fusion-reactor-equipment",
   prereq = "fusion-reactor-equipment",
   modded = {
+    {
+      mod = bridge.mods.k2,
+      -- name = "kr-antimatter-reactor",
+      name = "antimatter-reactor-equipment",
+      prereq = "kr-antimatter-reactor",
+    },
     {
       mod = bridge.mods.py_ht,
       name = "antimatter",
@@ -114,6 +121,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 3,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{"coal", 2}},
   stack_size = 100,
   energy_required = 5,
@@ -154,6 +162,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.carbon_fiber, 2},
     {bridge.item.dense_cable, 1},
@@ -199,6 +208,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {"steel-plate", 2},
     {bridge.item.sc_cable, 10},
@@ -257,13 +267,14 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {"low-density-structure", 10},
     {bridge.item.glass, 10},
     {bridge.item.carbon_fiber, 10},
   },
   result_count = 10,
-  energy_required = 30,
+  energy_required = 60,
   category = bridge.cat_nano_crafting,
   modded = {
     {
@@ -293,9 +304,9 @@ add_item({
       mod = bridge.mods.k2,
       prereq = "kr-imersium-processing",
       ingredients = {
-        {"low-density-structure", 4},
-        {"imersium-plate", 4},
-        {"silicon", 4},
+        {"low-density-structure", 10},
+        {"imersium-plate", 10},
+        {"silicon", 10},
       },
     },
     {
@@ -340,6 +351,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.carbon_fiber, 12},
     {bridge.item.glass, 4},
@@ -369,6 +381,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.quantum_transistor, 64},
     {bridge.item.sc_cable, 4},
@@ -436,6 +449,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.optic_cable, 2},
     {"advanced-circuit", 1},
@@ -503,6 +517,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.advanced_solenoid, 6},
     {bridge.item.nano_mat, 24},
@@ -565,6 +580,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.emfc, 3},
     {bridge.item.optic_emitter, 3},
@@ -600,5 +616,20 @@ add_item({
       },
       results = {},
     },
+  },
+})
+
+add_item({
+  short_name = "best_fuel",
+  name = "nuclear-fuel",
+  prereq = "kovarex-enrichment-process",
+  modded = {
+    {
+      mod = bridge.mods.k2,
+      -- Or krastorio.recipes.changed_names["charged-antimatter-fuel-cell"] ?!
+      name = "charged-antimatter-fuel-cell",
+      prereq = "kr-antimatter-reactor",
+    },
+    -- TODO: check out other mods!
   },
 })

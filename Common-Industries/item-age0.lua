@@ -11,6 +11,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ "stone", 1 }},
   result_count = 2,
   stack_size = 100,

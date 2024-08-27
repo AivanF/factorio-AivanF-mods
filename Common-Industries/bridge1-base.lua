@@ -24,6 +24,7 @@ bridge.debug_all = false
 
 
 -- Constants
+bridge.mod_name = "Common-Industries"
 bridge.media_path = "__Common-Industries__/graphics/"
 bridge.prefix = "afci-"
 bridge.log_prefix = "AFCI: "

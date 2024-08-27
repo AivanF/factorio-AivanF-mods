@@ -81,7 +81,7 @@ function bridge.add_item(item_info)
     -- TODO: remove ores/scrap+sludge(SE)/slag(248k) if related startup setting is set
 
     -- Make actual item + recipe
-    if bridge.is_bridge_name(item_info.name) then
+    if bridge.is_bridge_name(item_info.name) or item_info.afci_bridged then
       if data and data.raw and not data.raw.item[item_info.name] then
         log(bridge.log_prefix.."creating item "..item_info.short_name)
         data:extend({
@@ -101,12 +101,14 @@ function bridge.add_item(item_info)
             name = item_info.name,
             enabled = item_info.prerequisite == bridge.empty,
             energy_required = item_info.energy_required or 1,
+            allow_productivity = item_info.allow_productivity,
             ingredients = item_info.ingredients,
             result_count = item_info.result_count,
             result = item_info.name,
             results = results,
             main_product = item_info.name,
             category = item_info.category or "crafting",
+            afci_bridged = true,
           },
         })
         -- Note: tech research effects are added in data-final-fixes

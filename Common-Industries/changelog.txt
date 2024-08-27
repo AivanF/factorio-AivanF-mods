@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.6
+Date: 2024-08-27
+  Balancing:
+    - Enabled productivity modules for some recipes. Technically it's harder to implement than you might think, hence made so late.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.5
 Date: 2024-08-26
   Balancing:

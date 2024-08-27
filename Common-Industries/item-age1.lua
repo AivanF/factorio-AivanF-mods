@@ -11,6 +11,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ bridge.item.sand, 3 }},
   stack_size = 100,
   category = "smelting",
@@ -82,6 +83,7 @@ add_item({
   prereq = prerequisite,
   subgroup = subgroup,
   stack_size = 100,
+  allow_productivity = true,
   ingredients = {{ "wood", 8 }, { "iron-plate", 4 }, { "copper-cable", 8 }},
 })
 
@@ -93,6 +95,7 @@ add_item({
   prereq = prerequisite,
   subgroup = subgroup,
   stack_size = 100,
+  allow_productivity = true,
   ingredients = {{ "steel-plate", 5 }, { "iron-stick", 10 }, { "copper-cable", 10 }},
 })
 
@@ -103,6 +106,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ "iron-stick", 20 }, { "copper-cable", 20 }},
   modded = {
     {

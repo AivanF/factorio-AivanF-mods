@@ -16,7 +16,7 @@ add_item({
   subgroup = subgroup,
   ingredients = {
     {bridge.item.he_emitter, 3},
-    {bridge.item.quantum_chip, 5},
+    {bridge.item.quantum_chip, 1},
     {bridge.item.nano_mat, 8},
   },
   energy_required = 60,
@@ -30,7 +30,7 @@ add_item({
       ingredients = {
         {"se-naquium-cube", 1},
         {bridge.item.he_emitter, 3},
-        {bridge.item.quantum_chip, 5},
+        {bridge.item.quantum_chip, 1},
         {bridge.item.nano_mat, 8},
       },
     },
@@ -41,7 +41,7 @@ add_item({
       ingredients = {
         {"quantum-ring", 6},
         {bridge.item.he_emitter, 3},
-        {bridge.item.quantum_chip, 5},
+        {bridge.item.quantum_chip, 1},
         {bridge.item.nano_mat, 8},
       },
     },
@@ -52,7 +52,7 @@ add_item({
       ingredients = {
         {"ei_matter-stabilizer", 3},
         {bridge.item.he_emitter, 3},
-        {bridge.item.quantum_chip, 5},
+        {bridge.item.quantum_chip, 1},
         {bridge.item.nano_mat, 8},
       },
     },
@@ -63,7 +63,7 @@ add_item({
       ingredients = {
         {"matter-stabilizer", 3},
         {bridge.item.he_emitter, 3},
-        {bridge.item.quantum_chip, 5},
+        {bridge.item.quantum_chip, 1},
         {bridge.item.nano_mat, 8},
       },
     },
@@ -78,7 +78,7 @@ add_item({
   prereq = prerequisite,
   subgroup = subgroup,
   ingredients = {
-    {bridge.item.st_operator, 5},
+    {bridge.item.st_operator, 1},
     {bridge.item.he_emitter, 3},
   },
   energy_required = 60,

@@ -12,6 +12,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     { "wood", 4 },
     { "raw-fish", 4 },
@@ -33,6 +34,11 @@ add_item({
       name = "meat",
       -- prereq = "rendering",
       prereq = "organ-printing",
+    },
+    {
+      mod = bridge.mods.k2,
+      name = "biomass",
+      prereq = bridge.empty,
     },
     {
       mod = bridge.mods.se,
@@ -103,6 +109,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ "copper-cable", 4 }, { "plastic-bar", 1 }},
   stack_size = 100,
   modded = {
@@ -131,6 +138,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     -- { "copper-cable", 4 },
     { bridge.item.glass, 1 },
@@ -210,6 +218,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ "steel-plate", 8 }, { "plastic-bar", 6 }},
   energy_required = 1,
   category = "advanced-crafting",
@@ -223,6 +232,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{ "steel-plate", 20 }, { "copper-plate", 4 }, { "sulfur", 1 }, { "coal", 1 }},
   result_count = 20,
   stack_size = 100,
@@ -249,6 +259,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {{bridge.item.strong_alloy_powder, 2}},
   stack_size = 100,
   energy_required = 5,
