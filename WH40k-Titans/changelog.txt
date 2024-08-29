@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.25
+Date: 2024-08-29
+  Features:
+    - New admin command `titans-spawn-more-corpses`, it's cheaty, but helps to deal with mods that add other planets or limited surfaces, like SE, Warptorio, Team Competition.
+    - New admin commands `titans-fulfill` and `titans-clear` to add full ammo or remove it.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.24
 Date: 2024-08-27
   Balancing:

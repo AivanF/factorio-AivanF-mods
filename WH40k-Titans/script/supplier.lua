@@ -61,6 +61,20 @@ function lib_spl.supplier_entity_replaced(old_entity, new_entity)
 end
 
 
+function lib_spl.supplier_ammo_fulfill(supplier_info)
+  for _, ammo_name in ipairs(shared.ammo_list) do
+    supplier_info.inventory[ammo_name] = math.floor(supplier_max_weight / shared.ammo_weights[ammo_name])
+  end
+end
+
+
+function lib_spl.supplier_ammo_clear(supplier_info)
+  for _, ammo_name in ipairs(shared.ammo_list) do
+    supplier_info.inventory[ammo_name] = 0
+  end
+end
+
+
 function lib_spl.count_weight(supplier_info)
   local total_count = 0
   for ammo_name, count in pairs(supplier_info.inventory) do

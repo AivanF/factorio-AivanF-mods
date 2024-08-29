@@ -16,10 +16,9 @@ local main_frame_name = "wh40k_titans_extractor"
 local act_main_frame_close = "wh40k-titans-extractor-frame-close"
 
 function lib_exc.register_excavator(entity)
-  local world, sector, ruin_entity, ruin_info
+  local world, ruin_entity, ruin_info
   ruin_entity = entity.surface.find_entity(shared.corpse, entity.position)
   world = ctrl_data.by_surface[entity.surface.index]
-  sector = lib_ruins.get_sector(world, entity.position)
 
   local bodies = entity.surface.find_entities_filtered{position=entity.position, name=shared.corpse}
   if #bodies > 1 then
@@ -37,7 +36,6 @@ function lib_exc.register_excavator(entity)
     unit_number = entity.unit_number,
     entity = entity,
     world = world,
-    sector = sector,
     ruin_entity = ruin_entity,
     ruin_info = ruin_info,
     progress = 0,

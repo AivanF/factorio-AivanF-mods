@@ -201,6 +201,48 @@ local function update_configuration()
   end
 end
 
+local function fulfill_ammo_cmd(cmd)
+  local player = game.players[cmd.player_index]
+  if not player.admin then
+    player.print({"cant-run-command-not-admin", "Fulfill ammo"})
+    return
+  end
+  if player.vehicle and player.vehicle.valid then
+    local unit_number = player.vehicle.unit_number
+    if ctrl_data.titans[unit_number] then
+      lib_ttn.titan_ammo_fulfill(ctrl_data.titans[unit_number])
+
+    elseif ctrl_data.supplier_index[unit_number] then
+      lib_spl.supplier_ammo_fulfill(ctrl_data.supplier_index[unit_number])
+    end
+  end
+  player.print("Seems like you are not driving a Titan nor Supplier...")
+  return
+end
+
+local function clear_ammo_cmd(cmd)
+  local player = game.players[cmd.player_index]
+  if not player.admin then
+    player.print({"cant-run-command-not-admin", "Clear ammo"})
+    return
+  end
+  if player.vehicle and player.vehicle.valid then
+    local unit_number = player.vehicle.unit_number
+    if ctrl_data.titans[unit_number] then
+      lib_ttn.titan_ammo_clear(ctrl_data.titans[unit_number])
+      player.print("Done")
+      return
+
+    elseif ctrl_data.supplier_index[unit_number] then
+      lib_spl.supplier_ammo_clear(ctrl_data.supplier_index[unit_number])
+      player.print("Done")
+      return
+    end
+  end
+  player.print("Seems like you are not driving a Titan nor Supplier...")
+  return
+end
+
 
 lib:on_init(on_init)
 lib:on_load(on_load)
@@ -214,6 +256,18 @@ commands.add_command(
   "titans-reload",
   "Reload all WH40k Titans",
   update_configuration
+)
+
+commands.add_command(
+  "titans-fulfill",
+  "Fulfill current vehicle ammo (Titan or Supplier)",
+  fulfill_ammo_cmd
+)
+
+commands.add_command(
+  "titans-clear",
+  "Clear current vehicle ammo (Titan or Supplier)",
+  clear_ammo_cmd
 )
 
 

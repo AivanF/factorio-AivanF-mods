@@ -1,5 +1,4 @@
 local lib_ruins = require("script/ruins")
-local collision_mask_util_extended = require("cmue.collision-mask-util-control")
 
 local Lib = require("script/event_lib")
 lib_ttn = Lib.new()
@@ -134,8 +133,8 @@ function lib_ttn.titan_death(titan_info)
   lib_ruins.spawn_ruin(titan_info.surface, {
     position = source,
     class = titan_type.class,
-    details = remove_ingredients_doubles(iter_chain(detailses)),
-    ammo = remove_ingredients_doubles(ammo),
+    details = merge_ingredients_doubles(iter_chain(detailses)),
+    ammo = merge_ingredients_doubles(ammo),
   })
 
   lib_ttn.titan_removed(titan_info)
@@ -166,6 +165,21 @@ end)
 
 
 ----- MISC -----
+
+function lib_ttn.titan_ammo_fulfill(titan_info)
+  for _, gun_info in ipairs(titan_info.guns) do
+    local weapon_type = shared.weapons[gun_info.name]
+    gun_info.ammo_count = weapon_type.inventory
+  end
+end
+
+
+function lib_ttn.titan_ammo_clear(titan_info)
+  for _, gun_info in ipairs(titan_info.guns) do
+    gun_info.ammo_count = 0
+  end
+end
+
 
 function lib_ttn.titan_type_by_entity(entity)
   local name = entity.name
@@ -210,7 +224,7 @@ end
 local function titans_debug_cmd(cmd)
   local player = game.players[cmd.player_index]
   if not player.admin then
-    player.print("You are not an admin!")
+    player.print({"cant-run-command-not-admin", "Titans Debug"})
     return
   end
   local valid_titans = 0

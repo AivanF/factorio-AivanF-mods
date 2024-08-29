@@ -1,6 +1,7 @@
 require("__core__.lualib.util") -- for table.deepcopy
 math2d = require("math2d")
 shared = require("shared")
+collision_mask_util_extended = require("cmue.collision-mask-util-control")
 
 UPS = 60
 
@@ -74,7 +75,7 @@ function preprocess_ingredients()
   end
 end
 
-function remove_ingredients_doubles(ingredients)
+function merge_ingredients_doubles(ingredients)
   local indices = {}
   local result = {}
   local prev, name, count
@@ -151,6 +152,13 @@ function list_players(values)
     end
   end
   return result
+end
+
+math2d.bounding_box.random_point = function(box)
+  return {
+    math.random(box.left_top.x, box.right_bottom.x),
+    math.random(box.left_top.y, box.right_bottom.y)
+  }
 end
 
 function position_scatter(source, scatter)
