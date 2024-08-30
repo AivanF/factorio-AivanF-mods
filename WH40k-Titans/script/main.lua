@@ -4,6 +4,7 @@ local lib_asmb = require("script/assemble")
 local lib_ruins = require("script/ruins")
 local lib_exc = require("script/exc")
 local lib_tech = require("script/tech")
+local lib_gen = require("script/gen_ui")
 
 local Lib = require("script/event_lib")
 local lib = Lib.new()
@@ -12,16 +13,12 @@ local blank_ctrl_data = {
   assembler_buckets = {}, -- uid => bucket => assembler
   assembler_index = {}, -- entity.unit_number => assembler
   -- assembler_entities = {}, -- bunker parts, entity.unit_number => {assembler=, index=[0:6]}
-  assembler_gui = {}, -- player.index => {assembler=, main_frame=}
+  assembler_gui = {}, -- player.index => {player=, main_frame=, assembler=}
 
   titans = {},
-  titan_gui = {},
+  titan_gui = {}, -- player.index => {player=, main_frame=, titan_info=, guns=}
   foots = {},
   by_player = {}, -- player.index => user settings
-
-  by_surface = nil, -- surface.index => world settings
-  by_zones = nil, -- mod name => mod's zone index => world settings
-  ruins = {}, -- materialised corpses, unit_number => ruin_info
 
   excavator_buckets = {}, -- unit_number => bucket => exc_info
   excavator_index = {}, -- unit_number => exc_info
@@ -29,6 +26,12 @@ local blank_ctrl_data = {
   supplier_buckets = {}, -- unit_number => bucket => supplier_info
   supplier_index = {}, -- unit_number => supplier_info
   supplier_gui = {},
+
+  gen_ui = {}, -- player.index => {player=, main_frame=}
+
+  ruins = {}, -- materialised corpses, unit_number => ruin_info
+  by_surface = nil, -- surface.index => world settings
+  by_zones = nil, -- mod name => mod's zone index => world settings
 
   researches = {}, -- force_index => tech_name => level
 }
@@ -199,6 +202,10 @@ local function update_configuration()
   if ctrl_data.by_surface == nil then
     lib_ruins.initial_index()
   end
+
+  for _, player in pairs(game.players) do
+    lib_gen.setup_gui_btn(player.index)
+  end
 end
 
 local function fulfill_ammo_cmd(cmd)
@@ -269,6 +276,5 @@ commands.add_command(
   "Clear current vehicle ammo (Titan or Supplier)",
   clear_ammo_cmd
 )
-
 
 return lib

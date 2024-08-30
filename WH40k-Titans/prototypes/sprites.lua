@@ -28,6 +28,18 @@ end
 
 data:extend({
   {
+    type = "sprite",
+    name = shared.mod_prefix.."weight",
+    filename = "__core__/graphics/icons/alerts/no-storage-space-icon.png",
+    width = 64, height = 64,
+  },
+  {
+    type = "sprite",
+    name = shared.mod_prefix.."gui-btn",
+    filename = shared.media_prefix.."graphics/icons/datacard-titan.png",
+    width = 64, height = 64, mipmap_count = 4,
+  },
+  {
     type = "projectile",
     name = shared.item_proj,
     acceleration = 0.02,

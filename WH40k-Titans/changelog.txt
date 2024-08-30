@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.26
+Date: 2024-08-30
+  Features:
+    - General Titans dashboard: view lists and stats of Titans and Supplier aircrafts than belong to your team! Includes vehicle type, position, driver name, health, void shield, weapons ammo.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.25
 Date: 2024-08-29
   Features:

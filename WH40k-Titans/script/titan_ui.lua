@@ -126,6 +126,7 @@ end)
 local function update_guis()
   local tick = game.tick
   for _, guiobj in pairs(ctrl_data.titan_gui) do
+    -- TODO: separate if player is not valid, as there will be no UI objects anymore
     if false
       or (not guiobj.player.valid or not guiobj.titan_info.entity or not guiobj.titan_info.entity.valid)
       or (not table.contains(list_players(lib_ttn.get_crew(guiobj.titan_info)), guiobj.player))

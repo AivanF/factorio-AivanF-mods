@@ -27,7 +27,7 @@ lib_ttn.init_gun = lib_ttn.init_gun
 
 
 function lib_ttn.calc_max_dst(titan_type, k, weapon_type)
-  return weapon_type.max_dst * (1 + 0.02*titan_type.class)
+  return weapon_type.max_dst * (1 + 0.01*titan_type.class)
 end
 
 
