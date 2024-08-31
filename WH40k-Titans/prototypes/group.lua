@@ -29,6 +29,13 @@ data:extend{
   },
 
   {
+    type = "item-subgroup",
+    name = shared.mod_prefix.."signals",
+    group = "signals",
+    order = "zz"
+  },
+
+  {
     type = "item-group",
     name = group_name,
     order = "d-d",

@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.27
+Date: 2024-08-31
+  Features:
+    - Informatron integration, almost a half of pages are ready!
+  Graphics:
+    - Reworked Assembler Bunker icons.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.26
 Date: 2024-08-30
   Features:

@@ -3,8 +3,8 @@ local shared = require("shared")
 local misc = require("prototypes.misc")
 
 local icon = shared.media_prefix.."graphics/icons/bunker.png"
-local icon_size = 32
-local icon_mipmaps = 1
+local icon_size = 64
+local icon_mipmaps = 3
 
 local special_flags = {
   "not-rotatable", "placeable-neutral", "placeable-off-grid",

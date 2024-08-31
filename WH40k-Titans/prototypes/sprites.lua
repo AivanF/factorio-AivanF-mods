@@ -36,8 +36,8 @@ data:extend({
   {
     type = "sprite",
     name = shared.mod_prefix.."gui-btn",
-    filename = shared.media_prefix.."graphics/icons/datacard-titan.png",
-    width = 64, height = 64, mipmap_count = 4,
+    filename = shared.media_prefix.."graphics/icons/legio-titanicus.png",
+    width = 64, height = 64, mipmap_count = 1,
   },
   {
     type = "projectile",
@@ -53,6 +53,72 @@ data:extend({
     },
     speed = 0.05
   },
+
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-close",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-close.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "a[close]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-back",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-back.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "b[back]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-play",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-play.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "c[play]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-stop",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-stop.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "d[stop]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-assembling",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-assembling.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "e[assembling-1]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-disassembling",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-disassembling.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "e[assembling-2]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-packing",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-packing.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "e[packing-1]"
+  },
+  {
+    type = "virtual-signal",
+    name = shared.mod_prefix.."signal-unpacking",
+    icon = shared.media_prefix.."graphics/icons/btns/ic-unpacking.png",
+    icon_size = 64, icon_mipmaps = 1,
+    subgroup = shared.mod_prefix.."signals",
+    order = "e[packing-2]"
+  },
+
 
   -- https://wiki.factorio.com/Prototype/Sprite
   -- https://lua-api.factorio.com/latest/Concepts.html#SpritePath
@@ -209,3 +275,15 @@ data:extend({
     shift = util.by_pixel(0, 0),
   },
 })
+
+informatron_make_image(shared.mod_prefix.."inf-AT-logo",
+  shared.media_prefix.."graphics/informatron/AT-logo.png", 900, 493)
+
+informatron_make_image(shared.mod_prefix.."inf-lore-art",
+  shared.media_prefix.."graphics/informatron/lore-art.jpg", 1000, 680)
+
+informatron_make_image(shared.mod_prefix.."inf-extractor",
+  shared.media_prefix.."graphics/informatron/extractor.jpg", 900, 580)
+
+informatron_make_image(shared.mod_prefix.."inf-titan-dashboard",
+  shared.media_prefix.."graphics/informatron/titan-dashboard.jpg", 228, 172)

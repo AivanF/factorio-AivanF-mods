@@ -20,12 +20,12 @@ local gui_updater = {}
 
 
 function gui_maker.disabled(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", tags={action=act_change_state, state=states.initialising}, sprite="virtual-signal/signal-green", tooltip={"WH40k-Titans-gui.assembly-act-init"} }
+  main_frame.status_line.add{type="sprite-button", tags={action=act_change_state, state=states.initialising}, sprite="virtual-signal/"..shared.mod_prefix.."signal-play", tooltip={"WH40k-Titans-gui.assembly-act-init"} }
 end
 
 
 function gui_maker.initialising(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.deactivating, need_confirm=true}, sprite="virtual-signal/signal-red", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.deactivating, need_confirm=true}, sprite="virtual-signal/"..shared.mod_prefix.."signal-close", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   main_frame.main_room.add{ type="progressbar", name=main_frame_init_progress, direction="horizontal", value=assembler.init_progress/lib_asmb.bunker_init_time }
 end
 
@@ -37,11 +37,11 @@ end
 
 function gui_maker.idle(assembler, main_frame)
   local top_line = main_frame.main_room.add{ type="flow", name=main_frame_buttons_line, direction="horizontal" }
-  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.deactivating, need_confirm=true}, sprite="virtual-signal/signal-red", tooltip={"WH40k-Titans-gui.assembly-act-disable"} }
-  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.prepare_assembly}, sprite="virtual-signal/signal-green", tooltip={"WH40k-Titans-gui.assembly-act-prepare-assemble"} }
-  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.waiting_disassembly}, sprite="virtual-signal/signal-pink", tooltip={"WH40k-Titans-gui.assembly-act-prepare-disassemble"} }
-  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.restock}, sprite="virtual-signal/signal-yellow", tooltip={"WH40k-Titans-gui.assembly-act-restock"} }
-  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.clearing}, sprite="virtual-signal/signal-cyan", tooltip={"WH40k-Titans-gui.assembly-act-clearing"} }
+  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.deactivating, need_confirm=true}, sprite="virtual-signal/"..shared.mod_prefix.."signal-close", tooltip={"WH40k-Titans-gui.assembly-act-disable"} }
+  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.prepare_assembly}, sprite="virtual-signal/"..shared.mod_prefix.."signal-assembling", tooltip={"WH40k-Titans-gui.assembly-act-prepare-assemble"} }
+  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.waiting_disassembly}, sprite="virtual-signal/"..shared.mod_prefix.."signal-disassembling", tooltip={"WH40k-Titans-gui.assembly-act-prepare-disassemble"} }
+  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.restock}, sprite="virtual-signal/"..shared.mod_prefix.."signal-unpacking", tooltip={"WH40k-Titans-gui.assembly-act-restock"} }
+  top_line.add{type="sprite-button", tags={action=act_change_state, state=states.clearing}, sprite="virtual-signal/"..shared.mod_prefix.."signal-packing", tooltip={"WH40k-Titans-gui.assembly-act-clearing"} }
 end
 
 local no_recipes_filter = {
@@ -67,12 +67,12 @@ end
 function gui_updater.prepare_assembly(assembler, main_frame)
   -- TODO: update other elements?
   main_frame.main_room.label.caption = {"", "Status: ", assembler.message or "unknown"}
-  main_frame.main_room.last_line.auto_toggler.sprite = assembler.auto_build and "virtual-signal/signal-green" or "virtual-signal/signal-grey"
+  main_frame.main_room.last_line.auto_toggler.sprite = assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-play") or ("virtual-signal/"..shared.mod_prefix.."signal-stop")
 end
 
 
 function gui_maker.prepare_assembly(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/"..shared.mod_prefix.."signal-back", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   -- TODO: show expected assembly time
 
   main_frame.main_room.add{
@@ -125,20 +125,20 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.main_room.last_line.add{ type="label", name="label", caption={"WH40k-Titans-gui.assembly-auto"} }
   main_frame.main_room.last_line.add{
     type="sprite-button", name="auto_toggler", tags={action=act_toggle_auto},
-    sprite=assembler.auto_build and "virtual-signal/signal-green" or "virtual-signal/signal-grey",
+    sprite=assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-play") or ("virtual-signal/"..shared.mod_prefix.."signal-stop"),
   }
 end
 
 
 function gui_maker.assembling(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.disassembling}, sprite="virtual-signal/signal-red", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.disassembling}, sprite="virtual-signal/"..shared.mod_prefix.."signal-close", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   main_frame.main_room.add{ type="progressbar", name=main_frame_assembly_progress, direction="horizontal", value=assembler.assembly_progress/assembler.assembly_progress_max }
   -- TODO: show class, weapons !
 end
 
 
 function gui_maker.waiting_disassembly(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/"..shared.mod_prefix.."signal-back", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
 end
 
 
@@ -149,12 +149,12 @@ end
 
 
 function gui_maker.restock(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/"..shared.mod_prefix.."signal-back", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
 end
 
 
 function gui_maker.clearing(assembler, main_frame)
-  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/signal-grey", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
+  main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/"..shared.mod_prefix.."signal-back", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
 end
 
 
