@@ -28,9 +28,9 @@ shared.ammo_weights = {
   [shared.laser_ammo] = 1,
   [shared.flamer_ammo] = 1,
   [shared.melta_ammo] = 1,
-  [shared.hell_ammo] = 3,
   [shared.missile_ammo] = 1,
   [shared.plasma_ammo] = 2,
+  [shared.hell_ammo] = 3,
 }
 
 shared.ammo_list = {

@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.28
+Date: 2024-09-01
+  Features:
+    - All the most important Informatron pages are done!
+  Balancing:
+    - Weapons mounted on top has +10% max attack range.
+  Info:
+    - Bigger Titans seem to be over-powered comparing to smaller ones, I plan to nerf them, at least their armor.
+    - Lots of new technological researches will be added in the upcoming versions.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.27
 Date: 2024-08-31
   Features:
