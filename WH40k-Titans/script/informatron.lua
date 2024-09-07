@@ -118,6 +118,14 @@ function mymod_page_content(page_name, player_index, element)
       cell.add{type="label", caption=""..shared.ammo_weights[ammo_name]}
     end
 
+  elseif page_name == "ai" then
+    element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.AI"}}
+    element.add{type="label", name="empty_0", caption=" "}
+
+  elseif page_name == "other" then
+    element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Other"}}
+    element.add{type="label", name="empty_0", caption=" "}
+
   else
     element.add{type="label", name="text_1", caption={"WH40k-Titans-informatron.ToDo"}}
   end

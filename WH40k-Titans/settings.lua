@@ -16,6 +16,15 @@ data:extend{
     default_value = true,
     order = "a-2",
   },
+  {
+    type = "int-setting",
+    name = "wh40k-titans-base-shield-cap-cf",
+    setting_type = "startup",
+    minimum_value = 1,
+    default_value = 1,
+    maximum_value = 10,
+    order = "a-3",
+  },
 
   -- Map/global
   {

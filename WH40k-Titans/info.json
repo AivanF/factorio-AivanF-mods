@@ -1,17 +1,17 @@
 {
   "name": "WH40k-Titans",
-  "version": "0.9.28",
+  "version": "0.9.29",
   "title": "WH40k: Titans",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [
-    "WH40k-Titans-media = 1.0.13",
+    "WH40k-Titans-media = 1.0.14",
     "Recipes-Reload",
     "Reverse-Engineering",
-    "Common-Industries >= 0.9.5",
+    "Common-Industries >= 0.9.7",
     "informatron",
     "? aai-programmable-vehicles"
   ],
   "factorio_version": "1.1",
-  "description": "TechPriest, are you seeking Omnissiah blessing to protect and expand your Forge World?.. Legio Titanicus is here for you! The mod provides unique and customizable war machines from WarHammer 40.000 with enormously powerful military capabilities. Production challenges included! In case of you are tired of logistics, you can also explore and restore broken titans, performing real Adeptus Mechanicus expeditions!\n\nWIP WARNING! The mod is in active early development. I have lots of plans to implement and problems to fix, so no need to report bugs.\nPlease don't use for stable save files, but feel free to try in sandbox god mod, and wait for new versions :) Press C to attack when inside a titan!\n\nIn case you have skills of sounds editing or 3D modelling/rendering, and would like to help, please contact me on Discord!"
+  "description": "TechPriest, are you seeking Omnissiah blessing to protect and expand your Forge World?.. Legio Titanicus is here for you!\n\nThe mod provides unique and customizable war machines from WarHammer 40.000 with enormously powerful military capabilities. Production challenges included! In case of you are tired of logistics, you can also explore and restore broken titans, performing real Adeptus Mechanicus expeditions!\n\nCompatible with most of overhaul mods.\nWIP WARNING! The mod is in active development, backward compatibility is maintained, but recipes may be altered. Join my Discord server to stay in touch!"
 }

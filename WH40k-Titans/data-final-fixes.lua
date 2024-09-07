@@ -1,7 +1,26 @@
 local shared = require("shared")
 
--- Fix SE procedural updating
-data.raw.technology[shared.mod_prefix.."production"].unit.ingredients = {{shared.sp, 1}}
+--[[
+		Fix SE procedural updating
+		Although `se_prodecural_tech_exclusions` works,
+		there are other rude editions from prototypes/phase-3/technology.lua:
+data_util.tech_add_ingredients_with_prerequisites("advanced-electronics-2", {data_util.mod_prefix .. "rocket-science-pack"})
+data_util.tech_add_ingredients_with_prerequisites("industrial-furnace", {"space-science-pack"})
+
+	So, let's clean up added science packs!
+]]--
+local dirty
+for name, technology in pairs(data.raw.technology) do
+	dirty = false
+	for _, ingredient in pairs(technology.unit.ingredients) do
+    if ingredient[1] == shared.sp or ingredient.name == shared.sp then
+      dirty = true
+    end
+  end
+  if dirty then
+		technology.unit.ingredients = {{shared.sp, 1}}
+	end
+end
 
 
 local function remove_recipe_effect(effects, name)

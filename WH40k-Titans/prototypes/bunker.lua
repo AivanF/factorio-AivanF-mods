@@ -120,7 +120,7 @@ data:extend({
     selection_box = {{-2, -1}, {2, 1}},
     collision_box = {{-2, -1}, {2, 1}},
     collision_mask = {},
-    inventory_size = 300,
+    inventory_size = 400,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -147,7 +147,7 @@ data:extend({
     selection_box = {{-1, -2}, {1, 2}},
     collision_box = {{-1, -2}, {1, 2}},
     collision_mask = {},
-    inventory_size = 300,
+    inventory_size = 400,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -232,7 +232,7 @@ data:extend({
     selection_box = {{-4, -2}, {4, 2}},
     collision_box = {{-4, -2}, {4, 2}},
     collision_mask = {},
-    inventory_size = 350,
+    inventory_size = 500,
     picture = {
       layers = {
         misc.empty_sprite,
@@ -358,8 +358,8 @@ local leftovers_chest = table.deepcopy(data.raw["container"]["iron-chest"])
 leftovers_chest.name = shared.leftovers_chest
 leftovers_chest.resistances = strong_resistances
 leftovers_chest.next_upgrade = nil
-leftovers_chest.minable = {mining_time = 3}
-leftovers_chest.inventory_size = 350
+leftovers_chest.minable = {mining_time = 2}
+leftovers_chest.inventory_size = 600
 leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest.png"
 leftovers_chest.picture.layers[1].hr_version.filename = shared.media_prefix.."graphics/entity/leftovers-chest-hr.png"
 

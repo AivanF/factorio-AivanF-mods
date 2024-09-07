@@ -1,7 +1,8 @@
 local lib_ruins = require("script/ruins")
+local lib_tech = require("script/tech")
 local collision_mask_util_extended = require("cmue.collision-mask-util-control")
 
-local shield_fill_time = 180 * UPS
+local shield_fill_time = 30 * 60 * UPS
 local visual_ttl = 2
 
 local wc_color = {}
@@ -67,6 +68,24 @@ local function far_seeing(titan_info)
 end
 
 
+local function get_shield_recharge_speed(force)
+  return (2 + lib_tech.get_research_level(force.index, shared.void_shield_spd_research))
+end
+
+
+function lib_ttn.get_unit_shield_max_capacity(titan_info)
+  if not titan_info.cached_max_shield then
+    titan_info.cached_max_shield = 1
+      * shared.titan_types[titan_info.class].max_shield
+      * (2 + lib_tech.get_research_level(
+              titan_info.entity.force.index,
+              shared.void_shield_cap_research))
+      * shared.void_shield_cap_base
+  end
+  return titan_info.cached_max_shield
+end
+
+
 local function process_single_titan(titan_info)
   local tick = game.tick
   local titan_type = shared.titan_types[titan_info.class]
@@ -79,7 +98,10 @@ local function process_single_titan(titan_info)
     entity.speed = entity.speed * 0.99
   end
   local ori = entity.orientation
-  local oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3
+  local oris = 0
+  if spd > 0.1 then
+    oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3 / (1+class/20)
+  end
   titan_info.oris = oris
   local shadow_shift = {2 * (1+0.1*class), 1}
   titan_info.position = titan_info.entity.position
@@ -122,11 +144,11 @@ local function process_single_titan(titan_info)
 
   ----- Void Shield
   -- TODO: consider energy spent on guns?
-  -- 3 minutes for the full recharge
-  titan_info.shield = math.min((titan_info.shield or 0) + titan_type.max_shield /shield_fill_time, titan_type.max_shield)
-  local sc = 0.75 + 0.025*class
+  local max_shield = lib_ttn.get_unit_shield_max_capacity(titan_info)
+  titan_info.shield = math.min((titan_info.shield or 0) + get_shield_recharge_speed(entity.force) * max_shield /shield_fill_time, max_shield)
 
   -- Main visual
+  local sc = 0.75 + 0.03*class
   if titan_info.shield > 100 then
     rendering.draw_sprite{
       sprite=shared.mod_prefix.."shield",
@@ -136,9 +158,8 @@ local function process_single_titan(titan_info)
     }
   end
 
-
-  ----- Ratio bar
-  local shield_cf = titan_info.shield/titan_type.max_shield
+  -- Ratio bar
+  local shield_cf = titan_info.shield/lib_ttn.get_unit_shield_max_capacity(titan_info)
     if shield_cf < 0.99 then
     local w2 = 1 + class/10
     local yy = 4 + class/10
@@ -163,16 +184,20 @@ local function process_single_titan(titan_info)
   ----- The Guns
   local weapon_type, gunpos, cannon
   local for_whom = list_players({entity.get_driver(), entity.get_passenger()})
-  for k, _ in ipairs(titan_type.guns) do
+  for k, mounting in ipairs(titan_type.guns) do
     cannon = titan_info.guns[k]
     weapon_type = shared.weapons[cannon.name]
-    gunpos = math2d.position.add(entity.position, point_orientation_shift(ori, titan_type.guns[k].oris, titan_type.guns[k].shift))
+    if mounting.is_top then
+      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori+oris, mounting.oris, mounting.shift))
+    else
+      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori,      mounting.oris, mounting.shift))
+    end
     lib_ttn.wc_control[weapon_type.category](entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
     cannon.position = gunpos
 
     rendering.draw_animation{
       animation=weapon_type.animation,
-      x_scale=1, y_scale=1, render_layer=titan_type.guns[k].layer,
+      x_scale=1, y_scale=1, render_layer=mounting.layer,
       time_to_live=visual_ttl,
       surface=surface,
       target=gunpos,
@@ -181,7 +206,7 @@ local function process_single_titan(titan_info)
     if #for_whom > 0 then
       rendering.draw_circle{
         color=wc_color[weapon_type.category] or color_default_dst,
-        radius=lib_ttn.calc_max_dst(titan_type, k, weapon_type) *0.95,
+        radius=lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type) *0.95,
         filled=false, width=10+0.5*class, time_to_live=visual_ttl,
         surface=surface, target=gunpos, players=for_whom, --forces={entity.force},
         draw_on_ground=false, only_in_alt_mode=true,
@@ -199,7 +224,7 @@ local function process_single_titan(titan_info)
     ----- Foots
 
     if titan_info.foot_cd < tick then
-      titan_info.foot_cd = tick + 10 + class
+      titan_info.foot_cd = tick + 10 + 0.5 * class
       titan_info.foot_rot = not titan_info.foot_rot
 
       foot = titan_info.foots[titan_info.foot_rot and 1 or 2]
@@ -248,7 +273,7 @@ local function process_single_titan(titan_info)
     ----- Tracks
 
     if titan_info.track_cd < tick then
-      titan_info.track_cd = tick + 20 + 2*class
+      titan_info.track_cd = tick + 20 + class
       titan_info.track_rot = not titan_info.track_rot
 
       if class < 20 then
@@ -303,6 +328,7 @@ end -- process_single_titan
 
 
 local function process_titans()
+  -- TODO: optimise, get rid of table recreation
   local titans_old = ctrl_data.titans
   local titans_new = {}
   for unit_number, titan_info in pairs(titans_old) do

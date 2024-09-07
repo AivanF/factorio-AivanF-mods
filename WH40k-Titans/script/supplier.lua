@@ -2,8 +2,7 @@ local Lib = require("script/event_lib")
 lib_spl = Lib.new()
 
 local supplier_update_rate = UPS
-supplier_max_weight = 10 * 1000
-local supplier_transfer_limit = 50
+local supplier_base_max_weight = 5 * 1000
 local supplying_radius = 20
 
 
@@ -63,7 +62,7 @@ end
 
 function lib_spl.supplier_ammo_fulfill(supplier_info)
   for _, ammo_name in ipairs(shared.ammo_list) do
-    supplier_info.inventory[ammo_name] = math.floor(supplier_max_weight / shared.ammo_weights[ammo_name])
+    supplier_info.inventory[ammo_name] = math.floor(supplier_base_max_weight / shared.ammo_weights[ammo_name])
   end
 end
 
@@ -78,13 +77,17 @@ end
 function lib_spl.count_weight(supplier_info)
   local total_count = 0
   for ammo_name, count in pairs(supplier_info.inventory) do
-    total_count = total_count + shared.ammo_weights[ammo_name] * count
+    total_count = total_count + (shared.ammo_weights[ammo_name] or 0) * count
   end
   return total_count
 end
 
+function lib_spl.get_max_weight(supplier_info)
+  return supplier_base_max_weight * (1 + lib_tech.get_research_level(supplier_info.entity.force.index, shared.supplier_cap_research))
+end
+
 function lib_spl.count_free_weight(supplier_info)
-  return supplier_max_weight - lib_spl.count_weight(supplier_info)
+  return lib_spl.get_max_weight(supplier_info) - lib_spl.count_weight(supplier_info)
 end
 
 
@@ -112,6 +115,11 @@ local function find_titans_guns(supplier_info)
 end
 
 
+local function get_supplier_transfer_limit(supplier_info)
+  return shared.supplier_exch_by_level[lib_tech.get_research_level(supplier_info.entity.force.index, shared.supplier_cap_research)]
+end
+
+
 local function process_single_supplier(supplier_info)
   supplier_info.position = supplier_info.entity.position
 
@@ -123,7 +131,7 @@ local function process_single_supplier(supplier_info)
     ammo_fill_targets = fill_targets[ammo_name]
     if ammo_count > 0 and ammo_fill_targets ~= nil then
       supplier_info.supplying = true
-      transfer_now = math.min(supplier_transfer_limit, math.ceil(ammo_count / #ammo_fill_targets))
+      transfer_now = math.min(get_supplier_transfer_limit(supplier_info), math.ceil(ammo_count / #ammo_fill_targets))
       for _, ammo_fill_target_info in ipairs(ammo_fill_targets) do
         ammo_got = math.min(transfer_now, ammo_fill_target_info.need, ammo_count)
         ammo_fill_target_info.gun_info.ammo_count = ammo_fill_target_info.gun_info.ammo_count + ammo_got

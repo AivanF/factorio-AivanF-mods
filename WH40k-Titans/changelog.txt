@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.29
+Date: 2024-09-07
+  Features:
+    - Lots of new researches: 1. faster Titans assembly, 2. Titans ammo usage efficiency, 3. farther Titans attack range, 4. bigger Void Shields capacity, 5. faster Void Shields recharging, 6. higher Suppliers exchange rate, 7. more Suppliers capacity.
+    - More info in Assembly Bunker dashboard.
+  Balancing:
+    - Default values, rates related to the new researches got decreased.
+    - Adjusted several recipes. In case you have automated Titans details or ammo production, review it to maintain working state.
+  Changes:
+    - Melta and laser weapons ammo got changed from vanilla items (rocket fuel and batteries) to custom ones.
+    - A bit better compatibility with SE, Angel+Bob, Pyanodon.
+  Graphics:
+    - Minor icons and texts improvements.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.28
 Date: 2024-09-01
   Features:

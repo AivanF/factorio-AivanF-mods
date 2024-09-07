@@ -138,7 +138,7 @@ local function update_guis()
       local player_settings = ctrl_data.by_player[guiobj.player.index] or {}
       if guiobj.void_shield then
         if player_settings.percent_ammo then
-          guiobj.void_shield.number = math.floor(100 * guiobj.titan_info.shield / shared.titan_types[guiobj.titan_info.class].max_shield)
+          guiobj.void_shield.number = math.floor(100 * guiobj.titan_info.shield / lib_ttn.get_unit_shield_max_capacity(guiobj.titan_info))
         else
           guiobj.void_shield.number = math.floor(guiobj.titan_info.shield)
         end

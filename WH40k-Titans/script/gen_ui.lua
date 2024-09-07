@@ -202,7 +202,7 @@ row_updater.ttn = function (row_info, player_settings)
 
   if player_settings.percent_ammo then
     row_info.cells.hp.viz.number = math.floor(100 * titan_info.entity.get_health_ratio())
-    row_info.cells.vs.viz.number = math.floor(100 * titan_info.shield / shared.titan_types[titan_info.class].max_shield)
+    row_info.cells.vs.viz.number = math.floor(100 * titan_info.shield / lib_ttn.get_unit_shield_max_capacity(titan_info))
   else
     row_info.cells.hp.viz.number = math.floor(titan_info.entity.health)
     row_info.cells.vs.viz.number = math.floor(titan_info.shield)
@@ -226,7 +226,7 @@ row_updater.spl = function (row_info, player_settings)
 
   if player_settings.percent_ammo then
     row_info.cells.hp.viz.number = math.floor(100 * supplier_info.entity.get_health_ratio())
-    row_info.cells.weight.viz.number = math.floor(100*lib_spl.count_weight(supplier_info)/supplier_max_weight)
+    row_info.cells.weight.viz.number = math.floor(100*lib_spl.count_weight(supplier_info)/lib_spl.get_max_weight(supplier_info))
   else
     row_info.cells.hp.viz.number = math.floor(supplier_info.entity.health)
     row_info.cells.weight.viz.number = lib_spl.count_weight(supplier_info)

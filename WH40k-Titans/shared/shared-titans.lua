@@ -25,6 +25,7 @@ shared.class_warmonger = 55
 shared.titan_foot_small = shared.mod_prefix.."foot-small"
 shared.titan_foot_big   = shared.mod_prefix.."foot-big"
 shared.titan_aux_laser  = shared.mod_prefix.."aux-turret-laser"
+shared.titan_aux_laser2 = shared.mod_prefix.."aux-turret-laser-2"
 
 
 -- Render layers
@@ -43,13 +44,15 @@ shared.rl_foot = 124 -- ="lower-object"
 -- shared.rl_arm = 169
 -- shared.rl_body = 170
 -- shared.rl_shoulder = 171
--- shared.rl_shield = 172
+-- shared.rl_shoulder2 = 172
+-- shared.rl_shield = 173
 
 --- Under aircrafts, projectiles, explosions, bad for non-shoudler weapons
 shared.rl_shadow = 136 -- ="wires-above"
 shared.rl_arm = 139
 shared.rl_body = 140
 shared.rl_shoulder = 141
+shared.rl_shoulder2 = 142
 shared.rl_shield = 145
 
 shared.titan_base_type = "car"
@@ -76,7 +79,7 @@ shared.titan_type_list = {
     foot = shared.titan_foot_small,
     entity = shared.titan_prefix..shared.titan_warhound,
     health = 10*1000,
-    max_shield = 1*5000,
+    max_shield = 1, -- multiplied by base amount
     kill_cliffs = false,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-1.png",
@@ -107,7 +110,7 @@ shared.titan_type_list = {
     foot = shared.titan_foot_small,
     entity = shared.titan_prefix..shared.titan_direwolf,
     health = 15*1000,
-    max_shield = 1*5000,
+    max_shield = 1, -- multiplied by base amount
     kill_cliffs = false,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-1-dw.png",
@@ -139,7 +142,7 @@ shared.titan_type_list = {
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_reaver,
     health = 20*1000,
-    max_shield = 2*5000,
+    max_shield = 2, -- multiplied by base amount
     kill_cliffs = false,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-2.png",
@@ -155,6 +158,40 @@ shared.titan_type_list = {
       {2,-0.25},
     },
   },
+  -- {
+  --   name = shared.titan_warbringer,
+  --   class = shared.class_warbringer,
+  --   dst = 1.5, dmg = 1.5, spd = 8,
+  --   ingredients = {
+  --     {shared.bci,         1},
+  --     {shared.energy_core, 4},
+  --     {shared.servitor,    3},
+  --     {shared.void_shield, 3},
+  --     {shared.brain,       4},
+  --     {shared.motor,      30},
+  --     {shared.frame_part, 35},
+  --     {shared.antigraveng, 3},
+  --   },
+  --   foot = shared.titan_foot_big,
+  --   entity = shared.titan_prefix..shared.titan_warbringer,
+  --   health = 30*1000,
+  --   max_shield = 3, -- multiplied by base amount
+  --   kill_cliffs = true,
+  --   over_water = false,
+  --   icon = shared.media_prefix.."graphics/icons/titan-3-wb.png",
+  --   icon_size = 64, icon_mipmaps = 3,
+  --   plane = shared.media_prefix.."graphics/titans/class3wb.png",
+  --   guns = {
+  --     [1] = { oris=-0.2, shift=11, layer=shared.rl_arm, grade=2 },
+  --     [2] = { oris= 0.2, shift=11, layer=shared.rl_arm, grade=2 },
+  --     [3] = { oris= 0,   shift=2,  layer=shared.rl_shoulder, grade=2, is_top=true },
+  --   },
+  --   aux_laser = {
+  --     {3, 0.25},
+  --     {2, 0},
+  --     {3,-0.25},
+  --   },
+  -- },
   {
     name = shared.titan_warlord,
     class = shared.class_warlord,
@@ -171,8 +208,8 @@ shared.titan_type_list = {
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_warlord,
-    health = 30*1000,
-    max_shield = 4*5000,
+    health = 40*1000,
+    max_shield = 4, -- multiplied by base amount
     kill_cliffs = true,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-3.png",
@@ -193,7 +230,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warmaster,
     class = shared.class_warmaster,
-    dst = 1.75, dmg = 1.75, spd = 7,
+    dst = 1.75, dmg = 1.75, spd = 8,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 7},
@@ -207,30 +244,30 @@ shared.titan_type_list = {
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_warmaster,
     health = 60*1000,
-    max_shield = 6*5000,
+    max_shield = 6, -- multiplied by base amount
     kill_cliffs = true,
     over_water = false,
     icon = shared.media_prefix.."graphics/icons/titan-4.png",
     icon_size = 64, icon_mipmaps = 3,
     guns = {
-      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
-      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
-      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
-      [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
+      [1] = { oris=-0.20, shift=18, layer=shared.rl_arm, grade=3 },
+      [2] = { oris= 0.20, shift=18, layer=shared.rl_arm, grade=3 },
+      [3] = { oris=-0.21, shift=8, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [4] = { oris= 0.21, shift=8, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [5] = { oris=-0.26, shift=15, layer=shared.rl_shoulder, grade=1, is_top=true },
+      [6] = { oris= 0.26, shift=15, layer=shared.rl_shoulder, grade=1, is_top=true },
     },
     aux_laser = {
       {4, 0.15},
       {4,-0.15},
-      {4, 0.35},
-      {4,-0.35},
+      {6, 0.35},
+      {6,-0.35},
     },
   },
   {
     name = shared.titan_imperator,
     class = shared.class_imperator,
-    dst = 2, dmg = 2, spd = 7,
+    dst = 2, dmg = 2, spd = 8,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 15},
@@ -244,7 +281,7 @@ shared.titan_type_list = {
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_imperator,
     health = 120*1000,
-    max_shield = 12*5000,
+    max_shield = 12, -- multiplied by base amount
     kill_cliffs = true,
     over_water = true,
     icon = shared.media_prefix.."graphics/icons/titan-5.png",
@@ -258,18 +295,18 @@ shared.titan_type_list = {
       [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
     },
     aux_laser = {
-      {4, 0.15},
-      {4,-0.15},
-      {4, 0.35},
-      {4,-0.35},
-      {6, 0.25},
-      {6,-0.25},
+      {5, 0.15},
+      {5,-0.15},
+      {5, 0.35},
+      {5,-0.35},
+      {8, 0.25},
+      {8,-0.25},
     },
   },
   -- {
   --   name = shared.titan_warmonger,
   --   class = shared.class_warmonger,
-  --   dst = 2, dmg = 2, spd = 6,
+  --   dst = 2, dmg = 2, spd = 7,
   --   ingredients = {
   --     {shared.bci,          1},
   --     {shared.energy_core, 15},
@@ -283,7 +320,7 @@ shared.titan_type_list = {
   --   foot = shared.titan_foot_big,
   --   entity = shared.titan_prefix..shared.titan_warmonger,
   --   health = 120*1000,
-  --   max_shield = 10*5000,
+  --   max_shield = 10, -- multiplied by base amount
   --   kill_cliffs = true,
   --   over_water = true,
   --   icon = shared.media_prefix.."graphics/icons/titan-5.png",

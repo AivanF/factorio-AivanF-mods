@@ -66,8 +66,9 @@ end
 
 function gui_updater.prepare_assembly(assembler, main_frame)
   -- TODO: update other elements?
+  -- TODO: translate text
   main_frame.main_room.label.caption = {"", "Status: ", assembler.message or "unknown"}
-  main_frame.main_room.last_line.auto_toggler.sprite = assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-play") or ("virtual-signal/"..shared.mod_prefix.."signal-stop")
+  main_frame.main_room.last_line.auto_toggler.sprite = assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-stop") or ("virtual-signal/"..shared.mod_prefix.."signal-play")
 end
 
 
@@ -75,6 +76,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.idle}, sprite="virtual-signal/"..shared.mod_prefix.."signal-back", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   -- TODO: show expected assembly time
 
+  -- TODO: translate text
   main_frame.main_room.add{
     type="label", name="label",
     caption={"", "Status: ", assembler.message or "unknown"},
@@ -125,7 +127,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   main_frame.main_room.last_line.add{ type="label", name="label", caption={"WH40k-Titans-gui.assembly-auto"} }
   main_frame.main_room.last_line.add{
     type="sprite-button", name="auto_toggler", tags={action=act_toggle_auto},
-    sprite=assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-play") or ("virtual-signal/"..shared.mod_prefix.."signal-stop"),
+    sprite=assembler.auto_build and ("virtual-signal/"..shared.mod_prefix.."signal-stop") or ("virtual-signal/"..shared.mod_prefix.."signal-play"),
   }
 end
 
@@ -133,7 +135,23 @@ end
 function gui_maker.assembling(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.disassembling}, sprite="virtual-signal/"..shared.mod_prefix.."signal-close", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
   main_frame.main_room.add{ type="progressbar", name=main_frame_assembly_progress, direction="horizontal", value=assembler.assembly_progress/assembler.assembly_progress_max }
-  -- TODO: show class, weapons !
+
+  main_frame.main_room.add{ type="label", name="expected_time" }
+  main_frame.main_room.expected_time.caption = {"WH40k-Titans-gui.assembly-expected-time", beautify_time(lib_asmb:estimate_remaining_time(assembler))}
+
+  local line = main_frame.main_room.add{ type="flow", name="recipes", direction="horizontal" }
+  line.add{
+    type="sprite-button", sprite=("recipe/"..assembler.class_recipe),
+    tooltip={"entity-name."..assembler.class_recipe},
+  }
+  for k = 1, 6 do
+    if assembler.weapon_recipes[k] then
+      line.add{
+        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[k]),
+        tooltip={"item-name."..assembler.weapon_recipes[k]},
+      }
+    end
+  end
 end
 
 
@@ -144,7 +162,23 @@ end
 
 function gui_maker.disassembling(assembler, main_frame)
   main_frame.main_room.add{ type="progressbar", name=main_frame_assembly_progress, direction="horizontal", value=assembler.assembly_progress/assembler.assembly_progress_max }
-  -- TODO: show class, weapons !
+
+  main_frame.main_room.add{ type="label", name="expected_time" }
+  main_frame.main_room.expected_time.caption = {"WH40k-Titans-gui.assembly-expected-time", beautify_time(lib_asmb:estimate_remaining_time(assembler))}
+
+  local line = main_frame.main_room.add{ type="flow", name="recipes", direction="horizontal" }
+  line.add{
+    type="sprite-button", sprite=("recipe/"..assembler.class_recipe),
+    tooltip={"entity-name."..assembler.class_recipe},
+  }
+  for k = 1, 6 do
+    if assembler.weapon_recipes[k] then
+      line.add{
+        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[k]),
+        tooltip={"item-name."..assembler.weapon_recipes[k]},
+      }
+    end
+  end
 end
 
 

@@ -1,5 +1,6 @@
 local lib_ttn = require("script/titan")
 local lib_spl = require("script/supplier")
+local lib_tech = require("script/tech")
 
 local Lib = require("script/event_lib")
 lib_asmb = Lib.new()
@@ -110,7 +111,21 @@ local function get_titan_assembly_time(titan_class_or_name)
   if quick_mode then
     return 3 + shared.titan_types[titan_class_or_name].health /10000
   else
-    return shared.titan_types[titan_class_or_name].health /1000 *10
+    return math.pow(shared.titan_types[titan_class_or_name].health /1000, 1.2) * 10
+  end
+end
+
+function lib_asmb:get_assembly_speed(force)
+  return shared.assembly_speed_by_level[lib_tech.get_research_level(force.index, shared.assembly_speed_research)]
+end
+
+
+function lib_asmb:estimate_remaining_time(assembler)
+  if assembler.state == states.assembling then
+    return (assembler.assembly_progress_max - assembler.assembly_progress) / lib_asmb:get_assembly_speed(assembler.force)
+  else
+    -- Dis-assembling is 2 times faster
+    return assembler.assembly_progress / lib_asmb:get_assembly_speed(assembler.force) / 2
   end
 end
 
@@ -137,7 +152,7 @@ end
 
 function lib_asmb.check_weapon_is_appropriate(titan_type, k, weapon_type)
   if not weapon_type then return nil end
-  local name = {"item-name."..weapon_type.name}
+  local name = {"item-name."..shared.titan_prefix..weapon_type.name}
 
   if not (
     weapon_type.grade == titan_type.guns[k].grade or
@@ -158,27 +173,28 @@ end
 local function check_bunker_correct_details(assembler)
   local result = true
   assembler.message = nil
+  -- TODO: translate texts!
 
   local titan_type, lamp_color
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
   if not titan_type then
-    set_message(assembler, "Titan class is not set")
+    set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-class-selected"})
     result = false
     lamp_color = color_red
   elseif not titan_type.available then
-    set_message(assembler, "Titan class is not available")
+    set_message(assembler, {"WH40k-Titans-gui.assembly-er-class-not-available"})
     result = false
     lamp_color = color_red
   end
   if not assembler.bstore then
-    set_message(assembler, "improper bunker setup 1")
+    set_message(assembler, {"WH40k-Titans-gui.assembly-er-improper-bunker", 1})
     result = false
     lamp_color = color_red
   end
   if titan_type and not check_entity_has_ingredients(assembler.bstore, titan_type.ingredients) then
-    set_message(assembler, "not enough body details")
+    set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-body"})
     result = false
     lamp_color = lamp_color or color_gold
   end
@@ -193,12 +209,12 @@ local function check_bunker_correct_details(assembler)
     lamp_color = nil -- disabled
     if titan_type then
       if titan_type.guns[k] and not weapon_type then
-        set_message(assembler, "not all weapons specified")
+        set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-weapon-selected"})
         weapon_fine = false
         lamp_color = color_red
       end
       if weapon_type and not titan_type.guns[k] then
-        set_message(assembler, "excessive weapon specified")
+        set_message(assembler, {"WH40k-Titans-gui.assembly-er-extra-weapon-selected"})
         weapon_fine = false
         lamp_color = color_red
       elseif weapon_type then
@@ -211,14 +227,14 @@ local function check_bunker_correct_details(assembler)
       end
     end
     if not assembler.wstore[k] then
-      set_message(assembler, "improper bunker setup 2")
+      set_message(assembler, {"WH40k-Titans-gui.assembly-er-improper-bunker", 2})
       weapon_fine = false
     end
     if weapon_type then
       if weapon_type.available then
         -- Set recipe to assembler.wrecipe[k] ?
         if not check_entity_has_ingredients(assembler.wstore[k], weapon_type.ingredients) then
-          set_message(assembler, "not enough weapon details for "..weapon_type.name)
+          set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-weapon", "item-name."..shared.titan_prefix..weapon_type.name})
           weapon_fine = false
           lamp_color = lamp_color or color_orange
         end
@@ -228,7 +244,7 @@ local function check_bunker_correct_details(assembler)
         --   lamp_color = lamp_color or color_gold
         -- end
       else
-        set_message(assembler, "weapon "..weapon_type.name.." is not available")
+        set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-available-weapon", "item-name."..shared.titan_prefix..weapon_type.name})
         weapon_fine = false
         lamp_color = lamp_color or color_gold
       end
@@ -242,7 +258,7 @@ local function check_bunker_correct_details(assembler)
   end
 
   if result then
-    set_message(assembler, "ready to assemble")
+    set_message(assembler, {"WH40k-Titans-gui.assembly-ready"})
   end
   return result
 end
@@ -676,7 +692,7 @@ function state_post_handler.prepare_assembly(assembler)
 end
 
 function state_handler.assembling(assembler)
-  assembler.assembly_progress = assembler.assembly_progress + 1
+  assembler.assembly_progress = assembler.assembly_progress + 1 * lib_asmb:get_assembly_speed(assembler.force)
   if assembler.assembly_progress < assembler.assembly_progress_max then
     lib_asmb.update_assembler_guis(assembler)
   else
@@ -708,25 +724,26 @@ function state_handler.waiting_disassembly(assembler)
   if titan_entity and titan_info then
     local titan_type = lib_ttn.titan_type_by_entity(titan_entity)
     -- local titan_type = shared.titan_types[titan_entity.name]
-    assembler.force.print({"WH40k-Titans-gui.msg-titan-removed", {"entity-name."..titan_type.entity}})
     titan_to_bunker_internal(assembler, titan_info)
     titan_entity.destroy({raise_destroy=true})
     assembler.assembly_progress_max = get_titan_assembly_time(titan_info.class)
     assembler.assembly_progress = assembler.assembly_progress_max
     assembler.message = nil
     lib_asmb.change_assembler_state(assembler, states.disassembling)
+    assembler.force.print({"WH40k-Titans-gui.msg-titan-removed", {"entity-name."..titan_type.entity}})
   end
 end
 
 function state_handler.disassembling(assembler)
-  assembler.assembly_progress = assembler.assembly_progress - 2
+  assembler.assembly_progress = assembler.assembly_progress - 2 * lib_asmb:get_assembly_speed(assembler.force)
   if assembler.assembly_progress > 0 then
     lib_asmb.update_assembler_guis(assembler)
   else
     if bunker_internal_to_outer(assembler) then
       lib_asmb.change_assembler_state(assembler, states.idle)
+      assembler.force.print({"WH40k-Titans-gui.msg-titan-disassembled", {"entity-name."..assembler.class_recipe}})
     else
-      assembler.message = "not enough space!"
+      assembler.message = {"WH40k-Titans-gui.assembly-er-no-space"}
     end
   end
 end
@@ -928,7 +945,7 @@ lib_asmb:on_event(defines.events.on_tick, process_assemblers)
 local function bunkers_debug_cmd(cmd)
   local player = game.players[cmd.player_index]
   if not player.admin then
-    player.print("You are not an admin!")
+    player.print({"cant-run-command-not-admin", "Bunkers debug"})
     return
   end
 

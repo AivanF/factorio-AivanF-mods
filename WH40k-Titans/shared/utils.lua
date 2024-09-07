@@ -25,6 +25,11 @@ function math.clamp(v, mn, mx)
   return math.max(math.min(v, mx), mn)
 end
 
+function math.lerp_map(v, min1, max1, min2, max2)
+  -- Similar to LERP, linear interpolation
+  return (v - min1) / (max1 - min1) * (max2 - min2) + min2
+end
+
 function table.shallow_copy(t)
   local t2 = {}
   for k,v in pairs(t) do

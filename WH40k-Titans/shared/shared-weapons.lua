@@ -10,24 +10,22 @@ shared.las_engine    = shared.he_emitter
 -- shared.hell_engine   = ehe_emitter + melta_pump
 
 --------- Titan weapon ammo aliases
---- Custom
-shared.big_bolt = shared.mod_prefix.."bolt-big"
-shared.huge_bolt = shared.mod_prefix.."bolt-huge"
--- shared.quake_proj = shared.mod_prefix.."quake-projectile"
---- Builtin ones and the Bridge
-shared.laser_ammo   = "battery"
+shared.big_bolt =    shared.mod_prefix.."bolt-big"
+shared.huge_bolt =   shared.mod_prefix.."bolt-huge"
+-- shared.quake_proj =  shared.mod_prefix.."quake-projectile"
 shared.flamer_ammo  = "flamethrower-ammo"
-shared.melta_ammo   = "rocket-fuel"
+shared.laser_ammo   = shared.mod_prefix.."laser-ammo"
+shared.melta_ammo   = shared.mod_prefix.."melta-ammo"
+shared.plasma_ammo  = shared.bridge_prefix.."plasma-fuel"
 shared.hell_ammo    = shared.mod_prefix.."hellstorm-ammo"
 shared.missile_ammo = "explosive-rocket"
-shared.plasma_ammo  = shared.bridge_prefix.."plasma-fuel"
 
 shared.ammo_weights = {
   [shared.big_bolt] = 1,
   [shared.huge_bolt] = 2,
   [shared.laser_ammo] = 1,
   [shared.flamer_ammo] = 1,
-  [shared.melta_ammo] = 1,
+  [shared.melta_ammo] = 2,
   [shared.missile_ammo] = 1,
   [shared.plasma_ammo] = 2,
   [shared.hell_ammo] = 3,
@@ -147,7 +145,7 @@ add_weapon({
   min_dst = 8, max_dst = dst_m,
   speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
-  per_shot = 2, inventory = 2000,
+  per_shot = 2, inventory = 3000,
   cd = 0.4,
   bolt_type = bolt_types.bolt_laser,
   attack_sound = "wh40k-titans-laser",
@@ -266,7 +264,7 @@ add_weapon({
   min_dst = 10, max_dst = dst_m, spd=1.5,
   speed = 15, barrel = 12,
   ammo = shared.laser_ammo,
-  per_shot = 3, inventory = 6000,
+  per_shot = 3, inventory = 8000,
   cd = 0.15, attack_size = 3, scatter = 2,
   bolt_type = bolt_types.bolt_laser,
   attack_sound = "wh40k-titans-laser",
@@ -290,7 +288,7 @@ add_weapon({
   min_dst = 10, max_dst = (dst_m+dst_l)/2, max_dst = dst_l,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
-  per_shot = 1, inventory = 3000,
+  per_shot = 1, inventory = 4000,
   attack_size = 3, scatter = 4,
   cd = 0.3, bolt_type = bolt_types.bolt_rocket,
   start_far = true,
@@ -315,7 +313,7 @@ add_weapon({
   min_dst = 10, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
-  per_shot = 1, inventory = 8000,
+  per_shot = 1, inventory = 12000,
   cd = 0.15, attack_size = 8, scatter = 6,
   bolt_type = bolt_types.bolt_rocket,
   start_far = true,
@@ -332,6 +330,29 @@ add_weapon({
 
 
 --------- 2. Medium
+
+-- wname = "laser-blaster"  -- 3 lasers
+-- shared.weapon_laserblaster = wname
+-- add_weapon({
+--   name = wname,
+--   grade = shared.gun_grade_big,
+--   category = shared.wc_laser,
+--   min_dst = 12, max_dst = dst_l, spd=1.5,
+--   speed = 20, barrel = 14,
+--   ammo = shared.laser_ammo,
+--   per_shot = 6, inventory = 15000,
+--   cd = 0.1, attack_size = 6, scatter = 5,
+--   bolt_type = bolt_types.bolt_laser,
+--   attack_sound = "wh40k-titans-laser",
+--   ingredients = {
+--     {shared.las_engine, 3},
+--     {shared.barrel, 6},
+--     {shared.frame_part, 9},
+--   },
+--   icon = shared.media_prefix.."graphics/icons/weapons/Laser-Blaster.png",
+--   icon_size = 64, icon_mipmaps = 3,
+--   animation = shared.mod_prefix.."Laser-Blaster",
+-- })
 
 wname = "plasma-destructor"
 shared.weapon_plasma_destructor = wname
@@ -499,10 +520,10 @@ add_weapon({
   per_shot = 12, inventory = 12000,
   cd = 8,
   ingredients = {
-    {shared.melta_pump, 10},
-    {shared.ehe_emitter, 20},
+    {shared.melta_pump, 12},
+    {shared.ehe_emitter, 12},
     {shared.barrel, 30},
-    {shared.frame_part, 10},
+    {shared.frame_part, 18},
   },
   icon = "__base__/graphics/icons/flamethrower-turret.png",
   icon_size = 64, icon_mipmaps = 4,

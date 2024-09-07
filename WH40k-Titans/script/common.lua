@@ -154,6 +154,32 @@ function list_players(values)
   return result
 end
 
+function beautify_time(seconds)
+  if seconds <= 0 then
+    return "0"
+  else
+    local days = math.floor(seconds /3600 /24)
+    seconds = seconds - days *3600 *24
+    local hours = math.floor(seconds /3600)
+    seconds = seconds - hours *3600
+    local mins = math.floor(seconds /60)
+    seconds = seconds - mins *60
+    local secs = math.floor(seconds)
+    local h = string.format("%02.f",hours);
+    local m = string.format("%02.f", mins);
+    local s = string.format("%02.f", secs);
+    if days > 0 then
+      return days..":"..h..":"..m..":"..s
+    elseif hours > 0 then
+      return h..":"..m..":"..s
+    elseif mins > 0 then
+      return m..":"..s
+    else
+      return s
+    end
+  end
+end
+
 math2d.bounding_box.random_point = function(box)
   return {
     math.random(box.left_top.x, box.right_bottom.x),

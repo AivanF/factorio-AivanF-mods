@@ -55,7 +55,7 @@ data:extend({
   --   type = "item",
   --   name = shared.quake_proj,
   --   icon = icon,
-  --   icon_size = 64, icon_mipmaps = 4,
+  --   icon_size = 64, icon_mipmaps = 3,
   --   subgroup = shared.subg_ammo,
   --   order = "a-5-quake",
   --   stack_size = 10,
@@ -76,16 +76,16 @@ data:extend({
 })
 
 
--- Plasma fuel
+-- Plasma ammo
 
 bridge.add_item({
   short_name = "plasma_fuel",
   name = shared.plasma_ammo,
-  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Fuel.png",
+  icon = shared.media_prefix.."graphics/icons/weapons/Plasma-Ammo.png",
   icon_size = 64, icon_mipmaps = 3,
   prereq = nil,
   subgroup = shared.subg_ammo,
-  order = "c-1-plasma-fuel",
+  order = "c-3-plasma-fuel",
   allow_productivity = true,
   ingredients = {
     {type="fluid", name="water", amount=200},
@@ -182,16 +182,81 @@ bridge.add_item({
 }).data_getter()
 
 
--- HellStorm fuel
+-- Laser ammo
+
+bridge.add_item({
+  short_name = "laser_ammo",
+  name = shared.laser_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Laser-Ammo.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "c-1-laser-ammo",
+  allow_productivity = true,
+  ingredients = {
+    {"battery", 2},
+    {"electronic-circuit", 1},
+    {"steel-plate", 1},
+  },
+  modded = {
+    {
+      mod = bridge.mods.k2,
+      ingredients = {
+        {"lithium-sulfur-battery", 2},
+        {"electronic-circuit", 1},
+        {"steel-plate", 1},
+      },
+    },
+    {
+      mod = bridge.mods.py_alt,
+      ingredients = {
+        {"battery-mk01", 2},
+        {"electronic-circuit", 1},
+        {"steel-plate", 1},
+      },
+    },
+  },
+  energy_required = 30,
+  stack_size = 100,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
+
+
+-- Melta ammo
+
+bridge.add_item({
+  short_name = "melta_ammo",
+  name = shared.melta_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Melta-Ammo.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "c-2-melta-ammo",
+  allow_productivity = true,
+  ingredients = {
+    {"uranium-fuel-cell", 1},
+    {"rocket-fuel", 1},
+    {"advanced-circuit", 1},
+    {"steel-plate", 1},
+  },
+  energy_required = 30,
+  stack_size = 100,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
+
+
+-- HellStorm ammo
 
 bridge.add_item({
   short_name = "hell_ammo",
   name = shared.hell_ammo,
-  icon = shared.media_prefix.."graphics/icons/weapons/Hell-Fuel.png",
-  icon_size = 64, icon_mipmaps = 4,
+  icon = shared.media_prefix.."graphics/icons/weapons/Hell-Ammo.png",
+  icon_size = 64, icon_mipmaps = 3,
   prereq = nil,
   subgroup = shared.subg_ammo,
-  order = "c-2-hellstorm-ammo",
+  order = "c-4-hellstorm-ammo",
   allow_productivity = true,
   ingredients = {
     {shared.plasma_ammo, 1},

@@ -119,7 +119,7 @@ local function update_guis()
       local weight = lib_spl.count_weight(guiobj.supplier_info)
       guiobj.main_frame.label_weights.caption = {
         "WH40k-Titans-gui.supplier-ammo-weight",
-        weight, math.floor(100*weight/supplier_max_weight),
+        weight, math.floor(100*weight/lib_spl.get_max_weight(guiobj.supplier_info)),
       }
 
     end

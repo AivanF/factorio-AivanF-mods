@@ -1,4 +1,5 @@
 local lib_ruins = require("script/ruins")
+local lib_tech = require("script/tech")
 
 lib_ttn.order_ttl = 5 * UPS
 
@@ -26,8 +27,17 @@ end
 lib_ttn.init_gun = lib_ttn.init_gun
 
 
-function lib_ttn.calc_max_dst(titan_type, k, weapon_type)
-  return weapon_type.max_dst * (1 + 0.01*titan_type.class) * (titan_type.guns[k].is_top and 1.1 or 1)
+function lib_ttn.calc_max_dst(cannon, force, titan_type, k, weapon_type)
+  if not cannon.cached_dst then
+    cannon.cached_dst = 1
+      * weapon_type.max_dst
+      * (1 + 0.01*titan_type.class)
+      * (titan_type.guns[k].is_top and 1.1 or 1)
+      * (force and math.lerp_map(
+        lib_tech.get_research_level(force.index, shared.attack_range_research),
+        0, 8, 0.65, 1.5) or 1)
+  end
+  return cannon.cached_dst
 end
 
 
@@ -59,6 +69,16 @@ local function opt_play(entity, sound)
 end
 
 
+local function use_ammo_by_prob(force)
+  local lvl = lib_tech.get_research_level(force.index, shared.ammo_usage_research)
+  if lvl > 0 then
+    return math.random(0, 100) <= 100 - 5 * lvl
+  else
+    return true
+  end
+end
+
+
 local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
   -- TODO: add some time before attack
   -- TODO: calculate gun muzzle position
@@ -68,7 +88,9 @@ local function gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type,
     cannon.attack_number = (weapon_type.attack_size-1) or 0
     opt_play(entity, weapon_type.attack_start_sound)
   end
-  cannon.ammo_count = math.max(0, cannon.ammo_count - weapon_type.per_shot)
+  if use_ammo_by_prob(entity.force) then
+    cannon.ammo_count = math.max(0, cannon.ammo_count - weapon_type.per_shot)
+  end
   local target = cannon.target
   if (weapon_type.scatter or 0) > 0 then
     target = math2d.position.add(target, {
@@ -94,7 +116,7 @@ end
 local function control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
   if cannon.target ~= nil and tick < cannon.ordered + lib_ttn.order_ttl then
     local dst = math2d.position.distance(gunpos, cannon.target)
-    if cannon.gun_cd < tick and dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(titan_type, k, weapon_type) then
+    if cannon.gun_cd < tick and dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type) then
       gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
     end
 
@@ -116,7 +138,7 @@ local function control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_
     if true
       and math.abs(orid) < 0.015
       and cannon.gun_cd < tick
-      and dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(titan_type, k, weapon_type)
+      and dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type)
     then
       gun_do_attack(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, attacker)
     end
@@ -285,7 +307,7 @@ local function handle_attack_order(event, kind)
 
       if todo then
         dst = math2d.position.distance(entity.position, target)
-        todo = dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(titan_type, k, weapon_type)
+        todo = dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type)
       end
 
       -- TODO: make priority choice: if there is gun_cd, save for secondary trying to find a free cannon

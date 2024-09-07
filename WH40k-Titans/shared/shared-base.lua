@@ -87,8 +87,43 @@ shared.exc_efficiency_by_level = {
   [2] = 0.75,
   [3] = 0.90,
 }
+
+shared.assembly_speed_research = shared.mod_prefix.."assembly-speed"
+shared.assembly_speed_by_level = {
+  [0] = 0.5,
+  [1] = 1.0,
+  [2] = 1.5,
+  [3] = 2.0,
+  [4] = 3.0,
+  [5] = 4.0,
+}
+
+shared.void_shield_cap_research = shared.mod_prefix.."void-shield-capacity"
+shared.void_shield_cap_base = settings.startup["wh40k-titans-base-shield-cap-cf"].value * 2000
+shared.void_shield_spd_research = shared.mod_prefix.."void-shield-recharge"
+
+shared.ammo_usage_research = shared.mod_prefix.."ammo-usage-efficiency"
+shared.attack_range_research = shared.mod_prefix.."max-attack-range"
+
+shared.supplier_cap_research = shared.mod_prefix.."supplier-capacity"
+shared.supplier_exch_research = shared.mod_prefix.."supplier-exchange-speed"
+shared.supplier_exch_by_level = {
+  [0] = 20,
+  [1] = 50,
+  [2] = 100,
+  [3] = 200,
+  [4] = 500,
+  [5] = 1000,
+  [6] = 2000,
+  [7] = 5000,
+}
+
 shared.track_researches = {
   shared.exc_speed_research, shared.exc_efficiency_research,
+  shared.assembly_speed_research,
+  shared.void_shield_cap_research, shared.void_shield_spd_research,
+  shared.ammo_usage_research, shared.attack_range_research,
+  shared.supplier_cap_research, shared.supplier_exch_research,
 }
 
 --------- Other Mods

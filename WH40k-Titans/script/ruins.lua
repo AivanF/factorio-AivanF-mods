@@ -107,13 +107,8 @@ function lib_ruins.materialise_ruin(world, ruin_info)
   ruin_info.entity = world.surface.create_entity{
     name=shared.corpse, force="neutral", position=position,
   }
-  local img = shared.mod_prefix.."corpse-1"
-  ruin_info.class = ruin_info.class or 0
-  if ruin_info.class >= shared.class_warlord then
-    img = shared.mod_prefix.."corpse-3"
-  end
   rendering.draw_sprite{
-    sprite=img,
+    sprite=ruin_info.img or shared.mod_prefix.."corpse-1",
     -- https://lua-api.factorio.com/latest/concepts.html#RenderLayer
     x_scale=1, y_scale=1, render_layer=110,
     surface=world.surface, target=ruin_info.entity,
@@ -221,12 +216,15 @@ local function create_random_ruin_info(position)
   local detailses = {}
   local ammo = {}
   local class = 0
+  local img
 
   if math.random() < 0.7 then
     class = shared.class_warhound
+    img = shared.mod_prefix.."corpse-1"
     table.insert(detailses, shared.titan_types[shared.titan_warhound].ingredients)
   else
     class = shared.class_warlord
+    img = shared.mod_prefix.."corpse-3"
     table.insert(detailses, shared.titan_types[shared.class_warlord].ingredients)
   end
   table.insert(detailses, {{name=shared.frame_part, count=math.random(7)}})
@@ -270,6 +268,7 @@ local function create_random_ruin_info(position)
   local ruin_info = {
     died = false,
     class = class,
+    img = img,
     position = position,
     entity = nil,
     details = merge_ingredients_doubles(iter_chain(detailses)),
@@ -409,10 +408,10 @@ local function spawn_more_ruins_cmd(cmd)
   local surface = player.surface
   local world = ctrl_data.by_surface[surface.index]
   if not world then
-    game.print("Creating new Tians world info...")
+    player.print("Creating new Tians world info...")
     world = lib_ruins.opt_new_world({surface = surface})
   else
-    game.print("Fulfilling Titans wrecks with existing world info...")
+    player.print("Fulfilling Titans wrecks with existing world info...")
   end
   local sector, chunk_pos
   local cnt = 0
@@ -423,7 +422,7 @@ local function spawn_more_ruins_cmd(cmd)
     reveal_sector_point(world, chunk_pos)
   end
 
-  game.print("Added Titans: "..cnt)
+  player.print("Added Titans: "..cnt)
 end
 
 

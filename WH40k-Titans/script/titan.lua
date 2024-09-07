@@ -11,7 +11,7 @@ local titan_explo_bolt = shared.mod_prefix.."bolt-plasma-3"
 local function init_aux_laser(titan_type, titan_info, entity)
   for k, shift in ipairs(titan_type.aux_laser) do
     titan_info.aux_laser[k] = entity.surface.create_entity{
-      name=shared.titan_aux_laser, position=entity.position,
+      name=k>2 and shared.titan_aux_laser2 or shared.titan_aux_laser, position=entity.position,
       force=entity.force,
     }
     titan_info.aux_laser[k].destructible = false
@@ -36,7 +36,7 @@ function lib_ttn.register_titan(entity)
     force = entity.force,
     surface = entity.surface,
     class = titan_type.class,
-    shield = titan_type.max_shield /5, -- void shield health amount
+    shield = 0, -- void shield health amount
     voice_cd = 0, -- phrases muted till
     body_cd = 0, -- step and rotation sounds muted till
     track_cd = 0, -- footstep track drawing cooldown till
@@ -48,6 +48,7 @@ function lib_ttn.register_titan(entity)
     aux_laser = {},
     ai_cd = 0,
   }
+  titan_info.shield = lib_ttn.get_unit_shield_max_capacity(titan_info) / 5
 
   -- entity.health = entity.health/100
   init_aux_laser(titan_type, titan_info, entity)
@@ -74,20 +75,26 @@ function lib_ttn.register_titan(entity)
       lib_ttn.init_gun(shared.weapon_turbolaser),
       lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
     }
-  -- elseif titan_type.class >= shared.class_warmaster then
-  --   titan_info.guns = {
-  --     lib_ttn.init_gun(shared.weapon_plasma_blastgun),
-  --     lib_ttn.init_gun(shared.weapon_plasma_blastgun),
-  --     lib_ttn.init_gun(shared.weapon_turbolaser),
-  --   }
+  elseif titan_type.class >= shared.class_warmaster then
+    titan_info.guns = {
+      lib_ttn.init_gun(shared.weapon_plasma_annihilator),
+      lib_ttn.init_gun(shared.weapon_plasma_destructor),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
+    }
   else
     titan_info.guns = {
-      lib_ttn.init_gun(shared.weapon_turbolaser),
-      -- lib_ttn.init_gun(shared.weapon_plasma_destructor),
-      lib_ttn.init_gun(shared.weapon_plasma_annihilator),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
+      lib_ttn.init_gun(shared.weapon_plasma_destructor),
+      -- lib_ttn.init_gun(shared.weapon_plasma_annihilator),
       -- lib_ttn.init_gun(shared.weapon_lascannon),
       lib_ttn.init_gun(shared.weapon_missiles),
       lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+
+      lib_ttn.init_gun(shared.weapon_turbolaser),
+      lib_ttn.init_gun(shared.weapon_turbolaser),
     }
   end
 

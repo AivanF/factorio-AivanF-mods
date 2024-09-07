@@ -236,10 +236,10 @@ data:extend({
     attack_parameters = {
       type = "beam",
       cooldown = 40,
-      range = 24,
+      range = 28,
       source_direction_count = 64,
       source_offset = {0, -3.423489 / 4},
-      damage_modifier = 4,
+      damage_modifier = 5,
       ammo_type = {
         category = "laser",
         energy_consumption = "800kJ",
@@ -248,9 +248,56 @@ data:extend({
           action_delivery = {
             type = "beam",
             beam = "laser-beam",
-            max_length = 24,
+            max_length = 28,
             duration = 40,
-            source_offset = {0, -0.5 }
+            source_offset = {0, -1 }
+          }
+        }
+      },
+    },
+  },
+  {
+    type = "electric-turret",
+    name = shared.titan_aux_laser2,
+    icon = "__base__/graphics/icons/laser-turret.png",
+    icon_size = 64, icon_mipmaps = 4,
+    flags = {"placeable-neutral", "placeable-off-grid", "hidden"},
+    max_health = 10000,
+    resistances = technomagic_resistances,
+    selectable_in_game = false,
+    collision_mask = {},
+    collision_box = {{-0.7, -0.7 }, {0.7, 0.7}},
+    selection_box = {{ -1, -1}, {1, 1}},
+    map_color = {0,0,0,0},
+    rotation_speed = 0.03,
+    preparing_speed = 0.1,
+    folding_speed = 0.1,
+    energy_source = { type = "void" },
+    glow_light_intensity = 2,
+    folded_animation = { layers = {misc.empty_sprite} },
+    preparing_animation = { layers = {misc.empty_sprite} },
+    prepared_animation = { layers = {misc.empty_sprite} },
+    folding_animation = { layers = {misc.empty_sprite} },
+    base_picture = { layers = {misc.empty_sprite} },
+    call_for_help_radius = 2,
+    attack_parameters = {
+      type = "beam",
+      cooldown = 40,
+      range = 44,
+      source_direction_count = 64,
+      source_offset = {0, -3.423489 / 4},
+      damage_modifier = 15,
+      ammo_type = {
+        category = "laser",
+        energy_consumption = "800kJ",
+        action = {
+          type = "direct",
+          action_delivery = {
+            type = "beam",
+            beam = "laser-beam",
+            max_length = 44,
+            duration = 20,
+            source_offset = {0, -2 }
           }
         }
       },
