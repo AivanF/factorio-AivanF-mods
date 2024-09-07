@@ -91,25 +91,10 @@ add_item({
       name = "se-spaceship-rocket-engine",
       prereq = "se-spaceship",
     },
-    -- TODO: check out other mods
-  },
-})
-
-add_item({
-  short_name = "he_provider",
-  name = "fusion-reactor-equipment",
-  prereq = "fusion-reactor-equipment",
-  modded = {
     {
-      mod = bridge.mods.k2,
-      -- name = "kr-antimatter-reactor",
-      name = "antimatter-reactor-equipment",
-      prereq = "kr-antimatter-reactor",
-    },
-    {
-      mod = bridge.mods.py_ht,
-      name = "antimatter",
-      prereq = "earnshaw-theorem",
+      mod = bridge.mods.bobwar,
+      name = "rocket-engine",
+      prereq = "rocket-silo",
     },
   },
 })
@@ -124,7 +109,7 @@ add_item({
   allow_productivity = true,
   ingredients = {{"coal", 2}},
   stack_size = 100,
-  energy_required = 5,
+  energy_required = 10,
   category = bridge.cat_nano_crafting,
   modded = {
     {
@@ -151,6 +136,11 @@ add_item({
       mod = bridge.mods.bzcarbon,
       name = "nanotubes",
       prereq = "nanotubes",
+    },
+    {
+      mod = bridge.mods.angelsbio,
+      ingredients = {{"solid-carbon", 2}},
+      prereq = "bio-wood-processing-2",
     },
   },
 })
@@ -619,6 +609,32 @@ add_item({
   },
 })
 
+
+-- Aliases, fully transparent items without new objects nor recipes
+add_item({
+  short_name = "best_energy_provider",
+  name = "fusion-reactor-equipment",
+  prereq = "fusion-reactor-equipment",
+  modded = {
+    {
+      mod = bridge.mods.k2,
+      -- name = "kr-antimatter-reactor",
+      name = "antimatter-reactor-equipment",
+      prereq = "kr-antimatter-reactor",
+    },
+    {
+      mod = bridge.mods.bobequip,
+      name = "fusion-reactor-equipment-4",
+      prereq = "earnshaw-theorem",
+    },
+    {
+      mod = bridge.mods.py_ht,
+      name = "antimatter",
+      prereq = "earnshaw-theorem",
+    },
+  },
+})
+
 add_item({
   short_name = "best_fuel",
   name = "nuclear-fuel",
@@ -629,6 +645,25 @@ add_item({
       -- Or krastorio.recipes.changed_names["charged-antimatter-fuel-cell"] ?!
       name = "charged-antimatter-fuel-cell",
       prereq = "kr-antimatter-reactor",
+    },
+    -- TODO: check out other mods!
+  },
+})
+
+add_item({
+  short_name = "best_shield",
+  name = "energy-shield-mk2-equipment",
+  prereq = "energy-shield-mk2-equipment",
+  modded = {
+    {
+      mod = bridge.mods.se,
+      name = "energy-shield-mk6-equipment",
+      prereq = "energy-shield-mk6-equipment",
+    },
+    {
+      mod = bridge.mods.k2,
+      name = "energy-shield-mk4-equipment",
+      prereq = "kr-energy-shield-mk4-equipment",
     },
     -- TODO: check out other mods!
   },

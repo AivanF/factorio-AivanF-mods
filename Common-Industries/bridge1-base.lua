@@ -68,6 +68,8 @@ bridge.mods_list = {
   { short_name = "bobplates", name = "bobplates" },
   { short_name = "bobpower",  name = "bobpower" },
   { short_name = "bobores",   name = "bobores" },
+  { short_name = "bobwar",    name = "bobwarfare" },
+  { short_name = "bobequip",  name = "bobequipment" },
   -- Angel's  https://mods.factorio.com/user/Arch666Angel
   -- Does anybody play angels without bobs?
   { short_name = "angels", name = "angelsindustries" },

@@ -128,6 +128,16 @@ add_item({
       prereq = "reinforced-cable",
       name = "acsr-cable",
     },
+    {
+      mod = bridge.mods.bobelectronics,
+      -- prereq = "__TODO__",
+      name = "insulated-cable",
+    },
+    {
+      mod = bridge.mods.py_raw,
+      -- prereq = "__TODO__",
+      name = "tinned-cable",
+    },
   },
 })
 
@@ -158,7 +168,6 @@ add_item({
       name = "optical-fiber",
     },
     {
-      -- FiberGlass reinforced plastic, is it fine?..
       mod = bridge.mods._248k,
       prereq = "fi_materials_tech",
       name = "fi_materials_GFK",
@@ -185,6 +194,7 @@ add_item({
   },
 })
 
+-- Maybe split this into basic/best  bearning and mechanical components?
 add_item({
   short_name = "bearing",
   name = "iron-gear-wheel",
@@ -199,6 +209,11 @@ add_item({
       mod = bridge.mods.bobplates,
       prereq = "steel-processing",
       name = "steel-bearing",
+    },
+    {
+      mod = bridge.mods.py_pet,
+      prereq = "small-parts-mk03",
+      name = "small-parts-03",
     },
     {
       mod = bridge.mods.yit,
@@ -267,10 +282,10 @@ add_item({
   modded = {
     {
       mod = bridge.mods.se,
-      name = "se-iridium-plate",
-      prereq = "se-processing-iridium",
-      -- name = "se-heavy-composite",
-      -- prereq = "se-heavy-composite",
+      -- name = "se-iridium-plate",
+      -- prereq = "se-processing-iridium",
+      name = "se-heavy-composite",
+      prereq = "se-heavy-composite",
     },
     {
       mod = bridge.mods.ir3,
@@ -279,9 +294,14 @@ add_item({
     },
     {
       mod = bridge.mods.angelssmelting,
-      name = "invar-alloy",
+      name = "titanium-plate",
       prereq = "angels-invar-smelting-1",
     },
+    -- {
+    --   mod = bridge.mods.angelssmelting,
+    --   name = "invar-alloy",
+    --   prereq = "angels-invar-smelting-1",
+    -- },
     {
       mod = bridge.mods.py_fus,
       name = "super-alloy",

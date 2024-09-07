@@ -19,7 +19,7 @@ add_tech({
   icon = bridge.media_path.."tech/t1-craft.png",
   icon_size = 256, icon_mipmaps = 1,
   prerequisites = {},
-  count = 100,
+  count = 20,
   ingredients = {
     {"automation-science-pack", 1},
   },
@@ -36,7 +36,7 @@ add_tech({
     -- bridge.tech.early.name,
     "chemical-science-pack",
   },
-  count = 200,
+  count = 100,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},
@@ -72,7 +72,7 @@ add_tech({
     "production-science-pack",
     "utility-science-pack",
   },
-  count = 500,
+  count = 300,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},
