@@ -354,7 +354,11 @@ local tech_researches = {
 local exc_speed_levels = {
   [1] = 2,
   [2] = 20,
-  [3] = 100,
+  [3] = 50,
+  [4] = 100,
+  [5] = 250,
+  [6] = 500,
+  [7] = 1000,
 }
 for k, price in pairs(exc_speed_levels) do
   local technology =
@@ -412,8 +416,10 @@ end
 
 local exc_efficiency_levels = {
   [1] = 3,
-  [2] = 15,
+  [2] = 30,
   [3] = 100,
+  [4] = 150,
+  [5] = 250,
 }
 for k, price in pairs(exc_efficiency_levels) do
   local technology =
@@ -600,8 +606,7 @@ for k = 1, void_shield_spd_research_count do
 end
 
 
-local attack_range_research_count = 10
-for k = 1, attack_range_research_count do
+for k = 1, shared.attack_range_research_count do
   local technology =
   {
     name = shared.attack_range_research.."-"..k,
@@ -619,6 +624,11 @@ for k = 1, attack_range_research_count do
       {
         type = "nothing",
         effect_description = {"", {"technology-description."..shared.attack_range_research}},
+        effect_description = {"", {
+          "modifier-description.wh40k-titans-attack-cf",
+          math.floor(shared.attack_range_cf_get(k-1)*100),
+          math.floor(shared.attack_range_cf_get(k  )*100),
+        }},
         icons = {
           {
             icon = shared.media_prefix.."graphics/tech/titan-range.png",

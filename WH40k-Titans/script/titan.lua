@@ -79,10 +79,10 @@ function lib_ttn.register_titan(entity)
     titan_info.guns = {
       lib_ttn.init_gun(shared.weapon_plasma_annihilator),
       lib_ttn.init_gun(shared.weapon_plasma_destructor),
-      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
-      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
       lib_ttn.init_gun(shared.weapon_laserblaster),
       lib_ttn.init_gun(shared.weapon_laserblaster),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
     }
   else
     titan_info.guns = {
@@ -114,7 +114,14 @@ end
 
 ----- OUTRO -----
 
-function lib_ttn.titan_death(titan_info)
+local function get_corpse_img(class)
+  if class >= shared.class_warlord then
+    return shared.mod_prefix.."corpse-3"
+  end
+  return shared.mod_prefix.."corpse-1"
+end
+
+local function titan_death(titan_info)
   -- For death only
   local source = titan_info.position
   local target
@@ -139,34 +146,40 @@ function lib_ttn.titan_death(titan_info)
   end
   lib_ruins.spawn_ruin(titan_info.surface, {
     position = source,
-    class = titan_type.class,
+    img = get_corpse_img(titan_info.class),
     details = merge_ingredients_doubles(iter_chain(detailses)),
     ammo = merge_ingredients_doubles(ammo),
   })
-
-  lib_ttn.titan_removed(titan_info)
 
   titan_info.force.print(
     {"WH40k-Titans-gui.msg-titan-destroyed", {"entity-name."..titan_type.entity}},
     {1, 0.1, 0.1})
 end
 
-function lib_ttn.titan_removed(titan_info)
-  -- For any object remove
-  for _, obj in pairs(titan_info.aux_laser or {}) do
-    if obj and obj.valid then
-      obj.destructible = true
-      obj.destroy()
-    end
+function lib_ttn.titan_removed_by_number(unit_number, is_death)
+  local titan_info = unit_number and ctrl_data.titans[unit_number]
+  if titan_info then
+    lib_ttn.titan_removed(titan_info, is_death)
   end
 end
 
-lib_ttn:on_event(defines.events.script_raised_destroy, function(event)
-  local titan_entity = event.entity
-  local titan_info = titan_entity and ctrl_data.titans[titan_entity.unit_number]
-  if titan_info then
-    lib_ttn.titan_removed(titan_info)
+function lib_ttn.titan_removed(titan_info, is_death)
+  -- For any object remove
+  local unit_number = titan_info.entity.unit_number
+
+  if is_death then
+    titan_death(titan_info)
   end
+
+  lib_ttn.remove_titan_gui_by_titan(titan_info)
+  die_all(titan_info.foots)
+  die_all(titan_info.aux_laser)
+
+  ctrl_data.titans[unit_number] = nil
+end
+
+lib_ttn:on_event(defines.events.script_raised_destroy, function(event)
+  lib_ttn.titan_removed_by_number(event.entity.unit_number)
 end)
 
 

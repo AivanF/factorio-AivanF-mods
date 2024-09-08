@@ -63,19 +63,16 @@ local function on_any_remove(event)
   end
   unit_number = unit_number or event.unit_number
   if not unit_number then return end
+  local is_death = event.name == defines.events.on_entity_died
+
+  -- game.print("on_any_remove: "..serpent.line({name=entity.name, is_death=is_death}))
 
   if ctrl_data.titans[unit_number] then
-    local titan_info = ctrl_data.titans[unit_number]
-    if event.name == defines.events.on_entity_died then
-      lib_ttn.titan_death(titan_info)
-    end
-    lib_ttn.remove_titan_gui_by_titan(titan_info)
-    die_all(titan_info.foots)
-    ctrl_data.titans[unit_number] = nil
+    lib_ttn.titan_removed_by_number(unit_number, is_death)
   end
 
   if ctrl_data.supplier_index[unit_number] then
-    lib_spl.supplier_removed(unit_number)
+    lib_spl.supplier_removed_by_number(unit_number, is_death)
   end
 
   if ctrl_data.excavator_index[unit_number] then
@@ -218,9 +215,10 @@ local function fulfill_ammo_cmd(cmd)
     local unit_number = player.vehicle.unit_number
     if ctrl_data.titans[unit_number] then
       lib_ttn.titan_ammo_fulfill(ctrl_data.titans[unit_number])
-
+      return
     elseif ctrl_data.supplier_index[unit_number] then
       lib_spl.supplier_ammo_fulfill(ctrl_data.supplier_index[unit_number])
+      return
     end
   end
   player.print("Seems like you are not driving a Titan nor Supplier...")

@@ -143,7 +143,7 @@ add_weapon({
   grade = shared.gun_grade_small,
   category = shared.wc_laser,
   min_dst = 8, max_dst = dst_m,
-  speed = 15, barrel = 12,
+  speed = 15, barrel = 10,
   ammo = shared.laser_ammo,
   per_shot = 2, inventory = 3000,
   cd = 0.4,
@@ -239,9 +239,9 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_medium,
   category = shared.wc_bolter,
-  min_dst = 10, max_dst = dst_s,
+  min_dst = 10, max_dst = dst_m,
   ammo = shared.huge_bolt,
-  per_shot = 1, inventory = 500,
+  per_shot = 1, inventory = 1000,
   cd = 0.1,
   bolt_type = bolt_types.bolt_huge,
   attack_sound = "wh40k-titans-bolter-huge",
@@ -285,7 +285,7 @@ add_weapon({
   grade = shared.gun_grade_medium,
   top_only = true,
   category = shared.wc_rocket,
-  min_dst = 10, max_dst = (dst_m+dst_l)/2, max_dst = dst_l,
+  min_dst = 16, max_dst = (dst_m+dst_l)/2, max_dst = dst_l, max_orid = 0.03,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 4000,
@@ -310,11 +310,11 @@ add_weapon({
   grade = shared.gun_grade_big,
   top_only = true,
   category = shared.wc_rocket,
-  min_dst = 10, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2,
+  min_dst = 16, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2, max_orid = 0.03,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 12000,
-  cd = 0.15, attack_size = 8, scatter = 6,
+  cd = 0.15, attack_size = 8, scatter = 8,
   bolt_type = bolt_types.bolt_rocket,
   start_far = true,
   attack_sound = "wh40k-titans-rocket",
@@ -331,28 +331,28 @@ add_weapon({
 
 --------- 2. Medium
 
--- wname = "laser-blaster"  -- 3 lasers
--- shared.weapon_laserblaster = wname
--- add_weapon({
---   name = wname,
---   grade = shared.gun_grade_big,
---   category = shared.wc_laser,
---   min_dst = 12, max_dst = dst_l, spd=1.5,
---   speed = 20, barrel = 14,
---   ammo = shared.laser_ammo,
---   per_shot = 6, inventory = 15000,
---   cd = 0.1, attack_size = 6, scatter = 5,
---   bolt_type = bolt_types.bolt_laser,
---   attack_sound = "wh40k-titans-laser",
---   ingredients = {
---     {shared.las_engine, 3},
---     {shared.barrel, 6},
---     {shared.frame_part, 9},
---   },
---   icon = shared.media_prefix.."graphics/icons/weapons/Laser-Blaster.png",
---   icon_size = 64, icon_mipmaps = 3,
---   animation = shared.mod_prefix.."Laser-Blaster",
--- })
+wname = "laser-blaster"  -- 3 lasers
+shared.weapon_laserblaster = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_big,
+  category = shared.wc_laser,
+  min_dst = 12, max_dst = dst_l, spd=1.5,
+  speed = 20, barrel = 12,
+  ammo = shared.laser_ammo,
+  per_shot = 1, inventory = 12000,
+  cd = 0.1, attack_size = 6, scatter = 6,
+  bolt_type = bolt_types.bolt_laser,
+  attack_sound = "wh40k-titans-laser",
+  ingredients = {
+    {shared.las_engine, 3},
+    {shared.barrel, 6},
+    {shared.frame_part, 9},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/Laser-Blaster.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."Laser-Blaster",
+})
 
 wname = "plasma-destructor"
 shared.weapon_plasma_destructor = wname
@@ -386,9 +386,9 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_big,
   category = shared.wc_bolter,
-  min_dst = 12, max_dst = dst_m,
+  min_dst = 12, max_dst = (dst_m+dst_l)/2,
   ammo = shared.huge_bolt,
-  per_shot = 1, inventory = 1000,
+  per_shot = 1, inventory = 2000,
   attack_size = 3,
   attack_sound = "wh40k-titans-bolter-huge",
   bolt_type = bolt_types.bolt_huge,
@@ -410,7 +410,7 @@ add_weapon({
 --   category = shared.wc_quake,
 --   min_dst = 12, max_dst = dst_m, spd=0.5,
 --   ammo = shared.quake_proj,
---   per_shot = 1, inventory = 200,
+--   per_shot = 1, inventory = 500,
 --   ingredients = {
 --     {shared.quake_engine, 3},
 --     {shared.barrel, 4},
@@ -449,7 +449,7 @@ add_weapon({
   category = shared.wc_melta,
   min_dst = 12, max_dst = dst_m,
   ammo = shared.melta_ammo,
-  per_shot = 1, inventory = 500,
+  per_shot = 1, inventory = 1000,
   attack_size = 5,
   ingredients = {
     {shared.melta_pump, 6},
@@ -476,7 +476,7 @@ add_weapon({
     {shared.barrel, 4},
     {shared.frame_part, 5},
   },
-  per_shot = 2, inventory = 500,
+  per_shot = 2, inventory = 1000,
   icon = "__base__/graphics/icons/flamethrower-turret.png",
   icon_size = 64, icon_mipmaps = 4,
   animation = nil,  -- TODO: here!
@@ -491,9 +491,9 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_huge,
   category = shared.wc_plasma,
-  min_dst = 20, max_dst = dst_l,
+  min_dst = 32, max_dst = dst_l,
   ammo = shared.plasma_ammo,
-  per_shot = 10, inventory = 50000,
+  per_shot = 10, inventory = 20000,
   cd = 5,
   bolt_type = bolt_types.bolt_plasma_3,
   attack_sound = "wh40k-titans-plasma-2", -- TODO: replace
@@ -515,10 +515,11 @@ add_weapon({
   name = wname,
   grade = shared.gun_grade_huge,
   category = shared.wc_hell,
-  min_dst = 20, max_dst = dst_xl, spd=0.2,
+  min_dst = 32, max_dst = dst_xl, spd=0.2,
   ammo = shared.hell_ammo,
-  per_shot = 12, inventory = 12000,
+  per_shot = 12, inventory = 10000,
   cd = 8,
+  -- TODO: add sounds
   ingredients = {
     {shared.melta_pump, 12},
     {shared.ehe_emitter, 12},
@@ -536,7 +537,7 @@ add_weapon({
 --   name = wname,
 --   grade = shared.gun_grade_huge,
 --   category = shared.wc_quake,
---   min_dst = 32, max_dst = dst_xl*1.5, spd=0.2,
+--   min_dst = 48, max_dst = dst_xl*1.5, spd=0.2,
 --   ammo = shared.doom_rocket,
 --   per_shot = 1, inventory = 16,
 --   ingredients = {
@@ -548,4 +549,21 @@ add_weapon({
 --   icon_size = 64, icon_mipmaps = 3,
 --   animation = shared.mod_prefix.."MissileLauncher", -- TODO: replace
 -- })
--- 
+
+
+shared.get_weapon_descr = function (weapon_type)
+  local ammo = weapon_type.ammo or "unknown"
+  local own_descr = {"item-description."..weapon_type.entity}
+  local stats_descr = {
+    (weapon_type.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
+    -- Args:
+    weapon_type.grade,
+    {"item-name."..weapon_type.ammo}, -- "__ITEM__"..ammo.."__",
+    weapon_type.per_shot,
+    shorten_number(weapon_type.inventory),
+    weapon_type.bolt_type and shorten_number(weapon_type.attack_size * weapon_type.bolt_type.single_damage) or "terrible",
+    weapon_type.attack_size,
+  }
+  local full_descr = {"?", {"", own_descr, " ", stats_descr}, stats_descr}
+  return weapon_type.available and full_descr or {"item-description.wh40k-titans-not-yet"}
+end

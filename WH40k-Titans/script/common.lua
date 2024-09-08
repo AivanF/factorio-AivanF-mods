@@ -79,9 +79,12 @@ function merge_ingredients_doubles(ingredients)
   local indices = {}
   local result = {}
   local prev, name, count
-  for _, couple in pairs(ingredients) do
-    name = couple[1] or couple.name
-    count = couple[2] or couple.count
+  for _, obj in pairs(ingredients) do
+    name = obj[1] or obj.name
+    if not name then
+      error("Got nil name in: "..serpent.line(ingredients))
+    end
+    count = math.floor(obj[2] or obj.count)
     if indices[name] then
       prev = result[indices[name]]
       prev.count = prev.count + count
@@ -155,6 +158,7 @@ function list_players(values)
 end
 
 function beautify_time(seconds)
+  -- return util.formattime(seconds * UPS)
   if seconds <= 0 then
     return "0"
   else
@@ -206,4 +210,8 @@ function show_ammo_transfer(entity_from, entity_to, ammo_name, ammo_count, scatt
     target = position_scatter(entity_to.position, scatter),
     speed = 0.2 + math.random() * 0.3,
   }
+end
+
+function make_titled_text(title, text)
+  return {"", "[font=default-bold]", title, "[/font]\n", text}
 end

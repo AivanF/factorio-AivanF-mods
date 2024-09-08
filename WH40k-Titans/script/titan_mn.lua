@@ -137,8 +137,10 @@ local function process_single_titan(titan_info)
     init_aux_laser(titan_type, titan_info, entity)
   end
   for k, shift in ipairs(titan_type.aux_laser) do
-    -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1]))
-    titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1])))
+    if titan_info.aux_laser[k] then
+      -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1]))
+      titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1])))
+    end
   end
 
 
@@ -342,7 +344,7 @@ local function process_titans()
       end
     else
       game.print("Titan "..unit_number.." of class "..titan_info.class.." got invalid :(")
-      lib_ttn.titan_death(titan_info)
+      lib_ttn.titan_removed(titan_info, true)
     end
   end
   ctrl_data.titans = titans_new

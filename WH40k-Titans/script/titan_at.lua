@@ -6,7 +6,7 @@ lib_ttn.order_ttl = 5 * UPS
 local max_oris = { -- titan cannon max orientation shift
   0.15, 0.15,
   0.4, 0.4,
-  0.2, 0.2,
+  0.4, 0.4,
 }
 
 
@@ -33,9 +33,7 @@ function lib_ttn.calc_max_dst(cannon, force, titan_type, k, weapon_type)
       * weapon_type.max_dst
       * (1 + 0.01*titan_type.class)
       * (titan_type.guns[k].is_top and 1.1 or 1)
-      * (force and math.lerp_map(
-        lib_tech.get_research_level(force.index, shared.attack_range_research),
-        0, 8, 0.65, 1.5) or 1)
+      * (force and shared.attack_range_cf_get(lib_tech.get_research_level(force.index, shared.attack_range_research)) or 1)
   end
   return cannon.cached_dst
 end
@@ -136,7 +134,7 @@ local function control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_
     local dst = math2d.position.distance(gunpos, cannon.target)
 
     if true
-      and math.abs(orid) < 0.015
+      and math.abs(orid) < (weapon_type.max_orid or 0.015)
       and cannon.gun_cd < tick
       and dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type)
     then
@@ -166,7 +164,8 @@ local function control_bolt_gun(entity, titan_type, k, cannon, gunpos, weapon_ty
 end
 
 local function control_rocket_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
-  control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
+  -- control_simple_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
+  control_rotate_gun(entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick, bolt_attacker)
 end
 
 local function control_melta_gun(cannon, weapon_type, entity, ori, tick)
@@ -200,12 +199,14 @@ local function find_ai_target(titan_info, entity, weapon_type, cannon)
       dst = weapon_type.max_dst
       while 0 < dst and weapon_type.min_dst*1.3 < dst do
         dst = dst * 0.75
-        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
-        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
-        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
-        if enemy_number > max_number then
-          max_number = enemy_number
-          result = target_option
+        new_oris = 2/3*cannon.oris + oris
+        if new_oris < 0.2 and new_oris > -0.2 then
+          target_option = math2d.position.add(cannon.position, point_orientation_shift(entity.orientation -titan_info.oris/2, new_oris, dst))
+          enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
+          if enemy_number > max_number then
+            max_number = enemy_number
+            result = target_option
+          end
         end
       end
     end
@@ -215,12 +216,14 @@ local function find_ai_target(titan_info, entity, weapon_type, cannon)
       dst = weapon_type.min_dst*1.3
       while 0 < dst and dst < weapon_type.max_dst do
         dst = dst * 1.25
-        new_oris = entity.orientation -titan_info.oris/2 +2/3*cannon.oris + oris
-        target_option = math2d.position.add(cannon.position, point_orientation_shift(new_oris, 0, dst))
-        enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
-        if enemy_number > max_number then
-          max_number = enemy_number
-          result = target_option
+        new_oris = 2/3*cannon.oris + oris
+        if new_oris < 0.2 and new_oris > -0.2 then
+          target_option = math2d.position.add(cannon.position, point_orientation_shift(entity.orientation -titan_info.oris/2, new_oris, dst))
+          enemy_number = entity.surface.count_entities_filtered{position=target_option, radius=ai_attack_radius, force=enemies, is_military_target=true}
+          if enemy_number > max_number then
+            max_number = enemy_number
+            result = target_option
+          end
         end
       end
     end
@@ -340,3 +343,4 @@ end
 lib_ttn:on_event(shared.mod_prefix.."attack-1", function(event) handle_attack_order(event, 1) end)
 lib_ttn:on_event(shared.mod_prefix.."attack-2", function(event) handle_attack_order(event, 2) end)
 lib_ttn:on_event(shared.mod_prefix.."attack-3", function(event) handle_attack_order(event, 3) end)
+lib_ttn:on_event(shared.mod_prefix.."attack-4", function(event) handle_attack_order(event, 4) end)

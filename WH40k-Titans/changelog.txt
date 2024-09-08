@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.30
+Date: 2024-09-08
+  Features:
+    - New Titan class: War Master!  It's huge and full of cannons ;)
+    - Additional, 4th attack control hotkey, "V" by default.
+    - New Titan weapon: Laser Blaster!
+    - Brand new wrecks type: broken Titan Supplier aircraft, filled with various ammo! The same one you can get by destroying a Supplier, and the wrecks will keep its content.
+    - More research levels for speed and efficiency of fallen Titans excavation.
+  Info:
+    - As usual, many small UI improvements and balance fixes.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.29
 Date: 2024-09-07
   Features:

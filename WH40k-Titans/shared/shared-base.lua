@@ -79,6 +79,10 @@ shared.exc_speed_by_level = {
   [1] = 0.50,
   [2] = 0.75,
   [3] = 1.00,
+  [4] = 1.50,
+  [5] = 2.00,
+  [6] = 3.00,
+  [7] = 4.00,
 }
 shared.exc_efficiency_research = shared.mod_prefix.."excavation-efficiency"
 shared.exc_efficiency_by_level = {
@@ -86,6 +90,8 @@ shared.exc_efficiency_by_level = {
   [1] = 0.55,
   [2] = 0.75,
   [3] = 0.90,
+  [4] = 0.95,
+  [5] = 0.99,
 }
 
 shared.assembly_speed_research = shared.mod_prefix.."assembly-speed"
@@ -104,6 +110,10 @@ shared.void_shield_spd_research = shared.mod_prefix.."void-shield-recharge"
 
 shared.ammo_usage_research = shared.mod_prefix.."ammo-usage-efficiency"
 shared.attack_range_research = shared.mod_prefix.."max-attack-range"
+shared.attack_range_research_count = 10
+shared.attack_range_cf_get = function(level)
+  return math.lerp_map(level, 0, shared.attack_range_research_count, 0.7, 1.5)
+end
 
 shared.supplier_cap_research = shared.mod_prefix.."supplier-capacity"
 shared.supplier_exch_research = shared.mod_prefix.."supplier-exchange-speed"

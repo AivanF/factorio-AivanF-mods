@@ -1,3 +1,5 @@
+local lib_ruins = require("script/ruins")
+
 local Lib = require("script/event_lib")
 lib_spl = Lib.new()
 
@@ -30,18 +32,48 @@ function lib_spl.register_supplier(entity)
 end
 
 
-function lib_spl.supplier_removed(unit_number)
-  -- game.print("supplier_removed "..unit_number)
+local function supplier_death(supplier_info)
+  local details = {}
+  local ammo = {}
+  for _, obj in pairs(game.recipe_prototypes[shared.aircraft_supplier].ingredients) do
+    table.insert(details, {obj.name, obj.amount})
+  end
+  for ammo_name, ammo_count in pairs(supplier_info.inventory) do
+    table.insert(ammo, {name=ammo_name, count=ammo_count})
+  end
+  lib_ruins.spawn_ruin(supplier_info.surface, {
+    position = supplier_info.entity.position,
+    img = shared.mod_prefix.."corpse-supplier",
+    details = merge_ingredients_doubles(details),
+    ammo = merge_ingredients_doubles(ammo),
+  })
+end
+
+
+function lib_spl.supplier_removed_by_number(unit_number, is_death)
   local supplier_info = ctrl_data.supplier_index[unit_number]
   if supplier_info == nil then return end
+  lib_spl.supplier_removed(supplier_info, is_death)
+end
+
+
+function lib_spl.supplier_removed(supplier_info, is_death)
+  local unit_number = supplier_info.entity.unit_number
+
+  if is_death then
+    supplier_death(supplier_info)
+  end
 
   lib_spl.remove_supplier_gui_by_supplier(supplier_info)
 
   ctrl_data.supplier_index[unit_number] = nil
   bucks.remove(ctrl_data.supplier_buckets, supplier_update_rate, unit_number)
-
-  -- TODO: make a corpse!
 end
+
+
+lib_spl:on_event(defines.events.script_raised_destroy, function(event)
+  lib_spl.supplier_removed_by_number(event.entity.unit_number)
+end)
 
 
 function lib_spl.supplier_entity_replaced(old_entity, new_entity)
@@ -131,7 +163,10 @@ local function process_single_supplier(supplier_info)
     ammo_fill_targets = fill_targets[ammo_name]
     if ammo_count > 0 and ammo_fill_targets ~= nil then
       supplier_info.supplying = true
-      transfer_now = math.min(get_supplier_transfer_limit(supplier_info), math.ceil(ammo_count / #ammo_fill_targets))
+      transfer_now = math.min(
+        math.floor(get_supplier_transfer_limit(supplier_info) / (shared.ammo_weights[ammo_name] or 1)),
+        math.ceil(ammo_count / #ammo_fill_targets)
+      )
       for _, ammo_fill_target_info in ipairs(ammo_fill_targets) do
         ammo_got = math.min(transfer_now, ammo_fill_target_info.need, ammo_count)
         ammo_fill_target_info.gun_info.ammo_count = ammo_fill_target_info.gun_info.ammo_count + ammo_got

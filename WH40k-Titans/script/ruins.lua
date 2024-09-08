@@ -1,6 +1,6 @@
 local Lib = require("script/event_lib")
-local lib_ruins = Lib.new()
 local lib_tech = require("script/tech")
+lib_ruins = Lib.new()
 
 local debug_many = false
 -- debug_many = true
@@ -25,8 +25,8 @@ local blank_world = {
 local blank_ruin_info = {
   -- world = nil,
   -- sector = nil,
+  img = nil,
   died = nil,
-  class = nil,
   entity = nil,
   details = {}, -- [{name=, count=}]
   ammo = {}, -- [{name=, count=}]
@@ -37,7 +37,7 @@ local blank_sector = {
   ruin_ghosts = {},
 }
 
-lib_ruins.ammo_unit = 100
+lib_ruins.ammo_unit = 300 -- devided by weight
 
 --[[
 INFO: To reduce memory usage on large maps, surfaces are split into sectors (10*10 chunks by default).
@@ -154,7 +154,7 @@ end
 function lib_ruins.ruin_extract(ruin_info, ruin_entity)
   if ruin_info then
     local total = #ruin_info.details + #ruin_info.ammo
-    local position, name, count
+    local position, name, count, weight
     if total > 0 then
       -- Detail or ammo?
       if math.random() < #ruin_info.details / total then
@@ -168,7 +168,8 @@ function lib_ruins.ruin_extract(ruin_info, ruin_entity)
       else
         position = math.random(#ruin_info.ammo)
         name = ruin_info.ammo[position].name
-        count = math.min(lib_ruins.ammo_unit, ruin_info.ammo[position].count)
+        weight = shared.ammo_weights[name] or 1
+        count = math.min(lib_ruins.ammo_unit / weight, ruin_info.ammo[position].count)
         ruin_info.ammo[position].count = ruin_info.ammo[position].count - count
         if ruin_info.ammo[position].count < 1 then
           table.remove(ruin_info.ammo, position)
@@ -212,71 +213,6 @@ local function handle_deleted_surface(event)
   end
 end
 
-local function create_random_ruin_info(position)
-  local detailses = {}
-  local ammo = {}
-  local class = 0
-  local img
-
-  if math.random() < 0.7 then
-    class = shared.class_warhound
-    img = shared.mod_prefix.."corpse-1"
-    table.insert(detailses, shared.titan_types[shared.titan_warhound].ingredients)
-  else
-    class = shared.class_warlord
-    img = shared.mod_prefix.."corpse-3"
-    table.insert(detailses, shared.titan_types[shared.class_warlord].ingredients)
-  end
-  table.insert(detailses, {{name=shared.frame_part, count=math.random(7)}})
-
-  if math.random() < class*3/120 then
-    table.insert(detailses, shared.weapons[shared.weapon_plasma_blastgun].ingredients)
-    table.insert(ammo, {
-      name =shared.weapons[shared.weapon_plasma_blastgun].ammo,
-      count=shared.weapons[shared.weapon_plasma_blastgun].inventory * (0.2 + 0.5*math.random())
-    })
-  end
-  if math.random() < class*3/120 then
-    table.insert(detailses, shared.weapons[shared.weapon_inferno].ingredients)
-    table.insert(ammo, {
-      name =shared.weapons[shared.weapon_inferno].ammo,
-      count=shared.weapons[shared.weapon_inferno].inventory * (0.2 + 0.5*math.random())
-    })
-  end
-  if math.random() < class*3/120 then
-    table.insert(detailses, shared.weapons[shared.weapon_turbolaser].ingredients)
-    table.insert(ammo, {
-      name =shared.weapons[shared.weapon_turbolaser].ammo,
-      count=shared.weapons[shared.weapon_turbolaser].inventory * (0.2 + 0.5*math.random())
-    })
-  end
-  if math.random() < class*2/120 then
-    table.insert(detailses, shared.weapons[shared.weapon_missiles].ingredients)
-    table.insert(ammo, {
-      name =shared.weapons[shared.weapon_missiles].ammo,
-      count=shared.weapons[shared.weapon_missiles].inventory * (0.2 + 0.5*math.random())
-    })
-  end
-  if math.random() < class*5/120 then
-    table.insert(detailses, shared.weapons[shared.weapon_vulcanbolter].ingredients)
-    table.insert(ammo, {
-      name =shared.weapons[shared.weapon_vulcanbolter].ammo,
-      count=shared.weapons[shared.weapon_vulcanbolter].inventory * (0.2 + 0.5*math.random())
-    })
-  end
-
-  local ruin_info = {
-    died = false,
-    class = class,
-    img = img,
-    position = position,
-    entity = nil,
-    details = merge_ingredients_doubles(iter_chain(detailses)),
-    ammo = merge_ingredients_doubles(ammo),
-  }
-  return ruin_info
-end
-
 local function count_water(surface, position, radius)
   local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
   local total = surface.count_tiles_filtered{position=position, radius=radius}
@@ -312,7 +248,7 @@ local function fulfill_sector(world, sector, any_position, add_prob)
     if #sector.ruin_ghosts < 1 then
       sector.ruin_ghosts = {
         -- TODO: maybe several?
-        create_random_ruin_info(position),
+        lib_ruins.create_random_ruin_info(position),
       }
     end
     world.created_ruins = (world.created_ruins or 0) + #sector.ruin_ghosts
@@ -432,4 +368,6 @@ commands.add_command(
   spawn_more_ruins_cmd
 )
 
+
+require("script/ruins_dt")
 return lib_ruins

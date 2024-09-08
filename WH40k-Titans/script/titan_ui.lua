@@ -72,13 +72,17 @@ local function create_titan_gui(player, titan_info)
     guiobj.guns[k] = {}
     guiobj.guns[k].img = guiobj.weapon_table.add{
       type="sprite-button", sprite=("recipe/"..shared.mod_prefix..cannon.name),
-      tooltip={"item-name."..shared.mod_prefix..cannon.name},
+      tooltip=make_titled_text(
+        {"item-name."..shared.mod_prefix..cannon.name},
+        shared.get_weapon_descr(shared.weapons[cannon.name])
+      ),
       show_percent_for_small_numbers=true,
     }
   end
   for k, cannon in pairs(titan_info.guns) do
     guiobj.guns[k].ammo = guiobj.weapon_table.add{
       type="sprite-button", sprite=("item/"..shared.weapons[cannon.name].ammo),
+      tooltip={"item-name."..shared.weapons[cannon.name].ammo},
       -- show_percent_for_small_numbers=true,
       tags={action=action_toggle_ammo_count},
     }
@@ -168,19 +172,22 @@ local function update_guis()
         end
         if guiobj.titan_info.guns[k].ai then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-info"
-          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-ai"}
+          guiobj.guns[k].mode.tooltip=make_titled_text({"WH40k-Titans-gui.attack-ai"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 1 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-1"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-1"}
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-1"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 2 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-2"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-2"}
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-2"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 3 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-3"
-          guiobj.guns[k].mode.tooltip={"controls."..shared.mod_prefix.."attack-3"}
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-3"}, {"WH40k-Titans-gui.attack-click"})
+        elseif player_settings.guns[k].mode == 4 then
+          guiobj.guns[k].mode.sprite = "virtual-signal/signal-4"
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-4"}, {"WH40k-Titans-gui.attack-click"})
         else
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-red"
-          guiobj.guns[k].mode.tooltip={"WH40k-Titans-gui.attack-0"}
+          guiobj.guns[k].mode.tooltip = make_titled_text({"WH40k-Titans-gui.attack-0"}, {"WH40k-Titans-gui.attack-click"})
         end
       end
 
@@ -209,7 +216,7 @@ lib_ttn:on_event(defines.events.on_gui_click, function(event)
     if titan_info.guns[k].ai then
       titan_info.guns[k].ai = false
     else
-      player_settings.guns[k].mode = math.fmod((player_settings.guns[k].mode or 0) + 1, 4)
+      player_settings.guns[k].mode = math.fmod((player_settings.guns[k].mode or 0) + 1, 5)
       if player_settings.guns[k].mode == 0 then
         titan_info.guns[k].ai = true
       end

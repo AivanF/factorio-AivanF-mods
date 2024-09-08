@@ -152,6 +152,14 @@ data:extend({
     width = 600,
     height = 600,
   },
+  {
+    type = "sprite",
+    name = shared.mod_prefix.."corpse-supplier",
+    filename = shared.media_prefix.."graphics/entity/supplier-corpse.png",
+    width = 400,
+    height = 400,
+    scale = 0.5,
+  },
 
   -- https://wiki.factorio.com/Prototype/Animation
   {

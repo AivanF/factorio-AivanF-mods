@@ -43,6 +43,7 @@ local parts = {
       {afci_bridge.get.bearing().name, 20},
       -- {"steel-plate", 60},
       {afci_bridge.get.heavy_material().name, 60},
+      {afci_bridge.get.sc_cable().name, 30},
     },
     order = "a-3",
   },
@@ -117,6 +118,7 @@ local parts = {
     ingredients = {
       {afci_bridge.get.heavy_material().name, 180},
     },
+    allow_decomposition = true,
     order = "c-1",
     place_result = nil,
   },

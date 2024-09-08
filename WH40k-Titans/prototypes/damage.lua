@@ -25,6 +25,12 @@ data:extend({
     key_sequence = "C",
     action = "lua",
   },
+  {
+    type = "custom-input",
+    name = shared.mod_prefix.."attack-4",
+    key_sequence = "V",
+    action = "lua",
+  },
 
   {
     type = "projectile",
@@ -32,7 +38,7 @@ data:extend({
     flags = {"not-on-map"},
     collision_box = {{-0.5, -1.5}, {0.5, 1.5}},
     acceleration = 0,
-    piercing_damage = 300,
+    piercing_damage = 500,
     action = {
       type = "direct",
       action_delivery = {
@@ -40,7 +46,7 @@ data:extend({
         target_effects = {
           {
             type = "damage",
-            damage = {amount = 500 , type = "physical"}
+            damage = {amount = 750 , type = "physical"}
           },
           -- TODO: add some cannon explo?
           -- {
@@ -69,7 +75,7 @@ data:extend({
                 target_effects = {
                   {
                     type = "damage",
-                    damage = {amount = 500, type = "explosion"}
+                    damage = {amount = 750, type = "explosion"}
                   },
                   {
                     type = "create-entity",
@@ -148,7 +154,7 @@ data:extend({
         target_effects = {
           {
             type = "damage",
-            damage = {amount = 750 , type = "physical"}
+            damage = {amount = 1000 , type = "physical"}
           },
           -- TODO: add some cannon explo?
           -- {
@@ -393,7 +399,7 @@ data:extend({
               upper_distance_threshold = 8,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 1500, type = "explosion"}
+              damage = {amount = 2000, type = "explosion"}
             },
             {
               type = "damage",
@@ -401,7 +407,7 @@ data:extend({
               upper_distance_threshold = 8,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 2000, type = "laser"}
+              damage = {amount = 3000, type = "laser"}
             },
             {
               type = "damage",
@@ -409,7 +415,7 @@ data:extend({
               upper_distance_threshold = 8,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 1500, type = "fire"}
+              damage = {amount = 2000, type = "fire"}
             },
           }
         }
@@ -605,8 +611,8 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 10,
-              upper_distance_threshold = 16,
+              lower_distance_threshold = 12,
+              upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
               damage = {amount = 11000, type = "explosion"}
@@ -614,8 +620,8 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 8,
-              upper_distance_threshold = 16,
+              lower_distance_threshold = 12,
+              upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
               damage = {amount = 6000, type = "fire"}
@@ -623,8 +629,8 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 10,
-              upper_distance_threshold = 16,
+              lower_distance_threshold = 12,
+              upper_distance_threshold = 24,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
               damage = {amount = 8000, type = "electric"}
@@ -719,8 +725,8 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 16,
-              upper_distance_threshold = 24,
+              lower_distance_threshold = 18,
+              upper_distance_threshold = 26,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
               damage = {amount = 45000, type = "explosion"}
@@ -728,8 +734,8 @@ data:extend({
             {
               type = "damage",
               vaporize = true,
-              lower_distance_threshold = 16,
-              upper_distance_threshold = 24,
+              lower_distance_threshold = 18,
+              upper_distance_threshold = 26,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.1,
               damage = {amount = 25000, type = "fire"}

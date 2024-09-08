@@ -75,7 +75,7 @@ local function put_leftovers(exc_info)
       chest.surface.create_entity{
         name="flying-text", position=chest.position,
         -- TODO: add icon!
-        text={"item-name."..exc_info.leftovers.name},
+        text={"?", {"item-name."..exc_info.leftovers.name}, {"entity-name."..exc_info.leftovers.name}},
       }
       exc_info.leftovers = nil
       break
@@ -99,16 +99,18 @@ end
 local function calc_expected_time(exc_info)
   local secs = 0
   local exc_unit_time = get_exc_unit_time(exc_info)
+  local weight
   if exc_info.ruin_info then
     for _, couple in pairs(exc_info.ruin_info.details) do
       secs = secs + couple.count * exc_unit_time
     end
     for _, couple in pairs(exc_info.ruin_info.ammo) do
-      secs = secs + math.ceil(couple.count/lib_ruins.ammo_unit) * exc_unit_time
+      weight = (shared.ammo_weights[couple.name] or 1)
+      secs = secs + math.ceil(couple.count*weight/lib_ruins.ammo_unit) * exc_unit_time
     end
     secs = secs - exc_info.progress * exc_unit_time
   end
-  exc_info.expected_time = util.formattime(secs * UPS)
+  exc_info.expected_time = beautify_time(secs)
 end
 
 local function process_an_excavator(exc_info)
@@ -226,7 +228,7 @@ function lib_exc.gui_update(exc_info, main_frame)
     for _, couple in pairs(exc_info.ruin_info.details) do
       main_frame.results_line.add{
         type = "sprite-button", sprite = ("item/"..couple.name),
-        tooltip = {"item-name."..couple.name},
+        tooltip = {"?", {"item-name."..couple.name}, {"entity-name."..couple.name}},
         number = couple.count,
       }
     end
