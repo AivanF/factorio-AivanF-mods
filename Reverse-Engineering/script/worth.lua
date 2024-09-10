@@ -33,7 +33,7 @@ ignore_subgroup = {
 }
 
 override_items = {
-  ["gun-turret"] = { ingredients={red, grey}, need=10, price=1, prob=0.5 },
+  ["gun-turret"] = { ingredients={red, grey}, need=10, prob=0.5 },
   ["solid-fuel"] = { ingredients={red, green, blue}, need=20, prob=0.5 },
   ["raw-fish"] = { ingredients={white}, tech_name=false, need=42, prob=0.5 },
 }

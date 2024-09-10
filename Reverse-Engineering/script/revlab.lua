@@ -214,7 +214,7 @@ local function process_a_lab(rlab)
       then
         handle_input(rlab, item_info, pcs * (grade_info.prod_bonus or 1) * settings.global["af-reverse-lab-prob-mult"].value)
         rlab.input.remove_item({name=item_name, count=item_info.need*pcs})
-        local pollution_value = item_info.need * item_info.price *0.02
+        local pollution_value = item_info.need * (item_info.price or 1) *0.02
         rlab.surface.pollute(rlab.position, pollution_value)
         game.pollution_statistics.on_flow(grade_info.name, pollution_value)
         if pcs_limit <= 0 then break end

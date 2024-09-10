@@ -119,7 +119,6 @@ local function gui_explain(player, item_name)
     local expected, researched = prob_for_force(item_info, player.force)
     main_frame.status.caption = {
       researched and "af-reverse-lab.see-worth-info" or "af-reverse-lab.see-worth-info-not-researched",
-      -- string.format("%.0f", item_info.price),
       string.format("%.1f", expected),
       item_info.need,
     }
