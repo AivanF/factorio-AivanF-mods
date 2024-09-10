@@ -42,20 +42,128 @@ chest_base.inventory_size = 20
 
 local chest_input = table.deepcopy(chest_base)
 chest_input.name = base_name.."-chest-input"
-chest_input.picture.layers[1].tint = {0.8, 1, 0.9}
-chest_input.picture.layers[1].hr_version.tint = chest_input.picture.layers[1].tint
+-- chest_input.picture.layers[1].tint = {0.8, 1, 0.9}
+-- chest_input.picture.layers[1].hr_version.tint = chest_input.picture.layers[1].tint
 chest_input.selection_box = box_mult(chest_input.selection_box, 1, 3)
 chest_input.collision_box = box_mult(chest_input.collision_box, 1, 3)
+chest_input.picture = {
+  layers = {
+    {
+      filename = "__Reverse-Engineering__/graphics/chest-input.png",
+      priority = "extra-high",
+      width = 34,
+      height = 102,
+      shift = util.by_pixel(0, 0),
+      hr_version = {
+        filename = "__Reverse-Engineering__/graphics/chest-input-hr.png",
+        priority = "extra-high",
+        width = 66,
+        height = 192,
+        shift = util.by_pixel(0, 0),
+        scale = 0.5
+      }
+    },
+    {
+      filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
+      priority = "extra-high",
+      width = 56,
+      height = 26,
+      shift = util.by_pixel(10, 6.5),
+      draw_as_shadow = true,
+      hr_version = {
+        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
+        priority = "extra-high",
+        width = 110,
+        height = 50,
+        shift = util.by_pixel(10.5, 6),
+        draw_as_shadow = true,
+        scale = 0.5
+      }
+    }
+  }
+}
 
 local chest_packs = table.deepcopy(chest_base)
 chest_packs.name = base_name.."-chest-packs"
-chest_packs.picture.layers[1].tint = {0.9, 0.9, 1}
-chest_packs.picture.layers[1].hr_version.tint = chest_packs.picture.layers[1].tint
+-- chest_packs.picture.layers[1].tint = {0.9, 0.9, 1}
+-- chest_packs.picture.layers[1].hr_version.tint = chest_packs.picture.layers[1].tint
+chest_packs.picture = {
+  layers = {
+    {
+      filename = "__Reverse-Engineering__/graphics/chest-science.png",
+      priority = "extra-high",
+      width = 34,
+      height = 34,
+      shift = util.by_pixel(0, 0),
+      hr_version = {
+        filename = "__Reverse-Engineering__/graphics/chest-science-hr.png",
+        priority = "extra-high",
+        width = 66,
+        height = 66,
+        shift = util.by_pixel(0, 0),
+        scale = 0.5
+      }
+    },
+    {
+      filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
+      priority = "extra-high",
+      width = 56,
+      height = 26,
+      shift = util.by_pixel(10, 6.5),
+      draw_as_shadow = true,
+      hr_version = {
+        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
+        priority = "extra-high",
+        width = 110,
+        height = 50,
+        shift = util.by_pixel(10.5, 6),
+        draw_as_shadow = true,
+        scale = 0.5
+      }
+    }
+  }
+}
 
 local chest_other = table.deepcopy(chest_base)
 chest_other.name = base_name.."-chest-other"
-chest_other.picture.layers[1].tint = {1, 0.8, 0.8}
-chest_other.picture.layers[1].hr_version.tint = chest_other.picture.layers[1].tint
+-- chest_other.picture.layers[1].tint = {1, 0.8, 0.8}
+-- chest_other.picture.layers[1].hr_version.tint = chest_other.picture.layers[1].tint
+chest_other.picture = {
+  layers = {
+    {
+      filename = "__Reverse-Engineering__/graphics/chest-trash.png",
+      priority = "extra-high",
+      width = 34,
+      height = 34,
+      shift = util.by_pixel(0, 0),
+      hr_version = {
+        filename = "__Reverse-Engineering__/graphics/chest-trash-hr.png",
+        priority = "extra-high",
+        width = 66,
+        height = 66,
+        shift = util.by_pixel(0, 0),
+        scale = 0.5
+      }
+    },
+    {
+      filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
+      priority = "extra-high",
+      width = 56,
+      height = 26,
+      shift = util.by_pixel(10, 6.5),
+      draw_as_shadow = true,
+      hr_version = {
+        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
+        priority = "extra-high",
+        width = 110,
+        height = 50,
+        shift = util.by_pixel(10.5, 6),
+        draw_as_shadow = true,
+        scale = 0.5
+      }
+    }
+  }
+}
 
 local chest_corpse = table.deepcopy(data.raw["container"]["iron-chest"])
 chest_corpse.name = base_name.."-chest-corpse"
@@ -175,4 +283,4 @@ data:extend{
   },
 }
 
-informatron_make_image("reveng-info", "__Reverse-Engineering__/graphics/info-expl.png", 1024, 512)
+informatron_make_image("reveng-info", "__Reverse-Engineering__/graphics/info-expl.jpg", 900, 600)

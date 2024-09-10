@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2024-09-10
+  Graphics:
+    - Custom chests visuals!
+  Bugfixes:
+    - Fixed a bug introduced by previous update: error when Reverse-Engineering process got successful chance on researching given technology. Thanks to Snip3rScope for noticing!
+  Balancing:
+    - Advanced additional recipe for items available by default aren't considered anymore.
+    - Higher science packs output for technologies which require multiple different science packs.
+    - Less output for researched technologies, to compensate that increasement.
+  Info:
+    - More info in the worth evaluator UI to highlight the difference of already researched and yet unknown technologies.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2024-08-25
   Features:

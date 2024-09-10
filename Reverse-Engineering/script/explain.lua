@@ -9,10 +9,11 @@ local act_set_item = "af-reverse-lab-set-item"
 
 
 local function explain(cmd)
+  correct_global()
   local player = game.get_player(cmd.player_index)
   local item_name = cmd.parameter
   local answers = {}
-  if ignore_item[item_name] then
+  if ignore_items[item_name] then
     table.insert(answers, "builtinly ignored")
   end
   if global.add_ignore_items[item_name] then
@@ -85,6 +86,8 @@ end
 
 
 local function gui_explain(player, item_name)
+  correct_global()
+
   local main_frame = player.gui.screen[main_frame_name]
   if not main_frame_name then return end
   
@@ -95,7 +98,7 @@ local function gui_explain(player, item_name)
   local status = {"af-reverse-lab.useless"}
   local ok = false
   
-  if ignore_item[item_name] then
+  if ignore_items[item_name] then
     -- status = "builtinly ignored"
   elseif global.add_ignore_items[item_name] then
     -- status = "remotely ignored"
@@ -112,10 +115,12 @@ local function gui_explain(player, item_name)
 
   if ok then
     local item_info = global.add_override_items[item_name] or global.reverse_items[item_name]
+    -- game.print("// item_info: "..serpent.line(item_info))
+    local expected, researched = prob_for_force(item_info, player.force)
     main_frame.status.caption = {
-      "af-reverse-lab.see-worth-info",
+      researched and "af-reverse-lab.see-worth-info" or "af-reverse-lab.see-worth-info-not-researched",
       -- string.format("%.0f", item_info.price),
-      string.format("%.1f", prob_for_force(item_info, player.force)),
+      string.format("%.1f", expected),
       item_info.need,
     }
     for _, pack_name in pairs(item_info.ingredients) do

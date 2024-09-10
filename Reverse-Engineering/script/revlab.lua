@@ -93,7 +93,7 @@ local function try_add_pack(rlab, name, count)
   local pack = {name=name, count=count}
   if rlab.output_packs.can_insert(pack) then
     rlab.output_packs.insert(pack)
-    -- game.print("Putting "..name.." x"..count)
+    -- game.print("// Putting "..name.." x"..count)
     return true
   end
   return false
@@ -102,7 +102,7 @@ end
 
 local function play_prob_small(rlab, item_info, prob)
   local done = false
-  -- game.print("play_prob_small for "..item_info.item_name.." with prob="..prob)
+  -- game.print("// play_prob_small for "..item_info.item_name.." with prob="..prob)
   for index, name in pairs(item_info.ingredients) do
     if prob > 1 then
       done = true
@@ -123,7 +123,7 @@ end
 
 local function play_prob_big(rlab, item_info, prob)
   local done = false
-  -- game.print("play_prob_big for "..item_info.item_name.." with prob="..prob)
+  -- game.print("// play_prob_big for "..item_info.item_name.." with prob="..prob)
   local each_prob = prob / #item_info.ingredients
   local each_count = math.floor(each_prob)
   each_prob = each_prob - each_count
@@ -138,7 +138,11 @@ end
 
 
 local function handle_input(rlab, item_info, prod_bonus)
-  shuffle(item_info.ingredients)
+  shuffle(item_info.ingredients) -- maybe make a deep copy to better prevent desync?
+  local tech
+  if item_info.tech_name then
+    tech = rlab.force.technologies[item_info.tech_name]
+  end
   local prob = prob_for_force(item_info, rlab.force) * prod_bonus
   local done = false
   if prob <= #item_info.ingredients then
@@ -150,14 +154,19 @@ local function handle_input(rlab, item_info, prod_bonus)
     local res_prob = settings.global["af-reverse-lab-research-revprob"].value
     res_prob = (res_prob > 0) and (1 / res_prob) or 0
     if math.random() < item_info.prob*res_prob then
-      local candidates = {tech}
-      merge(candidates, tech.prerequisites)
+      -- game.print("// Reversely researching "..item_info.tech_name)
+      local candidates = {}
+      if tech then
+        candidates = {tech}
+        merge(candidates, tech.prerequisites)
+      end
       for index, name in pairs(item_info.ingredients) do
         if global.reverse_items[name] then
           table.insert(candidates, rlab.force.technologies[global.reverse_items[name].tech_name])
         end
       end
       shuffle(candidates)
+      -- TODO: increase technology research progress instead of instant opening
       for _, tech in pairs(candidates) do
         if not tech.researched then
           rlab.force.play_sound{path = "utility/research_completed"}
@@ -188,7 +197,7 @@ local function process_a_lab(rlab)
   local item_info, pack, pcs
 
   for item_name, have in pairs(rlab.input.get_inventory(defines.inventory.chest).get_contents()) do
-    item_info = not global.add_ignore_items[item_name] and (global.add_override_items[item_name] or global.reverse_items[item_name])
+    item_info = global.add_override_items[item_name] or global.reverse_items[item_name]
 
     if global.scipacks[item_name] then
       power_usage = power_usage + 1
@@ -223,18 +232,6 @@ local function process_a_lab(rlab)
 end
 
 
-local function correct_global()
-  if not global.scipacks then global.scipacks = {} end
-  if not global.add_ignore_items then global.add_ignore_items = {} end
-  if not global.add_override_items then global.add_override_items = {} end
-  if not global.reverse_labs then global.reverse_labs = {} end
-  if not global.reverse_items and game then
-    global.reverse_items = {}
-    cache_data()
-  end
-end
-
-
 local function process_labs()
   correct_global()
   local bucket = global.reverse_labs[game.tick % lab_update_rate]
@@ -256,44 +253,5 @@ end
 lib:on_event(defines.events.on_tick, process_labs)
 lib:on_any_built(on_any_built)
 lib:on_any_remove(on_any_remove)
-
--- lib:on_init(function()
--- end)
-
-lib:on_configuration_changed(function()
-  global.scipacks = nil
-  global.reverse_items = nil
-  global.add_ignore_items = nil
-  global.add_override_items = nil
-end)
-
--- TODO: add re-register function to reset global.reverse_labs?
-
-local interface = {
-  add_ignore_items = function(names)
-    deep_merge(global.add_ignore_items, from_key_list(names, true))
-  end,
-  -- item_info must contain at leas .ingredients and .prob
-  add_override_item = function(item_name, item_info)
-    item_info.need = item_info.need or 1
-    item_info.price = item_info.price or 1
-    global.add_override_items[item_name] = item_info
-  end,
-}
-
-function reload_cache()
-  cache_data()
-  game.print("Reverse Engineering cache reloaded")
-end
-
-commands.add_command(
-  "reveng-recache",
-  "Recalculate cache of items costs",
-  reload_cache
-)
-
-if not remote.interfaces["reverse_labs"] then
-  remote.add_interface("reverse_labs", interface)
-end
 
 return lib

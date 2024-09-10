@@ -11,17 +11,21 @@ local yellow = "utility-science-pack"
 local purple = "production-science-pack"
 local white = "space-science-pack"
 
-ignore_tech = {
+ignore_techs = {
   ["fluid-handling"] = true,
 }
-ignore_item = from_key_list({
-  "green-wire",
-  "red-wire",
-  "spidertron-remote",
-  "artillery-targeting-remote",
-  -- "discharge-defense-remote",
-  -- "lightning-arty-remote",
+
+ignore_items = from_key_list({
+  "fish", "wood",
+  "green-wire", "red-wire",
+  "spidertron-remote", "artillery-targeting-remote",
+  "discharge-defense-remote", "lightning-arty-remote",
+
+  "se-scrap", "se-contaminated-scrap",
+  "se-arcosphere", "se-arcosphere-a", "se-arcosphere-b", "se-arcosphere-c",
+  "se-arcosphere-d", "se-arcosphere-e", "se-arcosphere-f", "se-arcosphere-g", "se-arcosphere-h",
 }, true)
+
 ignore_subgroup = {
   ["raw-resource"] = true,
   -- ["ai-vehicles"] = true,
@@ -29,9 +33,16 @@ ignore_subgroup = {
 }
 
 override_items = {
-  ["gun-turret"] = { ingredients = {red, grey}, need=10, price=1, prob=0.1 },
-  ["solid-fuel"] = { ingredients = {red, green, blue}, need=50 },
-  ["raw-fish"] = { ingredients = {white}, need=100, prob=0.1 },
+  ["gun-turret"] = { ingredients={red, grey}, need=10, price=1, prob=0.5 },
+  ["solid-fuel"] = { ingredients={red, green, blue}, need=20, prob=0.5 },
+  ["raw-fish"] = { ingredients={white}, tech_name=false, need=42, prob=0.5 },
+}
+
+local builtin_recipe_categories = {
+  ["basic-crafting"] = true,
+  ["crafting"] = true,
+  ["advanced-crafting"] = true,
+  ["smelting"] = true,
 }
 
 
@@ -50,7 +61,7 @@ end
 local function try_stack(item_info, need, min_stack)
   if item_info.done then return end
   need = math.max(math.floor(need), 1)
-  local price = math.max(math.floor(item_info.price *need /2), 1)
+  local price = math.floor(item_info.price *need /2)
   if true
     and item_info.stack_size >= min_stack
     and need <= item_info.stack_size
@@ -84,6 +95,20 @@ end
 
 
 function cache_data()
+  global.scipacks = {}
+  global.reverse_items = {}
+
+  global.add_ignore_techs = {}
+  global.add_ignore_items = {}
+  global.add_override_items = {}
+
+  for interface, callables in pairs(remote.interfaces) do
+    if callables["reverse_engineering_pre_calc"] then
+      remote.call(interface, "reverse_engineering_pre_calc")
+      -- Here other mods can specify item and technologies to ignore
+    end
+  end
+
   local tech_values = {}
   tech_values = get_tech_worth(tech_values)
   tech_values = get_tech_worth(tech_values)
@@ -107,7 +132,7 @@ function cache_data()
   local recipes_of = {} -- item_name => recipe
 
   for tech_name, tech_data in pairs(game.technology_prototypes) do
-    for _, modifier in pairs(ignore_tech[tech_name] and {} or tech_data.effects) do
+    for _, modifier in pairs(global.add_ignore_techs[tech_name] and {} or ignore_techs[tech_name] and {} or tech_data.effects) do
       if modifier.type == "unlock-recipe" then
         for _, prod in pairs(game.recipe_prototypes[modifier.recipe].products) do
           if  true
@@ -126,10 +151,8 @@ function cache_data()
             total_price = 0
             ingredients = {}
             for _, ingr in pairs(tech_data.research_unit_ingredients) do
-              if true or ingr.type == "item" then
-                table.insert(ingredients, ingr.name)
-                total_price = total_price + ingr.amount * tech_data.research_unit_count
-              end
+              table.insert(ingredients, ingr.name)
+              total_price = total_price + ingr.amount * tech_data.research_unit_count
             end
             stack_size = game.item_prototypes[item_name] and game.item_prototypes[item_name].stack_size or 100 -- fluids
             prices = {
@@ -151,6 +174,21 @@ function cache_data()
       end
     end
   end
+
+  -- Remove all items that have recipes available by default,
+  -- to prevent evaluating them with additional recipes from advanced technologies.
+  -- local default_disabling = ""
+  for recipe_name, recipe_data in pairs(game.recipe_prototypes) do
+    if recipe_data.enabled and not recipe_data.hidden and builtin_recipe_categories[recipe_data.category] then
+      -- default_disabling = default_disabling.." / "..recipe_name
+      for _, prod in pairs(recipe_data.products) do
+        if prod.type == "item" then
+          reverse_items[prod.name] = nil
+        end
+      end
+    end
+  end
+  -- game.print("// default_disabling: "..default_disabling)
 
   -- Pick earlier research for each item
   global.reverse_items = {} -- item_name => {tech_name=, price=, ingredients=}
@@ -187,7 +225,7 @@ function cache_data()
       delimiter))
     item_info.prices = nil
 
-    if ignore_item[item_name] or item_info.price < 1 then
+    if global.add_ignore_items[item_name] or ignore_items[item_name] or item_info.price < 1 then
       global.reverse_items[item_name] = nil
     end
   end
@@ -236,18 +274,30 @@ function cache_data()
       end
     end
     item_info.price = (item_info.price + ingr_price) / 2
-    item_info.prob = item_info.price / 10
+    -- The final value
+    item_info.prob = math.max(1, 1 + #item_info.ingredients/2) * item_info.price / 10
   end
 
   game.write_file("af-revlab-prices"..ext, table.concat(texts, "\n"))
+
   deep_merge(global.reverse_items, override_items, true)
   -- game.print("Cached "..total.." items")
+
+  for interface, callables in pairs(remote.interfaces) do
+    if callables["reverse_engineering_post_calc"] then
+      remote.call(interface, "reverse_engineering_post_calc")
+    end
+  end
 end
 
 
 function prob_for_force(item_info, force)
   local prob = item_info.prob
-  local tech = force.technologies[item_info.tech_name]
-  prob = prob * (tech.researched and 1 or 5)
-  return prob
+  if item_info.tech_name then
+    local tech = force.technologies[item_info.tech_name]
+    prob = prob * (tech.researched and 0.5 or 4)
+    return prob, tech.researched
+  else
+    return prob, true
+  end
 end

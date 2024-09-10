@@ -19,7 +19,12 @@ function mymod_page_content(page_name, player_index, element)
     element.add{type="label", name="text_1", caption={"Reverse-Engineering.page_1_text_1"}}
     element.add{type="button", name="image_1", style="reveng-info"}
     element.add{type="label", name="text_2", caption={"Reverse-Engineering.page_1_text_2"}}
-    element.add{
+    local flow = element.add{ type = "flow", name = "reveng_btn_placeholder" }
+    flow.style.minimal_height = 80
+    flow.style.minimal_width = 600
+    flow.style.horizontal_align = "center"
+    flow.style.vertical_align = "center"
+    flow.add{
       type="sprite-button", sprite="af-reverse-lab-worth",
       tooltip={"shortcut-description.af-reverse-lab-see-worth"},
       tags={action="reverse-lab-open-worth-explain"},

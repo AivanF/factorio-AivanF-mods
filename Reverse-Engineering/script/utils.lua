@@ -2,9 +2,13 @@ require("__core__.lualib.util")
 
 function istable(t) return type(t) == 'table' end
 
+function islist(a)
+  return not not a[1]
+end
+
 function deep_merge(a, b, over)
   for k, v in pairs(b) do
-    if istable(v) and istable(a[k]) then
+    if istable(v) and not islist(v) and istable(a[k]) then
       deep_merge(a[k], v, over)
     elseif a[k] == nil or over then
       a[k] = v
