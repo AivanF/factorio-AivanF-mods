@@ -84,9 +84,8 @@ function bridge.add_item(item_info)
     if bridge.is_bridge_name(item_info.name) or item_info.afci_bridged then
       if data and data.raw and not data.raw.item[item_info.name] then
         log(bridge.log_prefix.."creating item "..item_info.short_name)
-        data:extend({
-          {
-            type = "item",
+        local item_data = {
+            type = item_info.item_prototype or "item",
             name = item_info.name,
             icon = item_info.icon,
             icon_size = item_info.icon_size,
@@ -95,22 +94,29 @@ function bridge.add_item(item_info)
             order = item_info.order,
             place_result = item_info.place_result,
             stack_size = item_info.stack_size or 20,
-          },
-          {
-            type = "recipe",
-            name = item_info.name,
-            enabled = item_info.prerequisite == bridge.empty,
-            energy_required = item_info.energy_required or 1,
-            allow_productivity = item_info.allow_productivity,
-            ingredients = item_info.ingredients,
-            result_count = item_info.result_count,
-            result = item_info.name,
-            results = results,
-            main_product = item_info.name,
-            category = item_info.category or "crafting",
-            afci_bridged = true,
-          },
-        })
+        }
+        local recipe_data = {
+          type = "recipe",
+          name = item_info.name,
+          enabled = item_info.prerequisite == bridge.empty,
+          energy_required = item_info.energy_required or 1,
+          allow_productivity = item_info.allow_productivity,
+          ingredients = item_info.ingredients,
+          result_count = item_info.result_count,
+          result = item_info.name,
+          results = results,
+          main_product = item_info.name,
+          category = item_info.category or "crafting",
+          afci_bridged = true,
+        }
+        if item_info.item_data then
+          table.merge(item_data, item_info.item_data)
+        end
+        if item_info.recipe_data then
+          table.merge(recipe_data, item_info.recipe_data)
+        end
+        data:extend({item_data, recipe_data})
+
         -- Note: tech research effects are added in data-final-fixes
         if item_info.builder and bridge.is_bridge_name(item_info.builder) then
           -- TODO: materialize builder entity; maybe it's better to consider crafting category

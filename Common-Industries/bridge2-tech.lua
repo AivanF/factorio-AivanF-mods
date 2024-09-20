@@ -61,7 +61,7 @@ add_tech({
 })
 
 -- Age 3. Late-game: nano-technologies, high-energy, sci-fi
--- Space Exploration analogue: Production + Utility Science packs
+-- Space Exploration analogue: first other planets, Production + Utility Science packs
 add_tech({
   short_name = "lategame",
   name = bridge.lategame,
@@ -104,7 +104,7 @@ add_tech({
 })
 
 -- Age 4. End-game: extra-high-energy, space-time warping, pure sci-fi
--- Space Exploration analogue: Deep Space Science packs
+-- Space Exploration analogue: advanced cosmic factory, Deep Space Science packs
 add_tech({
   short_name = "endgame",
   name = bridge.endgame,
@@ -130,6 +130,51 @@ add_tech({
     --     "ir-research-2",
     --   },
     -- },
+    {
+      mod = {bridge.mods.se, bridge.mods.k2},
+      ingredients = {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"production-science-pack", 1},
+        {"utility-science-pack", 1},
+        {"se-rocket-science-pack", 1},
+        {"space-science-pack", 1},
+        -- {"matter-tech-card", 1 }, -- aka Matter science 1
+        {"se-kr-matter-science-pack-2", 1 }, -- aka Matter science 2
+        -- {"advanced-tech-card", 1 }, -- aka Advanced science 1
+        {"singularity-tech-card", 1 }, -- aka Advanced science 2
+
+        {"se-energy-science-pack-2", 1},
+        {"se-material-science-pack-2", 1},
+        {"se-deep-space-science-pack-1", 1},
+      },
+    },
+    {
+      mod = bridge.mods.se,
+      ingredients = {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"production-science-pack", 1},
+        {"utility-science-pack", 1},
+        {"se-rocket-science-pack", 1},
+        {"space-science-pack", 1},
+        {"se-energy-science-pack-2", 1},
+        {"se-material-science-pack-2", 1},
+        {"se-deep-space-science-pack-1", 1},
+      },
+    },
+    {
+      mod = bridge.mods.k2,
+      ingredients = {
+        {"production-science-pack", 1},
+        {"utility-science-pack", 1},
+        {"space-science-pack", 1},
+        {"kr-matter-tech-card", 1},
+        {"kr-singularity-tech-card", 1},
+      },
+    },
   },
 })
 

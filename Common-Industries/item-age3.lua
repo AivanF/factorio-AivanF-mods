@@ -80,22 +80,25 @@ add_item({
   allow_productivity = true,
   ingredients = {
     {bridge.item.heavy_material, 9},
+    {"pump", 3},
     {"engine-unit", 6},
     {"processing-unit", 1},
   },
   energy_required = 10,
   category = "advanced-crafting",
   modded = {
-    {
-      mod = bridge.mods.se,
-      name = "se-spaceship-rocket-engine",
-      prereq = "se-spaceship",
-    },
-    {
-      mod = bridge.mods.bobwar,
-      name = "rocket-engine",
-      prereq = "rocket-silo",
-    },
+    -- {
+    --   -- This one is too advanced?
+    --   mod = bridge.mods.se,
+    --   name = "se-spaceship-rocket-engine",
+    --   prereq = "se-spaceship",
+    -- },
+    -- {
+    --   -- This one is too simple
+    --   mod = bridge.mods.bobwar,
+    --   name = "rocket-engine",
+    --   prereq = "rocket-silo",
+    -- },
   },
 })
 

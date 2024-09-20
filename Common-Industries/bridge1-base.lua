@@ -198,7 +198,7 @@ function bridge.preprocess(obj_info)
       table.merge(obj_info, specialised)
       bridge.preprocessed[obj_info.short_name] = true
       obj_info.updated = bridge.is_bridge_name(obj_info.name) and "adjusted" or "replaced"
-      log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
+      -- log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
       if not specialised.continue then
         return obj_info
       end

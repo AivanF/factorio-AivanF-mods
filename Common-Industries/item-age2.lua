@@ -138,6 +138,11 @@ add_item({
       -- prereq = "__TODO__",
       name = "tinned-cable",
     },
+    -- { -- I suppose it's too advanced here
+    --   mod = bridge.mods.se,
+    --   prereq = "se-holmium-cable",
+    --   name = "se-holmium-cable",
+    -- },
   },
 })
 
