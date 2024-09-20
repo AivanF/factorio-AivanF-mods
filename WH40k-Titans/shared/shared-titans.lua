@@ -9,6 +9,8 @@ shared.class_direwolf  = 11
 -- Battle grade
 shared.titan_reaver    = "reaver"
 shared.class_reaver    = 20
+shared.titan_warbringer= "warbringer"
+shared.class_warbringer= 29
 shared.titan_warlord   = "warlord"
 shared.class_warlord   = 30
 -- Heavy grade
@@ -18,7 +20,7 @@ shared.class_warmaster = 40
 shared.titan_imperator = "imperator"
 shared.class_imperator = 50
 shared.titan_warmonger = "warmonger"
-shared.class_warmonger = 55
+shared.class_warmonger = 51
 
 
 -- Foots/tracks, auxiliary turrets
@@ -59,13 +61,14 @@ shared.titan_base_type = "car"
 shared.titan_breakable_details = {
   [shared.motor] = true,
   [shared.frame_part] = true,
+  ["laser-turret"] = true,
 }
 
 shared.titan_type_list = {
   {
     name = shared.titan_warhound,
     class = shared.class_warhound,
-    dst = 1, dmg = 1, spd = 12,
+    spd = 12,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 1},
@@ -86,9 +89,10 @@ shared.titan_type_list = {
     icon = shared.media_prefix.."graphics/icons/titan-1.png",
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class1.png",
+    plane_size = 720,
     guns = {
-      [1] = { oris=-0.25, shift=7, layer=shared.rl_arm, grade=1 },
-      [2] = { oris= 0.25, shift=7, layer=shared.rl_arm, grade=1 },
+      [1] = { oris=-0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
+      [2] = { oris= 0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -98,7 +102,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_direwolf,
     class = shared.class_direwolf,
-    dst = 1, dmg = 1, spd = 10,
+    spd = 11,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 2},
@@ -119,9 +123,10 @@ shared.titan_type_list = {
     icon = shared.media_prefix.."graphics/icons/titan-1-dw.png",
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class1-dw.png",
+    plane_size = 640,
     guns = {
-      [1] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0 },
-      [2] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0 },
+      [1] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
+      [2] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
       [3] = { oris= 0,    shift=0, layer=shared.rl_shoulder, grade=2, is_top=true },
     },
     aux_laser = {
@@ -132,7 +137,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_reaver,
     class = shared.class_reaver,
-    dst = 1.25, dmg = 1.25, spd = 9,
+    spd = 11,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 3},
@@ -153,10 +158,11 @@ shared.titan_type_list = {
     icon = shared.media_prefix.."graphics/icons/titan-2.png",
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class2.png",
+    plane_size = 1024,
     guns = {
-      [1] = { oris=-0.2, shift=8, layer=shared.rl_arm, grade=2 },
-      [2] = { oris= 0.2, shift=8, layer=shared.rl_arm, grade=2 },
-      [3] = { oris= 0,   shift=2, layer=shared.rl_shoulder, grade=2, is_top=true },
+      [1] = { oris=-0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
+      [2] = { oris= 0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
+      [3] = { oris= 0,   shift=2, layer=shared.rl_shoulder, grade=3, is_top=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -164,45 +170,48 @@ shared.titan_type_list = {
       {2,-0.25},
     },
   },
-  -- {
-  --   name = shared.titan_warbringer,
-  --   class = shared.class_warbringer,
-  --   dst = 1.5, dmg = 1.5, spd = 8,
-  --   ingredients = {
-  --     {shared.bci,         1},
-  --     {shared.energy_core, 4},
-  --     {shared.servitor,    3},
-  --     {shared.void_shield, 3},
-  --     {shared.brain,       4},
-  --     {shared.motor,      30},
-  --     {shared.frame_part, 35},
-  --     {shared.antigraveng, 3},
-  --   },
-  --   foot = shared.titan_foot_big,
-  --   entity = shared.titan_prefix..shared.titan_warbringer,
-  --   health = 30*1000,
-  --   max_shield = 3, -- multiplied by base amount
-  --   kill_cliffs = true,
-  --   over_water = false,
-  --   icon = shared.media_prefix.."graphics/icons/titan-3-wb.png",
-  --   icon_size = 64, icon_mipmaps = 3,
-  --   plane = shared.media_prefix.."graphics/titans/class3wb.png",
-  --   guns = {
-  --     [1] = { oris=-0.2, shift=11, layer=shared.rl_arm, grade=2 },
-  --     [2] = { oris= 0.2, shift=11, layer=shared.rl_arm, grade=2 },
-  --     [3] = { oris= 0,   shift=2,  layer=shared.rl_shoulder, grade=2, is_top=true },
-  --   },
-  --   aux_laser = {
-  --     {2, 0.15},
-  --     {2,-0.15},
-  --     {3, 0.35},
-  --     {3,-0.35},
-  --   },
-  -- },
+  {
+    name = shared.titan_warbringer,
+    class = shared.class_warbringer,
+    spd = 10,
+    ingredients = {
+      {shared.bci,         1},
+      {shared.energy_core, 4},
+      {shared.servitor,    3},
+      {shared.void_shield, 3},
+      {shared.brain,       4},
+      {shared.motor,      30},
+      {shared.frame_part, 35},
+      {shared.antigraveng, 3},
+    },
+    foot = shared.titan_foot_big,
+    entity = shared.titan_prefix..shared.titan_warbringer,
+    health = 30*1000,
+    max_shield = 3, -- multiplied by base amount
+    kill_cliffs = true,
+    over_water = false,
+    icon = shared.media_prefix.."graphics/icons/titan-3-wb.png",
+    icon_size = 64, icon_mipmaps = 3,
+    plane = shared.media_prefix.."graphics/titans/class3-wb.png",
+    plane_size = 800,
+    guns = {
+      [1] = { oris=-0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
+      [2] = { oris= 0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
+      [3] = { oris= 0,   shift=3,  layer=shared.rl_shoulder, grade=4, is_top=true },
+      [4] = { oris= 0.2, shift=9,  layer=shared.rl_shoulder2, grade=1, is_top=true },
+      [5] = { oris=-0.2, shift=9,  layer=shared.rl_shoulder2, grade=1, is_top=true },
+    },
+    aux_laser = {
+      {2, 0.15},
+      {2,-0.15},
+      {3, 0.35},
+      {3,-0.35},
+    },
+  },
   {
     name = shared.titan_warlord,
     class = shared.class_warlord,
-    dst = 1.5, dmg = 1.5, spd = 8,
+    spd = 10,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 5},
@@ -223,11 +232,12 @@ shared.titan_type_list = {
     icon = shared.media_prefix.."graphics/icons/titan-3.png",
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class3.png",
+    plane_size = 920,
     guns = {
-      [1] = { oris=-0.2, shift=11, layer=shared.rl_arm, grade=2 },
-      [2] = { oris= 0.2, shift=11, layer=shared.rl_arm, grade=2 },
-      [3] = { oris=-0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [4] = { oris= 0.25, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
+      [1] = { oris=-0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
+      [2] = { oris= 0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
+      [3] = { oris=-0.20, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
+      [4] = { oris= 0.20, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
     },
     aux_laser = {
       {2, 0.15},
@@ -239,7 +249,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_warmaster,
     class = shared.class_warmaster,
-    dst = 1.75, dmg = 1.75, spd = 8,
+    spd = 9,
     ingredients = {
       {shared.bci,         1},
       {shared.energy_core, 7},
@@ -262,12 +272,11 @@ shared.titan_type_list = {
     plane = shared.media_prefix.."graphics/titans/class4.png",
     plane_size = 1280,
     guns = {
-      [1] = { oris=-0.20, shift=18, layer=shared.rl_arm, grade=3 },
-      [2] = { oris= 0.20, shift=18, layer=shared.rl_arm, grade=3 },
-      [3] = { oris=-0.24, shift=15, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [4] = { oris= 0.24, shift=15, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [5] = { oris=-0.22, shift=8.5, layer=shared.rl_shoulder2, grade=1, is_top=true },
-      [6] = { oris= 0.22, shift=8.5, layer=shared.rl_shoulder2, grade=1, is_top=true },
+      [1] = { oris=-0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
+      [2] = { oris= 0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
+      [3] = { oris=-0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [4] = { oris= 0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [5] = { oris= 0,    shift=1,  layer=shared.rl_shoulder,  grade=2, is_top=true, top_only=true },
     },
     aux_laser = {
       {4, 0.15},
@@ -280,7 +289,7 @@ shared.titan_type_list = {
   {
     name = shared.titan_imperator,
     class = shared.class_imperator,
-    dst = 2, dmg = 2, spd = 8,
+    spd = 9,
     ingredients = {
       {shared.bci,          1},
       {shared.energy_core, 16},
@@ -290,7 +299,7 @@ shared.titan_type_list = {
       {shared.motor,      100},
       {shared.frame_part, 180},
       {shared.antigraveng, 12},
-      {"laser-turret",      6},
+      {"laser-turret",     11},
     },
     foot = shared.titan_foot_big,
     entity = shared.titan_prefix..shared.titan_imperator,
@@ -300,62 +309,78 @@ shared.titan_type_list = {
     over_water = true,
     icon = shared.media_prefix.."graphics/icons/titan-5.png",
     icon_size = 64, icon_mipmaps = 3,
+    plane = nil, -- TODO: here!
+    plane_size = nil,
+    -- TODO: add towers!
     guns = {
-      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
-      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
-      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=1 },
-      [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=1 },
+      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
+      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
+      [5] = { oris= 0,    shift=8,  layer=shared.rl_arm, grade=3 },
+      [6] = { oris= 0,    shift=0,  layer=shared.rl_shoulder2, grade=3, is_top=true, top_only=true },
     },
     aux_laser = {
-      {2, 0.15},
-      {2,-0.15},
-      {8, 0.25},
-      {8,-0.25},
-      {6, 0.35},
-      {6,-0.35},
+      {2, 0.25},
+      {2,-0.25},
+      {0, 0   },
+
+      {5, 0.12},
+      {5,-0.12},
+      {5, 0.38},
+      {5,-0.38},
+
+      {8, 0.17},
+      {8,-0.17},
+      {8, 0.33},
+      {8,-0.33},
     },
   },
-  -- {
-  --   name = shared.titan_warmonger,
-  --   class = shared.class_warmonger,
-  --   dst = 2, dmg = 2, spd = 7,
-  --   ingredients = {
-  --     {shared.bci,          1},
-  --     {shared.energy_core, 15},
-  --     {shared.servitor,    12},
-  --     {shared.void_shield, 10},
-  --     {shared.brain,       10},
-  --     {shared.motor,      100},
-  --     {shared.frame_part, 150},
-  --     {shared.antigraveng, 10},
-  --   },
-  --   foot = shared.titan_foot_big,
-  --   entity = shared.titan_prefix..shared.titan_warmonger,
-  --   health = 120*1000,
-  --   max_shield = 10, -- multiplied by base amount
-  --   kill_cliffs = true,
-  --   over_water = true,
-  --   icon = shared.media_prefix.."graphics/icons/titan-5.png",
-  --   icon_size = 64, icon_mipmaps = 3,
-  --   guns = {
-  --     [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=3 },
-  --     [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-  --     [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=2, is_top=true },
-  --     [5] = { oris=-0.24, shift=8, layer=shared.rl_arm, grade=2, is_top=true },
-  --     [6] = { oris= 0.24, shift=8, layer=shared.rl_arm, grade=2, is_top=true },
-  --   },
-  --   aux_laser = {
-  --     {2, 0.15},
-  --     {2,-0.15},
-  --     {8, 0.25},
-  --     {8,-0.25},
-  --     {6, 0.35},
-  --     {6,-0.35},
-  --   },
-  -- },
+  {
+    name = shared.titan_warmonger,
+    class = shared.class_warmonger,
+    spd = 8,
+    ingredients = {
+      {shared.bci,          1},
+      {shared.energy_core, 15},
+      {shared.servitor,    12},
+      {shared.void_shield, 10},
+      {shared.brain,       10},
+      {shared.motor,      100},
+      {shared.frame_part, 150},
+      {shared.antigraveng, 10},
+      {"laser-turret",      7},
+    },
+    foot = shared.titan_foot_big,
+    entity = shared.titan_prefix..shared.titan_warmonger,
+    health = 120*1000,
+    max_shield = 10, -- multiplied by base amount
+    kill_cliffs = true,
+    over_water = true,
+    icon = shared.media_prefix.."graphics/icons/titan-5.png",
+    icon_size = 64, icon_mipmaps = 3,
+    plane = nil, -- TODO: here!
+    plane_size = nil,
+    -- TODO: add towers?
+    guns = {
+      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
+      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
+      [5] = { oris=-0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
+      [6] = { oris= 0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
+    },
+    aux_laser = {
+      {2, 0.25},
+      {2,-0.25},
+      {0, 0   },
+
+      {5, 0.12},
+      {5,-0.12},
+      {5, 0.38},
+      {5,-0.38},
+    },
+  },
 }
 shared.titan_types = {}
 

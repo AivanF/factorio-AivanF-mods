@@ -7,7 +7,7 @@ data:extend({
     type = "item",
     name = shared.big_bolt,
     icon = shared.media_prefix.."graphics/icons/weapons/Bolt-Big.png",
-    icon_size = 64, icon_mipmaps = 1,
+    icon_size = 64, icon_mipmaps = 3,
     subgroup = shared.subg_ammo,
     order = "a-1-bolt-big",
     stack_size = 100,
@@ -57,7 +57,7 @@ data:extend({
   --   icon = icon,
   --   icon_size = 64, icon_mipmaps = 3,
   --   subgroup = shared.subg_ammo,
-  --   order = "a-5-quake",
+  --   order = "a-4-quake",
   --   stack_size = 10,
   -- },
   -- {
@@ -74,6 +74,102 @@ data:extend({
   --   result = shared.quake_proj,
   -- },
 })
+
+
+-- Empty Ballistic Missile
+
+bridge.add_item({
+  short_name = "empty_missile",
+  name = shared.empty_missile_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Missile-Empty.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "a-5-empty-missile",
+  allow_productivity = false,
+  ingredients = {
+    {"artillery-shell", 1},
+    -- Add a strong metal?
+    {"rocket-control-unit", 1},
+    {afci_bridge.get.rocket_engine().name, 1},
+    {"rocket-fuel", 50},
+  },
+  stack_size = 5,
+  energy_required = 120,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
+
+
+-- DeathStrike Missile / Doom Rocket
+
+bridge.add_item({
+  short_name = "doom_missile",
+  name = shared.doom_missile_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Missile-DeathStrike.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "a-6-doom-missile",
+  allow_productivity = false,
+  ingredients = {
+    {shared.empty_missile_ammo, 1},
+    {"uranium-235", 50},
+    {"explosives", 10},
+  },
+  stack_size = 5,
+  energy_required = 120,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
+
+
+-- Plasma Missile
+
+bridge.add_item({
+  short_name = "plasma_missile",
+  name = shared.plasma_missile_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Missile-Plasma.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "a-7-plasma-missile",
+  allow_productivity = false,
+  ingredients = {
+    {shared.empty_missile_ammo, 5},
+    {afci_bridge.get.he_emitter().name, 1},
+    {afci_bridge.get.emfc().name, 1},
+    {shared.plasma_ammo, 12 * 5},
+  },
+  result_count = 5,
+  stack_size = 5,
+  energy_required = 120 * 5 * 2,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
+
+
+-- Warp Missile
+
+bridge.add_item({
+  short_name = "warp_missile",
+  name = shared.warp_missile_ammo,
+  icon = shared.media_prefix.."graphics/icons/weapons/Missile-Warp.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "a-8-warp-missile",
+  allow_productivity = false,
+  ingredients = {
+    {afci_bridge.get.empty_missile().name, 5},
+    {shared.realityctrl, 1},
+  },
+  result_count = 5,
+  stack_size = 5,
+  energy_required = 120 * 5 * 4,
+  category = "advanced-crafting",
+  afci_bridged = true,
+}).data_getter()
 
 
 -- Plasma ammo
@@ -264,8 +360,43 @@ bridge.add_item({
     {shared.laser_ammo, 1},
     {bridge.get.best_fuel().name, 1},
   },
-  energy_required = 60,
+  energy_required = 120,
   stack_size = 20,
   category = "advanced-crafting",
   afci_bridged = true,
+}).data_getter()
+
+
+-- World Breaker tool
+
+bridge.add_item({
+  short_name = "worldbreaker",
+  name = shared.worldbreaker,
+  item_prototype = "selection-tool",
+  icon = shared.media_prefix.."graphics/icons/WorldBreaker.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_build,
+  order = "z-worldbreaker",
+  allow_productivity = true,
+  ingredients = {
+    {shared.frame_part, 1},
+    {afci_bridge.get.he_emitter().name, 1},
+    {afci_bridge.get.emfc().name, 1},
+    {shared.laser_ammo, 50},
+  },
+  energy_required = 120,
+  stack_size = 1,
+  category = "advanced-crafting",
+  afci_bridged = true,
+  item_data = {
+    -- https://wiki.factorio.com/Prototype/SelectionTool#selection_mode
+    stackable = false,
+    selection_color = {r = 0.9, g = 0.5, b = 0.1},
+    alt_selection_color = {r = 0.9, g = 0.5, b = 0.1},
+    selection_mode = {"not-same-force"},
+    alt_selection_mode = {"not-same-force"},
+    selection_cursor_box_type = "copy",
+    alt_selection_cursor_box_type = "entity"
+  },
 }).data_getter()

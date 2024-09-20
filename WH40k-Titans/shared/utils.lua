@@ -21,6 +21,10 @@ function shared.shuffle(t)
   return t
 end
 
+function math.round(v)
+  return math.floor(v + 0.5)
+end
+
 function math.clamp(v, mn, mx)
   return math.max(math.min(v, mx), mn)
 end

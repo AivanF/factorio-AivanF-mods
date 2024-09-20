@@ -5,7 +5,7 @@ local sounds = require("__base__.prototypes.entity.sounds")
 
 local tint = { r = .8, g = .7, b = .7, a = 1}
 
-local ingredients = {
+local ingredients = {  -- 7
   {"automation-science-pack", 10},
   {"logistic-science-pack", 10},
   {"military-science-pack", 10},
@@ -15,22 +15,39 @@ local ingredients = {
   {"space-science-pack", 10},
 }
 
-if mods[shared.SE] then
-  ingredients = {
+if mods[shared.SE] and mods[shared.K2] then
+  ingredients = {  -- 8
+    {"military-science-pack", 10},
+    -- {"space-science-pack", 10},
+    {"utility-science-pack", 10},
+    {"production-science-pack", 10},
+
+    {"se-deep-space-science-pack-1", 10},
+    {"se-energy-science-pack-4", 10},
+    {"se-material-science-pack-4", 10},
+    {"matter-tech-card", 10 }, -- aka Matter science 1
+    -- {"se-kr-matter-science-pack-2", 10 }, -- aka Matter science 2
+    {"advanced-tech-card", 10 }, -- aka Advanced science 1
+    -- {"singularity-tech-card", 10 }, -- aka Advanced science 2
+  }
+
+elseif mods[shared.SE] then
+  ingredients = {  -- 7
     -- {"automation-science-pack", 10},
     -- {"logistic-science-pack", 10},
     {"military-science-pack", 10},
     -- {"chemical-science-pack", 10},
     -- {"se-rocket-science-pack", 10},
     {"space-science-pack", 10},
-    {"se-energy-science-pack-1", 10},
-    {"se-material-science-pack-1", 10},
     {"utility-science-pack", 10},
     {"production-science-pack", 10},
+    {"se-energy-science-pack-4", 10},
+    {"se-material-science-pack-4", 10},
+    {"se-deep-space-science-pack-1", 10},
   }
 
 elseif mods[shared.K2] then
-  ingredients = {
+  ingredients = {  -- 6
     { "production-science-pack", 10 },
     { "utility-science-pack", 10 },
     { "space-science-pack", 10 },

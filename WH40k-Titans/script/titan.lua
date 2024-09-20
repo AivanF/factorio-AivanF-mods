@@ -66,20 +66,37 @@ function lib_ttn.register_titan(entity)
     titan_info.guns = {
       lib_ttn.init_gun(shared.weapon_adrexbolter),
       lib_ttn.init_gun(shared.weapon_adrexbolter),
-      lib_ttn.init_gun(shared.weapon_plasma_blastgun),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
     }
   elseif titan_type.class == shared.class_reaver then
     titan_info.guns = {
       -- TODO: use weapon_gatling_blaster
+      lib_ttn.init_gun(shared.weapon_gatling_blaster),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
+      -- lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+      lib_ttn.init_gun(shared.weapon_volcano_cannon),
+    }
+  elseif titan_type.class == shared.class_warbringer then
+    titan_info.guns = {
+      lib_ttn.init_gun(shared.weapon_gatling_blaster),
+      lib_ttn.init_gun(shared.weapon_laserblaster),
+      -- lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
       lib_ttn.init_gun(shared.weapon_plasma_destructor),
-      lib_ttn.init_gun(shared.weapon_turbolaser),
+      lib_ttn.init_gun(shared.weapon_missiles),
+      lib_ttn.init_gun(shared.weapon_missiles),
+    }
+  elseif titan_type.class == shared.class_warlord then
+    titan_info.guns = {
+      lib_ttn.init_gun(shared.weapon_volcano_cannon),
+      lib_ttn.init_gun(shared.weapon_plasma_sunfury),
+      lib_ttn.init_gun(shared.weapon_missiles),
       lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
     }
   elseif titan_type.class >= shared.class_warmaster then
     titan_info.guns = {
       lib_ttn.init_gun(shared.weapon_plasma_annihilator),
       lib_ttn.init_gun(shared.weapon_plasma_destructor),
-      lib_ttn.init_gun(shared.weapon_laserblaster),
+      lib_ttn.init_gun(shared.weapon_gatling_blaster),
       lib_ttn.init_gun(shared.weapon_laserblaster),
       lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
       lib_ttn.init_gun(shared.weapon_apocalypse_missiles),

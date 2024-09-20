@@ -7,7 +7,7 @@ for i = 1, 5 do
     name = shared.craftcat_titan..i
   }}
 end
-for i = 0, 3 do
+for i = 0, 5 do
   data:extend{
     {
       type = "recipe-category",

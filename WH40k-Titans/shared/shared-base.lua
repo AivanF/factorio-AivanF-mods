@@ -112,7 +112,7 @@ shared.ammo_usage_research = shared.mod_prefix.."ammo-usage-efficiency"
 shared.attack_range_research = shared.mod_prefix.."max-attack-range"
 shared.attack_range_research_count = 10
 shared.attack_range_cf_get = function(level)
-  return math.lerp_map(level, 0, shared.attack_range_research_count, 0.7, 1.5)
+  return math.lerp_map(level, 0, shared.attack_range_research_count, 0.7, 1.2)
 end
 
 shared.supplier_cap_research = shared.mod_prefix.."supplier-capacity"

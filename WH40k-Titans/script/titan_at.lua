@@ -44,6 +44,7 @@ local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, ta
     error("Weapon "..weapon_type.name.." has no bolt type!")
   end
   local speed = weapon_type.speed or 10
+  if type(speed) ~= "table" then speed = {speed,} end
   local barrel = weapon_type.barrel or 12
   if weapon_type.category == shared.wc_flamer then
     source = math2d.position.add(source, {math.random(-1, 1), math.random(-1, 1)})
@@ -51,10 +52,12 @@ local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, ta
   if barrel > 0 then
     source = math2d.position.add(source, point_orientation_shift(entity.orientation, cannon.oris, barrel))
   end
-  entity.surface.create_entity{
-    name=weapon_type.bolt_type.entity, force=entity.force,
-    position=source, source=source, target=target, speed=speed,
-  }
+  for _, value in ipairs(speed) do
+    entity.surface.create_entity{
+      name=weapon_type.bolt_type.entity, force=entity.force,
+      position=source, source=entity, target=target, speed=value,
+    }
+  end
 end
 
 
@@ -340,7 +343,37 @@ local function handle_attack_order(event, kind)
   end
 end
 
+
+local function on_player_selected_area(event)
+  if event.item ~= shared.worldbreaker then return end
+  local alt = event.name == defines.events.on_player_alt_selected_area
+  local player = game.players[event.player_index]
+  local force = player.force
+  local surface = event.surface
+  local source = player.position
+  local target = {
+    x = (event.area.left_top.x + event.area.right_bottom.x) / 2,
+    y = (event.area.left_top.y + event.area.right_bottom.y) / 2
+  }
+
+  local dst = math2d.position.distance(source, target)
+  if dst > 40 then
+    -- TODO: try to call Titans attacks!
+
+  elseif dst > 9 then
+    player.surface.create_entity{
+      name=shared.bolt_types.bolt_laser.entity, force=player.force,
+      position=source, source=source, target=target, speed=8,
+    }
+    opt_play(player, attack_sound)
+  end
+end
+
+
 lib_ttn:on_event(shared.mod_prefix.."attack-1", function(event) handle_attack_order(event, 1) end)
 lib_ttn:on_event(shared.mod_prefix.."attack-2", function(event) handle_attack_order(event, 2) end)
 lib_ttn:on_event(shared.mod_prefix.."attack-3", function(event) handle_attack_order(event, 3) end)
 lib_ttn:on_event(shared.mod_prefix.."attack-4", function(event) handle_attack_order(event, 4) end)
+
+lib_ttn:on_event(defines.events.on_player_selected_area, on_player_selected_area)
+lib_ttn:on_event(defines.events.on_player_alt_selected_area, on_player_selected_area)

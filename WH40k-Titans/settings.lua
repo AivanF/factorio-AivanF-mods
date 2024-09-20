@@ -18,12 +18,30 @@ data:extend{
   },
   {
     type = "int-setting",
+    name = "wh40k-titans-resist-const",
+    setting_type = "startup",
+    minimum_value = 0,
+    default_value = 500,
+    maximum_value = 10 * 1000,
+    order = "a-3",
+  },
+  {
+    type = "int-setting",
+    name = "wh40k-titans-resist-mult",
+    setting_type = "startup",
+    minimum_value = 0,
+    default_value = 100,
+    maximum_value = 10 * 1000,
+    order = "a-4",
+  },
+  {
+    type = "int-setting",
     name = "wh40k-titans-base-shield-cap-cf",
     setting_type = "startup",
     minimum_value = 1,
     default_value = 1,
     maximum_value = 10,
-    order = "a-3",
+    order = "a-5",
   },
 
   -- Map/global

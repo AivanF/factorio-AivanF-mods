@@ -19,14 +19,14 @@ end
 for _, titan_type in ipairs(shared.titan_type_list) do
   local name = titan_type.entity
   local class = titan_type.class
-  local class_precise = math.floor(titan_type.class/10)
+  local class_precise = math.round(titan_type.class/10)
   local icon = titan_type.icon
   local icon_size = titan_type.icon_size
   local icon_mipmaps = titan_type.icon_mipmaps
   local place_result = titan_type.plane and name or shared.titan_prefix..shared.titan_warhound
   local about_guns = ""
   for k, gun in ipairs(titan_type.guns) do
-    about_guns = about_guns.." "..(gun.is_top and "t" or "")..gun.grade
+    about_guns = about_guns.." "..(gun.is_arm and "H" or gun.top_only and "A" or gun.is_top and "T" or "C")..gun.grade
   end
   local description = {
     "",
@@ -34,6 +34,17 @@ for _, titan_type in ipairs(shared.titan_type_list) do
     " ",
     {"entity-description.wh40k-titans-pattern", about_guns},
   }
+
+  local main_resist = settings.startup["wh40k-titans-resist-const"].value + settings.startup["wh40k-titans-resist-mult"].value * class_precise
+
+  local rotation_speed
+  if titan_type.class < shared.class_reaver then
+    rotation_speed = 0.005
+  elseif titan_type.class < shared.class_reaver then
+    rotation_speed = 0.004
+  else
+    rotation_speed = 0.003
+  end
 
   data:extend({
     {
@@ -81,16 +92,16 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       dying_explosion = "medium-explosion",
       track_coverage_during_build_by_moving = true,
       resistances = {
-        { type = "impact", decrease=500 * titan_type.class, percent=100 },
-        { type = "fire", decrease=500 * titan_type.class, percent=100 },
-        { type = "poison", decrease=500 * titan_type.class, percent=100 },
+        { type = "impact", decrease=0, percent=100 },
+        { type = "fire", decrease=0, percent=100 },
+        { type = "poison", decrease=0, percent=100 },
 
-        { type = "acid", decrease=25 * titan_type.class, percent=90 },
-        { type = "laser", decrease=25 * titan_type.class, percent=90 },
-        { type = "electric", decrease=25 * titan_type.class, percent=90 },
+        { type = "acid", decrease=main_resist, percent=80 },
+        { type = "laser", decrease=main_resist, percent=80 },
+        { type = "electric", decrease=main_resist, percent=80 },
 
-        { type = "explosion", decrease=25 * titan_type.class, percent=80 },
-        { type = "physical", decrease=25 * titan_type.class, percent=90 },
+        { type = "explosion", decrease=main_resist, percent=80 },
+        { type = "physical", decrease=main_resist, percent=80 },
       },
       collision_mask = titan_type.over_water and {} or {only_water_layer},
       collision_box = {{-4, -4}, {4, 4}},
@@ -113,12 +124,12 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       terrain_friction_modifier = 0,
       friction = 0.05,
       breaking_speed = 0.1,
-      rotation_speed = (titan_type.class < shared.class_reaver) and 0.005 or 0.004,
+      rotation_speed = rotation_speed,
       repair_speed_modifier = 0.5,
 
       equipment_grid = shared.mod_prefix.."t"..class_precise,
-      inventory_size = math.ceil(20 * titan_type.class/10),
-      chunk_exploration_radius = math.ceil(1 + titan_type.class/10),
+      inventory_size = 20 * class_precise,
+      chunk_exploration_radius = 1 + class_precise,
       -- render_layer = "air-object",
       -- final_render_layer = "air-object",
       animation = table.deepcopy(data.raw["car"]["car"].animation),

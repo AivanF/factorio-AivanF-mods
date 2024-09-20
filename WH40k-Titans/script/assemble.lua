@@ -161,10 +161,13 @@ function lib_asmb.check_weapon_is_appropriate(titan_type, k, weapon_type)
     return {"WH40k-Titans-gui.assembly-er-wrong-grade", name}
 
   elseif weapon_type.no_top and titan_type.guns[k].is_top then
-    return {"WH40k-Titans-gui.assembly-er-cant-top", name}
+    return {"WH40k-Titans-gui.assembly-er-place-cant-be-top", name}
 
   elseif weapon_type.top_only and not titan_type.guns[k].is_top then
-    return {"WH40k-Titans-gui.assembly-er-must-top", name}
+    return {"WH40k-Titans-gui.assembly-er-place-must-be-top", name}
+
+  elseif not weapon_type.top_only and titan_type.guns[k].top_only then
+    return {"WH40k-Titans-gui.assembly-er-weapon-must-be-top", name}
   end
   return nil
 end

@@ -1,6 +1,6 @@
 local shared = require("shared")
 
-for _, info in pairs(shared.weapons) do
+local function add_weapon_recipe(info)
   data:extend({
     {
       type = "recipe",
@@ -18,4 +18,14 @@ for _, info in pairs(shared.weapons) do
       order = "wh40k-tw-"..info.grade.."-"..string.format("%02.0f", info.order_index).."-"..info.name,
     },
   })
+end
+
+for _, info in pairs(shared.weapons) do
+  local success, err = pcall(add_weapon_recipe, info)
+  if not success then
+    error(serpent.line({
+      weapon = info.entity,
+      error = err,
+    }))
+  end
 end

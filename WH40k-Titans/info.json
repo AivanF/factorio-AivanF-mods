@@ -1,14 +1,14 @@
 {
   "name": "WH40k-Titans",
-  "version": "0.9.30",
+  "version": "0.9.31",
   "title": "WH40k: Titans",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [
-    "WH40k-Titans-media = 1.0.14",
+    "WH40k-Titans-media = 1.0.15",
     "Recipes-Reload",
     "Reverse-Engineering",
-    "Common-Industries >= 0.9.7",
+    "Common-Industries >= 0.9.8",
     "informatron",
     "? aai-programmable-vehicles"
   ],

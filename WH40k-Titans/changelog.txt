@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.31
+Date: 2024-09-10
+  Changes:
+    - Reworked weapons grades, now there are 6 of them instead of 4, to better fit Titans classes and mounting positions, which is described in the Informatron.
+    - Reworked Plasma cannons.
+  Features:
+    - New Titan class: War Bringer!
+    - New weapons: Emperor-scale Plasma Annihilator, Gatling Blaster (filled with explosive cannon shells), Volcano Cannon (to finally make use of HellStorm ammo).
+    - Startup settings to edit Titans resistance. If you find actually robust values, please let me know in the Discord explaining your point of view!
+    - Bonus: in case you'd like to become an actual Warmaster yourself, the Horus' World Breaker mace is now available!
+  Balancing:
+    - Increased Reverse-Engineering output of some precious Titans details.
+    - Many weapons got adjusted stats.
+  Graphics:
+    - Reworked many icons, weapons visuals, and War Lord skin.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.30
 Date: 2024-09-08
   Features:

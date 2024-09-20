@@ -92,6 +92,14 @@ local function on_any_remove(event)
 end
 
 
+local function reveng_multiply_value(item_name, cf)
+    local item_info = remote.call("reverse_labs", "get_item", item_name)
+    item_info.price = item_info.price * cf
+    item_info.prob = item_info.prob * cf
+    remote.call("reverse_labs", "add_override_item", item_name, item_info)
+end
+
+
 remote.add_interface(shared.titan_prefix.."main", {
   on_entity_replaced = function(data)
     -- AAI Programmable Vehicles integration
@@ -105,6 +113,21 @@ remote.add_interface(shared.titan_prefix.."main", {
     if ctrl_data.supplier_index[data.old_entity.unit_number] then
       lib_spl.supplier_entity_replaced(data.old_entity, data.new_entity)
     end
+  end,
+
+  -- reverse_engineering_pre_calc = function()
+  --   game.print("// WH40k RevEng Pre")
+  -- end,
+
+  reverse_engineering_post_calc = function()
+    -- Increase values of the most advanced technologies
+    reveng_multiply_value(shared.frame_part, 0.5)
+    reveng_multiply_value(shared.motor, 0.75)
+    reveng_multiply_value(shared.brain, 4)
+    reveng_multiply_value(shared.antigraveng, 2)
+    reveng_multiply_value(shared.realityctrl, 3)
+    reveng_multiply_value(afci_bridge.get.ehe_emitter().name, 2)
+    -- game.print("// WH40k RevEng Post")
   end,
 })
 

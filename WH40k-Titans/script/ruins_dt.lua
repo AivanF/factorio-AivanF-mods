@@ -8,11 +8,11 @@ end
 
 local function add_weapon_grade_1(detailses, ammo)
   local value = math.random()
-  if value < 0.25 then
+  if value < 1/4 then
     add_weapon_and_ammo(detailses, ammo, shared.weapon_inferno)
-  elseif value < 0.50 then
+  elseif value < 2/4 then
     add_weapon_and_ammo(detailses, ammo, shared.weapon_vulcanbolter)
-  elseif value < 0.75 then
+  elseif value < 3/4 then
     add_weapon_and_ammo(detailses, ammo, shared.weapon_plasma_blastgun)
   else
     add_weapon_and_ammo(detailses, ammo, shared.weapon_turbolaser)
@@ -21,16 +21,12 @@ end
 
 local function add_weapon_grade_2(detailses, ammo)
   local value = math.random()
-  if value < 1/6 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_plasma_destructor)
-  elseif value < 2/6 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_volcano_cannon)
-  elseif value < 3/6 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_laserblaster)
-  elseif value < 4/6 then
+  if value < 1/4 then
     add_weapon_and_ammo(detailses, ammo, shared.weapon_gatling_blaster)
-  elseif value < 5/6 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_boltcannon)
+  elseif value < 2/4 then
+    add_weapon_and_ammo(detailses, ammo, shared.weapon_volcano_cannon)
+  elseif value < 3/4 then
+    add_weapon_and_ammo(detailses, ammo, shared.weapon_laserblaster)
   else
     add_weapon_grade_1(detailses, ammo)
   end
@@ -50,9 +46,9 @@ end
 local function add_weapon_grade_3(detailses, ammo)
   local value = math.random()
   if value < 1/3 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_plasma_annihilator)
+    add_weapon_and_ammo(detailses, ammo, shared.weapon_plasma_sunfury)
   elseif value < 2/3 then
-    add_weapon_and_ammo(detailses, ammo, shared.weapon_hellstorm_cannon)
+    add_weapon_and_ammo(detailses, ammo, shared.weapon_volkite_destructor)
   else
     add_weapon_grade_2(detailses, ammo)
   end
