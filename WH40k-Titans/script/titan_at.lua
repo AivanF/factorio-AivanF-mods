@@ -284,6 +284,21 @@ function lib_ttn.handle_attack_ai(titan_info)
 end
 
 
+local function check_cannon_ready(tick, titan_info, cn, cannon, target)
+  local weapon_type = shared.weapons[cannon.name]
+  local titan_type = shared.titan_types[titan_info.class]
+  local todo = true
+  todo = todo and cannon.gun_cd < tick
+  todo = todo and (cannon.target == nil or cannon.ordered + lib_ttn.order_ttl < tick)
+  todo = todo and cannon.ammo_count >= weapon_type.per_shot * weapon_type.attack_size
+  if todo then
+    dst = math2d.position.distance(titan_info.entity.position, target)
+    todo = dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, titan_info.force, titan_type, cn, weapon_type)
+  end
+  return todo
+end
+
+
 local function handle_attack_order(event, kind)
   -- https://lua-api.factorio.com/latest/events.html#CustomInputEvent
   local player = game.players[event.player_index]
@@ -303,26 +318,26 @@ local function handle_attack_order(event, kind)
   local player_settings = ctrl_data.by_player[event.player_index] or {}
   player_settings.guns = player_settings.guns or {}
 
-  for k, cannon in pairs(table.shallow_copy(titan_info.guns)) do
-    if (player_settings.guns[k] or {}).mode == kind and not titan_info.guns[k].ai then
-      weapon_type = shared.weapons[titan_info.guns[k].name]
-      todo = true
-      todo = todo and cannon.gun_cd < tick
-      todo = todo and (cannon.target == nil or cannon.ordered+lib_ttn.order_ttl < tick)
-      todo = todo and cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size
+  for cn, cannon in pairs(table.shallow_copy(titan_info.guns)) do
+    if (player_settings.guns[cn] or {}).mode == kind and not titan_info.guns[cn].ai then
+      -- weapon_type = shared.weapons[cannon.name]
+      -- todo = true
+      -- todo = todo and cannon.gun_cd < tick
+      -- todo = todo and (cannon.target == nil or cannon.ordered+lib_ttn.order_ttl < tick)
+      -- todo = todo and cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size
 
-      if todo then
-        dst = math2d.position.distance(entity.position, target)
-        todo = dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type)
-      end
+      -- if todo then
+      --   dst = math2d.position.distance(entity.position, target)
+      --   todo = dst > weapon_type.min_dst and dst < lib_ttn.calc_max_dst(cannon, entity.force, titan_type, cn, weapon_type)
+      -- end
 
       -- TODO: make priority choice: if there is gun_cd, save for secondary trying to find a free cannon
-      if todo then
-        cannon.target = event.cursor_position
+      if check_cannon_ready(tick, titan_info, cn, cannon, target) then
+        cannon.target = target
         cannon.ordered = tick
         -- cannon.attack_number = 0
         done = true
-        opt_play(entity, weapon_type.pre_attack_sound)
+        opt_play(entity, shared.weapons[cannon.name].pre_attack_sound)
         break
       end
     end
@@ -358,9 +373,27 @@ local function on_player_selected_area(event)
 
   local dst = math2d.position.distance(source, target)
   if dst > 40 then
-    -- TODO: try to call Titans attacks!
+    -- Try to call Titans attacks
+    local tick = game.tick
+    local done = false
+    for unit_number, titan_info in pairs(ctrl_data.titans) do
+      if titan_info.surface == surface and titan_info.force == force then
+        dst = math2d.position.distance(source, titan_info.entity.position)
+        if dst < 192 then
+          for cn, cannon in pairs(titan_info.guns) do
+            if check_cannon_ready(tick, titan_info, cn, cannon, target) then
+              cannon.target = target
+              cannon.ordered = tick
+              break
+            end
+          end
+        end
+      end
+      if done then break end
+    end
 
   elseif dst > 9 then
+    -- Use local laser gun
     player.surface.create_entity{
       name=shared.bolt_types.bolt_laser.entity, force=player.force,
       position=source, source=source, target=target, speed=8,

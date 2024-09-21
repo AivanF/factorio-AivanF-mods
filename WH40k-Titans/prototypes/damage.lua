@@ -975,7 +975,7 @@ data:extend({
           type = "projectile",
           projectile = shared.mod_prefix.."bolt-plasma-2",
           direction_deviation = 0.6,
-          starting_speed = 6,
+          starting_speed = 2,
           starting_speed_deviation = 0.3
         }
       },

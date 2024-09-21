@@ -1,6 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.32
+Date: 2024-09-21
+  Bugfixes:
+    - Enabled WorldBreaker mace research.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.31
-Date: 2024-09-10
+Date: 2024-09-20
   Changes:
     - Reworked weapons grades, now there are 6 of them instead of 4, to better fit Titans classes and mounting positions, which is described in the Informatron.
     - Reworked Plasma cannons.

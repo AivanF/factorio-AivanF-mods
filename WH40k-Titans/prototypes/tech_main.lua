@@ -127,26 +127,26 @@ local tech_researches = {
       time = 60
     },
   },
-  -- {
-  --   name = shared.mod_prefix.."worldbreaker",
-  --   type = "technology",
-  --   icons = {
-  --     {
-  --     icon = shared.media_prefix.."graphics/tech/WorldBreaker.png",
-  --     icon_size = 256,
-  --     icon_mipmaps = 1,
-  --     }
-  --   },
-  --   effects = {
-  --     { type = "unlock-recipe", recipe = shared.worldbreaker },
-  --   },
-  --   prerequisites = {shared.mod_prefix.."2-grade"},
-  --   unit = {
-  --     count = 5,
-  --     ingredients = {{shared.sp, 3}},
-  --     time = 60
-  --   },
-  -- },
+  {
+    name = shared.mod_prefix.."worldbreaker",
+    type = "technology",
+    icons = {
+      {
+      icon = shared.media_prefix.."graphics/tech/WorldBreaker.png",
+      icon_size = 256,
+      icon_mipmaps = 1,
+      }
+    },
+    effects = {
+      { type = "unlock-recipe", recipe = shared.worldbreaker },
+    },
+    prerequisites = {shared.mod_prefix.."3-grade"},
+    unit = {
+      count = 5,
+      ingredients = {{shared.sp, 3}},
+      time = 60
+    },
+  },
 
 
 
