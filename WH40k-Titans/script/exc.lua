@@ -152,7 +152,7 @@ local function process_an_excavator(exc_info)
     end
 
     if exc_info.progress >= 1 then
-      local item_name, count = lib_ruins.ruin_extract(exc_info.ruin_info, exc_info.ruin_entity)
+      local item_name, count = lib_ruins.ruin_extract(exc_info)
       if item_name and count > 0 then
         exc_info.leftovers = {name=item_name, count=count}
         put_leftovers(exc_info)

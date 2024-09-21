@@ -30,7 +30,7 @@ local blank_ruin_info = {
   entity = nil,
   details = {}, -- [{name=, count=}]
   ammo = {}, -- [{name=, count=}]
-  exc_info = nil,
+  exc_info = nil,  -- TODO: get rid of it, as several exc can be placed and removed
 }
 
 local blank_sector = {
@@ -151,7 +151,8 @@ function lib_ruins.calc_extract_success_prob(force)
   return cf
 end
 
-function lib_ruins.ruin_extract(ruin_info, ruin_entity)
+function lib_ruins.ruin_extract(exc_info)
+  local ruin_info, ruin_entity = exc_info.ruin_info, exc_info.ruin_entity
   if ruin_info then
     local total = #ruin_info.details + #ruin_info.ammo
     local position, name, count, weight
@@ -176,7 +177,7 @@ function lib_ruins.ruin_extract(ruin_info, ruin_entity)
         end
       end
       -- Success or failed extraction?
-      if math.random() < lib_ruins.calc_extract_success_prob(ruin_info.exc_info.entity.force) then
+      if math.random() < lib_ruins.calc_extract_success_prob(exc_info.entity.force) then
         return name, count
       else
         return nil, 0

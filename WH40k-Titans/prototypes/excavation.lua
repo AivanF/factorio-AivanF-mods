@@ -114,7 +114,7 @@ data:extend({
       {"electric-mining-drill", 20},
       {"laser-turret", 20},
       {"filter-inserter", 20},
-      {"processing-unit", 10},
+      {"advanced-circuit", 10},
     },
     result = shared.excavator,
     category = "crafting",

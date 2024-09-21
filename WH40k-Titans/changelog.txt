@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.33
+Date: 2024-09-21
+  Bugfixes:
+    - Fixed error when multiple extractors are placed and the last one removed.
+  Balancing:
+    - Cheaper ruins extractor: advanced circuits (red chips) instead of processing units (blue chips).
+    - More expensive World Breaker.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.32
 Date: 2024-09-21
   Bugfixes:
