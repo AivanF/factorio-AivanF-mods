@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.34
+Date: 2024-09-28
+  Features:
+    - MELEE combat is here! Available with the ChainSword. Yes, the movement graphics is far from being beautiful (Factorio is not really suitable for such animations), but I plan to improve it when I'll have some more free time.
+    - In startup settings, you can now adjust volume and hearing range of all mod's sounds.
+    - Added actual Titans' assembly time into recipe description.
+  Balancing:
+    - To prevent unwanted stomping, the train rails, conveyor belts, flying robots and some other things are now immune to Titans steps damage! It's more arguable for containers, electric poles and especially walls, so, let me know your opinion in Discord ;)
+    - A bit more expensive research prices, to compensate higher RevEng output from the v0.9.31.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.33
 Date: 2024-09-21
   Bugfixes:
@@ -18,7 +29,8 @@ Version: 0.9.31
 Date: 2024-09-20
   Changes:
     - Reworked weapons grades, now there are 6 of them instead of 4, to better fit Titans classes and mounting positions, which is described in the Informatron.
-    - Reworked Plasma cannons.
+    - Reworked Plasma cannons types.
+    - Enemies now trigger to attacks from Titans! Look at their helpless attacks...
   Features:
     - New Titan class: War Bringer!
     - New weapons: Emperor-scale Plasma Annihilator, Gatling Blaster (filled with explosive cannon shells), Volcano Cannon (to finally make use of HellStorm ammo).

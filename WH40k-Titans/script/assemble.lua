@@ -83,13 +83,13 @@ local bunker_signal_outputs = {
 }
 
 
-local function draw_assembler_lamp(assembler, k, lamp_color)
+local function draw_assembler_lamp(assembler, wi, lamp_color)
   local color = table.deepcopy(lamp_color)
   table.insert(color, 0.25)
   rendering.draw_sprite{
     surface=assembler.surface, sprite=shared.mod_prefix.."light", x_scale=1, y_scale=1,
     tint=color, time_to_live=building_update_rate+1, render_layer=145, -- 123 or 145
-    target={x=assembler.position.x+bunker_lamps[k][1], y=assembler.position.y+bunker_lamps[k][2]},
+    target={x=assembler.position.x+bunker_lamps[wi][1], y=assembler.position.y+bunker_lamps[wi][2]},
   }
 end
 
@@ -111,7 +111,7 @@ local function get_titan_assembly_time(titan_class_or_name)
   if quick_mode then
     return 3 + shared.titan_types[titan_class_or_name].health /10000
   else
-    return math.pow(shared.titan_types[titan_class_or_name].health /1000, 1.2) * 10
+    return shared.get_titan_assembly_time(titan_class_or_name)
   end
 end
 
@@ -150,23 +150,23 @@ local function set_message(assembler, text)
 end
 
 
-function lib_asmb.check_weapon_is_appropriate(titan_type, k, weapon_type)
+function lib_asmb.check_weapon_is_appropriate(titan_type, wi, weapon_type)
   if not weapon_type then return nil end
-  local name = {"item-name."..shared.titan_prefix..weapon_type.name}
+  local name = {{"item-name."..shared.mod_prefix..weapon_type.name}}
 
   if not (
-    weapon_type.grade == titan_type.guns[k].grade or
-    weapon_type.grade == titan_type.guns[k].grade-1
+    weapon_type.grade == titan_type.mounts[wi].grade or
+    weapon_type.grade == titan_type.mounts[wi].grade-1
   ) then
     return {"WH40k-Titans-gui.assembly-er-wrong-grade", name}
 
-  elseif weapon_type.no_top and titan_type.guns[k].is_top then
+  elseif weapon_type.no_top and titan_type.mounts[wi].is_top then
     return {"WH40k-Titans-gui.assembly-er-place-cant-be-top", name}
 
-  elseif weapon_type.top_only and not titan_type.guns[k].is_top then
+  elseif weapon_type.top_only and not titan_type.mounts[wi].is_top then
     return {"WH40k-Titans-gui.assembly-er-place-must-be-top", name}
 
-  elseif not weapon_type.top_only and titan_type.guns[k].top_only then
+  elseif not weapon_type.top_only and titan_type.mounts[wi].top_only then
     return {"WH40k-Titans-gui.assembly-er-weapon-must-be-top", name}
   end
   return nil
@@ -206,22 +206,22 @@ local function check_bunker_correct_details(assembler)
   draw_assembler_lamp(assembler, 8, lamp_color)
 
   local weapon_type, weapon_fine, msg
-  for k = 1, 6 do
-    weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
+  for wi = 1, 6 do
+    weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
     weapon_fine = true
     lamp_color = nil -- disabled
     if titan_type then
-      if titan_type.guns[k] and not weapon_type then
+      if titan_type.mounts[wi] and not weapon_type then
         set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-weapon-selected"})
         weapon_fine = false
         lamp_color = color_red
       end
-      if weapon_type and not titan_type.guns[k] then
+      if weapon_type and not titan_type.mounts[wi] then
         set_message(assembler, {"WH40k-Titans-gui.assembly-er-extra-weapon-selected"})
         weapon_fine = false
         lamp_color = color_red
       elseif weapon_type then
-        msg = lib_asmb.check_weapon_is_appropriate(titan_type, k, weapon_type)
+        msg = lib_asmb.check_weapon_is_appropriate(titan_type, wi, weapon_type)
         if msg then
           set_message(assembler, msg)
           weapon_fine = false
@@ -229,25 +229,25 @@ local function check_bunker_correct_details(assembler)
         end
       end
     end
-    if not assembler.wstore[k] then
+    if not assembler.wstore[wi] then
       set_message(assembler, {"WH40k-Titans-gui.assembly-er-improper-bunker", 2})
       weapon_fine = false
     end
     if weapon_type then
       if weapon_type.available then
-        -- Set recipe to assembler.wrecipe[k] ?
-        if not check_entity_has_ingredients(assembler.wstore[k], weapon_type.ingredients) then
-          set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-weapon", "item-name."..shared.titan_prefix..weapon_type.name})
+        -- Set recipe to assembler.wrecipe[wi] ?
+        if not check_entity_has_ingredients(assembler.wstore[wi], weapon_type.ingredients) then
+          set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
           weapon_fine = false
           lamp_color = lamp_color or color_orange
         end
-        -- if assembler.wstore[k].get_item_count(weapon_type.ammo) < weapon_type.inventory*required_ammo_ratio-1 then
+        -- if assembler.wstore[wi].get_item_count(weapon_type.ammo) < weapon_type.inventory*required_ammo_ratio-1 then
         --   set_message(assembler, "not enough ammo for "..weapon_type.name)
         --   weapon_fine = false
         --   lamp_color = lamp_color or color_gold
         -- end
       else
-        set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-available-weapon", "item-name."..shared.titan_prefix..weapon_type.name})
+        set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-available-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
         weapon_fine = false
         lamp_color = lamp_color or color_gold
       end
@@ -256,7 +256,7 @@ local function check_bunker_correct_details(assembler)
     end
     result = result and weapon_fine
     if lamp_color then
-      draw_assembler_lamp(assembler, k, lamp_color)
+      draw_assembler_lamp(assembler, wi, lamp_color)
     end
   end
 
@@ -273,13 +273,15 @@ local function collect_bunker_details(assembler)
   assembler.items_main = table.deepcopy(titan_type.ingredients)
 
   local weapon_type, got_ammo
-  for k, _ in pairs(titan_type.guns) do
-    weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
-    collect_entity_ingredients(assembler.wstore[k], weapon_type.ingredients)
-    assembler.items_guns[k] = table.deepcopy(weapon_type.ingredients)
-    got_ammo = assembler.wstore[k].remove_item({name=weapon_type.ammo, count=weapon_type.inventory})
-    table.insert(assembler.items_guns[k], {weapon_type.ammo, got_ammo})
-    assembler.items_guns[k].ammo_count = got_ammo
+  for wi, _ in pairs(titan_type.mounts) do
+    weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
+    collect_entity_ingredients(assembler.wstore[wi], weapon_type.ingredients)
+    assembler.items_guns[wi] = table.deepcopy(weapon_type.ingredients)
+    if weapon_type.ammo then
+      got_ammo = assembler.wstore[wi].remove_item({name=weapon_type.ammo, count=weapon_type.inventory})
+      table.insert(assembler.items_guns[wi], {weapon_type.ammo, got_ammo})
+    end
+    assembler.items_guns[wi].ammo_count = got_ammo
   end
 end
 
@@ -317,11 +319,13 @@ local function titan_to_bunker_internal(assembler, titan_info)
   assembler.class_recipe = titan_type.entity
   assembler.items_guns = {}
   local weapon_type
-  for k, _ in pairs(titan_type.guns) do
-    weapon_type = shared.weapons[titan_info.guns[k].name]
-    assembler.weapon_recipes[k] = weapon_type.entity
-    assembler.items_guns[k] = table.deepcopy(weapon_type.ingredients)
-    table.insert(assembler.items_guns[k], {weapon_type.ammo, titan_info.guns[k].ammo_count})
+  for wi, _ in pairs(titan_type.mounts) do
+    weapon_type = shared.weapons[titan_info.guns[wi].name]
+    assembler.weapon_recipes[wi] = weapon_type.entity
+    assembler.items_guns[wi] = table.deepcopy(weapon_type.ingredients)
+    if weapon_type.ammo ~= nil then
+      table.insert(assembler.items_guns[wi], {weapon_type.ammo, titan_info.guns[wi].ammo_count})
+    end
   end
 end
 
@@ -330,6 +334,12 @@ local function put_items_to_entity(entity, items)
   local finished = true
   local done
   for key, stack in ipairs(items) do
+    if stack[2] == nil then
+      error(serpent.line({
+        items = items,
+        key = key,
+      }))
+    end
     if stack[2] > 0 then
       done = entity.insert({name=stack[1], count=stack[2]})
     else
@@ -350,8 +360,8 @@ end
 local function bunker_internal_to_outer(assembler)
   local finished = true
   finished = finished and put_items_to_entity(assembler.bstore, assembler.items_main)
-  for k, _ in pairs(assembler.items_guns) do
-    finished = put_items_to_entity(assembler.wstore[k], assembler.items_guns[k]) and finished
+  for wi, _ in pairs(assembler.items_guns) do
+    finished = put_items_to_entity(assembler.wstore[wi], assembler.items_guns[wi]) and finished
   end
   return finished
 end
@@ -400,7 +410,7 @@ local function set_signals_from_ingredients(comb, ingredients, ammo)
   for pos = 1, shared.bunker_comb_size do
     if ingredients and pos <= #ingredients then
       ctrl.set_signal(pos, {signal={type="item", name=ingredients[pos][1]}, count=ingredients[pos][2]})
-    elseif ammo and pos == #ingredients+1 then
+    elseif ammo and ammo[1] and pos == #ingredients+1 then
       ctrl.set_signal(pos, {signal={type="item", name=ammo[1]}, count=ammo[2]})
     else
       ctrl.set_signal(pos, nil)
@@ -413,12 +423,12 @@ local function set_all_signals(assembler)
   local titan_type = shared.titan_types[assembler.class_recipe]
   set_signals_from_ingredients(assembler.output_combinators[7], titan_type and titan_type.ingredients or nil)
 
-  for k = 1, 6 do
-    local weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
+  for wi = 1, 6 do
+    local weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
     if weapon_type then
-      set_signals_from_ingredients(assembler.output_combinators[k], weapon_type.ingredients, {weapon_type.ammo, weapon_type.inventory})
+      set_signals_from_ingredients(assembler.output_combinators[wi], weapon_type.ingredients, {weapon_type.ammo, weapon_type.inventory})
     else
-      set_signals_from_ingredients(assembler.output_combinators[k])
+      set_signals_from_ingredients(assembler.output_combinators[wi])
     end
   end
 end
@@ -712,10 +722,10 @@ function state_handler.assembling(assembler)
     local titan_info = lib_ttn.register_titan(titan_entity)
     local weapon_type
     titan_info.guns = {}
-    for k, _ in pairs(titan_type.guns) do
-      weapon_type = shared.weapons[assembler.weapon_recipes[k]]
-      titan_info.guns[k] = lib_ttn.init_gun(nil, weapon_type)
-      titan_info.guns[k].ammo_count = assembler.items_guns[k].ammo_count
+    for wi, _ in pairs(titan_type.mounts) do
+      weapon_type = shared.weapons[assembler.weapon_recipes[wi]]
+      titan_info.guns[wi] = lib_ttn.init_gun(nil, weapon_type)
+      titan_info.guns[wi].ammo_count = assembler.items_guns[wi].ammo_count
     end
     lib_asmb.change_assembler_state(assembler, states.idle)
   end
@@ -764,16 +774,16 @@ function state_handler.restock(assembler)
     local titan_type = shared.titan_types[titan_info.name or titan_entity.name]
     local done_ws, done_ammo = 0, 0
     local weapon_type, cannon
-    for k, _ in pairs(titan_type.guns) do
-      cannon = titan_info.guns[k]
+    for wi, _ in pairs(titan_type.mounts) do
+      cannon = titan_info.guns[wi]
       weapon_type = shared.weapons[cannon.name]
       need_ammo = weapon_type.inventory - cannon.ammo_count
-      have_ammo = assembler.wstore[k].get_item_count(weapon_type.ammo)
+      have_ammo = assembler.wstore[wi].get_item_count(weapon_type.ammo)
       got_ammo = math.min(need_ammo, have_ammo)
       if got_ammo > 0 then
         done_ws = done_ws + 1
         done_ammo = done_ammo + got_ammo
-        assembler.wstore[k].remove_item({name=weapon_type.ammo, count=got_ammo})
+        assembler.wstore[wi].remove_item({name=weapon_type.ammo, count=got_ammo})
         cannon.ammo_count = cannon.ammo_count + got_ammo
         show_ammo_transfer(assembler.sentity, titan_info.entity, weapon_type.ammo, got_ammo, 4)
       end
@@ -789,11 +799,11 @@ function state_handler.restock(assembler)
     for _, ammo_name in ipairs(shared.ammo_list) do
       if not supplier_info.disabled_ammo[ammo_name] then
         for k = 1, gun_chests_number do
-          have_ammo = assembler.wstore[k].get_item_count(ammo_name)
+          have_ammo = assembler.wstore[wi].get_item_count(ammo_name)
           need_ammo = lib_spl.count_free_weight(supplier_info) / shared.ammo_weights[ammo_name]
           got_ammo = math.min(need_ammo, have_ammo)
           if got_ammo > 0 then
-            assembler.wstore[k].remove_item({name=ammo_name, count=need_ammo})
+            assembler.wstore[wi].remove_item({name=ammo_name, count=need_ammo})
             supplier_info.inventory[ammo_name] = (supplier_info.inventory[ammo_name] or 0) + got_ammo
             show_ammo_transfer(assembler.sentity, supplier_info.entity, ammo_name, got_ammo, 1)
           end
@@ -808,11 +818,11 @@ local function clear_supplier(assembler, supplier_info)
   local weapon_type, done
   for ammo_name, ammo_count in pairs(supplier_info.inventory) do
     for k = 1, gun_chests_number do
-      weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
+      weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
       -- Try to find a chest with matching ammo type or just empty recipe set
       if weapon_type == nil or ammo_name == weapon_type.ammo then
         if ammo_count > 0 then
-          done = assembler.wstore[k].insert({name=ammo_name, count=ammo_count})
+          done = assembler.wstore[wi].insert({name=ammo_name, count=ammo_count})
           ammo_count = ammo_count - done
           if ammo_count > 0 then
             supplier_info.inventory[ammo_name] = ammo_count
@@ -826,7 +836,7 @@ local function clear_supplier(assembler, supplier_info)
 
     for k = 1, gun_chests_number do
       if ammo_count > 0 then
-        done = assembler.wstore[k].insert({name=ammo_name, count=ammo_count})
+        done = assembler.wstore[wi].insert({name=ammo_name, count=ammo_count})
         ammo_count = ammo_count - done
         if ammo_count > 0 then
           supplier_info.inventory[ammo_name] = ammo_count
@@ -848,7 +858,7 @@ function state_handler.clearing(assembler)
   --   local titan_type = shared.titan_types[titan_info.name or titan_entity.name]
   --   local done_ws, done_ammo = 0, 0
   --   local weapon_type, cannon
-  --   for k, _ in pairs(titan_type.guns) do
+  --   for wi, _ in pairs(titan_type.mounts) do
   --   end
   -- end
 

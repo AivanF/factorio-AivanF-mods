@@ -41,7 +41,7 @@ local tech_researches = {
       shared.mod_prefix.."0-grade",
     },
     unit = {
-      count = 20,
+      count = 25,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
@@ -144,12 +144,12 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_min),
+    effects = get_weapon_effects(shared.gun_grade_0m),
     prerequisites = {
       shared.mod_prefix.."assembly",
     },
     unit = {
-      count = 5,
+      count = 10,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
@@ -164,7 +164,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_small),
+    effects = get_weapon_effects(shared.gun_grade_1v),
     prerequisites = {
       shared.mod_prefix.."0-grade",
       -- shared.mod_prefix.."1-class",
@@ -185,7 +185,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_medium),
+    effects = get_weapon_effects(shared.gun_grade_2s),
     prerequisites = {
       shared.mod_prefix.."1-grade",
       shared.mod_prefix.."1-class",
@@ -206,7 +206,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_better),
+    effects = get_weapon_effects(shared.gun_grade_3f),
     prerequisites = {
       shared.mod_prefix.."2-grade",
       shared.mod_prefix.."2-class",
@@ -227,7 +227,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_big),
+    effects = get_weapon_effects(shared.gun_grade_4m),
     prerequisites = {
       shared.mod_prefix.."3-grade",
       shared.mod_prefix.."3-class",
@@ -248,7 +248,7 @@ local tech_researches = {
       icon_mipmaps = 1,
       }
     },
-    effects = get_weapon_effects(shared.gun_grade_huge),
+    effects = get_weapon_effects(shared.gun_grade_5g),
     prerequisites = {
       shared.mod_prefix.."4-grade",
       shared.mod_prefix.."4-class",

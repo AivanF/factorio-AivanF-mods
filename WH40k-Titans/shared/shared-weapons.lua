@@ -1,4 +1,5 @@
 local shared = require("shared.shared-base")
+local UPS = 60
 
 shared.worldbreaker = shared.mod_prefix.."worldbreaker"
 
@@ -11,6 +12,11 @@ shared.las_engine    = shared.he_emitter
 -- shared.plasma_engine = he_emitter + emfc
 -- shared.hell_engine   = ehe_emitter + melta_pump
 
+shared.arty = shared.mod_prefix.."artillery-turret"
+shared.arty_invsz = 10
+
+shared.titan_arm_length = 6.5
+
 --------- Titan weapon ammo aliases
 shared.big_bolt     = shared.mod_prefix.."bolt-big"
 shared.huge_bolt    = shared.mod_prefix.."bolt-huge"  -- DEPRECATED!
@@ -22,6 +28,7 @@ shared.melta_ammo   = shared.mod_prefix.."melta-ammo"
 shared.plasma_ammo  = shared.bridge_prefix.."plasma-fuel"
 shared.hell_ammo    = shared.mod_prefix.."hellstorm-ammo"
 shared.missile_ammo = "explosive-rocket"
+
 shared.empty_missile_ammo = shared.mod_prefix.."empty-missile"
 shared.doom_missile_ammo = shared.mod_prefix.."doom-missile"
 shared.plasma_missile_ammo = shared.mod_prefix.."plasma-missile"
@@ -50,16 +57,16 @@ shared.ammo_list = {
 
 --------- Titan weapon scaling
 -- Specified size also allows to use 1 grade lower
-shared.gun_grade_min    = 0
-shared.gun_grade_small  = 1
-shared.gun_grade_medium = 2
-shared.gun_grade_better = 3
-shared.gun_grade_big    = 4
-shared.gun_grade_huge   = 5
+shared.gun_grade_0m = 0 -- Minimalis
+shared.gun_grade_1v = 1 -- Validus
+shared.gun_grade_2s = 2 -- Solidus
+shared.gun_grade_3f = 3 -- Fortis
+shared.gun_grade_4m = 4 -- Magnus
+shared.gun_grade_5g = 5 -- Grandis
 
 --------- Weapon categories
 -- NOTE: number can be changed, thus shouldn't go to save files
--- This should be only used for faster runtime indexing
+-- This should be only used for faster runtime index lookups
 shared.wc_rocket = 01
 shared.wc_bolter = 02
 shared.wc_quake  = 03
@@ -68,10 +75,15 @@ shared.wc_laser  = 12
 shared.wc_plasma = 13
 shared.wc_melta  = 14
 shared.wc_hell   = 15
-shared.wc_melee  = 21
+shared.wc_arty   = 21
+shared.wc_melee  = 31
 
 --------- Bolt types
 local bolt_types = {}
+bolt_types.bolt_melee = {
+  entity = shared.mod_prefix.."bolt-melee",
+  single_damage = 10 *1000,
+}
 bolt_types.bolt_big = {
   entity = shared.mod_prefix.."bolt-big",
   single_damage = 1000,
@@ -125,13 +137,39 @@ dst_s, dst_m, dst_l, dst_xl = 96, 140, 192, 256
 local wname = nil
 local order_index = 1
 
+
+local function add_weapon_cannon(weapon_type)
+  weapon_type.cd = weapon_type.cd or 3
+  weapon_type.per_shot = weapon_type.per_shot or 1
+  weapon_type.attack_size = weapon_type.attack_size or 1
+
+  weapon_type.available = true
+    and weapon_type.animation
+    and (weapon_type.bolt_type and weapon_type.ammo or weapon_type.ammo_category)
+end
+
+local function add_weapon_melee(weapon_type)
+  -- Convert from Factorio ori to radians
+  weapon_type.arc_angle = weapon_type.half_angle * math.pi * 4
+
+  weapon_type.attack_ticks = {}
+  for i = 1, weapon_type.attack_size do
+    table.insert(weapon_type.attack_ticks, math.floor(weapon_type.usage_time/4 + weapon_type.usage_time/2 * i/weapon_type.attack_size))
+  end
+
+  weapon_type.available = weapon_type.animation and weapon_type.usage_time
+end
+
+
+local wc_define = {}
+wc_define[shared.wc_melee] = add_weapon_melee
+
 local function add_weapon(weapon_type)
   order_index = order_index + 1
   weapon_type.order_index = order_index
-  weapon_type.entity = shared.mod_prefix..weapon_type.name
-  weapon_type.cd = weapon_type.cd or 3
-  weapon_type.attack_size = weapon_type.attack_size or 1
-  weapon_type.available = weapon_type.animation and weapon_type.ammo and weapon_type.bolt_type
+  weapon_type.entity = shared.mod_prefix..weapon_type.name;
+
+  (wc_define[weapon_type.category] or add_weapon_cannon)(weapon_type);
 
   shared.weapons[weapon_type.entity] = weapon_type
   shared.weapons[weapon_type.name] = weapon_type
@@ -144,7 +182,7 @@ wname = "adrex-mega-bolter"  -- 5 big bolters
 shared.weapon_adrexbolter = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_min,
+  grade = shared.gun_grade_0m,
   category = shared.wc_bolter,
   min_dst = 8, max_dst = dst_s,
   barrel = 6,
@@ -167,13 +205,13 @@ wname = "lascannon"
 shared.weapon_lascannon = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_min,
+  grade = shared.gun_grade_0m,
   category = shared.wc_laser,
   min_dst = 8, max_dst = dst_m,
   speed = 15, barrel = 8,
   ammo = shared.laser_ammo,
   per_shot = 2, inventory = 3000,
-  cd = 0.5,
+  cd = 0.6,
   bolt_type = bolt_types.bolt_laser,
   attack_sound = "wh40k-titans-laser",
   ingredients = {
@@ -193,7 +231,7 @@ wname = "plasma-blastgun"
 shared.weapon_plasma_blastgun = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_1v,
   category = shared.wc_plasma,
   min_dst = 10, max_dst = dst_s,
   ammo = shared.plasma_ammo,
@@ -217,7 +255,7 @@ wname = "inferno"  -- 3 flamers
 shared.weapon_inferno = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_1v,
   -- no_top = true,
   category = shared.wc_flamer,
   min_dst = 10, max_dst = dst_s,
@@ -240,7 +278,7 @@ wname = "vulcan-mega-bolter"  -- 2 guns with 5 big bolters
 shared.weapon_vulcanbolter = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_1v,
   category = shared.wc_bolter,
   min_dst = 10, max_dst = dst_m,
   ammo = shared.big_bolt,
@@ -263,7 +301,7 @@ add_weapon({
 -- shared.weapon_boltcannon = wname
 -- add_weapon({
 --   name = wname,
---   grade = shared.gun_grade_small,
+--   grade = shared.gun_grade_1v,
 --   category = shared.wc_bolter,
 --   min_dst = 10, max_dst = dst_m,
 --   ammo = shared.huge_bolt,
@@ -285,13 +323,13 @@ wname = "turbo-laser-destructor"  -- 2 lasers
 shared.weapon_turbolaser = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_1v,
   category = shared.wc_laser,
   min_dst = 10, max_dst = dst_m, spd=1.5,
   speed = 15, barrel = 8,
   ammo = shared.laser_ammo,
   per_shot = 1, inventory = 8000,
-  cd = 0.25, attack_size = 3, scatter = 2,
+  cd = 0.4, attack_size = 3, scatter = 2,
   bolt_type = bolt_types.bolt_laser,
   attack_sound = "wh40k-titans-laser",
   ingredients = {
@@ -308,7 +346,7 @@ wname = "missile-launcher"
 shared.weapon_missiles = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_small,
+  grade = shared.gun_grade_1v,
   top_only = true,
   category = shared.wc_rocket,
   min_dst = 16, max_dst = (dst_m+dst_l)/2, max_dst = dst_l, max_orid = 0.03,
@@ -333,7 +371,7 @@ wname = "apocalypse-missiles"
 shared.weapon_apocalypse_missiles = wname  -- faster & farther rockets
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_2s,
   top_only = true,
   category = shared.wc_rocket,
   min_dst = 16, max_dst = dst_l, max_dst = (dst_l+dst_xl)/2, max_orid = 0.03,
@@ -361,13 +399,13 @@ wname = "laser-blaster"  -- 3 lasers
 shared.weapon_laserblaster = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_2s,
   category = shared.wc_laser,
   min_dst = 12, max_dst = dst_l, spd=1.5,
   speed = 20, barrel = 8,
   ammo = shared.laser_ammo,
   per_shot = 1, inventory = 12000,
-  cd = 0.15, attack_size = 6, scatter = 6,
+  cd = 0.2, attack_size = 6, scatter = 6,
   bolt_type = bolt_types.bolt_laser,
   attack_sound = "wh40k-titans-laser",
   ingredients = {
@@ -380,11 +418,11 @@ add_weapon({
   animation = shared.mod_prefix.."Laser-Blaster",
 })
 
-wname = "gatling-blaster"  -- 6 huge bolters
+wname = "gatling-blaster"  -- 6 huge bolters/autocannons
 shared.weapon_gatling_blaster = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_2s,
   category = shared.wc_bolter,
   min_dst = 12, max_dst = (dst_m+dst_l)/2,
   barrel = 8,
@@ -408,7 +446,7 @@ wname = "volcano-cannon"
 shared.weapon_volcano_cannon = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_2s,
   category = shared.wc_laser,
   min_dst = 14, max_dst = dst_m,
   speed = {4, 6, 8, 10}, barrel = 10,
@@ -437,7 +475,7 @@ wname = "plasma-sunfury"  -- Plasma 2: SunFury pattern Plasma Destructor/Annihil
 shared.weapon_plasma_sunfury = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_better,
+  grade = shared.gun_grade_3f,
   category = shared.wc_plasma,
   min_dst = 12, max_dst = dst_m,
   ammo = shared.plasma_ammo,
@@ -461,7 +499,7 @@ wname = "volkite-destructor"  -- quick big melta, short-range
 shared.weapon_volkite_destructor = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_medium,
+  grade = shared.gun_grade_3f,
   category = shared.wc_melta,
   min_dst = 12, max_dst = dst_m,
   ammo = shared.melta_ammo,
@@ -480,6 +518,31 @@ add_weapon({
   animation = nil,  -- TODO: here!
 })
 
+wname = "chainsword"
+shared.weapon_chainsword = wname
+add_weapon({
+  name = wname,
+  grade = shared.gun_grade_3f,
+  category = shared.wc_melee,
+  on_arm = true,
+  no_top = true,
+  bolt_type = bolt_types.bolt_melee,
+  attack_size = 10,
+  medium_length = 16,
+  usage_time = 2 * UPS,
+  half_angle = 0.15,
+  pre_attack_sound = "wh40k-titans-chainsword",
+  attack_sound = nil,
+  ingredients = {
+    {shared.antigraveng, 1},
+    {shared.motor, 12},
+    {shared.frame_part, 16},
+  },
+  icon = shared.media_prefix.."graphics/icons/weapons/ChainSword.png",
+  icon_size = 64, icon_mipmaps = 3,
+  animation = shared.mod_prefix.."ChainSword",
+})
+
 
 
 --------- 4. Big: WarBringer top, WarMaster arms
@@ -488,7 +551,7 @@ wname = "plasma-destructor"  -- Plasma 3: Suzerain class Plasma Destructor/Annih
 shared.weapon_plasma_destructor = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_big,
+  grade = shared.gun_grade_4m,
   category = shared.wc_plasma,
   min_dst = 12, max_dst = (dst_m + dst_l) / 2,
   ammo = shared.plasma_ammo,
@@ -513,7 +576,7 @@ add_weapon({
 -- shared.weapon_quake_cannon = wname
 -- add_weapon({
 --   name = wname,
---   grade = shared.gun_grade_big,
+--   grade = shared.gun_grade_4m,
 --   category = shared.wc_quake,
 --   min_dst = 12, max_dst = dst_m, spd=0.5,
 --   ammo = shared.quake_proj,
@@ -532,7 +595,7 @@ add_weapon({
 -- shared.weapon_graviton_ruinator = wname
 -- add_weapon({
 --   name = wname,
---   grade = shared.gun_grade_big,
+--   grade = shared.gun_grade_4m,
 --   category = shared.wc_quake,
 --   min_dst = 12, max_dst = dst_m, spd=0.5,
 --   ammo = shared.laser_ammo,
@@ -548,6 +611,31 @@ add_weapon({
 --   animation = nil,  -- TODO: here!
 -- })
 
+-- wname = "artillery-turret"
+-- shared.weapon_artillery = wname
+-- add_weapon({
+--   name = wname,
+--   grade = shared.gun_grade_4m,
+--   top_only = true,
+--   category = shared.wc_arty,
+
+--   -- ammo = "mortar-cluster-bomb",
+--   ammo = "artillery-shell",
+--   -- ammo_category = "artillery-shell",
+
+--   per_shot = 1, inventory = 200,
+--   attack_sound = "wh40k-titans-rocket",
+--   ingredients = {
+--     {"artillery-turret", 1},
+--     {shared.proj_engine, 3},
+--     {shared.barrel, 3},
+--     {shared.frame_part, 4},
+--   },
+--   icon = "__base__/graphics/icons/artillery-turret.png",
+--   icon_size = 64, icon_mipmaps = 4,
+--   animation = shared.mod_prefix.."ApocLauncher",
+-- })
+
 
 
 --------- 5. Huge: Emperor arms
@@ -556,7 +644,7 @@ wname = "plasma-annihilator"  -- Plasma 4 Grand Annihilator
 shared.weapon_plasma_annihilator = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_huge,
+  grade = shared.gun_grade_5g,
   category = shared.wc_plasma,
   min_dst = 32, max_dst = dst_l,
   ammo = shared.plasma_ammo,
@@ -580,7 +668,7 @@ wname = "hellstorm-cannon"
 shared.weapon_hellstorm_cannon = wname
 add_weapon({
   name = wname,
-  grade = shared.gun_grade_huge,
+  grade = shared.gun_grade_5g,
   category = shared.wc_hell,
   min_dst = 32, max_dst = dst_xl, spd=0.2,
   speed = {6, 7, 8, 9, 10, 11},
@@ -604,7 +692,7 @@ add_weapon({
 -- shared.weapon_doomstrike_missiles = wname
 -- add_weapon({
 --   name = wname,
---   grade = shared.gun_grade_huge,
+--   grade = shared.gun_grade_5g,
 --   category = shared.wc_quake,
 --   min_dst = 48, max_dst = dst_xl*3, spd=0.2,  -- TODO: don't draw such large circle!
 --   ammo = shared.doom_missile_ammo,
@@ -623,18 +711,23 @@ add_weapon({
 shared.get_weapon_descr = function (weapon_type)
   local ammo = weapon_type.ammo or "unknown"
   local own_descr = {"item-description."..weapon_type.entity}
-  local damage = weapon_type.attack_size * weapon_type.bolt_type.single_damage
+  local damage = weapon_type.bolt_type and (weapon_type.attack_size * weapon_type.bolt_type.single_damage) or nil
   if type(weapon_type.speed) == "table" then damage = #weapon_type.speed * damage end
-  local stats_descr = {
-    (weapon_type.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
-    -- Args:
-    weapon_type.grade,
-    {"item-name."..weapon_type.ammo}, -- "__ITEM__"..ammo.."__",
-    weapon_type.per_shot,
-    shorten_number(weapon_type.inventory),
-    weapon_type.bolt_type and shorten_number(damage) or "terrible",
-    weapon_type.attack_size,
-  }
+  local stats_descr
+  if weapon_type.category == shared.wc_melee then
+    stats_descr = {"item-description.wh40k-titan-weapon-melee", weapon_type.grade, shorten_number(damage)}
+  else
+    stats_descr = {
+      (weapon_type.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
+      -- Args:
+      weapon_type.grade,
+      weapon_type.ammo and {"item-name."..weapon_type.ammo} or {"ammo-category-name."..weapon_type.ammo_category}, -- "__ITEM__"..ammo.."__"
+      weapon_type.per_shot,
+      shorten_number(weapon_type.inventory),
+      weapon_type.bolt_type and shorten_number(damage) or "terrible", -- TODO: replace/translate it!
+      weapon_type.attack_size,
+    }
+  end
   local full_descr = {"?", {"", own_descr, " ", stats_descr}, stats_descr}
   return weapon_type.available and full_descr or {"item-description.wh40k-titans-not-yet"}
 end

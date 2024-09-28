@@ -1,5 +1,6 @@
 local shared = {}
 shared.debug_mod = false
+shared.debug_mod = true
 shared.mod_name = "WH40k-Titans"
 shared.path_prefix = "__"..shared.mod_name.."__/"
 shared.media_prefix = "__"..shared.mod_name.."-media__/"
@@ -8,6 +9,7 @@ shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
 shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
 shared.bridge_prefix = "afci-"
 shared.equip_cat = shared.mod_prefix
+shared.step_damage = "stomp"
 
 afci_bridge = require("__Common-Industries__.export")
 
@@ -97,11 +99,12 @@ shared.exc_efficiency_by_level = {
 shared.assembly_speed_research = shared.mod_prefix.."assembly-speed"
 shared.assembly_speed_by_level = {
   [0] = 0.5,
-  [1] = 1.0,
-  [2] = 1.5,
-  [3] = 2.0,
-  [4] = 3.0,
-  [5] = 4.0,
+  [1] = 0.75,
+  [2] = 1.0,
+  [3] = 1.5,
+  [4] = 2.0,
+  [5] = 3.0,
+  [6] = 4.0,
 }
 
 shared.void_shield_cap_research = shared.mod_prefix.."void-shield-capacity"

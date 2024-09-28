@@ -33,29 +33,53 @@ shared.titan_aux_laser2 = shared.mod_prefix.."aux-turret-laser-2"
 -- Render layers
 --[[
 https://lua-api.factorio.com/latest/Concepts.html#RenderLayer
-"air-object" = 145
-"light-effect" = 148
+
+"floor-mechanics" = 122
+"item"          = 123
+"lower-object"  = 124
+"object"        = 129
+"higher-object-under"    = 131
+"higher-object-above"    = 132
+"item-in-inserter-hand"  = 134
+"wires-above"   = 136
+"entity-info-icon"       = 138
+"entity-info-icon-above" = 139
+"explosion"     = 142
+"projectile"    = 143
+"smoke"         = 144
+"air-object"    = 145
+"air-entity-info-icon" = 147
+"light-effect"  = 148
 "selection-box" = 187
-"projectile" = 143
 ]]--
 shared.rl_track = 122
-shared.rl_foot = 124 -- ="lower-object"
+shared.rl_foot = 124
 
 --- Above aircrafts and projectiles, bad for shoulder weapons
 -- shared.rl_shadow = 144
 -- shared.rl_arm = 169
 -- shared.rl_body = 170
--- shared.rl_shoulder = 171
+-- shared.rl_shoulder1 = 171
 -- shared.rl_shoulder2 = 172
--- shared.rl_shield = 173
+-- shared.rl_shoulder3 = 173
+-- shared.rl_shield = 174
 
 --- Under aircrafts, projectiles, explosions, bad for non-shoudler weapons
-shared.rl_shadow = 136 -- ="wires-above"
+shared.rl_shadow = 136
 shared.rl_arm = 139
 shared.rl_body = 140
-shared.rl_shoulder = 141
-shared.rl_shoulder2 = 142
+shared.rl_shoulder1 = 142
+shared.rl_shoulder1_name = "explosion"
+shared.rl_shoulder2 = 143
+shared.rl_shoulder2_name = "projectile"
+shared.rl_shoulder3 = 144
+shared.rl_shoulder3_name = "smoke"
 shared.rl_shield = 145
+
+--- For debugging purposes
+-- shared.rl_shadow = 122
+-- shared.rl_arm = 123
+-- shared.rl_body = 124
 
 shared.titan_base_type = "car"
 shared.titan_breakable_details = {
@@ -90,9 +114,9 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class1.png",
     plane_size = 720,
-    guns = {
-      [1] = { oris=-0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
-      [2] = { oris= 0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
+    mounts = {
+      [1] = { oris= 0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
+      [2] = { oris=-0.25, shift=7, layer=shared.rl_arm, grade=1, is_arm=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -124,10 +148,10 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class1-dw.png",
     plane_size = 640,
-    guns = {
-      [1] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
-      [2] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
-      [3] = { oris= 0,    shift=0, layer=shared.rl_shoulder, grade=2, is_top=true },
+    mounts = {
+      [1] = { oris= 0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
+      [2] = { oris=-0.25, shift=8, layer=shared.rl_arm, grade=0, is_arm=false },
+      [3] = { oris= 0,    shift=0, layer=shared.rl_shoulder1, grade=2, is_top=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -159,10 +183,10 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class2.png",
     plane_size = 1024,
-    guns = {
-      [1] = { oris=-0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
-      [2] = { oris= 0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
-      [3] = { oris= 0,   shift=2, layer=shared.rl_shoulder, grade=3, is_top=true },
+    mounts = {
+      [1] = { oris= 0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
+      [2] = { oris=-0.2, shift=8, layer=shared.rl_arm, grade=2, is_arm=true },
+      [3] = { oris= 0,   shift=2, layer=shared.rl_shoulder1, grade=3, is_top=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -194,10 +218,10 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class3-wb.png",
     plane_size = 800,
-    guns = {
-      [1] = { oris=-0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
-      [2] = { oris= 0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
-      [3] = { oris= 0,   shift=3,  layer=shared.rl_shoulder, grade=4, is_top=true },
+    mounts = {
+      [1] = { oris= 0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
+      [2] = { oris=-0.2, shift=10, layer=shared.rl_arm, grade=2, is_arm=true },
+      [3] = { oris= 0,   shift=3,  layer=shared.rl_shoulder1, grade=4, is_top=true },
       [4] = { oris= 0.2, shift=9,  layer=shared.rl_shoulder2, grade=1, is_top=true },
       [5] = { oris=-0.2, shift=9,  layer=shared.rl_shoulder2, grade=1, is_top=true },
     },
@@ -233,11 +257,11 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class3.png",
     plane_size = 920,
-    guns = {
-      [1] = { oris=-0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
-      [2] = { oris= 0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
-      [3] = { oris=-0.20, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
-      [4] = { oris= 0.20, shift=6, layer=shared.rl_shoulder, grade=2, is_top=true },
+    mounts = {
+      [1] = { oris= 0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
+      [2] = { oris=-0.15, shift=11, layer=shared.rl_arm, grade=3, is_arm=true },
+      [3] = { oris= 0.20, shift=6, layer=shared.rl_shoulder1, grade=2, is_top=true },
+      [4] = { oris=-0.20, shift=6, layer=shared.rl_shoulder1, grade=2, is_top=true },
     },
     aux_laser = {
       {2, 0.15},
@@ -271,12 +295,12 @@ shared.titan_type_list = {
     icon_size = 64, icon_mipmaps = 3,
     plane = shared.media_prefix.."graphics/titans/class4.png",
     plane_size = 1280,
-    guns = {
-      [1] = { oris=-0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
-      [2] = { oris= 0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
-      [3] = { oris=-0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
-      [4] = { oris= 0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
-      [5] = { oris= 0,    shift=1,  layer=shared.rl_shoulder,  grade=2, is_top=true, top_only=true },
+    mounts = {
+      [1] = { oris= 0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
+      [2] = { oris=-0.20, shift=18, layer=shared.rl_arm, grade=4, is_arm=true },
+      [3] = { oris= 0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [4] = { oris=-0.24, shift=15, layer=shared.rl_shoulder2, grade=2, is_top=true },
+      [5] = { oris= 0,    shift=1,  layer=shared.rl_shoulder1,  grade=2, is_top=true, top_only=true },
     },
     aux_laser = {
       {4, 0.15},
@@ -312,11 +336,11 @@ shared.titan_type_list = {
     plane = nil, -- TODO: here!
     plane_size = nil,
     -- TODO: add towers!
-    guns = {
-      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
-      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
-      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
-      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
+    mounts = {
+      [1] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [2] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [3] = { oris= 0.26, shift=10, layer=shared.rl_shoulder1, grade=4, is_top=true },
+      [4] = { oris=-0.26, shift=10, layer=shared.rl_shoulder1, grade=4, is_top=true },
       [5] = { oris= 0,    shift=8,  layer=shared.rl_arm, grade=3 },
       [6] = { oris= 0,    shift=0,  layer=shared.rl_shoulder2, grade=3, is_top=true, top_only=true },
     },
@@ -362,13 +386,13 @@ shared.titan_type_list = {
     plane = nil, -- TODO: here!
     plane_size = nil,
     -- TODO: add towers?
-    guns = {
-      [1] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
-      [2] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
-      [3] = { oris=-0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
-      [4] = { oris= 0.26, shift=10, layer=shared.rl_shoulder, grade=4, is_top=true },
-      [5] = { oris=-0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
-      [6] = { oris= 0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
+    mounts = {
+      [1] = { oris= 0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [2] = { oris=-0.24, shift=10, layer=shared.rl_arm, grade=5, is_arm=true },
+      [3] = { oris= 0.26, shift=10, layer=shared.rl_shoulder1, grade=4, is_top=true },
+      [4] = { oris=-0.26, shift=10, layer=shared.rl_shoulder1, grade=4, is_top=true },
+      [5] = { oris= 0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
+      [6] = { oris=-0.24, shift=8,  layer=shared.rl_shoulder2, grade=4, is_top=true, top_only=true },
     },
     aux_laser = {
       {2, 0.25},
@@ -389,4 +413,8 @@ for _, titan_type in pairs(shared.titan_type_list) do
   shared.titan_types[titan_type.class]  = titan_type
   shared.titan_types[titan_type.name]   = titan_type
   shared.titan_types[titan_type.entity] = titan_type
+end
+
+function shared.get_titan_assembly_time(titan_class_or_name)
+  return math.pow(shared.titan_types[titan_class_or_name].health /1000, 1.2) * 10
 end

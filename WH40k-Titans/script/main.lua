@@ -120,13 +120,30 @@ remote.add_interface(shared.titan_prefix.."main", {
   -- end,
 
   reverse_engineering_post_calc = function()
-    -- Increase values of the most advanced technologies
-    reveng_multiply_value(shared.frame_part, 0.5)
-    reveng_multiply_value(shared.motor, 0.75)
-    reveng_multiply_value(shared.brain, 4)
-    reveng_multiply_value(shared.antigraveng, 2)
-    reveng_multiply_value(shared.realityctrl, 3)
+    --[[
+    Adjust details prices.
+    It's tricky, RevEng assignes values dynamically,
+    and it varies a lot for different overhaul mods.
+    ]]--
+    -- Body
+    reveng_multiply_value(shared.servitor,    0.2)
+    reveng_multiply_value(shared.brain,       2.0)
+    reveng_multiply_value(shared.energy_core, 0.8)
+    reveng_multiply_value(shared.void_shield, 0.8)
+    reveng_multiply_value(shared.frame_part,  0.3)
+    reveng_multiply_value(shared.motor,       0.3)
+    -- Common
+    reveng_multiply_value(shared.antigraveng, 2.0)
+    reveng_multiply_value(shared.realityctrl, 3.0)
+    -- Weapons
+    reveng_multiply_value(shared.barrel,      0.2)
+    reveng_multiply_value(shared.proj_engine, 0.5)
+    reveng_multiply_value(shared.melta_pump,  0.5)
+    -- From the Bridge
+    -- reveng_multiply_value(afci_bridge.get.emfc().name, 1)
+    -- reveng_multiply_value(afci_bridge.get.he_emitter().name, 1)
     reveng_multiply_value(afci_bridge.get.ehe_emitter().name, 2)
+    -- reveng_multiply_value(afci_bridge.get.rocket_engine().name, 1)
     -- game.print("// WH40k RevEng Post")
   end,
 })

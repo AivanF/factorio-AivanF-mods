@@ -15,7 +15,8 @@ wc_color[shared.wc_melta]  = color_cyan
 wc_color[shared.wc_laser]  = color_gold
 wc_color[shared.wc_hell]   = color_red
 -- wc_color[shared.wc_gravy]  = color_purple
--- wc_color[shared.wc_warpm]  = color_green
+-- wc_color[shared.wc_warp]   = color_green
+wc_color[shared.wc_melee]  = color_ared
 
 
 local function try_remove_small_water(surface, position, radius)
@@ -50,7 +51,7 @@ local function far_seeing(titan_info)
     math2d.bounding_box.create_from_centre(
       math2d.position.add(
         titan_info.entity.position,
-        point_orientation_shift(titan_info.entity.orientation, 0, dst)),
+        point_orientation_shift(titan_info.entity.orientation, dst)),
       size, size)
   )
   if titan_info.class >= shared.class_warlord then
@@ -60,7 +61,7 @@ local function far_seeing(titan_info)
         math2d.bounding_box.create_from_centre(
           math2d.position.add(
             titan_info.entity.position,
-            point_orientation_shift(titan_info.entity.orientation, i/4, dst/2)),
+            point_orientation_shift(titan_info.entity.orientation + i/4, dst/2)),
           size, size)
       )
     end
@@ -102,7 +103,6 @@ local function process_single_titan(titan_info)
   if spd > 0.1 then
     oris = math.sin(tick/120 *2*math.pi) * 0.02 * spd/0.3 / (1+class/20)
   end
-  titan_info.oris = oris
   local shadow_shift = {2 * (1+0.1*class), 1}
   titan_info.position = titan_info.entity.position
 
@@ -123,13 +123,13 @@ local function process_single_titan(titan_info)
     x_scale=1, y_scale=1, render_layer=shared.rl_body,
     time_to_live=visual_ttl,
     surface=surface, target=entity, target_offset={0, 0},
-    orientation=ori+oris,
+    orientation=ori+titan_info.oris,
   }
   rendering.draw_light{
     sprite=shared.mod_prefix.."light", scale=7+0.5*class,
     intensity=1.5+0.1*class, minimum_darkness=0,
     time_to_live=visual_ttl,
-    surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 6)),
+    surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 6)),
   }
 
   if not titan_info.aux_laser then
@@ -138,10 +138,12 @@ local function process_single_titan(titan_info)
   end
   for k, shift in ipairs(titan_type.aux_laser) do
     if titan_info.aux_laser[k] then
-      -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1]))
-      titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], 0, shift[1])))
+      -- titan_info.aux_laser[k].position = math2d.position.add(entity.position, point_orientation_shift(shift[2], shift[1]))
+      titan_info.aux_laser[k].teleport(math2d.position.add(entity.position, point_orientation_shift(shift[2], shift[1])))
     end
   end
+  -- Save after drawing, so that weapons can affect body's oris
+  titan_info.oris = oris
 
 
   ----- Void Shield
@@ -149,14 +151,14 @@ local function process_single_titan(titan_info)
   local max_shield = lib_ttn.get_unit_shield_max_capacity(titan_info)
   titan_info.shield = math.min((titan_info.shield or 0) + get_shield_recharge_speed(entity.force) * max_shield /shield_fill_time, max_shield)
 
-  -- Main visual
+  -- Shield's main visual
   local sc = 0.75 + 0.03*class
   if titan_info.shield > 100 then
     rendering.draw_sprite{
       sprite=shared.mod_prefix.."shield",
       x_scale=sc, y_scale=sc, render_layer=shared.rl_shield,
       time_to_live=visual_ttl,
-      surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 0, 2)),
+      surface=surface, target=math2d.position.add(entity.position, point_orientation_shift(ori, 2)),
     }
   end
 
@@ -184,35 +186,66 @@ local function process_single_titan(titan_info)
 
 
   ----- The Guns
-  local weapon_type, gunpos, cannon
+  local weapon_type, armpos, gunpos, cannon
   local for_whom = list_players({entity.get_driver(), entity.get_passenger()})
-  for k, mounting in ipairs(titan_type.guns) do
-    cannon = titan_info.guns[k]
+  for wi, mounting in ipairs(titan_type.mounts) do
+    cannon = titan_info.guns[wi]
     weapon_type = shared.weapons[cannon.name]
     if mounting.is_top then
-      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori+oris, mounting.oris, mounting.shift))
+      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori+oris + mounting.oris, mounting.shift))
     else
-      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori,      mounting.oris, mounting.shift))
+      gunpos = math2d.position.add(entity.position, point_orientation_shift(ori      + mounting.oris, mounting.shift))
     end
-    lib_ttn.wc_control[weapon_type.category](entity, titan_type, k, cannon, gunpos, weapon_type, ori, tick)
+
+    if weapon_type.on_arm then
+      cannon.armpos = gunpos
+      gunpos = math2d.position.add(cannon.armpos, point_orientation_shift(ori +cannon.oris/2 -(cannon.base_oris or 0), shared.titan_arm_length))
+    end
+
+    lib_ttn.wc_control[weapon_type.category](titan_info, titan_type, wi, cannon, gunpos, weapon_type, ori, tick)
     cannon.position = gunpos
 
-    rendering.draw_animation{
-      animation=weapon_type.animation,
-      x_scale=1, y_scale=1, render_layer=mounting.layer,
-      time_to_live=visual_ttl,
-      surface=surface,
-      target=gunpos,
-      orientation=ori-oris/2 + cannon.oris,
-    }
-    if #for_whom > 0 then
-      rendering.draw_circle{
-        color=wc_color[weapon_type.category] or color_default_dst,
-        radius=lib_ttn.calc_max_dst(cannon, entity.force, titan_type, k, weapon_type) *0.95,
-        filled=false, width=10+0.5*class, time_to_live=visual_ttl,
-        surface=surface, target=gunpos, players=for_whom, --forces={entity.force},
-        draw_on_ground=false, only_in_alt_mode=true,
+    if cannon.entity == nil then
+      rendering.draw_animation{
+        animation=weapon_type.animation,
+        x_scale=1, y_scale=1, render_layer=mounting.layer,
+        time_to_live=visual_ttl,
+        surface=surface,
+        target=gunpos,
+        orientation=ori-oris/2 + cannon.oris +(cannon.base_oris or 0)/2,
       }
+      if weapon_type.on_arm then
+        rendering.draw_animation{
+          animation=shared.mod_prefix.."Arm",
+          x_scale=1, y_scale=1, render_layer=mounting.layer, -- Hopefuly, arm should be upper
+          time_to_live=visual_ttl,
+          surface=surface,
+          target=cannon.armpos,
+          orientation=ori-oris/2 + cannon.oris/2 -(cannon.base_oris or 0),
+        }
+      end
+    end
+
+    if #for_whom > 0 and wc_color[weapon_type.category] then
+      if weapon_type.max_dst then
+        rendering.draw_circle{
+          color=wc_color[weapon_type.category],
+          radius=lib_ttn.calc_max_dst(cannon, entity.force, titan_type, wi, weapon_type) *0.95,
+          filled=false, width=10+0.5*class, time_to_live=visual_ttl,
+          surface=surface, target=gunpos, players=for_whom, --forces={entity.force},
+          draw_on_ground=false, only_in_alt_mode=true,
+        }
+      elseif weapon_type.medium_length then
+        rendering.draw_arc{
+          color=wc_color[weapon_type.category],
+          min_radius=weapon_type.medium_length-1,
+          max_radius=weapon_type.medium_length+1,
+          start_angle=orientation_to_radians(ori-oris/2+(cannon.base_oris or 0)/2) - weapon_type.arc_angle/2,
+          angle=weapon_type.arc_angle,
+          surface=surface, target=gunpos, time_to_live=visual_ttl, players=for_whom, --forces={entity.force},
+          draw_on_ground=false, only_in_alt_mode=true,
+        }
+      end
     end
     -- TODO: add weapons shadow
   end
@@ -235,10 +268,10 @@ local function process_single_titan(titan_info)
       local foot_oris, foot_shift
       if entity.speed < 0 then
         foot_oris = 0.4 * (titan_info.foot_rot and -1 or 1)
-        foot_shift = 6 + class/10
+        foot_shift = 6 + class/8
       else
         foot_oris = 0.1 * (titan_info.foot_rot and -1 or 1)
-        foot_shift = 8 + class/10
+        foot_shift = 8 + class/8
       end
       if class < 20 then
         img = shared.mod_prefix.."foot-small"
@@ -247,11 +280,11 @@ local function process_single_titan(titan_info)
         img = shared.mod_prefix.."foot-big"
         sc = (class+5) /20
       end
-      local foot_pos = math2d.position.add(entity.position, point_orientation_shift(ori, foot_oris, foot_shift))
+      local foot_pos = math2d.position.add(entity.position, point_orientation_shift(ori + foot_oris, foot_shift))
       if not titan_type.over_water then
         local earty_radius = 5 + class*0.1
         try_remove_small_water(surface, foot_pos, earty_radius)
-        try_remove_small_water(surface, math2d.position.add(entity.position, point_orientation_shift(ori, 0, foot_shift)), earty_radius)
+        try_remove_small_water(surface, math2d.position.add(entity.position, point_orientation_shift(ori, foot_shift)), earty_radius)
       end
       foot = surface.create_entity{
         name=titan_type.foot, force="neutral", position=foot_pos,
@@ -290,7 +323,7 @@ local function process_single_titan(titan_info)
         animation=img, x_scale=sc, y_scale=sc,
         render_layer=shared.rl_track, time_to_live=5*UPS,
         surface=surface,
-        target=math2d.position.add(entity.position, point_orientation_shift(ori, 0.25 * (titan_info.track_rot and 1 or -1), 4+0.1*titan_info.class)),
+        target=math2d.position.add(entity.position, point_orientation_shift(ori + 0.25 * (titan_info.track_rot and 1 or -1), 4+0.1*titan_info.class)),
         target_offset={3, 0}, orientation=ori-oris/2,
       }
     end

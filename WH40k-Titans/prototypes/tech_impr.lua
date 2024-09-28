@@ -3,7 +3,7 @@ local shared = require("shared")
 local tech_researches = {}
 
 local exc_speed_levels = {
-  [1] = 2,
+  [1] = 10,
   [2] = 20,
   [3] = 50,
   [4] = 100,
@@ -66,11 +66,11 @@ end
 
 
 local exc_efficiency_levels = {
-  [1] = 3,
-  [2] = 30,
+  [1] = 10,
+  [2] = 50,
   [3] = 100,
-  [4] = 150,
-  [5] = 250,
+  [4] = 200,
+  [5] = 500,
 }
 for k, price in pairs(exc_efficiency_levels) do
   local technology =
@@ -127,11 +127,12 @@ end
 
 
 local assembly_speed_research_prices = {
-  [1] = 10,
-  [2] = 25,
-  [3] = 50,
-  [4] = 100,
-  [5] = 250,
+  [1] = 25,
+  [2] = 50,
+  [3] = 100,
+  [4] = 250,
+  [5] = 500,
+  [6] = 700,
 }
 for k, price in pairs(assembly_speed_research_prices) do
   local technology =
@@ -354,7 +355,7 @@ end
 
 
 local supplier_cap_research_prices = {
-  [1] = 10,
+  [1] = 20,
   [2] = 50,
   [3] = 100,
 }

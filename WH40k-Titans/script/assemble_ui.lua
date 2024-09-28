@@ -98,25 +98,25 @@ function gui_maker.prepare_assembly(assembler, main_frame)
     titan_type = shared.titan_types[assembler.class_recipe]
   end
   filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 0, 3)
-  for k = 1, 6 do
+  for wi = 1, 6 do
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",
-      elem_filters=filters, recipe=assembler.weapon_recipes[k],
+      elem_filters=filters, recipe=assembler.weapon_recipes[wi],
       tags={action=act_set_weapon, k=k },
     }
-    weapon_type = assembler.weapon_recipes[k] and shared.weapons[assembler.weapon_recipes[k]]
+    weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
     if titan_type then
-      if not titan_type.guns[k] and not weapon_type then
+      if not titan_type.mounts[wi] and not weapon_type then
         btn.tooltip = {"WH40k-Titans-gui.assembly-blocked-weapon"}
       end
       -- TODO: highlight errors with some colors/styles?
-      if titan_type.guns[k] and not weapon_type then
+      if titan_type.mounts[wi] and not weapon_type then
         btn.tooltip = {"WH40k-Titans-gui.assembly-er-weapon-missing"}
       end
-      if weapon_type and not titan_type.guns[k] then
+      if weapon_type and not titan_type.mounts[wi] then
         btn.tooltip = {"WH40k-Titans-gui.assembly-er-extra-weapon"}
       else
-        local error = lib_asmb.check_weapon_is_appropriate(titan_type, k, weapon_type)
+        local error = lib_asmb.check_weapon_is_appropriate(titan_type, wi, weapon_type)
         -- nil value gets considered as a string :(
         if error then btn.tooltip = error end
       end
@@ -145,10 +145,10 @@ function gui_maker.assembling(assembler, main_frame)
     tooltip={"entity-name."..assembler.class_recipe},
   }
   for k = 1, 6 do
-    if assembler.weapon_recipes[k] then
+    if assembler.weapon_recipes[wi] then
       line.add{
-        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[k]),
-        tooltip={"item-name."..assembler.weapon_recipes[k]},
+        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[wi]),
+        tooltip={"item-name."..assembler.weapon_recipes[wi]},
       }
     end
   end
@@ -172,10 +172,10 @@ function gui_maker.disassembling(assembler, main_frame)
     tooltip={"entity-name."..assembler.class_recipe},
   }
   for k = 1, 6 do
-    if assembler.weapon_recipes[k] then
+    if assembler.weapon_recipes[wi] then
       line.add{
-        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[k]),
-        tooltip={"item-name."..assembler.weapon_recipes[k]},
+        type="sprite-button", sprite=("recipe/"..assembler.weapon_recipes[wi]),
+        tooltip={"item-name."..assembler.weapon_recipes[wi]},
       }
     end
   end

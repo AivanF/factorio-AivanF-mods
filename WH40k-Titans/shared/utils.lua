@@ -98,6 +98,14 @@ function deep_get(obj, keys)
   return obj
 end
 
+function dict_from_keys_list(keys, value)
+  local result = {}
+  for _, name in ipairs(keys) do
+    result[name] = value
+  end
+  return result
+end
+
 
 
 -- Long live the Functional programming!
@@ -178,7 +186,6 @@ function func_maps(func, args_arrays)
 end
 
 
-
 function shorten_number(value)
   if value > 1000000000 then
     value = value/1000000000
@@ -209,10 +216,41 @@ function shorten_number(value)
   end
 end
 
+
+function beautify_time(seconds)
+  -- return util.formattime(seconds * UPS)
+  if seconds <= 0 then
+    return "0"
+  else
+    local days = math.floor(seconds /3600 /24)
+    seconds = seconds - days *3600 *24
+    local hours = math.floor(seconds /3600)
+    seconds = seconds - hours *3600
+    local mins = math.floor(seconds /60)
+    seconds = seconds - mins *60
+    local secs = math.floor(seconds)
+    local h = string.format("%02.f",hours);
+    local m = string.format("%02.f", mins);
+    local s = string.format("%02.f", secs);
+    if days > 0 then
+      return days..":"..h..":"..m..":"..s
+    elseif hours > 0 then
+      return h..":"..m..":"..s
+    elseif mins > 0 then
+      return m..":"..s
+    else
+      return s
+    end
+  end
+end
+
+
+-- https://lua-api.factorio.com/latest/concepts.html#Color
 color_default_dst = {1,1,1}
 color_gold    = {255, 220,  50}
 color_orange  = {255, 160,  50}
 color_red     = {200,  20,  20}
+color_ared    = {255,   0,   0, 64}
 color_blue    = { 70, 120, 230}
 color_purple  = {200,  20, 200}
 color_green   = {20,  120,  20}
@@ -221,7 +259,7 @@ color_ltgrey  = {160, 160, 160}
 color_dkgrey  = { 60,  60,  60}
 
 technomagic_resistances = {
-  { type = "impact", decrease=10000, percent=100 },
+  { type = "impact", percent=100 },
   { type = "physical", percent=100 },
   { type = "explosion", percent=100 },
   { type = "laser", percent = 100 },
@@ -231,12 +269,12 @@ technomagic_resistances = {
   { type = "poison", percent=100 },
 }
 strong_resistances = {
-  { type = "impact", decrease=1000, percent=100 },
-  { type = "poison", decrease=1000, percent=100 },
-  { type = "fire", decrease=1000, percent=100 },
+  { type = "impact", percent=100 },
+  { type = "poison", percent=100 },
+  { type = "fire", percent=100 },
   { type = "laser", decrease=50, percent=50 },
   { type = "electric", decrease=50, percent=50 },
   { type = "physical", decrease=50, percent=50 },
-  { type = "explosion", decrease=50, percent=50 },
+  { type = "explosion", decrease=200, percent=50 },
   { type = "acid", decrease=50, percent=50 },
 }

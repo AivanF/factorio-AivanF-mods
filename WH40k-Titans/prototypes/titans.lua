@@ -25,12 +25,14 @@ for _, titan_type in ipairs(shared.titan_type_list) do
   local icon_mipmaps = titan_type.icon_mipmaps
   local place_result = titan_type.plane and name or shared.titan_prefix..shared.titan_warhound
   local about_guns = ""
-  for k, gun in ipairs(titan_type.guns) do
-    about_guns = about_guns.." "..(gun.is_arm and "H" or gun.top_only and "A" or gun.is_top and "T" or "C")..gun.grade
+  for wi, mounting in ipairs(titan_type.mounts) do
+    about_guns = about_guns.." "..(mounting.is_arm and "H" or mounting.top_only and "A" or mounting.is_top and "T" or "C")..mounting.grade
   end
   local description = {
     "",
     titan_type.available and {"entity-description."..name} or {"item-description.wh40k-titans-not-yet"},
+    " ",
+    {"entity-description.wh40k-titans-time", beautify_time(shared.get_titan_assembly_time(name))},
     " ",
     {"entity-description.wh40k-titans-pattern", about_guns},
   }
@@ -79,7 +81,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       flags = {
         "placeable-neutral", "player-creation", "placeable-off-grid",
         "no-automated-item-removal", "no-automated-item-insertion",
-        "not-repairable",
+        "not-flammable", "not-repairable",
       },
       minable = minable_titans and {mining_time = 1.5, result = name} or nil,
       energy_per_hit_point = 0.05,
@@ -137,6 +139,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
   })
 end
 
+
 local foot_size_1 = 2.5
 local foot_size_2 = 5
 -- Dummy icon for foots
@@ -144,6 +147,7 @@ local titan_type = shared.titan_types[shared.class_warhound]
 local icon = titan_type.icon
 local icon_size = titan_type.icon_size
 local icon_mipmaps = titan_type.icon_mipmaps
+
 
 data:extend({
   {
@@ -163,7 +167,7 @@ data:extend({
             {
               type = "damage",
               vaporize = false,
-              damage = {amount = 500, type = "impact"}
+              damage = {amount = 500, type = shared.step_damage}
             },
           }
         }
@@ -187,7 +191,7 @@ data:extend({
             {
               type = "damage",
               vaporize = false,
-              damage = {amount = 1000, type = "impact"}
+              damage = {amount = 1000, type = shared.step_damage}
             },
           }
         }
@@ -315,3 +319,48 @@ data:extend({
     },
   },
 })
+
+
+-- -- local arty = table.deepcopy(data.raw["artillery-turret"]["artillery-turret"])
+-- local arty = table.deepcopy(data.raw["ammo-turret"]["mortar-turret"])
+
+-- arty.name = shared.arty
+-- arty.ammo_stack_limit = shared.arty_invsz
+-- arty.flags = {
+--   "placeable-neutral", "placeable-off-grid", "hidden",
+--   "no-automated-item-removal",
+--   "no-automated-item-insertion",
+-- }
+-- arty.collision_mask = {}
+-- -- arty.manual_range_modifier = 1.5 * arty.manual_range_modifier
+-- -- arty.turret_rotation_speed = 2 * arty.turret_rotation_speed
+-- arty.minable = nil
+-- arty.fast_replaceable_group = nil
+-- arty.selectable_in_game = shared.debug_mod
+
+-- arty.integration_patch = nil
+-- -- arty.base_picture = nil
+-- arty.folded_animation = table.deepcopy(data.raw["artillery-turret"]["artillery-turret"].cannon_barrel_pictures)
+-- table.extend(arty.folded_animation.layers, table.deepcopy(data.raw["artillery-turret"]["artillery-turret"].cannon_base_pictures.layers))
+-- arty.folded_animation.layers[1].slice = 4
+-- arty.folded_animation.layers[1].hr_version.slice = 4
+-- arty.folded_animation.layers[2].slice = 4
+-- arty.folded_animation.layers[2].hr_version.slice = 4
+-- arty.folded_animation.layers[3].slice = 4
+-- arty.folded_animation.layers[3].hr_version.slice = 4
+-- arty.folded_animation.layers[4].slice = 4
+-- arty.folded_animation.layers[4].hr_version.slice = 4
+-- arty.base_picture_render_layer = shared.rl_shoulder2_name
+-- arty.gun_animation_render_layer = shared.rl_shoulder3_name
+
+-- arty.alert_when_attacking = false
+-- arty.rotation_speed = 0.01
+-- arty.attack_parameters.turn_range = 1
+-- arty.attack_parameters.cooldown = 60 * 3
+-- arty.attack_parameters.range = 7 * 32
+-- arty.attack_parameters.min_range = 2 * 32
+-- arty.attack_parameters.projectile_creation_distance = 2.5
+-- arty.attack_parameters.ammo_category = "artillery-shell"
+
+-- data:extend({ arty })
+

@@ -80,12 +80,19 @@ local function create_titan_gui(player, titan_info)
     }
   end
   for k, cannon in pairs(titan_info.guns) do
-    guiobj.guns[k].ammo = guiobj.weapon_table.add{
-      type="sprite-button", sprite=("item/"..shared.weapons[cannon.name].ammo),
-      tooltip={"item-name."..shared.weapons[cannon.name].ammo},
-      -- show_percent_for_small_numbers=true,
-      tags={action=action_toggle_ammo_count},
-    }
+    if shared.weapons[cannon.name].ammo then
+      guiobj.guns[k].ammo = guiobj.weapon_table.add{
+        type="sprite-button", sprite=("item/"..shared.weapons[cannon.name].ammo),
+        tooltip={"item-name."..shared.weapons[cannon.name].ammo},
+        -- show_percent_for_small_numbers=true,
+        tags={action=action_toggle_ammo_count},
+      }
+    else
+      guiobj.guns[k].ammo = guiobj.weapon_table.add{
+        type="sprite-button", sprite="virtual-signal/signal-red",
+        -- tooltip={"item-name."..shared.weapons[cannon.name].ammo}, -- TODO: show "no ammo usage"
+      }
+    end
   end
   for k, cannon in pairs(titan_info.guns) do
     guiobj.guns[k].mode = guiobj.weapon_table.add{
@@ -165,10 +172,12 @@ local function update_guis()
         if guiobj.guns[k].img.toggled ~= nil then
           guiobj.guns[k].img.toggled = still_cd or (cannon.target ~= nil) and (tick < cannon.ordered + lib_ttn.order_ttl)
         end
-        if player_settings.percent_ammo then
-          guiobj.guns[k].ammo.number = math.floor(100 *(cannon.ammo_count or 0) /shared.weapons[cannon.name].inventory)
-        else
-          guiobj.guns[k].ammo.number = cannon.ammo_count or 0
+        if shared.weapons[cannon.name].ammo then
+          if player_settings.percent_ammo then
+            guiobj.guns[k].ammo.number = math.floor(100 *(cannon.ammo_count or 0) /shared.weapons[cannon.name].inventory)
+          else
+            guiobj.guns[k].ammo.number = cannon.ammo_count or 0
+          end
         end
         if guiobj.titan_info.guns[k].ai then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-info"

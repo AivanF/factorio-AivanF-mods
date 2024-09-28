@@ -6,7 +6,7 @@ collision_mask_util_extended = require("cmue.collision-mask-util-control")
 UPS = 60
 
 heavy_debugging = false
--- heavy_debugging = true
+heavy_debugging = true
 
 bucks = {}
 
@@ -96,6 +96,15 @@ function merge_ingredients_doubles(ingredients)
   return result
 end
 
+function orientation_to_radians(ori)
+  -- https://lua-api.factorio.com/latest/concepts.html#RealOrientation
+  --[[
+  The smooth orientation is a float in the range [0, 1), starting at the top and going clockwise.
+  This means a value of 0 indicates "north", a value of 0.5 indicates "south".
+  ]]--
+  return (ori-0.25) * 2 * math.pi
+end
+
 function points_to_orientation(a, b)
   return 0.25 +math.atan2(b.y-a.y, b.x-a.x) /math.pi /2
 end
@@ -106,8 +115,8 @@ function orientation_diff(src, dst)
   return dst - src
 end
 
-function point_orientation_shift(ori, oris, length)
-  ori = -ori -oris +0.25
+function point_orientation_shift(ori, length)
+  ori = -ori +0.25
   ori = ori * 2 * math.pi
   return {length*math.cos(ori), -length*math.sin(ori)}
 end
@@ -155,33 +164,6 @@ function list_players(values)
     end
   end
   return result
-end
-
-function beautify_time(seconds)
-  -- return util.formattime(seconds * UPS)
-  if seconds <= 0 then
-    return "0"
-  else
-    local days = math.floor(seconds /3600 /24)
-    seconds = seconds - days *3600 *24
-    local hours = math.floor(seconds /3600)
-    seconds = seconds - hours *3600
-    local mins = math.floor(seconds /60)
-    seconds = seconds - mins *60
-    local secs = math.floor(seconds)
-    local h = string.format("%02.f",hours);
-    local m = string.format("%02.f", mins);
-    local s = string.format("%02.f", secs);
-    if days > 0 then
-      return days..":"..h..":"..m..":"..s
-    elseif hours > 0 then
-      return h..":"..m..":"..s
-    elseif mins > 0 then
-      return m..":"..s
-    else
-      return s
-    end
-  end
 end
 
 math2d.bounding_box.random_point = function(box)

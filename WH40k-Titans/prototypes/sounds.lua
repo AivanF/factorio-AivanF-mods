@@ -1,8 +1,12 @@
 local shared = require("shared")
 
-data:extend({
+local dst_cf = settings.startup["wh40k-titans-sounds-dst"].value
+local vol_cf = settings.startup["wh40k-titans-sounds-vol"].value
+
+local to_add = {
   -- https://wiki.factorio.com/Prototype/Sound
   -- https://lua-api.factorio.com/latest/Concepts.html#SoundPath
+  -- audible_distance_modifier = 1 means 40 tiles
 
 
 
@@ -30,7 +34,7 @@ data:extend({
       {filename=shared.media_prefix.."sounds/random-work/add-5.wav"},
       {filename=shared.media_prefix.."sounds/random-work/add-6.wav"},
     },
-    audible_distance_modifier = 5,
+    audible_distance_modifier = 3,
   },
 
 
@@ -222,4 +226,22 @@ data:extend({
     },
     audible_distance_modifier = 4,
   },
-})
+  {
+    type = "sound",
+    name = "wh40k-titans-chainsword",
+    category = "environment",
+    variations = {
+      {filename=shared.media_prefix.."sounds/weapons/chainsword-1.wav"},
+      {filename=shared.media_prefix.."sounds/weapons/chainsword-2.wav"},
+    },
+    audible_distance_modifier = 2,
+  },
+}
+
+for _, obj in pairs(to_add) do
+  for _, row in pairs(obj.variations or {}) do
+    row.volume = (obj.volume or 1) * (row.volume or 1) * vol_cf
+  end
+end
+
+data:extend(to_add)

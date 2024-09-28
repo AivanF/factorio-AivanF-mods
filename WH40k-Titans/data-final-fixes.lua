@@ -1,5 +1,7 @@
 local shared = require("shared")
 
+require("prototypes/fixes-resist")
+
 --[[
 		Fix SE procedural updating
 		Although `se_prodecural_tech_exclusions` works,

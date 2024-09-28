@@ -1,4 +1,5 @@
 local shared = require("shared")
+local misc = require("prototypes.misc")
 local sounds = require("__base__.prototypes.entity.sounds")
 local fireutil = require("__base__.prototypes.fire-util")
 
@@ -7,6 +8,11 @@ local function find_sound(name)
 end
 
 data:extend({
+  {
+    type = "damage-type",
+    name = shared.step_damage,
+    hidden = true,
+  },
   {
     type = "custom-input",
     name = shared.mod_prefix.."attack-1",
@@ -30,6 +36,160 @@ data:extend({
     name = shared.mod_prefix.."attack-4",
     key_sequence = "V",
     action = "lua",
+  },
+
+  {
+    type = "projectile",
+    name = shared.mod_prefix.."bolt-melee",
+    flags = {"not-on-map"},
+    acceleration = 0.01,
+    turn_speed = 0.1,
+    action = {
+      {
+        type = "direct",
+        action_delivery = {
+          type = "instant",
+          target_effects = {
+            {
+              type = "destroy-decoratives",
+              include_soft_decoratives = true,
+              include_decals = true,
+              invoke_decorative_trigger = true,
+              decoratives_with_trigger_only = false,
+              radius = 1
+            },
+            -- {
+            --   type = "create-entity",
+            --   entity_name = "medium-scorchmark",
+            --   offsets = {{ 0, 0 }},
+            --   check_buildability = true
+            -- },
+            {
+              type = "create-entity",
+              -- entity_name = "medium-explosion"
+              entity_name = "explosion"
+            },
+          }
+        }
+      },
+      {
+        type = "area",
+        radius = 6,
+        ignore_collision_condition = true,
+        action_delivery = {
+          type = "instant",
+          target_effects = {
+            {
+              type = "damage",
+              lower_distance_threshold = 6,
+              upper_distance_threshold = 3,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "impact"}
+            },
+            {
+              type = "damage",
+              lower_distance_threshold = 6,
+              upper_distance_threshold = 3,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "physical"}
+            },
+          }
+        }
+      },
+    },
+    animation = misc.empty_sprite,
+  },
+
+  {
+    type = "projectile",
+    name = shared.mod_prefix.."bolt-melee-energy",
+    flags = {"not-on-map"},
+    acceleration = 0.01,
+    turn_speed = 0.1,
+    action = {
+      {
+        type = "direct",
+        action_delivery = {
+          type = "instant",
+          target_effects = {
+            {
+              type = "destroy-decoratives",
+              include_soft_decoratives = true,
+              include_decals = true,
+              invoke_decorative_trigger = true,
+              decoratives_with_trigger_only = false,
+              radius = 2
+            },
+            -- {
+            --   type = "create-entity",
+            --   entity_name = "medium-scorchmark",
+            --   offsets = {{ 0, 0 }},
+            --   check_buildability = true
+            -- },
+            {
+              type = "create-entity",
+              -- entity_name = "medium-explosion"
+              entity_name = "explosion"
+            },
+          }
+        }
+      },
+      {
+        type = "area",
+        radius = 7,
+        ignore_collision_condition = true,
+        action_delivery = {
+          type = "instant",
+          target_effects = {
+            {
+              type = "damage",
+              lower_distance_threshold = 7,
+              upper_distance_threshold = 3,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "impact"}
+            },
+            {
+              type = "damage",
+              lower_distance_threshold = 7,
+              upper_distance_threshold = 3,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "physical"}
+            },
+            {
+              type = "damage",
+              lower_distance_threshold = 7,
+              upper_distance_threshold = 4,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "electric"}
+            },
+            {
+              type = "damage",
+              lower_distance_threshold = 7,
+              upper_distance_threshold = 4,
+              lower_damage_modifier = 1,
+              upper_damage_modifier = 0.2,
+              damage = {amount = 10000, type = "explosion"}
+            },
+          }
+        }
+      },
+    },
+    animation = {
+      filename=shared.media_prefix.."graphics/fx/Plasma.png",
+      draw_as_glow = true,
+      frame_count = 1,
+      line_length = 1,
+      width = 320,
+      height = 320,
+      scale = 0.5,
+      shift = {0, 0},
+      priority = "high"
+    },
   },
 
   {
@@ -1514,6 +1674,7 @@ data:extend({
     }
   },
 })
+
 
 local fire = table.deepcopy(data.raw["fire"]["fire-flame"])
 fire.name = "titanic-fire-flame"

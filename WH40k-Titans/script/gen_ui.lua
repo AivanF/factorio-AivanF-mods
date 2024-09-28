@@ -210,10 +210,12 @@ row_updater.ttn = function (row_info, player_settings)
   -- TODO: show red icon if hp/vs is low
 
   for k, cannon in pairs(titan_info.guns) do
-    if player_settings.percent_ammo then
-      row_info.cells["gun"..k].viz.number = math.floor(100 *(cannon.ammo_count or 0) /shared.weapons[cannon.name].inventory)
-    else
-      row_info.cells["gun"..k].viz.number = cannon.ammo_count or 0
+    if shared.weapons[cannon.name].ammo then
+      if player_settings.percent_ammo then
+        row_info.cells["gun"..k].viz.number = math.floor(100 *(cannon.ammo_count or 0) /shared.weapons[cannon.name].inventory)
+      else
+        row_info.cells["gun"..k].viz.number = cannon.ammo_count or 0
+      end
     end
   end
 end

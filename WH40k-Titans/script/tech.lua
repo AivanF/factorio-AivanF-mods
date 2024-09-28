@@ -6,8 +6,8 @@ local function reset_weapon_max_dst_cache(force)
   for unit_number, titan_info in pairs(ctrl_data.titans) do
     if force == nil or titan_info.force == force then
       titan_type = shared.titan_types[titan_info.class]
-      for k, _ in ipairs(titan_type.guns) do
-        cannon = titan_info.guns[k]
+      for wi, _ in ipairs(titan_type.mounts) do
+        cannon = titan_info.guns[wi]
         cannon.cached_dst = nil
       end
     end

@@ -292,6 +292,8 @@ data:extend({
       {"steel-plate", 100},
       {"processing-unit", 100},
     },
+    allow_productivity = true,
+    afci_bridged = true,
     energy_required = 10,
     result = shared.lab,
   },

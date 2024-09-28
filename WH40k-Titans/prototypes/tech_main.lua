@@ -50,7 +50,7 @@ local tech_researches = {
     },
     prerequisites = {shared.mod_prefix.."base"},
     unit = {
-      count = 10,
+      count = 25,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
@@ -122,7 +122,7 @@ local tech_researches = {
     },
     prerequisites = {shared.mod_prefix.."0-grade"},
     unit = {
-      count = 5,
+      count = 35,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
@@ -142,9 +142,9 @@ local tech_researches = {
     },
     prerequisites = {shared.mod_prefix.."3-grade"},
     unit = {
-      count = 5,
+      count = 50,
       ingredients = {{shared.sp, 3}},
-      time = 60
+      time = 90
     },
   },
 
@@ -169,7 +169,7 @@ local tech_researches = {
       afci_bridge.get.rocket_engine().prerequisite,
     },
     unit = {
-      count = 50,
+      count = 75,
       ingredients = {{shared.sp, 1}},
       time = 60
     },
