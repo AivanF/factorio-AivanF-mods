@@ -1,4 +1,19 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.35
+Date: 2024-09-29
+  Balancing:
+    - Friendly fire on Titans now deals only 35% of damage, adjustable with startup settings.
+    - Void shields now pass 80% of melee damage! Also adjustable with startup settings.
+  Bugfixes:
+    - In previous release, I forgot to disable debug mode in the code, which adds technical info and makes some processes really fast. To prevent such cases, now debug flags are set by runtime/map settings. In addition, this allows players to help debuging the mod!
+    - Silenced a reported error of Reverse-Engineering integration, as I couldn't reproduce it to solve properly, I guess it's due to some special mods, but now it can be explored with more details using mentioned settings.
+    - Assembly Bunker wasn't showing last 2 weapons grades, even if they are researched. Sad that nobody noticed and reported it!
+  Info:
+    - Better info for weapons that don't use ammo (like ChainSword) in the Titan Dashboard.
+    - More tooltips in all the dashboards.
+    - Informatron: I shared more knowledge about weapons in the "Lore" section and about God-mode possibilities in the "Misc" section.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.34
 Date: 2024-09-28
   Features:

@@ -26,12 +26,12 @@ end
 
 function gui_maker.initialising(assembler, main_frame)
   main_frame.status_line.add{type="sprite-button", index=1, tags={action=act_change_state, state=states.deactivating, need_confirm=true}, sprite="virtual-signal/"..shared.mod_prefix.."signal-close", tooltip={"WH40k-Titans-gui.assembly-act-cancel"} }
-  main_frame.main_room.add{ type="progressbar", name=main_frame_init_progress, direction="horizontal", value=assembler.init_progress/lib_asmb.bunker_init_time }
+  main_frame.main_room.add{ type="progressbar", name=main_frame_init_progress, direction="horizontal", value=assembler.init_progress/lib_asmb.get_bunker_init_time() }
 end
 
 
 function gui_maker.deactivating(assembler, main_frame)
-  main_frame.main_room.add{ type="progressbar", name=main_frame_init_progress, direction="horizontal", value=assembler.init_progress/lib_asmb.bunker_init_time }
+  main_frame.main_room.add{ type="progressbar", name=main_frame_init_progress, direction="horizontal", value=assembler.init_progress/lib_asmb.get_bunker_init_time() }
 end
 
 
@@ -97,7 +97,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
   if assembler.class_recipe then
     titan_type = shared.titan_types[assembler.class_recipe]
   end
-  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 0, 3)
+  filters = get_category_filters_by_research(player, shared.craftcat_weapon, "-grade", 0, 5)
   for wi = 1, 6 do
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",
@@ -230,16 +230,16 @@ local function create_assembly_gui(player, assembler)
   pusher.style.maximal_height = 24
   flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
 
-  if heavy_debugging then
-    local tf = main_frame.add{ type="text-box", name="debugging",
-      text=table.concat(func_map(serpent.line, {
-        {"wentity", assembler.wentity},
-        {"is it valid", assembler.wentity and assembler.wentity.valid},
-        {"sentity", assembler.sentity},
-        {"is it valid", assembler.sentity and assembler.sentity.valid},
-      }), "\n") }
-    tf.style.minimal_width = 256
-  end
+  -- if settings.global["wh40k-titans-debug-info"].value then
+  --   local tf = main_frame.add{ type="text-box", name="debugging",
+  --     text=table.concat(func_map(serpent.line, {
+  --       {"wentity", assembler.wentity},
+  --       {"is it valid", assembler.wentity and assembler.wentity.valid},
+  --       {"sentity", assembler.sentity},
+  --       {"is it valid", assembler.sentity and assembler.sentity.valid},
+  --     }), "\n") }
+  --   tf.style.minimal_width = 256
+  -- end
 
   main_frame.add{ type="flow", name="status_line", direction="horizontal" }
   main_frame.add{ type="flow", name="main_room", direction="vertical" }

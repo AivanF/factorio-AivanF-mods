@@ -92,8 +92,15 @@ local function on_any_remove(event)
 end
 
 
-local function reveng_multiply_value(item_name, cf)
+local function reveng_multiply_value(item_name, cf, silent)
     local item_info = remote.call("reverse_labs", "get_item", item_name)
+    if item_info == nil then
+      if not silent and settings.global["wh40k-titans-debug-info"].value then
+        error(serpent.line({item_name=item_name}))
+      else
+        return
+      end
+    end
     item_info.price = item_info.price * cf
     item_info.prob = item_info.prob * cf
     remote.call("reverse_labs", "add_override_item", item_name, item_info)
@@ -133,8 +140,8 @@ remote.add_interface(shared.titan_prefix.."main", {
     reveng_multiply_value(shared.frame_part,  0.3)
     reveng_multiply_value(shared.motor,       0.3)
     -- Common
-    reveng_multiply_value(shared.antigraveng, 2.0)
-    reveng_multiply_value(shared.realityctrl, 3.0)
+    reveng_multiply_value(shared.antigraveng, 1.0)
+    reveng_multiply_value(shared.realityctrl, 2.0)
     -- Weapons
     reveng_multiply_value(shared.barrel,      0.2)
     reveng_multiply_value(shared.proj_engine, 0.5)
@@ -144,6 +151,10 @@ remote.add_interface(shared.titan_prefix.."main", {
     -- reveng_multiply_value(afci_bridge.get.he_emitter().name, 1)
     reveng_multiply_value(afci_bridge.get.ehe_emitter().name, 2)
     -- reveng_multiply_value(afci_bridge.get.rocket_engine().name, 1)
+
+    for _, name in ipairs(shared.ammo_list) do
+      reveng_multiply_value(name, 0.2, true)
+    end
     -- game.print("// WH40k RevEng Post")
   end,
 })

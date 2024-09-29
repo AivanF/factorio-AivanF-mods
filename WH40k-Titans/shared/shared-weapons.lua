@@ -44,9 +44,9 @@ shared.ammo_weights = {
   [shared.missile_ammo] = 1,
   [shared.plasma_ammo] = 2,
   [shared.hell_ammo] = 3,
-  [shared.doom_missile_ammo] = 4,
-  [shared.plasma_missile_ammo] = 4,
-  [shared.warp_missile_ammo] = 4,
+  [shared.doom_missile_ammo] = 5,
+  [shared.plasma_missile_ammo] = 5,
+  [shared.warp_missile_ammo] = 5,
 }
 
 shared.ammo_list = {

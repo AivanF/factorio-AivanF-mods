@@ -135,7 +135,7 @@ local function find_titans_guns(supplier_info)
     if titan_info then
       for _, gun_info in ipairs(titan_info.guns) do
         weapon_type = shared.weapons[gun_info.name]
-        ammo_need = weapon_type.inventory - gun_info.ammo_count
+        ammo_need = weapon_type.inventory and (weapon_type.inventory - gun_info.ammo_count) or 0
         if ammo_need > 0 then
           fill_targets[weapon_type.ammo] = fill_targets[weapon_type.ammo] or {}
           table.append(fill_targets[weapon_type.ammo], {gun_info=gun_info, need=ammo_need, entity=titan_info.entity})

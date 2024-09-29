@@ -6,10 +6,8 @@ local Lib = require("script/event_lib")
 lib_asmb = Lib.new()
 
 building_update_rate = UPS
-local quick_mode = heavy_debugging
 local required_ammo_ratio = 0.05
 local gun_chests_number = 6
-lib_asmb.bunker_init_time = quick_mode and 8 or 40
 
 local supplying_radius = 10
 
@@ -94,6 +92,20 @@ local function draw_assembler_lamp(assembler, wi, lamp_color)
 end
 
 
+function lib_asmb.get_bunker_init_time()
+  return settings.global["wh40k-titans-debug-quick"].value and 8 or 40
+end
+
+
+local function get_titan_assembly_time(titan_class_or_name)
+  if settings.global["wh40k-titans-debug-quick"].value then
+    return 3 + shared.titan_types[titan_class_or_name].health /10000
+  else
+    return shared.get_titan_assembly_time(titan_class_or_name)
+  end
+end
+
+
 function lib_asmb.change_assembler_state(assembler, new_state)
   if assembler.state == new_state then return end
   if lib_asmb.state_post_handler[assembler.state] then
@@ -104,15 +116,6 @@ function lib_asmb.change_assembler_state(assembler, new_state)
   end
   assembler.state = new_state
   lib_asmb.update_assembler_guis(assembler)
-end
-
-
-local function get_titan_assembly_time(titan_class_or_name)
-  if quick_mode then
-    return 3 + shared.titan_types[titan_class_or_name].health /10000
-  else
-    return shared.get_titan_assembly_time(titan_class_or_name)
-  end
 end
 
 function lib_asmb:get_assembly_speed(force)
@@ -640,7 +643,7 @@ end
 
 function state_handler.initialising(assembler)
   assembler.init_progress = assembler.init_progress + 1
-  if assembler.init_progress < lib_asmb.bunker_init_time then
+  if assembler.init_progress < lib_asmb.get_bunker_init_time() then
     lib_asmb.update_assembler_guis(assembler)
   else
     -- Entity should be already changed
@@ -665,8 +668,8 @@ function state_post_handler.deactivating(assembler)
 end
 
 function state_pre_handler.deactivating(assembler)
-  if assembler.init_progress <= 0 or assembler.init_progress > lib_asmb.bunker_init_time then
-    assembler.init_progress = lib_asmb.bunker_init_time
+  if assembler.init_progress <= 0 or assembler.init_progress > lib_asmb.get_bunker_init_time() then
+    assembler.init_progress = lib_asmb.get_bunker_init_time()
   end
 end
 

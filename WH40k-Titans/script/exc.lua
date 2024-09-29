@@ -5,7 +5,7 @@ local Lib = require("script/event_lib")
 lib_exc = Lib.new()
 
 exc_update_rate = UPS
-local global_exc_unit_time = heavy_debugging and 5 or 60
+local global_exc_unit_time = 60
 local exc_half_size = 4
 local exc_offsets = {
   {exc_half_size, 0}, {-exc_half_size, 0},
@@ -88,6 +88,9 @@ local function get_exc_speed(force)
   if force then
     local level = lib_tech.get_research_level(force.index, shared.exc_speed_research)
     cf = shared.exc_speed_by_level[level]
+  end
+  if settings.global["wh40k-titans-debug-quick"].value then
+    cf = cf * 5
   end
   return cf
 end

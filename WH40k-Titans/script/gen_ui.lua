@@ -149,17 +149,28 @@ row_filler.ttn = function (row_info)
   row_info.cells.driver.add{type="label", name="viz", caption=""}
   row_info.cells.hp.add{
     type="sprite-button", name="viz", sprite="item/"..shared.frame_part,
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.health"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=act_toggle_ammo_count},
   }
   row_info.cells.vs.add{
     type="sprite-button", name="viz", sprite="item/"..shared.void_shield,
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.vs-value"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=act_toggle_ammo_count},
   }
 
   for k, cannon in pairs(titan_info.guns) do
     row_info.cells["gun"..k].add{
       type="sprite-button", name="viz", sprite=("recipe/"..shared.mod_prefix..cannon.name),
-      tooltip={"item-name."..shared.mod_prefix..cannon.name},
+      tooltip=make_titled_text(
+        {"item-name."..shared.mod_prefix..cannon.name},
+        {"item-description."..shared.weapons[cannon.name].ammo}
+      ),
       tags={action=act_toggle_ammo_count},
     }
   end
@@ -176,10 +187,18 @@ row_filler.spl = function (row_info)
   row_info.cells.driver.add{type="label", name="viz", caption=""}
   row_info.cells.hp.add{
     type="sprite-button", name="viz", sprite="item/"..shared.frame_part,
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.health"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=act_toggle_ammo_count},
   }
   row_info.cells.weight.add{
     type="sprite-button", name="viz", sprite=shared.mod_prefix.."weight",
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.column-weight"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=act_toggle_ammo_count},
   }
 

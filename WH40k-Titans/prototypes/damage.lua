@@ -11,7 +11,17 @@ data:extend({
   {
     type = "damage-type",
     name = shared.step_damage,
-    hidden = true,
+    hidden = not settings.startup["wh40k-titans-show-damage-types"].value,
+  },
+  {
+    type = "damage-type",
+    name = shared.melee_damage,
+    hidden = not settings.startup["wh40k-titans-show-damage-types"].value,
+  },
+  {
+    type = "damage-type",
+    name = shared.mepow_damage,
+    hidden = not settings.startup["wh40k-titans-show-damage-types"].value,
   },
   {
     type = "custom-input",
@@ -93,7 +103,7 @@ data:extend({
               upper_distance_threshold = 3,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "physical"}
+              damage = {amount = 10000, type = shared.melee_damage}
             },
           }
         }
@@ -157,7 +167,7 @@ data:extend({
               upper_distance_threshold = 3,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "physical"}
+              damage = {amount = 5000, type = shared.melee_damage}
             },
             {
               type = "damage",
@@ -165,7 +175,7 @@ data:extend({
               upper_distance_threshold = 4,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "electric"}
+              damage = {amount = 15000, type = shared.mepow_damage}
             },
             {
               type = "damage",
@@ -173,7 +183,7 @@ data:extend({
               upper_distance_threshold = 4,
               lower_damage_modifier = 1,
               upper_damage_modifier = 0.2,
-              damage = {amount = 10000, type = "explosion"}
+              damage = {amount = 5000, type = "explosion"}
             },
           }
         }
@@ -1600,7 +1610,7 @@ data:extend({
               type = "nested-result",
               action = {
                 type = "area",
-                radius = 16,
+                radius = 20,
                 action_delivery = {
                   type = "instant",
                   target_effects = {
@@ -1608,7 +1618,7 @@ data:extend({
                       type = "damage",
                       vaporize = true,
                       lower_distance_threshold = 10,
-                      upper_distance_threshold = 16,
+                      upper_distance_threshold = 20,
                       lower_damage_modifier = 1,
                       upper_damage_modifier = 0.2,
                       damage = {amount = 100*1000, type = "explosion"}
@@ -1617,19 +1627,19 @@ data:extend({
                       type = "damage",
                       vaporize = true,
                       lower_distance_threshold = 10,
-                      upper_distance_threshold = 16,
+                      upper_distance_threshold = 20,
                       lower_damage_modifier = 1,
-                      upper_damage_modifier = 0.2,
-                      damage = {amount = 100*1000, type = "electric"}
+                      upper_damage_modifier = 0.1,
+                      damage = {amount = 100*1000, type = shared.mepow_damage}
                     },
                     {
                       type = "damage",
                       vaporize = true,
                       lower_distance_threshold = 10,
-                      upper_distance_threshold = 16,
+                      upper_distance_threshold = 20,
                       lower_damage_modifier = 1,
-                      upper_damage_modifier = 0.2,
-                      damage = {amount = 100*1000, type = "physical"}
+                      upper_damage_modifier = 0.1,
+                      damage = {amount = 100*1000, type = shared.melee_damage}
                     },
                     {
                       type = "create-entity",

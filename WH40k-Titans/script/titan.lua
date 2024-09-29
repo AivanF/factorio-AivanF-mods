@@ -4,7 +4,8 @@ local Lib = require("script/event_lib")
 lib_ttn = Lib.new()
 
 local titan_explo_bolt = shared.mod_prefix.."bolt-plasma-2"
-
+local friendly_fire_cf = settings.startup["wh40k-titans-friendly-fire-%"].value / 100
+local vs_melee_absorb_cf = settings.startup["wh40k-titans-void-shield-melee-absorb-%"].value / 100
 
 ----- Intro -----
 
@@ -90,14 +91,21 @@ function lib_ttn.register_titan(entity)
       lib_ttn.init_gun(shared.weapon_missiles),
     }
   elseif titan_type.class == shared.class_warlord then
-    titan_info.guns = {
-      lib_ttn.init_gun(shared.weapon_chainsword),
-      lib_ttn.init_gun(shared.weapon_chainsword),
-      -- lib_ttn.init_gun(shared.weapon_volcano_cannon),
-      -- lib_ttn.init_gun(shared.weapon_plasma_sunfury),
-      lib_ttn.init_gun(shared.weapon_missiles),
-      lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
-    }
+    if math.random() < 0.5 then
+      titan_info.guns = {
+        lib_ttn.init_gun(shared.weapon_chainsword),
+        lib_ttn.init_gun(shared.weapon_chainsword),
+        lib_ttn.init_gun(shared.weapon_gatling_blaster),
+        lib_ttn.init_gun(shared.weapon_laserblaster),
+      }
+    else
+      titan_info.guns = {
+        lib_ttn.init_gun(shared.weapon_volcano_cannon),
+        lib_ttn.init_gun(shared.weapon_plasma_sunfury),
+        lib_ttn.init_gun(shared.weapon_missiles),
+        lib_ttn.init_gun(shared.weapon_apocalypse_missiles),
+      }
+    end
   elseif titan_type.class >= shared.class_warmaster then
     titan_info.guns = {
       lib_ttn.init_gun(shared.weapon_plasma_annihilator),
@@ -289,32 +297,52 @@ local function titans_debug_cmd(cmd)
 end
 
 
+local pass_damage_types = {shared.melee_damage, shared.mepow_damage}
+pass_damage_types = dict_from_keys_list(pass_damage_types, true)
+
+
 lib_ttn:on_event(defines.events.on_entity_damaged, function(event)
   -- Void Shields absorbing
   local entity = event.entity
   local unit_number = entity.valid and entity.unit_number
   if unit_number == nil then return end
-  if ctrl_data.titans[unit_number] then
-    local tctrl = ctrl_data.titans[unit_number]
-    if event.final_health > 0 then
-      -- entity.health and event.final_health cannot be received negative,
-      -- so, if damage was fatal, this formula won't work
-      entity.health = event.final_health + event.final_damage_amount
-    else
-      -- Should basically work...
-      entity.health = event.final_health + event.final_damage_amount/2
-    end
-    local damage = event.final_damage_amount
-    local shielded = math.min(damage, tctrl.shield)
-    tctrl.shield = tctrl.shield - shielded
-    damage = damage - shielded
-    entity.health = entity.health - damage
-    -- game.print(serpent.line({
-    --   ent_hp=entity.health,
-    --   fin_hp=event.final_health,
-    --   damage=math.floor(damage), shielded=math.floor(shielded),
-    -- }))
+  if not ctrl_data.titans[unit_number] then return end
+  local titan_info = ctrl_data.titans[unit_number]
+  if titan_info.shield < 1 then return end
+
+  -- local info = {} -- W/o ifs to boost performance
+  -- info.hp_was = math.floor(entity.health)
+  -- info.sh_was = math.floor(entity.health)
+  -- info.hp_got = math.floor(event.final_health)
+  -- info.dmg_got = math.floor(event.final_damage_amount)
+
+  if event.final_health > 0 then
+    -- entity.health and event.final_health cannot be received negative,
+    -- so, if damage was fatal, this formula won't work
+    entity.health = event.final_health + event.final_damage_amount
+  else
+    -- Should basically work...
+    entity.health = event.final_health + event.final_damage_amount/2
   end
+  local damage = event.final_damage_amount -- It considers entity's resistances.
+  if event.force and event.force == entity.force then
+    damage = damage * friendly_fire_cf
+    -- info.f_ff = true
+  end
+  if damage <= 0 then return end
+  local shielded = math.min(damage, titan_info.shield)
+  if event.final_health > 0 and pass_damage_types[event.damage_type.name] then
+    shielded = shielded * vs_melee_absorb_cf
+    -- info.f_ml = true
+  end
+  titan_info.shield = titan_info.shield - shielded
+  damage = damage - shielded
+  entity.health = entity.health - damage
+
+  -- info.hp_dun = math.floor(entity.health)
+  -- info.dmg_dun = math.floor(damage)
+  -- info.sh_dif = math.floor(shielded)
+  -- game.print(serpent.line(info))
 end)
 
 

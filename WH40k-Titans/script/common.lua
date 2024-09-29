@@ -6,7 +6,7 @@ collision_mask_util_extended = require("cmue.collision-mask-util-control")
 UPS = 60
 
 heavy_debugging = false
-heavy_debugging = true
+-- heavy_debugging = true
 
 bucks = {}
 
@@ -195,5 +195,8 @@ function show_ammo_transfer(entity_from, entity_to, ammo_name, ammo_count, scatt
 end
 
 function make_titled_text(title, text)
-  return {"", "[font=default-bold]", title, "[/font]\n", text}
+  return {"?",
+    {"", "[font=default-bold]", title, "[/font]\n", text},
+    {"", "[font=default-bold]", title, "[/font]"},
+  }
 end

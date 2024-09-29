@@ -83,14 +83,17 @@ local function create_titan_gui(player, titan_info)
     if shared.weapons[cannon.name].ammo then
       guiobj.guns[k].ammo = guiobj.weapon_table.add{
         type="sprite-button", sprite=("item/"..shared.weapons[cannon.name].ammo),
-        tooltip={"item-name."..shared.weapons[cannon.name].ammo},
+        tooltip=make_titled_text(
+          {"item-name."..shared.weapons[cannon.name].ammo},
+          {"item-description."..shared.weapons[cannon.name].ammo}
+        ),
         -- show_percent_for_small_numbers=true,
         tags={action=action_toggle_ammo_count},
       }
     else
       guiobj.guns[k].ammo = guiobj.weapon_table.add{
-        type="sprite-button", sprite="virtual-signal/signal-red",
-        -- tooltip={"item-name."..shared.weapons[cannon.name].ammo}, -- TODO: show "no ammo usage"
+        type="sprite-button", sprite="virtual-signal/signal-dot",
+        tooltip={"WH40k-Titans-gui.no-ammo-usage"},
       }
     end
   end
@@ -109,12 +112,18 @@ local function create_titan_gui(player, titan_info)
   }
   guiobj.health = guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/"..shared.frame_part,
-    tooltip={"WH40k-Titans-gui.health"},
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.health"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=action_toggle_ammo_count},
   }
   guiobj.void_shield = guiobj.titan_info_table.add{
     type="sprite-button", sprite="item/"..shared.void_shield,
-    tooltip={"WH40k-Titans-gui.vs-value"},
+    tooltip=make_titled_text(
+      {"WH40k-Titans-gui.vs-value"},
+      {"WH40k-Titans-gui.percent-toggle-tooltip"}
+    ),
     tags={action=action_toggle_ammo_count},
   }
 end
@@ -184,16 +193,16 @@ local function update_guis()
           guiobj.guns[k].mode.tooltip=make_titled_text({"WH40k-Titans-gui.attack-ai"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 1 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-1"
-          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-1"}, {"WH40k-Titans-gui.attack-click"})
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-1", "[__CONTROL__wh40k-titans-attack-1__]"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 2 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-2"
-          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-2"}, {"WH40k-Titans-gui.attack-click"})
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-2", "[__CONTROL__wh40k-titans-attack-2__]"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 3 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-3"
-          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-3"}, {"WH40k-Titans-gui.attack-click"})
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-3", "[__CONTROL__wh40k-titans-attack-3__]"}, {"WH40k-Titans-gui.attack-click"})
         elseif player_settings.guns[k].mode == 4 then
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-4"
-          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-4"}, {"WH40k-Titans-gui.attack-click"})
+          guiobj.guns[k].mode.tooltip=make_titled_text({"controls."..shared.mod_prefix.."attack-4", "[__CONTROL__wh40k-titans-attack-4__]"}, {"WH40k-Titans-gui.attack-click"})
         else
           guiobj.guns[k].mode.sprite = "virtual-signal/signal-red"
           guiobj.guns[k].mode.tooltip = make_titled_text({"WH40k-Titans-gui.attack-0"}, {"WH40k-Titans-gui.attack-click"})

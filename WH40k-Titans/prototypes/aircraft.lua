@@ -25,10 +25,10 @@ local function aircraftAnimation(nickname)
   anim.layers = {
     {
       filename = ENTITYPATH .. "/" .. nickname .. "-sheet.png",
-      shift = util.by_pixel(9, -10),
+      shift = util.by_pixel(0, -10),
       hr_version = {
         filename = ENTITYPATH .. "/" .. nickname .. "-sheet-HR.png",
-        shift = util.by_pixel(9, -10),
+        shift = util.by_pixel(0, -10),
       }
     },
     -- {

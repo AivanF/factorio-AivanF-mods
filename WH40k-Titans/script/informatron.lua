@@ -1,4 +1,20 @@
-shared = require("shared")
+local Lib = require("script/event_lib")
+lib_inf = Lib.new()
+
+local act_open_reveng = "wh40k-titans-inf-open-reveng"
+
+lib_inf:on_event(defines.events.on_gui_click, function(event)
+  local player = game.get_player(event.player_index)
+  local action = event.element and event.element.valid and event.element.tags.action
+
+  if action == act_open_reveng then
+    remote.call("informatron", "informatron_open_to_page", {
+      player_index = event.player_index,
+      interface = "Reverse-Engineering",
+      page_name = "Reverse-Engineering",
+    })
+  end
+end)
 
 remote.add_interface(shared.mod_name, {
   informatron_menu = function(data)
@@ -65,7 +81,8 @@ function mymod_page_content(page_name, player_index, element)
     flow.add{
       type="sprite-button", sprite="af-reverse-lab-worth",
       tooltip={"shortcut-description.af-reverse-lab-see-worth"},
-      tags={action="reverse-lab-open-worth-explain"},
+      -- tags={action="reverse-lab-open-worth-explain"},
+      tags={action=act_open_reveng},
     }
     element.add{type="label", name="empty_revlab", caption=" "}
 
@@ -123,10 +140,12 @@ function mymod_page_content(page_name, player_index, element)
     element.add{type="label", name="empty_0", caption=" "}
 
   elseif page_name == "other" then
-    element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Other"}}
+    element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Misc"}}
     element.add{type="label", name="empty_0", caption=" "}
 
   else
     element.add{type="label", name="text_1", caption={"WH40k-Titans-informatron.ToDo"}}
   end
 end
+
+return lib_inf

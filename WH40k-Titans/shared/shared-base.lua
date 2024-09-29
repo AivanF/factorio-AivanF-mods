@@ -9,7 +9,9 @@ shared.titan_prefix = "wh40k-titan-" -- To distinct titan entities
 shared.part_prefix = "wh40k-" -- Can be moved out into separate mod
 shared.bridge_prefix = "afci-"
 shared.equip_cat = shared.mod_prefix
-shared.step_damage = "stomp"
+shared.step_damage = shared.mod_prefix.."stomp"
+shared.melee_damage = shared.mod_prefix.."melee"
+shared.mepow_damage = shared.mod_prefix.."power-melee"
 
 afci_bridge = require("__Common-Industries__.export")
 

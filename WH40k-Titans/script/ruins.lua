@@ -4,8 +4,8 @@ lib_ruins = Lib.new()
 
 local debug_many = false
 -- debug_many = true
-local base_ruin_prob = heavy_debugging and debug_many and 0.8 or settings.startup["wh40k-titans-ruin-prob"].value
-local sector_size = (heavy_debugging and debug_many and 2 or 10) * 32
+local base_ruin_prob = debug_many and 0.8 or settings.startup["wh40k-titans-ruin-prob"].value
+local sector_size = (debug_many and 2 or 10) * 32
 local free_area = 1.5 * sector_size
 
 local blank_world = {
@@ -62,9 +62,9 @@ end
 -- Tries to find existing world for new surface
 function lib_ruins.opt_new_world(data)
   if not data.surface then
-    error("Missing surface")
+    error(serpent.line({type="Missing surface", data=data}))
   end
-  if heavy_debugging then
+  if settings.global["wh40k-titans-debug-info"].value then
     game.print("WH40k_Titans-opt_new_world: "..serpent.line(data.surface.name))
   end
 
@@ -253,7 +253,7 @@ local function fulfill_sector(world, sector, any_position, add_prob)
       }
     end
     world.created_ruins = (world.created_ruins or 0) + #sector.ruin_ghosts
-    if heavy_debugging and not debug_many then
+    if settings.global["wh40k-titans-debug-info"].value and not debug_many then
       game.print("Planned a titan ruin!")
     end
     return #sector.ruin_ghosts
