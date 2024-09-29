@@ -14,6 +14,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 3,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.he_emitter, 3},
     {bridge.item.quantum_chip, 1},
@@ -77,6 +78,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.st_operator, 1},
     {bridge.item.he_emitter, 3},
@@ -103,6 +105,7 @@ add_item({
   icon_size = 64, icon_mipmaps = 1,
   prereq = prerequisite,
   subgroup = subgroup,
+  allow_productivity = true,
   ingredients = {
     {bridge.item.st_operator, 1},
     {bridge.item.quantum_chip, 4},

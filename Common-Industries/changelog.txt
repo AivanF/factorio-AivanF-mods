@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.9
+Date: 2024-09-29
+  Balancing:
+    - Allowed productivity modules for several more recipes.
+  Bugfixes:
+    - Fixed Krastorio2 crash.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.8
 Date: 2024-09-20
   Balancing:
