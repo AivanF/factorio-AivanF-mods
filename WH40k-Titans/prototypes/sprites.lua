@@ -374,3 +374,6 @@ informatron_make_image(shared.mod_prefix.."inf-extractor",
 
 informatron_make_image(shared.mod_prefix.."inf-titan-dashboard",
   shared.media_prefix.."graphics/informatron/titan-dashboard.jpg", 228, 172)
+
+-- informatron_make_image(shared.mod_prefix.."inf-bunker-schema",
+--   shared.media_prefix.."graphics/informatron/bunker-schema.jpg", 800, 600)

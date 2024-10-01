@@ -103,8 +103,21 @@ function mymod_page_content(page_name, player_index, element)
     element.add{type="label", name="text_1", tooltip=ntt, caption={"WH40k-Titans-informatron.Titan-usage-db"}}
 
   elseif page_name == "assembling" then
-    element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Bunker"}}
-    element.add{type="label", name="empty_0", caption=" "}
+    element.add{type="label", name="text_OLD", tooltip=ntt, caption={"WH40k-Titans-informatron.BunkerOLD"}}
+    element.add{type="label", name="empty_OLD", caption=" "}
+
+    -- element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Bunker1"}}
+    -- element.add{type="label", name="empty_0", caption=" "}
+
+    -- local flow = element.add{ type = "flow", name = "ttn_schema_placeholder" }
+    -- flow.style.minimal_width = 600
+    -- flow.style.horizontal_align = "center"
+    -- flow.style.vertical_align = "center"
+    -- flow.add{type="button", name="image_extract", style=shared.mod_prefix.."inf-bunker-schema"}
+
+    -- element.add{type="label", name="empty_1", caption=" "}
+    -- element.add{type="label", name="text_1", tooltip=ntt, caption={"WH40k-Titans-informatron.Bunker2"}}
+    element.add{type="label", name="empty_2", caption=" "}
 
   elseif page_name == "weapon_rules" then
     element.add{type="label", name="text_0", tooltip=ntt, caption={"WH40k-Titans-informatron.Weapons-Rules"}}

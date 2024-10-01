@@ -200,3 +200,7 @@ function make_titled_text(title, text)
     {"", "[font=default-bold]", title, "[/font]"},
   }
 end
+
+function niller()
+  return nil
+end

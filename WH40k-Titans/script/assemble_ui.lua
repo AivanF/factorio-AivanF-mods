@@ -102,7 +102,7 @@ function gui_maker.prepare_assembly(assembler, main_frame)
     btn = grid.add{
       type="choose-elem-button", elem_type="recipe",
       elem_filters=filters, recipe=assembler.weapon_recipes[wi],
-      tags={action=act_set_weapon, k=k },
+      tags={action=act_set_weapon, wi=wi },
     }
     weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
     if titan_type then
@@ -331,7 +331,7 @@ lib_asmb:on_event(defines.events.on_gui_elem_changed, function(event)
   if event.element.tags.action == act_set_class then
     assembler.class_recipe = event.element.elem_value
   elseif event.element.tags.action == act_set_weapon then
-    assembler.weapon_recipes[event.element.tags.k] = event.element.elem_value
+    assembler.weapon_recipes[event.element.tags.wi] = event.element.elem_value
   end
   lib_asmb.update_assembler_guis(assembler)
 end)

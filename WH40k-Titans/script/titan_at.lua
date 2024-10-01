@@ -214,7 +214,7 @@ end
 
 
 local function start_melee()
-  -- body
+  -- TODO: here!
 end
 
 
@@ -271,15 +271,16 @@ lib_ttn.wc_control[shared.wc_arty]   = control_arty_gun
 lib_ttn.wc_control[shared.wc_melee]  = control_melee
 
 
-local enemies
+local enemies -- Globals are dangerous, but here the value is set & used inside each tick only
 local attack_ori_shifts = {0, 0.07, -0.07, 0.15, -0.15}
 local ai_attack_radius = 6
 
 
-local function find_ai_target(titan_info, entity, weapon_type, cannon)
+local function find_gun_target(titan_info, entity, weapon_type, cannon, wi)
   local enemy_number, target_option, new_oris
   local max_number = 0
   local result = nil
+  -- TODO: get rid of attack_ori_shifts, calc it dynamically by 0,±1/3,±2/3 of allowed by wi
   if weapon_type.start_far then
     -- Going inside
     for _, oris in ipairs(attack_ori_shifts) do
@@ -318,6 +319,40 @@ local function find_ai_target(titan_info, entity, weapon_type, cannon)
   return result
 end
 
+local function handler_ai_gun(entity, titan_info, weapon_type, cannon, wi)
+  if cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size
+  then
+    return find_gun_target(titan_info, entity, weapon_type, cannon, wi)
+  end
+  return nil
+end
+
+local function handler_ai_melee(entity, titan_info, weapon_type, cannon, wi)
+  local target_option = math2d.position.add(titan_info.entity.position, point_orientation_shift(
+    entity.orientation -cannon.base_oris/2,
+    shared.titan_arm_length + weapon_type.medium_length))
+  local enemy_number = entity.surface.count_entities_filtered{
+    position=target_option,
+    radius=weapon_type.medium_length, force=enemies, is_military_target=true
+  }
+  if enemy_number > 1 then
+    return target_option
+  else
+    return nil
+  end
+end
+
+local wc_ai_handler = {}
+wc_ai_handler[shared.wc_rocket] = handler_ai_gun
+wc_ai_handler[shared.wc_bolter] = handler_ai_gun
+wc_ai_handler[shared.wc_quake]  = handler_ai_gun
+wc_ai_handler[shared.wc_flamer] = handler_ai_gun
+wc_ai_handler[shared.wc_plasma] = handler_ai_gun
+wc_ai_handler[shared.wc_melta]  = handler_ai_gun
+wc_ai_handler[shared.wc_laser]  = handler_ai_gun
+wc_ai_handler[shared.wc_hell]   = handler_ai_gun
+wc_ai_handler[shared.wc_arty]   = niller
+wc_ai_handler[shared.wc_melee]  = handler_ai_melee
 
 function lib_ttn.handle_attack_ai(titan_info)
   local tick = game.tick
@@ -337,22 +372,17 @@ function lib_ttn.handle_attack_ai(titan_info)
   }
   if enemy_number < 1 then return end
 
-  local weapon_type, dst, target_option
+  local weapon_type, target_option
   local done = false
   for wi, cannon in pairs(titan_info.guns) do
     if cannon.ai and (cannon.target == nil or cannon.ordered+lib_ttn.order_ttl < tick) then
       weapon_type = shared.weapons[cannon.name]
-      if true
-        and cannon.ammo_count >= weapon_type.per_shot*weapon_type.attack_size
-        and weapon_type.max_dst ~= nil  -- To filter out arty. TODO: make smth better
-      then
-        target_option = find_ai_target(titan_info, entity, weapon_type, cannon)
-        if target_option then
-          cannon.target = target_option
-          cannon.ordered = tick
-          opt_play(entity, weapon_type.pre_attack_sound)
-          done = true
-        end
+      target_option = wc_ai_handler[weapon_type.category](entity, titan_info, weapon_type, cannon, wi);
+      if target_option then
+        cannon.target = target_option
+        cannon.ordered = game.tick
+        opt_play(entity, weapon_type.pre_attack_sound)
+        return true
       end
     end
   end
