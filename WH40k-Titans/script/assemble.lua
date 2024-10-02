@@ -155,7 +155,7 @@ end
 
 function lib_asmb.check_weapon_is_appropriate(titan_type, wi, weapon_type)
   if not weapon_type then return nil end
-  local name = {{"item-name."..shared.mod_prefix..weapon_type.name}}
+  local name = {"item-name."..shared.mod_prefix..weapon_type.name}
 
   if not (
     weapon_type.grade == titan_type.mounts[wi].grade or

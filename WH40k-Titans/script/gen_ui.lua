@@ -73,16 +73,55 @@ local function set_cell_flow_style(cell, col_spec)
 end
 
 
+local function preprocess_entity_name(entity_name)
+  -- entity_name = entity_name:replace("$". "")
+  -- entity_name = entity_name:replace("-0". "")
+  entity_name = entity_name:gsub(string.gsub("-0-_-solid", "%p", "%%%0").."$", "")
+  entity_name = entity_name:gsub(string.gsub("-0", "%p", "%%%0").."$", "")
+  return entity_name
+end
+
+
 local function get_driver_name(entity)
   local driver = entity.get_driver()
+  -- TODO: maybe show the passanger too??
   if driver then
-    if driver.player then
-      return driver.player.name
+    local dr_name, dr_desc
+    if driver.object_name == "LuaPlayer" then
+      -- Bodyless / God mode
+    elseif driver.object_name == "LuaEntity" then
+      if driver.type == "character" then
+        if driver.player then
+          -- A usual player with body
+          dr_name = driver.player.name
+          dr_desc = {"WH40k-Titans-gui.player-driver-desc"}
+        else
+          -- A character with no player, assuming AAI PV
+          dr_name = {"WH40k-Titans-gui.aai-pv-driver"}
+          dr_desc = {"WH40k-Titans-gui.aai-pv-driver-desc"}
+        end
+      else
+        -- Unknown, probably not possible
+        dr_name = {"WH40k-Titans-gui.unknown-driver"}
+        dr_desc = serpent.line({
+          -- Some debug info, JIC
+          driver_object_name = driver.object_name,
+          driver_name = driver.name,
+        })
+      end
     else
-      return driver.name
+      -- Unknown, surely not possible
+      dr_name = {"WH40k-Titans-gui.unknown-driver"}
+      dr_desc = serpent.line({
+        -- Some debug info, JIC
+        driver_object_name = driver.object_name,
+        driver_name = driver.name,
+      })
     end
+
+    return dr_name, dr_desc
   else
-    return {"WH40k-Titans-gui.no-driver"}
+    return {"WH40k-Titans-gui.no-driver"}, {"WH40k-Titans-gui.no-driver"}
   end
 end
 
@@ -143,7 +182,7 @@ row_filler.ttn = function (row_info)
 
   row_info.cells.main.add{
     type="sprite-button", sprite=("entity/"..titan_info.entity.name),
-    tooltip={"entity-name."..titan_info.entity.name},
+    tooltip={"entity-name."..preprocess_entity_name(titan_info.entity.name)},
     tags={action=act_show_object, tab_name=tab_ttn, unit_number=row_info.unit_number},
   }
   row_info.cells.driver.add{type="label", name="viz", caption=""}
@@ -169,7 +208,7 @@ row_filler.ttn = function (row_info)
       type="sprite-button", name="viz", sprite=("recipe/"..shared.mod_prefix..cannon.name),
       tooltip=make_titled_text(
         {"item-name."..shared.mod_prefix..cannon.name},
-        {"item-description."..shared.weapons[cannon.name].ammo}
+        shared.get_weapon_descr(shared.weapons[cannon.name])
       ),
       tags={action=act_toggle_ammo_count},
     }
@@ -180,8 +219,8 @@ row_filler.spl = function (row_info)
   local supplier_info = ctrl_data.supplier_index[row_info.unit_number]
 
   row_info.cells.main.add{
-    type="sprite-button", sprite=("recipe/"..supplier_info.entity.name),
-    tooltip={"entity-name."..supplier_info.entity.name},
+    type="sprite-button", sprite=("entity/"..supplier_info.entity.name),
+    tooltip={"entity-name."..preprocess_entity_name(supplier_info.entity.name)},
     tags={action=act_show_object, tab_name=tab_spl, unit_number=row_info.unit_number},
   }
   row_info.cells.driver.add{type="label", name="viz", caption=""}
@@ -205,7 +244,10 @@ row_filler.spl = function (row_info)
   for i, ammo_name in ipairs(shared.ammo_list) do
     row_info.cells["ammo_"..ammo_name].add{
       type="sprite-button", name="viz", sprite="item/"..ammo_name,
-      tooltip={"item-name."..ammo_name},
+      tooltip=make_titled_text(
+        {"item-name."..ammo_name},
+        {"item-description."..ammo_name}
+      ),
     }
   end
 end
@@ -216,8 +258,9 @@ local row_updater = {}
 row_updater.ttn = function (row_info, player_settings)
   local titan_info = ctrl_data.titans[row_info.unit_number]
 
-  row_info.cells.driver.viz.caption = get_driver_name(titan_info.entity)
-  row_info.cells.driver.viz.tooltip = row_info.cells.driver.viz.caption
+  local dr_name, dr_desc = get_driver_name(titan_info.entity)
+  row_info.cells.driver.viz.caption = dr_name
+  row_info.cells.driver.viz.tooltip = dr_desc
 
   if player_settings.percent_ammo then
     row_info.cells.hp.viz.number = math.floor(100 * titan_info.entity.get_health_ratio())
@@ -242,8 +285,9 @@ end
 row_updater.spl = function (row_info, player_settings)
   local supplier_info = ctrl_data.supplier_index[row_info.unit_number]
 
-  row_info.cells.driver.viz.caption = get_driver_name(supplier_info.entity)
-  row_info.cells.driver.viz.tooltip = row_info.cells.driver.viz.caption
+  local dr_name, dr_desc = get_driver_name(supplier_info.entity)
+  row_info.cells.driver.viz.caption = dr_name
+  row_info.cells.driver.viz.tooltip = dr_desc
 
   if player_settings.percent_ammo then
     row_info.cells.hp.viz.number = math.floor(100 * supplier_info.entity.get_health_ratio())

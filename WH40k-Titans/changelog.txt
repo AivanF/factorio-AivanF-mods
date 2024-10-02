@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.9.37
+Date: 2024-10-02
+  Bugfixes:
+    - Fixed an error due to AAI PV integration in the General Dashboard.
+  Gui:
+    - More detailed drivers info in the General Dashboard, especially for AAI Programmable Vehicles mod.
+    - Better weapons + ammo info for titans & supplier in all dashboards.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.36
 Date: 2024-10-01
   Features:

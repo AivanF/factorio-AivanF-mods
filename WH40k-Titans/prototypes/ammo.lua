@@ -378,9 +378,9 @@ bridge.add_item({
   subgroup = shared.subg_build,
   order = "z-worldbreaker",
   ingredients = {
-    {shared.frame_part, 2},
-    {afci_bridge.get.he_emitter().name, 3},
-    {afci_bridge.get.emfc().name, 3},
+    {shared.frame_part, 3},
+    {afci_bridge.get.he_emitter().name, 5},
+    {afci_bridge.get.emfc().name, 5},
     {shared.laser_ammo, 100},
   },
   energy_required = 120,

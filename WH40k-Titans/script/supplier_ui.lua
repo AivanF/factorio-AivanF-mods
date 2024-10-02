@@ -72,12 +72,16 @@ local function create_supplier_gui(player, supplier_info)
   for _, ammo_name in ipairs(shared.ammo_list) do
     guiobj.ammo_counter[ammo_name] = guiobj.ammo_table.add{
       type="sprite-button", sprite="item/"..ammo_name,
-      tooltip={"item-name."..ammo_name},
+      tooltip=make_titled_text(
+        {"item-name."..ammo_name},
+        {"item-description."..ammo_name}
+      ),
     }
   end
   for _, ammo_name in ipairs(shared.ammo_list) do
     guiobj.ammo_disabler[ammo_name] = guiobj.ammo_table.add{
-      type="sprite-button", tooltip={"WH40k-Titans-gui.supplier-ammo-filtering"},
+      type="sprite-button",
+      tooltip={"WH40k-Titans-gui.supplier-ammo-filtering"},
       tags={action=action_toggle_disabler, ammo_name=ammo_name},
       -- Sprite is set in the update
     }

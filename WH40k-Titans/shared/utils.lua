@@ -245,6 +245,12 @@ function beautify_time(seconds)
 end
 
 
+-- Plain string replace function is absent in the Lua std lib, WTF
+function string:replace(substring, replacement, n)
+    return (self:gsub(substring:gsub("%p", "%%%0"), replacement:gsub("%%", "%%%%"), n))
+end
+
+
 -- https://lua-api.factorio.com/latest/concepts.html#Color
 color_default_dst = {1,1,1}
 color_gold    = {255, 220,  50}
