@@ -1,0 +1,5 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2024-10-04
+  Info:
+    - Initial release by AivanF! I’m not a professional 3D artist, but worked hard on it and plan to yet improve.
