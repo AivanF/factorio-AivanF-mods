@@ -38,14 +38,16 @@ local function should_enable_prod(item_name)
   local equipment = item_has_field(item_name, "placed_as_equipment_result")
   local launchable = item_has_field(item_name, "rocket_launch_product") or item_has_field(item_name, "rocket_launch_products")
 
-  return false
+  local result = (false
     ----- Logistics
     or settings.startup["af-prod-enable-belts"].value and data.raw["transport-belt"][item_name]
     or settings.startup["af-prod-enable-belts"].value and data.raw["underground-belt"][item_name]
     or settings.startup["af-prod-enable-belts"].value and data.raw["splitter"][item_name]
     or settings.startup["af-prod-enable-belts"].value and data.raw["loader"][item_name]
+    or settings.startup["af-prod-enable-belts"].value and data.raw["loader-1x1"][item_name]
     or settings.startup["af-prod-enable-inserters"].value and data.raw["inserter"][item_name]
-    or settings.startup["af-prod-enable-inserters"].value and data.raw["container"][item_name]
+    or settings.startup["af-prod-enable-containers"].value and data.raw["container"][item_name]
+    or settings.startup["af-prod-enable-containers"].value and data.raw["logistic-container"][item_name]
 
     or settings.startup["af-prod-enable-robots"].value and data.raw["logistic-robot"][item_name]
     or settings.startup["af-prod-enable-robots"].value and data.raw["construction-robot"][item_name]
@@ -56,12 +58,14 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-rail-stops+signals"].value and data.raw["rail-chain-signal"][item_name]
 
     or settings.startup["af-prod-enable-trains"].value and data.raw["locomotive"][item_name]
+    or settings.startup["af-prod-enable-trains"].value and data.raw["artillery-wagon"][item_name]
     or settings.startup["af-prod-enable-trains"].value and data.raw["cargo-wagon"][item_name]
     or settings.startup["af-prod-enable-trains"].value and data.raw["fluid-wagon"][item_name]
     or settings.startup["af-prod-enable-vehicles"].value and data.raw["car"][item_name]
     or settings.startup["af-prod-enable-vehicles"].value and data.raw["spider-vehicle"][item_name]
 
     or settings.startup["af-prod-enable-fluid-sys"].value and data.raw["pipe"][item_name]
+    or settings.startup["af-prod-enable-fluid-sys"].value and data.raw["pipe-to-ground"][item_name]
     or settings.startup["af-prod-enable-fluid-sys"].value and data.raw["pump"][item_name]
     or settings.startup["af-prod-enable-fluid-sys"].value and data.raw["offshore-pump"][item_name]
     or settings.startup["af-prod-enable-fluid-sys"].value and data.raw["storage-tank"][item_name]
@@ -71,6 +75,7 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["assembling-machine"][item_name]
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["furnace"][item_name]
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["rocket-silo"][item_name]
+    or settings.startup["af-prod-enable-assemblers"].value and data.raw["lab"][item_name]
     or settings.startup["af-prod-enable-roboports"].value and data.raw["roboport"][item_name]
     or settings.startup["af-prod-enable-solar+acc"].value and data.raw["solar-panel"][item_name]
     or settings.startup["af-prod-enable-solar+acc"].value and data.raw["accumulator"][item_name]
@@ -83,10 +88,12 @@ local function should_enable_prod(item_name)
 
     ----- Misc
     or settings.startup["af-prod-enable-modules"].value and data.raw["module"][item_name]
+    or settings.startup["af-prod-enable-modules"].value and data.raw["beacon"][item_name]
     or settings.startup["af-prod-enable-poles"].value and data.raw["electric-pole"][item_name]
     or settings.startup["af-prod-enable-combinators"].value and item_name:find("combinator", 1, true) and placable
     or settings.startup["af-prod-enable-satellites"].value and item_name:find("satellite", 1, true) and launchable
     or settings.startup["af-prod-enable-satellites"].value and item_name:find("-probe", 1, true) and launchable -- SE probes
+    or settings.startup["af-prod-enable-tiles"].value and data.raw["tile"][item_name]
 
     ----- Armor & Ammo
     or settings.startup["af-prod-enable-armor"].value and data.raw["armor"][item_name]
@@ -95,18 +102,24 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-ammo"].value and data.raw["ammo"][item_name]
     or settings.startup["af-prod-enable-ammo"].value and data.raw["land-mine"][item_name]
     or settings.startup["af-prod-enable-ammo"].value and data.raw["capsule"][item_name]
+  )
+  return not not result
 end
 
 
 function enable_total_productivity()
   -- log("--- TotalProductivity1 ---")
+
   local item_name, success, result
   for recipe_name, recipe in pairs(data.raw.recipe) do
     item_name = (nil
       or recipe.result
       or (recipe.results and #recipe.results==1 and recipe.results[1].name)
+      or (recipe.normal and (
+        recipe.normal.result
+        or (recipe.normal.results and #recipe.normal.results==1 and recipe.normal.results[1].name)
+      ))
     )
-    -- log(serpent.line(recipe))
 
     success, call_result = pcall(should_enable_prod, item_name)
     if not success then
@@ -115,6 +128,9 @@ function enable_total_productivity()
         error = call_result,
       }))
     end
+
+    -- log("Adding Prod to "..recipe_name.." => "..serpent.line(item_name)..": "..serpent.line(call_result))
+    -- log(serpent.line(recipe))
 
     if call_result then
       for _, module in pairs(data.raw.module) do

@@ -1,5 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
+Date: 2024-10-19
+  Changes:
+    - Setting to enable productivity for landfill & floor tiles.
+    - Added missing underground pipes and artillery wagons if related setting flags are on.
+    - Fixed behaviour for some recipes.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
 Date: 2024-09-24
   Info:
     - Initial release by AivanF!

@@ -142,6 +142,13 @@ data:extend{
         default_value = false,
         order = "c-4",
     },
+    {
+        type = "bool-setting",
+        name = "af-prod-enable-tiles",
+        setting_type = "startup",
+        default_value = true,
+        order = "c-5",
+    },
     -- Armor & Ammo
     {
         type = "bool-setting",
