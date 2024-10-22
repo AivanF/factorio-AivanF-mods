@@ -1,8 +1,6 @@
-local Constants = require("constants")
+local shared = require("shared")
 
--- Category --
-data:extend({{type = "ammo-category", name = Constants.ammoCategory}})
+data:extend({{type = "ammo-category", name = shared.ammoCategory}})
 
--- Entities --
 require("prototypes.magazine")
 require("prototypes.rifle")

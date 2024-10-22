@@ -1,5 +1,4 @@
-local Constants = require("constants")
-local Recipe = require("__stdlib__/stdlib/data/recipe")
+local shared = require("shared")
 
 -- Items --
 
@@ -15,18 +14,18 @@ local container = {}
 
 local item1 = {
     type = "gun",
-    name = Constants.rifle1,
-    icon = "__" .. Constants.modName .. "__/graphics/" .. Constants.rifle1 ..
+    name = shared.rifle1,
+    icon = "__" .. shared.modName .. "__/graphics/" .. shared.rifle1 ..
         ".png",
     icon_size = 64,
     subgroup = "gun",
-    order = "a[basic-clips]-c-ra[" .. Constants.rifle1 .. "]",
+    order = "a[basic-clips]-c-ra[" .. shared.rifle1 .. "]",
     attack_parameters = {
         type = "projectile",
-        ammo_category = Constants.ammoCategory,
+        ammo_category = shared.ammoCategory,
         cooldown = cd1,
         sound = {
-            { filename = "__" .. Constants.modName .. "__/SniperRifle.ogg", volume = 1.0 }
+            { filename = "__" .. shared.modName .. "__/SniperRifle.ogg", volume = 1.0 }
         },
         movement_slow_down_factor = 0.5,
         shell_particle = {
@@ -48,18 +47,18 @@ table.insert(container, item1)
 
 local item2 = {
     type = "gun",
-    name = Constants.rifle2,
-    icon = "__" .. Constants.modName .. "__/graphics/" .. Constants.rifle2 ..
+    name = shared.rifle2,
+    icon = "__" .. shared.modName .. "__/graphics/" .. shared.rifle2 ..
         ".png",
     icon_size = 64,
     subgroup = "gun",
-    order = "a[basic-clips]-c-rb[" .. Constants.rifle2 .. "]",
+    order = "a[basic-clips]-c-rb[" .. shared.rifle2 .. "]",
     attack_parameters = {
         type = "projectile",
-        ammo_category = Constants.ammoCategory,
+        ammo_category = shared.ammoCategory,
         cooldown = cd2,
         sound = {
-            { filename = "__" .. Constants.modName .. "__/SniperRifle.ogg", volume = 1.0 }
+            { filename = "__" .. shared.modName .. "__/SniperRifle.ogg", volume = 1.0 }
         },
         damage_modifier = 1.25,
         movement_slow_down_factor = 0.5,
@@ -88,24 +87,36 @@ data:extend({
         enabled = false,
         energy_required = 15,
         ingredients = {
-            {"wood", 10}, {"iron-gear-wheel", 15}, {"steel-plate", 10},
+            {type="item", name="wood", amount=10},
+            {type="item", name="iron-gear-wheel", amount=15},
+            {type="item", name="steel-plate", amount=10},
         },
-        name = Constants.rifle1,
-        result = Constants.rifle1,
+        name = shared.rifle1,
+        results = {{type="item", name=shared.rifle1, amount=1}},
         type = "recipe"
     }
 })
-Recipe(Constants.rifle1):add_unlock("military-2")
+table.insert(
+  data.raw.technology["military-2"].effects,
+  { type = "unlock-recipe", recipe = shared.rifle1 }
+)
+
 data:extend({
     {
         enabled = false,
         energy_required = 30,
         ingredients = {
-            {Constants.rifle1, 1}, {"small-lamp", 2}, {"pipe", 10}, {"steel-plate", 10},
+            {type="item", name=shared.rifle1, amount=1},
+            {type="item", name="small-lamp", amount=2},
+            {type="item", name="pipe", amount=10},
+            {type="item", name="steel-plate", amount=10},
         },
-        name = Constants.rifle2,
-        result = Constants.rifle2,
+        name = shared.rifle2,
+        results = {{type="item", name=shared.rifle2, amount=1}},
         type = "recipe"
     }
 })
-Recipe(Constants.rifle2):add_unlock("military-4")
+table.insert(
+  data.raw.technology["military-4"].effects,
+  { type = "unlock-recipe", recipe = shared.rifle2 }
+)

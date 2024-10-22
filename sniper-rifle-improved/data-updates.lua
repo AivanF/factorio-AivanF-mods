@@ -1,17 +1,16 @@
-local Constants = require("constants")
+local shared = require("shared")
 
 local round_by = function(value, base)
     return math.floor(value/base + 0.5) * base
 end
 
--- Technology --
 damage_gain = settings.startup["af-sniper-damage-gain"].value
 
 local function addDamageEffect(technology)
     local effects = data.raw["technology"][technology].effects
     effects[#effects + 1] = {
         type = "ammo-damage",
-        ammo_category = Constants.ammoCategory,
+        ammo_category = shared.ammoCategory,
         modifier = round_by(effects[#effects - (#effects - 1)].modifier * damage_gain, 0.05)
     }
 end
@@ -36,7 +35,7 @@ local function addSpeedEffect(technology)
     local effects = data.raw["technology"][technology].effects
     effects[#effects + 1] = {
         type = "gun-speed",
-        ammo_category = Constants.ammoCategory,
+        ammo_category = shared.ammoCategory,
         modifier = effects[#effects - (#effects - 1)].modifier
     }
 end

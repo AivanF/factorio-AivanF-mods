@@ -1,16 +1,15 @@
-local Constants = require("constants")
-local Recipe = require("__stdlib__/stdlib/data/recipe")
+local shared = require("shared")
 
 -- Items --
 local container = {}
 local item1 = {
     type = "ammo",
-    name = Constants.magazine1,
-    icon = "__" .. Constants.modName .. "__/graphics/" .. Constants.magazine1 ..
+    name = shared.magazine1,
+    icon = "__" .. shared.modName .. "__/graphics/" .. shared.magazine1 ..
         ".png",
     icon_size = 64,
+    ammo_category = shared.ammoCategory,
     ammo_type = {
-        category = Constants.ammoCategory,
         action = {
             type = "direct",
             action_delivery = {
@@ -36,17 +35,17 @@ local item1 = {
     },
     magazine_size = 5,
     subgroup = "ammo",
-    order = "a[basic-clips]-d[" .. Constants.magazine1 .. "]",
+    order = "a[basic-clips]-d[" .. shared.magazine1 .. "]",
     stack_size = 200
 }
 local item2 = {
     type = "ammo",
-    name = Constants.magazine2,
-    icon = "__" .. Constants.modName .. "__/graphics/" .. Constants.magazine2 ..
+    name = shared.magazine2,
+    icon = "__" .. shared.modName .. "__/graphics/" .. shared.magazine2 ..
         ".png",
     icon_size = 64,
+    ammo_category = shared.ammoCategory,
     ammo_type = {
-        category = Constants.ammoCategory,
         action = {
             type = "direct",
             action_delivery = {
@@ -72,17 +71,17 @@ local item2 = {
     },
     magazine_size = 5,
     subgroup = "ammo",
-    order = "a[basic-clips]-d[" .. Constants.magazine2 .. "]",
+    order = "a[basic-clips]-d[" .. shared.magazine2 .. "]",
     stack_size = 200
 }
 local item3 = {
     type = "ammo",
-    name = Constants.magazine3,
-    icon = "__" .. Constants.modName .. "__/graphics/" .. Constants.magazine3 ..
+    name = shared.magazine3,
+    icon = "__" .. shared.modName .. "__/graphics/" .. shared.magazine3 ..
         ".png",
     icon_size = 64,
+    ammo_category = shared.ammoCategory,
     ammo_type = {
-        category = Constants.ammoCategory,
         action = {
             type = "direct",
             action_delivery = {
@@ -108,7 +107,7 @@ local item3 = {
     },
     magazine_size = 5,
     subgroup = "ammo",
-    order = "a[basic-clips]-d[" .. Constants.magazine2 .. "]",
+    order = "a[basic-clips]-d[" .. shared.magazine2 .. "]",
     stack_size = 200
 }
 
@@ -123,10 +122,11 @@ data:extend({
         enabled = false,
         energy_required = 3,
         ingredients = {
-            {"copper-plate", 5}, {"steel-plate", 5}
+            {type="item", name="copper-plate", amount=5},
+            {type="item", name="steel-plate", amount=5},
         },
-        name = Constants.magazine1,
-        result = Constants.magazine1,
+        name = shared.magazine1,
+        results = {{type="item", name=shared.magazine1, amount=1}},
         type = "recipe"
     }
 })
@@ -135,13 +135,11 @@ data:extend({
         enabled = false,
         energy_required = 15,
         ingredients = {
-            {Constants.magazine1, 5}, {"explosives", 1}
+            {type="item", name=shared.magazine1, amount=5},
+            {type="item", name="explosives", amount=1},
         },
-        name = Constants.magazine2,
-        results = {{
-           name = Constants.magazine2,
-           amount = 5,
-        }},
+        name = shared.magazine2,
+        results = {{type="item", name=shared.magazine2, amount=5}},
         type = "recipe"
     }
 })
@@ -150,13 +148,24 @@ data:extend({
         enabled = false,
         energy_required = 3,
         ingredients = {
-            {Constants.magazine2, 1}, {"uranium-238", 1}
+            {type="item", name=shared.magazine2, amount=1},
+            {type="item", name="uranium-238", amount=1},
         },
-        name = Constants.magazine3,
-        result = Constants.magazine3,
+        name = shared.magazine3,
+        results = {{type="item", name=shared.magazine3, amount=1}},
         type = "recipe"
     }
 })
-Recipe(Constants.magazine1):add_unlock("military-2")
-Recipe(Constants.magazine2):add_unlock("military-3")
-Recipe(Constants.magazine3):add_unlock("uranium-ammo")
+
+table.insert(
+  data.raw.technology["military-2"].effects,
+  { type = "unlock-recipe", recipe = shared.magazine1 }
+)
+table.insert(
+  data.raw.technology["military-3"].effects,
+  { type = "unlock-recipe", recipe = shared.magazine2 }
+)
+table.insert(
+  data.raw.technology["uranium-ammo"].effects,
+  { type = "unlock-recipe", recipe = shared.magazine3 }
+)
