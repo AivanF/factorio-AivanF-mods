@@ -59,12 +59,13 @@ data:extend({
     name = basic_chest_name,
     enabled = true,
     ingredients = {
-      {"iron-plate", 10},
-      {"electronic-circuit", 10},
-      {"inserter", 2},
-      {"radar", 1},
+
+      {type="item", name="iron-plate", amount=10},
+      {type="item", name="electronic-circuit", amount=10},
+      {type="item", name="inserter", amount=2},
+      {type="item", name="radar", amount=1},
     },
-    result = basic_chest_name
+    results = {{type="item", name=basic_chest_name, amount=1}}
   },
 
   {
@@ -72,24 +73,24 @@ data:extend({
     name = signals_chest_name,
     enabled = false,
     ingredients = {
-      {"steel-plate", 10},
-      {"electronic-circuit", 10},
-      {"filter-inserter", 2},
-      {"radar", 1},
+      {type="item", name="steel-plate", amount=10},
+      {type="item", name="electronic-circuit", amount=10},
+      {type="item", name="inserter", amount=2},
+      {type="item", name="radar", amount=1},
     },
-    result = signals_chest_name
+    results = {{type="item", name=signals_chest_name, amount=1}}
   },
   {
     type = "recipe",
     name = logistic_chest_name,
     enabled = false,
     ingredients = {
-      {"steel-plate", 20},
-      {"advanced-circuit", 10},
-      {"filter-inserter", 2},
-      {"radar", 1},
+      {type="item", name="steel-plate", amount=20},
+      {type="item", name="advanced-circuit", amount=10},
+      {type="item", name="inserter", amount=2},
+      {type="item", name="radar", amount=1},
     },
-    result = logistic_chest_name
+    results = {{type="item", name=logistic_chest_name, amount=1}}
   },
 
 -- }) data:extend({

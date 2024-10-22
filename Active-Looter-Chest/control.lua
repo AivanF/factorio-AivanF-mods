@@ -59,7 +59,7 @@ end
 function process_a_chest(chest_entity)
   surface = chest_entity.surface
 
-  local signals = chest_entity.get_merged_signals()
+  local signals = chest_entity.get_signals(defines.wire_connector_id.circuit_red, defines.wire_connector_id.circuit_green)
 
   signal_names = {} -- for filters
 
@@ -213,7 +213,7 @@ local process_all_chests = function(event)
   radius = settings.global["af-alc-chest-radius"].value
   show_circles = settings.global["af-alc-chest-show"].value
 
-  local bucket = global.looting_chests[event.tick % scan_update_rate]
+  local bucket = storage.looting_chests[event.tick % scan_update_rate]
   if not bucket then return end
 
   for unit_number, chest_entity in pairs(bucket) do
@@ -228,20 +228,20 @@ end
 
 function register_chest(entity)
   local unit_number = entity.unit_number
-  local bucket = global.looting_chests[unit_number % scan_update_rate]
+  local bucket = storage.looting_chests[unit_number % scan_update_rate]
   if not bucket then
     bucket = {}
-    global.looting_chests[unit_number % scan_update_rate] = bucket
+    storage.looting_chests[unit_number % scan_update_rate] = bucket
   end
   bucket[unit_number] = entity
 end
 
 
 function reset_storage()
-  global.looting_chests = {}
+  storage.looting_chests = {}
   -- Create buckets
   for i = 1, scan_update_rate do
-    global.looting_chests[i] = {}
+    storage.looting_chests[i] = {}
   end
 end
 
@@ -276,7 +276,7 @@ end
 
 
 function on_init()
-  if not global.looting_chests then reset_storage() end
+  if not storage.looting_chests then reset_storage() end
 end
 
 function on_any_built(event)

@@ -1,24 +1,34 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 2024-10-22
+  Features:
+    - Factorio 2.0 support.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2023-06-19
   Features:
     - Previously one chest was processed each tick – great for UPS, bad for looting speed of chests. Now chests update rate doesn't depend on their count (but performance does). There is a startup mod setting to edit scan delay.
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2023-06-10
   Features:
     - Wartorio2 support: chests keep looting after teleportations.
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2023-06-07
   Changes:
     - Three chests now: 1. iron without signals, 2. (new) steel with circuit signals support, 3. logistic with signals support
     - A setting to make 2 & 3 chests require a laser turret which is cool yet challenging
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2023-05-30
   Bugfixes:
     - Fixed eternal area highlights
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2023-05-30
@@ -27,6 +37,7 @@ Date: 2023-05-30
   Changes:
     - Default max shift increased from 64 to 96
 ---------------------------------------------------------------------------------------------------
+
 Version: 1.0.0
 Date: 2023-05-30
   Info:
