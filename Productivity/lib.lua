@@ -12,7 +12,7 @@ end
 
 local function adds_productivity(module)
   for name, value in pairs(module.effect) do
-    if name == "productivity" and value.bonus > 0 then
+    if name == "productivity" and value > 0 then
       return true
     end
   end
@@ -35,7 +35,7 @@ local function should_enable_prod(item_name)
   if item_name:find("fish", 1, true) then return false end
 
   local placable = item_has_field(item_name, "place_result")
-  local equipment = item_has_field(item_name, "placed_as_equipment_result")
+  local equipment = item_has_field(item_name, "place_as_equipment_result")
   local launchable = item_has_field(item_name, "rocket_launch_product") or item_has_field(item_name, "rocket_launch_products")
 
   local result = (false
@@ -53,9 +53,9 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-robots"].value and data.raw["construction-robot"][item_name]
 
     or settings.startup["af-prod-enable-rails"].value and data.raw["rail-planner"][item_name]
-    or settings.startup["af-prod-enable-rail-stops+signals"].value and data.raw["train-stop"][item_name]
-    or settings.startup["af-prod-enable-rail-stops+signals"].value and data.raw["rail-signal"][item_name]
-    or settings.startup["af-prod-enable-rail-stops+signals"].value and data.raw["rail-chain-signal"][item_name]
+    or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["train-stop"][item_name]
+    or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["rail-signal"][item_name]
+    or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["rail-chain-signal"][item_name]
 
     or settings.startup["af-prod-enable-trains"].value and data.raw["locomotive"][item_name]
     or settings.startup["af-prod-enable-trains"].value and data.raw["artillery-wagon"][item_name]
@@ -77,11 +77,15 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["rocket-silo"][item_name]
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["lab"][item_name]
     or settings.startup["af-prod-enable-roboports"].value and data.raw["roboport"][item_name]
-    or settings.startup["af-prod-enable-solar+acc"].value and data.raw["solar-panel"][item_name]
-    or settings.startup["af-prod-enable-solar+acc"].value and data.raw["accumulator"][item_name]
-    or settings.startup["af-prod-enable-boiler+gen"].value and data.raw["reactor"][item_name]
-    or settings.startup["af-prod-enable-boiler+gen"].value and data.raw["boiler"][item_name]
-    or settings.startup["af-prod-enable-boiler+gen"].value and data.raw["generator"][item_name]
+
+    or settings.startup["af-prod-enable-solar-acc"].value and data.raw["solar-panel"][item_name]
+    or settings.startup["af-prod-enable-solar-acc"].value and data.raw["accumulator"][item_name]
+    or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["reactor"][item_name]
+    or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["heat-pipe"][item_name]
+    or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["boiler"][item_name]
+    or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["generator"][item_name]
+    or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["burner-generator"][item_name]
+
     or settings.startup["af-prod-enable-turrets"].value and item_name:find("turret", 1, true) and placable
     or settings.startup["af-prod-enable-walls"].value and data.raw["wall"][item_name]
     or settings.startup["af-prod-enable-walls"].value and data.raw["gate"][item_name]
@@ -112,14 +116,7 @@ function enable_total_productivity()
 
   local item_name, success, result
   for recipe_name, recipe in pairs(data.raw.recipe) do
-    item_name = (nil
-      or recipe.result
-      or (recipe.results and #recipe.results==1 and recipe.results[1].name)
-      or (recipe.normal and (
-        recipe.normal.result
-        or (recipe.normal.results and #recipe.normal.results==1 and recipe.normal.results[1].name)
-      ))
-    )
+    item_name = recipe.results and #recipe.results==1 and recipe.results[1].name
 
     success, call_result = pcall(should_enable_prod, item_name)
     if not success then
@@ -133,11 +130,13 @@ function enable_total_productivity()
     -- log(serpent.line(recipe))
 
     if call_result then
-      for _, module in pairs(data.raw.module) do
-        if adds_productivity(module) and is_restricted(module, recipe_name) then
-          table.insert(module.limitation, recipe_name)
-        end
-      end
+      recipe.allow_productivity = true
+      -- Hooray, it finally seems so simple now
+      -- for _, module in pairs(data.raw.module) do
+      --   if adds_productivity(module) and is_restricted(module, recipe_name) then
+      --     table.insert(module.limitation, recipe_name)
+      --   end
+      -- end
     end
   end
   -- log("--- TotalProductivity2 ---")

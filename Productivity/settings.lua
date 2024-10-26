@@ -37,7 +37,7 @@ data:extend{
     },
     {
         type = "bool-setting",
-        name = "af-prod-enable-rail-stops+signals",
+        name = "af-prod-enable-rail-stops-signals",
         setting_type = "startup",
         default_value = true,
         order = "a-6",
@@ -87,16 +87,16 @@ data:extend{
     },
     {
         type = "bool-setting",
-        name = "af-prod-enable-solar+acc",
+        name = "af-prod-enable-solar-acc",
         setting_type = "startup",
         default_value = true,
         order = "b-4",
     },
     {
         type = "bool-setting",
-        name = "af-prod-enable-boiler+gen",
+        name = "af-prod-enable-boiler-gen",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "b-5",
     },
     {
