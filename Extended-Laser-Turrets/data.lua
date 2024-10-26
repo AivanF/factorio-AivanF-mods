@@ -52,15 +52,15 @@ local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, he
   local descr
   if health_cf >= 2 then
     if damage_cf > range_cf then
-      descr = {"item-description.laser-turret-mk3-stro", damage_mult, range_mult}
+      descr = {"item-description.laser-turret-mk3-stro", ""..damage_mult, ""..range_mult}
     else
-      descr = {"item-description.laser-turret-mk3-long", math.floor(range_mult), damage_mult}
+      descr = {"item-description.laser-turret-mk3-long", ""..math.floor(range_mult), ""..damage_mult}
     end
   else
     if damage_cf > range_cf then
-      descr = {"item-description.laser-turret-mk2-stro", damage_mult}
+      descr = {"item-description.laser-turret-mk2-stro", ""..damage_mult}
     else
-      descr = {"item-description.laser-turret-mk2-long", range_mult}
+      descr = {"item-description.laser-turret-mk2-long", ""..range_mult}
     end
   end
 
@@ -76,16 +76,11 @@ local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, he
   newEntity.max_health = newEntity.max_health * health_mult
   newEntity.resistances = make_resistances(health_cf)
   newEntity.map_color = tint
-  newEntity.base_picture.layers[1].tint = tint
-  newEntity.base_picture.layers[1].hr_version.tint = tint
+  -- newEntity.base_picture.layers[1].tint = tint
   newEntity.folded_animation.layers[1].tint = tint
-  newEntity.folded_animation.layers[1].hr_version.tint = tint
   newEntity.folding_animation.layers[1].tint = tint
-  newEntity.folding_animation.layers[1].hr_version.tint = tint
   newEntity.prepared_animation.layers[1].tint = tint
-  newEntity.prepared_animation.layers[1].hr_version.tint = tint
   newEntity.preparing_animation.layers[1].tint = tint
-  newEntity.preparing_animation.layers[1].hr_version.tint = tint
   newEntity.name = new_name
   newEntity.minable.result = new_name
   newEntity.health_penalty = health_penalty
@@ -111,16 +106,16 @@ local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, he
       icon_size = 64,
     },
     (damage_cf > range_cf) and {
-      icon = "__core__/graphics/icons/technology/constants/constant-damage.png",
-      icon_mipmaps = 3,
-      icon_size = 128,
-      scale = 0.1 + health_cf/10,
+      icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-range.png",
+      icon_mipmaps = 2,
+      icon_size = 64,
+      scale = 0.3 + health_cf/4,
       shift = {8, 16},
     } or {
-      icon = "__core__/graphics/icons/technology/constants/constant-range.png",
-      icon_mipmaps = 3,
-      icon_size = 128,
-      scale = 0.1 + health_cf/10,
+      icon = "__core__/graphics/icons/technology/effect-constant/effect-constant-damage.png",
+      icon_mipmaps = 2,
+      icon_size = 64,
+      scale = 0.3 + health_cf/4,
       shift = {8, 16},
     },
   }
@@ -129,12 +124,12 @@ local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, he
   data:extend({newItem})
 
   local newRecipe = {
+    type = "recipe",
     name = new_name,
     enabled = false,
     energy_required = 20,
     ingredients = ingredients,
-    result = new_name,
-    type = "recipe"
+    results = {{type="item", name=new_name, amount=1}},
   }
   data:extend({ newRecipe })
 
@@ -147,29 +142,44 @@ local mk2_stro = "laser-turret-mk2-stro"
 local mk3_long = "laser-turret-mk3-long"
 local mk3_stro = "laser-turret-mk3-stro"
 
+local mk2_long_tint = { r = .7, g = 0.8, b = 1, a = 1}
 local mk2_long_ent = makeLaser(
   --       dst dmg  en  hp hp_pen
   mk2_long,  1,  0,  1,  1,     2,
-  { r = .7, g = 0.8, b = 1, a = 1}, {
-  {"laser-turret", 4}, {"stone-brick", 20}, {"effectivity-module", 1}
+  mk2_long_tint, {
+  {type="item", name="laser-turret", amount=4},
+  {type="item", name="stone-brick", amount=20},
+  {type="item", name="efficiency-module", amount=1},
 })
+
+local mk2_stro_tint = { r = .4, g = .7, b = .7, a = 1}
 local mk2_stro_ent = makeLaser(
   --       dst dmg  en  hp hp_pen
   mk2_stro,  0,  1,  1,  1,    -2,
-  { r = .4, g = .7, b = .7, a = 1}, {
-  {"laser-turret", 4}, {"stone-brick", 20}, {"speed-module", 1}
+  mk2_stro_tint, {
+    {type="item", name="laser-turret", amount=4},
+    {type="item", name="stone-brick", amount=20},
+    {type="item", name="speed-module", amount=1},
 })
+
+local mk3_long_tint = { r = 1, g = .8, b = .6, a = 1}
 makeLaser(
   --       dst dmg  en  hp hp_pen
   mk3_long,1.5,  1,  2,  2,    1,
-  { r = 1, g = .8, b = .6, a = 1}, {
-  {mk2_long, 4}, {"concrete", 50}, {"effectivity-module-2", 1}
+  mk3_long_tint, {
+    {type="item", name=mk2_long, amount=4},
+    {type="item", name="concrete", amount=50},
+    {type="item", name="efficiency-module-2", amount=1},
 })
+
+local mk3_stro_tint = { r = .8, g = .4, b = .2, a = 1}
 makeLaser(
   --       dst dmg  en  hp hp_pen
   mk3_stro,  1,  2,  2,  2,    -3,
-  { r = .8, g = .4, b = .2, a = 1}, {
-  {mk2_stro, 4}, {"concrete", 50}, {"speed-module-2", 1}
+  mk3_stro_tint, {
+    {type="item", name=mk2_stro, amount=4},
+    {type="item", name="concrete", amount=50},
+    {type="item", name="speed-module-2", amount=1},
 })
 mk2_long_ent.next_upgrade = mk3_long
 mk2_stro_ent.next_upgrade = mk3_stro
@@ -185,6 +195,7 @@ data:extend{{
     {
       icon = "__base__/graphics/technology/laser-turret.png",
       icon_size = 256, icon_mipmaps = 4,
+      tint = mk2_stro_tint,
     },
     {
       icon = "__core__/graphics/icons/technology/constants/constant-range.png",
@@ -196,7 +207,7 @@ data:extend{{
     { type = "unlock-recipe", recipe = mk2_long },
     { type = "unlock-recipe", recipe = mk2_stro },
   },
-  prerequisites = {"laser-turret", "effectivity-module", "speed-module"},
+  prerequisites = {"laser-turret", "efficiency-module", "speed-module"},
   unit = {
     count = 300,
     ingredients = {
@@ -217,6 +228,7 @@ data:extend{{
     {
       icon = "__base__/graphics/technology/laser-turret.png",
       icon_size = 256, icon_mipmaps = 4,
+      tint = mk3_stro_tint,
     },
     {
       icon = "__core__/graphics/icons/technology/constants/constant-damage.png",
@@ -228,7 +240,7 @@ data:extend{{
     { type = "unlock-recipe", recipe = mk3_long },
     { type = "unlock-recipe", recipe = mk3_stro },
   },
-  prerequisites = {tech2, "effectivity-module-2", "speed-module-2"},
+  prerequisites = {tech2, "efficiency-module-2", "speed-module-2"},
   unit = {
     count = 500,
     ingredients = {
