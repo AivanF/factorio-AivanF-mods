@@ -9,27 +9,28 @@ local technology_name = early_space_cruiser and "tank" or "spidertron"
 local space_cruiser_ingredients
 if early_space_cruiser then
   space_cruiser_ingredients = {
-    {"steel-plate", 200},
-    {"electric-engine-unit", 50},
-    {"advanced-circuit", 42},
-    {"accumulator", 10},
-    {"nuclear-reactor", 1},
-    {"effectivity-module-2", 10},
-    {"speed-module-2", 10},
-    {"power-armor", 1},
+    {type="item", name="steel-plate", amount=200},
+    {type="item", name="electric-engine-unit", amount=50},
+    {type="item", name="advanced-circuit", amount=42},
+    {type="item", name="accumulator", amount=10},
+    {type="item", name="fission-reactor-equipment", amount=1},
+    {type="item", name="efficiency-module", amount=10},
+    {type="item", name="speed-module", amount=10},
+    {type="item", name="modular-armor", amount=1},
   }
 else
   -- TODO: add rocket/antimatter engine?
   -- TODO: maybe make more difficulty options or tiers for mid/late/end-game?
   space_cruiser_ingredients = {
-    {"low-density-structure", 200},
-    {"electric-engine-unit", 50},
-    {"rocket-control-unit", 42},
-    {"accumulator", 10},
-    {"fusion-reactor-equipment", 6},
-    {"effectivity-module-3", 10},
-    {"speed-module-3", 10},
-    {"power-armor-mk2", 1},
+    {type="item", name="low-density-structure", amount=200},
+    {type="item", name="electric-engine-unit", amount=50},
+    {type="item", name="processing-unit", amount=42},
+    {type="item", name="accumulator", amount=10},
+    {type="item", name="fission-reactor-equipment", amount=6},
+    -- {type="item", name="fusion-reactor-equipment", amount=6}, -- It's Space Age only
+    {type="item", name="efficiency-module-3", amount=10},
+    {type="item", name="speed-module-3", amount=10},
+    {type="item", name="power-armor-mk2", amount=1},
   }
 end
 
@@ -39,19 +40,12 @@ local ENTITYPATH = shared.path_prefix.."media/"
 
 local function addcommonanimlines(anim)
   for _,layer in pairs(anim.layers) do
-    layer.width, layer.height = 448, 448
-    layer.scale = 0.5
-    -- layer.width, layer.height = 896, 896
-    -- layer.scale = 0.25
-
-    -- layer.hr_version.width, layer.hr_version.height = 448, 448
-    -- layer.hr_version.scale = 0.5
-    layer.hr_version.width, layer.hr_version.height = 896, 896
-    layer.hr_version.scale = 0.25
-    layer.frame_count, layer.hr_version.frame_count = 1, 1
-    layer.direction_count, layer.hr_version.direction_count = 36, 36
-    layer.line_length, layer.hr_version.line_length = 6, 6
-    layer.max_advance, layer.hr_version.max_advance = 1, 1
+    layer.width, layer.height = 896, 896
+    layer.scale = 0.25
+    layer.frame_count = 1
+    layer.direction_count = 36
+    layer.line_length = 6
+    layer.max_advance = 1
   end
   return anim
 end
@@ -60,22 +54,14 @@ local function aircraftAnimation(nickname)
   local anim = {}
   anim.layers = {
     {
-      filename = ENTITYPATH .. nickname .. "-sheet.png",
+      filename = ENTITYPATH .. nickname .. "-sheet-HR.png",
       shift = util.by_pixel(0, -10),
-      hr_version = {
-        filename = ENTITYPATH .. nickname .. "-sheet-HR.png",
-        shift = util.by_pixel(0, -10),
-      }
+      scale = 0.25,
     },
     -- {
     --   filename = ENTITYPATH .. name .. "/" .. name .. "_spritesheet-shadow.png",
     --   shift = util.by_pixel(54, 35),
     --   draw_as_shadow = true,
-    --   hr_version = {
-    --     filename = ENTITYPATH .. name .. "/hr-" .. name .. "_spritesheet-shadow.png",
-    --     shift = util.by_pixel(54, 35),
-    --     draw_as_shadow = true,
-    --   }
     -- }
   }
   addcommonanimlines(anim)
@@ -86,14 +72,10 @@ local function aircraftLightAnimation(nickname)
   local anim = {}
   anim.layers = {
     {
-      filename = ENTITYPATH .. "/" .. nickname .. "-sheet-light.png",
+      filename = ENTITYPATH .. "/" .. nickname .. "-sheet-light-HR.png",
       shift = util.by_pixel(0, -10),
+      scale = 0.25,
       draw_as_light = true,
-      hr_version = {
-        filename = ENTITYPATH .. "/" .. nickname .. "-sheet-light-HR.png",
-        shift = util.by_pixel(0, -10),
-        draw_as_light = true,
-      }
     }
   }
   addcommonanimlines(anim)
@@ -153,7 +135,7 @@ local function add_recurrent_params(proto)
   proto.dying_explosion = "medium-explosion"
   proto.terrain_friction_modifier = 0
   proto.collision_box = {{-bw, -bh}, {bw, bh}}
-  proto.collision_mask = {}
+  proto.collision_mask = {layers={}}
   proto.selection_box = {{-bw, -bh}, {bw, bh}}
   proto.selection_priority = 70
   proto.render_layer = "air-object"
@@ -224,7 +206,8 @@ local space_cruiser = {
   -- MOVEMENT
   effectivity = 0.9,
   braking_power = "3MW",
-  burner = {
+  energy_source = {
+    type = "burner",
     fuel_categories = {"chemical"},
     fuel_inventory_size = 1,
     burnt_inventory_size = 1,
@@ -297,7 +280,7 @@ data:extend({
     order = "x[space-cruiser]",
     enabled = false,
     ingredients = space_cruiser_ingredients,
-    results = {{shared.space_cruiser, 1}},
+    results = {{type="item", name=shared.space_cruiser, amount=1}},
     energy_required = 60,
   },
   {

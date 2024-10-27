@@ -17,11 +17,11 @@ if not mods[shared.K2] then
 end
 
 local titan_supplier = data.raw.car[shared.space_cruiser]
-titan_supplier.burner.fuel_categories = {"nuclear"}
+titan_supplier.energy_source.fuel_categories = {"nuclear"}
 if mods[shared.K2] then
-	titan_supplier.burner.fuel_categories = {"nuclear-fuel"}
+	titan_supplier.energy_source.fuel_categories = {"nuclear-fuel"}
 	-- TODO: make only fusion for late-game mode/tier
-  table.insert(titan_supplier.burner.fuel_categories, "fusion-fuel")
+  table.insert(titan_supplier.energy_source.fuel_categories, "fusion-fuel")
 	-- TODO: make only antimatter for end-game mode/tier
-  table.insert(titan_supplier.burner.fuel_categories, "antimatter-fuel")
+  table.insert(titan_supplier.energy_source.fuel_categories, "antimatter-fuel")
 end
