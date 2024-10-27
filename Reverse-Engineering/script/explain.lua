@@ -16,19 +16,19 @@ local function explain(cmd)
   if ignore_items[item_name] then
     table.insert(answers, "builtinly ignored")
   end
-  if global.add_ignore_items[item_name] then
+  if storage.add_ignore_items[item_name] then
     table.insert(answers, "remotely ignored")
   end
-  if global.scipacks[item_name] then
+  if storage.scipacks[item_name] then
     table.insert(answers, "is a science pack")
   end
   if override_items[item_name] then
     table.insert(answers, "builtin overriden")
   end
-  if global.add_override_items[item_name] then
+  if storage.add_override_items[item_name] then
     table.insert(answers, "remotely overriden")
   end
-  local item_info = global.reverse_items[item_name]
+  local item_info = storage.reverse_items[item_name]
   if item_info then
     table.insert(answers, "registered: "..serpent.line(item_info))
   end
@@ -74,7 +74,7 @@ local function gui_create(player, toggle)
   pusher.style.horizontally_stretchable = true
   pusher.drag_target = main_frame
   pusher.style.maximal_height = 24
-  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
+  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close" }
 
   main_frame.add{ type="flow", name="input_line", direction="horizontal" }
   main_frame.input_line.add{ type="choose-elem-button", elem_type="item", tags={action=act_set_item}, name="selector" }
@@ -100,21 +100,21 @@ local function gui_explain(player, item_name)
   
   if ignore_items[item_name] then
     -- status = "builtinly ignored"
-  elseif global.add_ignore_items[item_name] then
+  elseif storage.add_ignore_items[item_name] then
     -- status = "remotely ignored"
-  elseif global.scipacks[item_name] then
+  elseif storage.scipacks[item_name] then
     status = {"af-reverse-lab.a-science-pack"}
-  elseif global.add_override_items[item_name] then
+  elseif storage.add_override_items[item_name] then
     status = "remotely valued"
     ok = true
-  elseif global.reverse_items[item_name] then
+  elseif storage.reverse_items[item_name] then
     status = "automatically valued"
     ok = true
   end
   main_frame.status.caption = status
 
   if ok then
-    local item_info = global.add_override_items[item_name] or global.reverse_items[item_name]
+    local item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
     -- game.print("// item_info: "..serpent.line(item_info))
     local expected, researched = prob_for_force(item_info, player.force)
     main_frame.status.caption = {

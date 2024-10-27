@@ -14,10 +14,10 @@ rlab_list = {
     usage = 100 * KW,
     prereq = nil,
     ingredients = {
-      {"iron-chest", 3},
-      {"inserter", 5},
-      {"assembling-machine-1", 1},
-      {"electronic-circuit", 10},
+      {type="item", name="iron-chest", amount=3},
+      {type="item", name="inserter", amount=5},
+      {type="item", name="assembling-machine-1", amount=1},
+      {type="item", name="electronic-circuit", amount=10},
     }
   },
   {
@@ -31,11 +31,11 @@ rlab_list = {
     usage = 1 * MW,
     prereq = "automation-2",
     ingredients = {
-      {"af-reverse-lab-1", 1},
-      -- {"steel-chest", 3},
-      {"filter-inserter", 5},
-      {"assembling-machine-2", 1},
-      {"advanced-circuit", 10},
+      {type="item", name="af-reverse-lab-1", amount=1},
+      -- {type="item", name="steel-chest", amount=3},
+      {type="item", name="fast-inserter", amount=5},
+      {type="item", name="assembling-machine-2", amount=1},
+      {type="item", name="advanced-circuit", amount=10},
     },
   },
   {
@@ -50,12 +50,12 @@ rlab_list = {
     prod_bonus = 1.5,
     prereq = "automation-3",
     ingredients = {
-      {"af-reverse-lab-2", 1},
-      {"stack-filter-inserter", 5},
-      {"assembling-machine-3", 1},
-      -- {"processing-unit", 10},
-      {"speed-module", 10},
-      {"productivity-module", 10},
+      {type="item", name="af-reverse-lab-2", amount=1},
+      {type="item", name="bulk-inserter", amount=5},
+      {type="item", name="assembling-machine-3", amount=1},
+      -- {type="item", name="processing-unit", amount=10},
+      {type="item", name="speed-module", amount=10},
+      {type="item", name="productivity-module", amount=10},
     },
   },
 }
@@ -71,9 +71,9 @@ end
 
 if not make_grades then
   rlabs[2].ingredients = {
-    {"iron-chest", 3},
-    {"filter-inserter", 5},
-    {"assembling-machine-2", 1},
-    {"advanced-circuit", 10},
+    {type="item", name="iron-chest", amount=3},
+    {type="item", name="fast-inserter", amount=5},
+    {type="item", name="assembling-machine-2", amount=1},
+    {type="item", name="advanced-circuit", amount=10},
   }
 end

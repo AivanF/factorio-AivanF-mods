@@ -7,9 +7,9 @@ local lib = Lib.new()
 
 
 function correct_global()
-  if not global.reverse_labs then global.reverse_labs = {} end
-  if not global.reverse_items and game then
-    global.reverse_items = {}
+  if not storage.reverse_labs then storage.reverse_labs = {} end
+  if not storage.reverse_items and game then
+    storage.reverse_items = {}
     cache_data()
   end
 end
@@ -18,21 +18,21 @@ end
 -- end)
 
 lib:on_configuration_changed(function()
-  -- Clean global. This will cause recache when game get initialised
-  global.scipacks = nil
-  global.reverse_items = nil
+  -- Clean storage. This will cause recache when game get initialised
+  storage.scipacks = nil
+  storage.reverse_items = nil
 end)
 
--- TODO: add re-register function to reset global.reverse_labs?
+-- TODO: add re-register function to reset storage.reverse_labs?
 
 
 local interface = {
   add_ignore_items = function(names)
-    deep_merge(global.add_ignore_items, from_key_list(names, true))
+    deep_merge(storage.add_ignore_items, from_key_list(names, true))
   end,
 
   add_ignore_techs = function(names)
-    deep_merge(global.add_ignore_techs, from_key_list(names, true))
+    deep_merge(storage.add_ignore_techs, from_key_list(names, true))
   end,
 
   -- Given `item_info` must contain at least `ingredients`. Maybe better to override from `get_item`
@@ -43,13 +43,13 @@ local interface = {
     item_info.prob = item_info.prob or 1
     item_info.need = item_info.need or 1
     item_info.price = item_info.price or 1
-    global.add_override_items[item_name] = item_info
+    storage.add_override_items[item_name] = item_info
   end,
 
   get_item = function(item_name)
-    -- local item_info = global.add_override_items[item_name] or global.reverse_items[item_name]
-    -- game.print("get_item: "..serpent.line(item_name).." => "..serpent.line(global.reverse_items[item_name]))
-    return global.reverse_items[item_name]
+    -- local item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
+    -- game.print("get_item: "..serpent.line(item_name).." => "..serpent.line(storage.reverse_items[item_name]))
+    return storage.reverse_items[item_name]
   end,
 
   -- Use the above API in your own remote functions:

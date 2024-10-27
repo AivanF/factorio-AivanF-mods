@@ -1,10 +1,10 @@
 {
   "name": "Reverse-Engineering",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "title": "Reverse Engineering Lab",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
-  "dependencies": ["informatron"],
-  "factorio_version": "1.1",
+  "dependencies": ["? informatron"],
+  "factorio_version": "2.0",
   "description": "Now you can uncraft & recycle items into science packs! Provides a lab that performs reverse-engineering research converting items into science packs considering their worth. Sometimes it can unlock related technology research! Useful with mods where you can find, loot advanced items, or just in case you wanna get rid of old stuff. Recipes and science packs from any other mods are supported. In addition, there are runtime/map settings to adjust probabilities. Note that items' worth is calculated by a complicated script, so, the balance can be a bit wrong, and it can be adjusted in newer versions."
 }

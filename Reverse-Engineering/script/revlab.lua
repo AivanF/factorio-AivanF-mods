@@ -35,10 +35,10 @@ local function on_any_built(event)
 
   if rlabs[entity.name] then
     local unit_number = entity.unit_number
-    local bucket = global.reverse_labs[unit_number % lab_update_rate]
+    local bucket = storage.reverse_labs[unit_number % lab_update_rate]
     if not bucket then
       bucket = {}
-      global.reverse_labs[unit_number % lab_update_rate] = bucket
+      storage.reverse_labs[unit_number % lab_update_rate] = bucket
     end
     local rlab = {
       grade = rlabs[entity.name].grade,
@@ -76,7 +76,7 @@ end
 local function on_any_remove(event)
   if rlabs[event.entity.name] then
     local unit_number = event.entity.unit_number
-    local bucket = global.reverse_labs[unit_number % lab_update_rate]
+    local bucket = storage.reverse_labs[unit_number % lab_update_rate]
     if bucket and bucket[unit_number] then
       local rlab = bucket[unit_number]
       if rlab.center.valid then rlab.center.destroy() end
@@ -161,8 +161,8 @@ local function handle_input(rlab, item_info, prod_bonus)
         merge(candidates, tech.prerequisites)
       end
       for index, name in pairs(item_info.ingredients) do
-        if global.reverse_items[name] then
-          table.insert(candidates, rlab.force.technologies[global.reverse_items[name].tech_name])
+        if storage.reverse_items[name] then
+          table.insert(candidates, rlab.force.technologies[storage.reverse_items[name].tech_name])
         end
       end
       shuffle(candidates)
@@ -194,12 +194,14 @@ local function process_a_lab(rlab)
   local grade_info = rlabs[rlab.grade]
   local pcs_limit = grade_info.max_pcs
   local power_usage = 0
-  local item_info, pack, pcs
+  local item_info, pcs, item_name, have
 
-  for item_name, have in pairs(rlab.input.get_inventory(defines.inventory.chest).get_contents()) do
-    item_info = global.add_override_items[item_name] or global.reverse_items[item_name]
+  for _, stack_info in ipairs(rlab.input.get_inventory(defines.inventory.chest).get_contents()) do
+    item_name = stack_info.name
+    have = stack_info.count
+    item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
 
-    if global.scipacks[item_name] then
+    if storage.scipacks[item_name] then
       power_usage = power_usage + 1
       local done = rlab.output_packs.insert({name=item_name, count=have})
       rlab.input.remove_item({name=item_name, count=done})
@@ -234,7 +236,7 @@ end
 
 local function process_labs()
   correct_global()
-  local bucket = global.reverse_labs[game.tick % lab_update_rate]
+  local bucket = storage.reverse_labs[game.tick % lab_update_rate]
   if not bucket then return end
   for unit_number, rlab in pairs(bucket) do
     if rlab.main.valid then

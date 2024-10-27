@@ -12,7 +12,7 @@ local special_flags = {
 }
 
 local resistances = {
-  { type = "impact", decrease=10000, percent=100 },
+  { type = "impact", percent=100 },
   { type = "physical", percent=100 },
   { type = "explosion", percent=100 },
   { type = "laser", percent = 100 },
@@ -31,10 +31,9 @@ local function box_mult(box, xs, ys)
 end
 
 local chest_base = table.deepcopy(data.raw["container"]["iron-chest"])
-chest_base.max_health = 10000
-chest_base.healing_per_tick = 10000
+chest_base.max_health = 1000
 chest_base.flags = special_flags
-chest_base.collision_mask = {}
+chest_base.collision_mask = {layers={}}
 chest_base.resistances = resistances
 chest_base.next_upgrade = nil
 chest_base.minable = nil
@@ -49,36 +48,21 @@ chest_input.collision_box = box_mult(chest_input.collision_box, 1, 3)
 chest_input.picture = {
   layers = {
     {
-      filename = "__Reverse-Engineering__/graphics/chest-input.png",
+      filename = "__Reverse-Engineering__/graphics/chest-input-hr.png",
       priority = "extra-high",
-      width = 34,
-      height = 102,
+      width = 66,
+      height = 192,
       shift = util.by_pixel(0, 0),
-      hr_version = {
-        filename = "__Reverse-Engineering__/graphics/chest-input-hr.png",
-        priority = "extra-high",
-        width = 66,
-        height = 192,
-        shift = util.by_pixel(0, 0),
-        scale = 0.5
-      }
+      scale = 0.5
     },
     {
       filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
       priority = "extra-high",
-      width = 56,
-      height = 26,
-      shift = util.by_pixel(10, 6.5),
+      width = 110,
+      height = 50,
+      shift = util.by_pixel(10.5, 6),
       draw_as_shadow = true,
-      hr_version = {
-        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
-        priority = "extra-high",
-        width = 110,
-        height = 50,
-        shift = util.by_pixel(10.5, 6),
-        draw_as_shadow = true,
-        scale = 0.5
-      }
+      scale = 0.5
     }
   }
 }
@@ -90,36 +74,21 @@ chest_packs.name = base_name.."-chest-packs"
 chest_packs.picture = {
   layers = {
     {
-      filename = "__Reverse-Engineering__/graphics/chest-science.png",
+      filename = "__Reverse-Engineering__/graphics/chest-science-hr.png",
       priority = "extra-high",
-      width = 34,
-      height = 34,
+      width = 66,
+      height = 66,
       shift = util.by_pixel(0, 0),
-      hr_version = {
-        filename = "__Reverse-Engineering__/graphics/chest-science-hr.png",
-        priority = "extra-high",
-        width = 66,
-        height = 66,
-        shift = util.by_pixel(0, 0),
-        scale = 0.5
-      }
+      scale = 0.5
     },
     {
       filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
       priority = "extra-high",
-      width = 56,
-      height = 26,
-      shift = util.by_pixel(10, 6.5),
+      width = 110,
+      height = 50,
+      shift = util.by_pixel(10.5, 6),
       draw_as_shadow = true,
-      hr_version = {
-        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
-        priority = "extra-high",
-        width = 110,
-        height = 50,
-        shift = util.by_pixel(10.5, 6),
-        draw_as_shadow = true,
-        scale = 0.5
-      }
+      scale = 0.5
     }
   }
 }
@@ -131,36 +100,21 @@ chest_other.name = base_name.."-chest-other"
 chest_other.picture = {
   layers = {
     {
-      filename = "__Reverse-Engineering__/graphics/chest-trash.png",
+      filename = "__Reverse-Engineering__/graphics/chest-trash-hr.png",
       priority = "extra-high",
-      width = 34,
-      height = 34,
+      width = 66,
+      height = 66,
       shift = util.by_pixel(0, 0),
-      hr_version = {
-        filename = "__Reverse-Engineering__/graphics/chest-trash-hr.png",
-        priority = "extra-high",
-        width = 66,
-        height = 66,
-        shift = util.by_pixel(0, 0),
-        scale = 0.5
-      }
+      scale = 0.5
     },
     {
       filename = "__base__/graphics/entity/iron-chest/iron-chest-shadow.png",
       priority = "extra-high",
-      width = 56,
-      height = 26,
-      shift = util.by_pixel(10, 6.5),
+      width = 110,
+      height = 50,
+      shift = util.by_pixel(10.5, 6),
       draw_as_shadow = true,
-      hr_version = {
-        filename = "__base__/graphics/entity/iron-chest/hr-iron-chest-shadow.png",
-        priority = "extra-high",
-        width = 110,
-        height = 50,
-        shift = util.by_pixel(10.5, 6),
-        draw_as_shadow = true,
-        scale = 0.5
-      }
+      scale = 0.5
     }
   }
 }
@@ -182,10 +136,10 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
       localised_description = {"entity-description.af-reverse-lab"},
       icon = info.icon, icon_size = info.icon_size, icon_mipmaps = info.icon_mipmaps,
       flags = special_flags,
-      max_health = 10000,
+      max_health = 1000,
       selection_box = {{-0.5, -0.5}, {0.5, 0.5}},
       collision_box = {{-0.5, -0.5}, {0.5, 0.5}},
-      -- collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
+      -- collision_mask = {layers={item=true, object=true, player=true, water_tile=true}},
       vehicle_impact_sound = sounds.generic_impact,
       animations = {
         filename = info.sprite,
@@ -209,7 +163,7 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
       dying_explosion = "massive-explosion",
       selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
       collision_box = {{-1.4, -1.4}, {1.4, 1.4}},
-      collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
+      collision_mask = {layers={item=true, object=true, player=true, water_tile=true}},
       selection_priority = 40,
       vehicle_impact_sound = sounds.generic_impact,
       open_sound = sounds.electric_network_open,
@@ -217,9 +171,9 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
       energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        buffer_capacity = (100*info.usage/KW).."KJ",
-        input_flow_limit = (20*info.usage/KW).."KW",
-        drain = (info.usage/KW).."KW",
+        buffer_capacity = (100*info.usage/KW).."kJ",
+        input_flow_limit = (20*info.usage/KW).."kW",
+        drain = (info.usage/KW).."kW",
       },
       render_layer = "floor",
       animations = {
@@ -245,7 +199,7 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
       name = info.name,
       enabled = not info.prereq,
       ingredients = info.ingredients,
-      result = info.name,
+      results = {{type="item", name=info.name, amount=1}},
     },
   })
   if info.prereq then
@@ -274,13 +228,11 @@ data:extend{
     order = "def",
     action = "lua",
     style = "blue",
-    icon = {
-      filename = "__Reverse-Engineering__/graphics/shortcut-worth.png",
-      size = 64,
-      scale = 1,
-      priority = "extra-high-no-scale",
-    },
+    icon = "__Reverse-Engineering__/graphics/shortcut-worth.png",
+    small_icon = "__Reverse-Engineering__/graphics/shortcut-worth.png",
   },
 }
 
-informatron_make_image("reveng-info", "__Reverse-Engineering__/graphics/info-expl.jpg", 900, 600)
+if informatron_make_image then
+  informatron_make_image("reveng-info", "__Reverse-Engineering__/graphics/info-expl.jpg", 900, 600)
+end
