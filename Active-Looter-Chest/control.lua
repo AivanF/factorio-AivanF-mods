@@ -4,6 +4,8 @@ local radius = 0
 local show_circles = false
 local max_shift = 0
 
+-- Global variables are dangerous in parallel-compute, multiplayer
+-- But hopefully I know what I'm doing
 local chest_entity = nil
 local surface = nil
 local signal_names = nil
@@ -23,7 +25,7 @@ local scan_update_rate = settings.startup["af-alc-scan-update-rate"].value
 local loot_corpses = settings.startup["af-alc-loot-corpses"].value
 
 local ttl_1 = scan_update_rate + 1
-local ttl_2 = 1
+local ttl_2 = 3
 
 
 local take_item = function(chest_entity, source_entity, stack)
@@ -35,10 +37,10 @@ local take_item = function(chest_entity, source_entity, stack)
       from=chest_entity, to={x=tx,y=ty}, surface=surface, time_to_live=ttl_2, forces={chest_entity.force}}
 
     -- circles
-    -- rendering.draw_circle{color={r=0.5,g=0.1,b=0.5,a=1}, radius=0.5, width=1,
-    --   filled=false, target={x=tx,y=ty}, surface=surface, time_to_live=12, forces={chest_entity.force}, draw_on_ground=true, only_in_alt_mode=true}
-    rendering.draw_circle{color={r=0.1,g=0.02,b=0.1,a=0.05}, radius=radius, width=1,
-      filled=true, target={x=tx,y=ty}, surface=surface, time_to_live=ttl_2, forces={chest_entity.force}, draw_on_ground=true, only_in_alt_mode=true}
+    rendering.draw_circle{color={r=0.5,g=0.1,b=0.5,a=1}, radius=0.5, width=1,
+      filled=false, target={x=tx,y=ty}, surface=surface, time_to_live=12, forces={chest_entity.force}, draw_on_ground=true, only_in_alt_mode=true}
+    -- rendering.draw_circle{color={r=0.1,g=0.02,b=0.1,a=0.05}, radius=radius, width=1,
+    --   filled=true, target={x=tx,y=ty}, surface=surface, time_to_live=ttl_2, forces={chest_entity.force}, draw_on_ground=true, only_in_alt_mode=true}
   end
 
   -- new line one
@@ -120,15 +122,15 @@ function process_a_chest(chest_entity)
 
   if sm > 0 or sn > 0 then
     local angle = math.rad(90 - sa)
-    sx = sx + sm * math.cos (angle) -- it's easy
-    sy = sy - sn * math.sin (angle) -- positive is south in Factorio world
+    sx = sx + sm * math.cos(angle)
+    sy = sy - sn * math.sin(angle)
   end
 
   local sl = math.abs(sx) + math.abs(sy)
   if sl > max_shift then
     local scale = max_shift / sl
-    sx = math.floor(sx * scale)
-    sy = math.floor(sy * scale)
+    sx = sx * scale
+    sy = sy * scale
   end
 
   local corrected = sx ~= 0 or sy ~= 0
@@ -266,10 +268,9 @@ end
 
 
 function clean_drawings()
-  local ids = rendering.get_all_ids(mod_name)
-  for _, id in pairs (ids) do
-    if rendering.is_valid(id) then
-      rendering.destroy(id)
+  for _, obj in pairs(rendering.get_all_objects(mod_name)) do
+    if not obj.valid then
+      obj.destroy()
     end
   end
 end
