@@ -114,6 +114,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       close_sound = sounds.electric_network_close,
       allow_passengers = true,
       has_belt_immunity = true,
+      trigger_target_mask = { "common" }, -- Override car's default to disable acid puddle damage
       -- tank_driving = true,
       selection_priority = 70,
       is_military_target = true,

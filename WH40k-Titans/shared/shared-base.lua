@@ -1,6 +1,6 @@
 local shared = {}
 shared.debug_mod = false
-shared.debug_mod = true
+-- shared.debug_mod = true
 shared.mod_name = "WH40k-Titans"
 shared.path_prefix = "__"..shared.mod_name.."__/"
 shared.media_prefix = "__"..shared.mod_name.."-media__/"

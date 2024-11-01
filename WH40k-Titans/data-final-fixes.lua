@@ -68,7 +68,7 @@ end
 -- Updates after overhauls
 -- Supplier equipment categories
 local wanted_categories = {
-  "aircraft", "aircraft-equipment",
+  "aircraft", "aircraft-equipment", "armor-weapons",
   "universal-equipment", "vehicle-motor", "vehicle-robot-interaction-equipment",
 }
 local aircraft_grid = data.raw["equipment-grid"][shared.mod_prefix.."aircraft"]
