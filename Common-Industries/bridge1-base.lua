@@ -58,7 +58,6 @@ bridge.mods_list = {
   -- EI    https://mods.factorio.com/user/PreLeyZero
   { short_name = "exind", name = "exotic-industries" },
 
-  { short_name = "angelbob", name = "AngelBob" },
   -- Bob's    https://mods.factorio.com/user/Bobingabout
   { short_name = "bobelectronics", names = {
     "bobelectronics",
@@ -72,7 +71,6 @@ bridge.mods_list = {
   { short_name = "bobequip",  name = "bobequipment" },
   -- Angel's  https://mods.factorio.com/user/Arch666Angel
   -- Does anybody play angels without bobs?
-  { short_name = "angels", name = "angelsindustries" },
   { short_name = "angelsbio", name = "angelsbioprocessing" },
   { short_name = "angelspetrochem", name = "angelspetrochem" },
   { short_name = "angelssmelting", name = "angelssmelting" },
@@ -98,7 +96,6 @@ bridge.mods_list = {
   { short_name = "bzbearly",   name = "bzbearly" },
   { short_name = "bzsilicon",  name = "bzsilicon" },
   { short_name = "bzcarbon",   name = "bzcarbon" },
-  { short_name = "bzgraphene", name = "bzgraphene" },
   { short_name = "bzaluminum", name = "bzaluminum" },
   { short_name = "bztungsten", name = "bztungsten" },
 

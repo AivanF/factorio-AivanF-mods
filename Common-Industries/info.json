@@ -7,9 +7,9 @@
   "dependencies": [
     "? space-exploration", "? aai-industry", "? Krastorio2", "? 248k",
     "? bobelectronics", "? MDbobelectronics", "? bobtech", "? bobplates", "? bobpower",
-    "? angels", "? angelspetrochem", "? angelssmelting", "? angelbob",
+    "? angelspetrochem", "? angelssmelting",
     "? IndustrialRevolution3", "? exotic-industries",
-    "? bzvery", "? bzbintermediates", "? bzbelectronics", "? bzsilicon", "? bzcarbon", "? bzgraphene", "? bzaluminum", "? bztungsten",
+    "? bzvery", "? bzbintermediates", "? bzbelectronics", "? bzsilicon", "? bzcarbon", "? bzaluminum", "? bztungsten",
     "? pyhightech", "? pyindustry", "? pypetroleumhandling", "? pyfusionenergy", "? pycoalprocessing", "? pyalternativeenergy",
     "? 5dim_compatibility", "? 5dim_energy", "? 5dim_nuclear", "? 5dim_mining", "? 5dim_storage", "? 5dim_logistic", "? 5dim_automation",
     "? omnimatter_crystal", "? omnimatter_energy", "? omnimatter",
