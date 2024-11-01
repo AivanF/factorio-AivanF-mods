@@ -3,9 +3,12 @@ function reload_recipes(event)
   for i, force in pairs(game.forces) do
     for _, tech in pairs(force.technologies) do
       if tech.researched then
-        for _, effect in pairs(tech.effects) do
-          if effect.type == "unlock-recipe" then
-            force.recipes[effect.recipe].enabled = true
+        local success, effects = pcall(function() return tech.effects end)
+        if success and effects then -- Checking for successful access to effects
+          for _, effect in pairs(effects) do
+            if effect.type == "unlock-recipe" then
+              force.recipes[effect.recipe].enabled = true
+            end
           end
         end
       end
