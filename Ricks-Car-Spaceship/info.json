@@ -1,10 +1,10 @@
 {
   "name": "Ricks-Car-Spaceship",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "title": "Rick’s Space Cruiser – a flying car",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
-  "dependencies": ["(?) Krastorio2"],
+  "dependencies": ["? space-age", "(?) Krastorio2"],
   "factorio_version": "2.0",
   "description": "Wanna be the coolest engineer owning a fancy Car Spaceship of Rick Sanches? Now you got it! The mod add Space Cruiser – a fast yet steady and spacious flying vehicle that behaves as a robust aircraft – unlike airplanes, it doesn’t require a runway as it has no takeoff & braking distance. The car has no built-in weapons, but provides a decent equipment grid. It's a late-game technology by default, but there is a setting to make it mid-game..\n\nI’m not a I’m not a professional 3D artist, but hopefully it looks good ^_^ Cross-planet travelling and overhaul mods integrations are planned, as well as better graphics. Also, I can make several skins or tiers if it will be interesting to many players."
 }
