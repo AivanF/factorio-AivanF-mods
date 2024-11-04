@@ -128,7 +128,10 @@ local bw, bh = 2, 2.5
 ---add in one function all the common parameteres between aircrafts
 local function add_recurrent_params(proto)
   proto.icon_size = 64
-  proto.flags = {"placeable-neutral", "player-creation", "placeable-off-grid"}
+  proto.flags = {
+    "placeable-neutral", "player-creation", "placeable-off-grid",
+    "no-automated-item-insertion", "no-automated-item-removal",
+  }
   -- Overriding the "car" default disables acid puddle damage.
   proto.trigger_target_mask = { "common" }
   proto.has_belt_immunity = true
