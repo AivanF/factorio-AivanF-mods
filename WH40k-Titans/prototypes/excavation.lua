@@ -86,7 +86,7 @@ data:extend({
     crafting_categories = {shared.craftcat_empty},
     energy_source = {
       type = "electric",
-      emissions_per_minute = 50,
+      emissions_per_minute = {pollution=50},
       usage_priority = "secondary-input",
       buffer_capacity = "50MJ",
       input_flow_limit = "25MW",
@@ -101,7 +101,7 @@ data:extend({
     icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
     subgroup = shared.subg_build,
     order = "c[excavator]",
-    place_result = shared.excavator,
+    place_results = {{type="item", name=shared.excavator, amount=1}},
     stack_size = 1,
   },
   {
@@ -110,13 +110,13 @@ data:extend({
     enabled = false,
     energy_required = 100,
     ingredients = {
-      {"concrete", 400},
-      {"electric-mining-drill", 20},
-      {"laser-turret", 20},
-      {"filter-inserter", 20},
-      {"advanced-circuit", 20},
+      {type="item", name="concrete", amount=400},
+      {type="item", name="electric-mining-drill", amount=20},
+      {type="item", name="laser-turret", amount=20},
+      {type="item", name="fast-inserter", amount=20},
+      {type="item", name="advanced-circuit", amount=20},
     },
-    result = shared.excavator,
+    results = {{type="item", name=shared.excavator, amount=1}},
     category = "crafting",
   },
   {

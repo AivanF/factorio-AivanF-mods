@@ -86,7 +86,7 @@ function lib_ruins.opt_new_world(data)
     world = merge(data or {}, table.deepcopy(blank_world), false)
     -- TODO: adjust ruin_prob_cf considering world.surface.map_gen_settings.width&height?
     -- Adjust wrecks number considering amount of water
-    world.ruin_prob_cf = world.ruin_prob_cf * (1 + world.surface.map_gen_settings.water)
+    world.ruin_prob_cf = world.ruin_prob_cf * (1 + data.surface.map_gen_settings.autoplace_controls.water.size)
   end
   ctrl_data.by_surface[world.surface.index] = world
 
@@ -215,9 +215,8 @@ local function handle_deleted_surface(event)
 end
 
 local function count_water(surface, position, radius)
-  local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
   local total = surface.count_tiles_filtered{position=position, radius=radius}
-  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={only_water_layer}}
+  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={shared.titan_prefix.."-only-water-layer"}}
   local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
   return (water + 0.5*shallow) / (total + 0.1)
 end

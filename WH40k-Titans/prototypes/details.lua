@@ -6,15 +6,15 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/servitor.png",
     icon_size = 64, icon_mipmaps = 1,
     ingredients = {
-      -- {"low-density-structure", 20},
-      {afci_bridge.get.meat().name, 40},
-      {afci_bridge.get.brain().name, 1},
-      {"iron-stick", 20},
-      {"iron-gear-wheel", 20},
-      {"copper-cable", 40},
-      -- {"processing-unit", 1},
-      -- {"construction-robot", 1},
-      {"repair-pack", 100},
+      -- {type="item", name="low-density-structure", amount=20},
+      {type="item", name=afci_bridge.get.meat().name, amount=40},
+      {type="item", name=afci_bridge.get.brain().name, amount=1},
+      {type="item", name="iron-stick", amount=20},
+      {type="item", name="iron-gear-wheel", amount=20},
+      {type="item", name="copper-cable", amount=40},
+      -- {type="item", name="processing-unit", amount=1},
+      -- {type="item", name="construction-robot", amount=1},
+      {type="item", name="repair-pack", amount=100},
     },
     stack_size = 4,
     order = "a-1",
@@ -25,9 +25,9 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/titanic-brain.png",
     icon_size = 64, icon_mipmaps = 1,
     ingredients = {
-      {"radar", 1},
-      {afci_bridge.get.nano_mat().name, 24},
-      {afci_bridge.get.quantum_chip().name, 42},
+      {type="item", name="radar", amount=1},
+      {type="item", name=afci_bridge.get.nano_mat().name, amount=24},
+      {type="item", name=afci_bridge.get.quantum_chip().name, amount=42},
       -- Titans know the meaning of life, the universe, and everything!
     },
     energy_required = 60,
@@ -38,12 +38,12 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/titanic-motor.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {"electric-engine-unit", 40},
-      -- {"iron-gear-wheel", 20},
-      {afci_bridge.get.bearing().name, 20},
-      -- {"steel-plate", 60},
-      {afci_bridge.get.heavy_material().name, 60},
-      {afci_bridge.get.sc_cable().name, 30},
+      {type="item", name="electric-engine-unit", amount=40},
+      -- {type="item", name="iron-gear-wheel", amount=20},
+      {type="item", name=afci_bridge.get.bearing().name, amount=20},
+      -- {type="item", name="steel-plate", amount=60},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=60},
+      {type="item", name=afci_bridge.get.sc_cable().name, amount=30},
     },
     order = "a-3",
   },
@@ -52,11 +52,11 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/frame-part.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {afci_bridge.get.heavy_material().name, 120},
-      {afci_bridge.get.light_material().name, 120},
-      {afci_bridge.get.bearing().name, 24},
-      {afci_bridge.get.dense_cable().name, 20},
-      {"processing-unit", 1},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=120},
+      {type="item", name=afci_bridge.get.light_material().name, amount=120},
+      {type="item", name=afci_bridge.get.bearing().name, amount=24},
+      {type="item", name=afci_bridge.get.dense_cable().name, amount=20},
+      {type="item", name="processing-unit", amount=1},
     },
     order = "a-4",
   },
@@ -65,10 +65,10 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/energy-core.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {afci_bridge.get.best_energy_provider().name, 7},
-      {afci_bridge.get.emfc().name, 6},
-      {afci_bridge.get.heavy_material().name, 20},
-      {afci_bridge.get.dense_cable().name, 8},
+      {type="item", name=afci_bridge.get.best_energy_provider().name, amount=7},
+      {type="item", name=afci_bridge.get.emfc().name, amount=6},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=20},
+      {type="item", name=afci_bridge.get.dense_cable().name, amount=8},
     },
     order = "a-5",
     place_result = nil,
@@ -78,9 +78,9 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/void-shield-gen.png",
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
-      {shared.realityctrl, 1},
+      {type="item", name=shared.realityctrl, amount=1},
       -- {"energy-shield-mk2-equipment", 1},
-      {afci_bridge.get.best_shield().name, 1},
+      {type="item", name=afci_bridge.get.best_shield().name, amount=1},
     },
     order = "a-6",
   },
@@ -92,8 +92,8 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/antigraveng.png",
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
-      {afci_bridge.get.st_operator().name, 3},
-      {afci_bridge.get.light_material().name, 10},
+      {type="item", name=afci_bridge.get.st_operator().name, amount=3},
+      {type="item", name=afci_bridge.get.light_material().name, amount=10},
       -- {"energy-shield-mk2-equipment", 1},
     },
     order = "b-1",
@@ -103,9 +103,9 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/reality-ctrl.png",
     icon_size = 64, icon_mipmaps = 3,
     ingredients = {
-      {afci_bridge.get.st_operator().name, 11},
-      {afci_bridge.get.heavy_material().name, 17},
-      -- {afci_bridge.get.light_material().name, 19},
+      {type="item", name=afci_bridge.get.st_operator().name, amount=11},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=17},
+      -- {type="item", name=afci_bridge.get.light_material().name, amount=19},
     },
     order = "b-2",
   },
@@ -116,7 +116,7 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/barrel.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {afci_bridge.get.heavy_material().name, 180},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=180},
     },
     allow_decomposition = true,
     order = "c-1",
@@ -127,11 +127,11 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/projectile-engine.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {afci_bridge.get.heavy_material().name, 80},
-      {afci_bridge.get.bearing().name, 18},
-      {"electric-engine-unit", 12},
-      {"engine-unit", 12},
-      {"processing-unit", 1},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=80},
+      {type="item", name=afci_bridge.get.bearing().name, amount=18},
+      {type="item", name="electric-engine-unit", amount=12},
+      {type="item", name="engine-unit", amount=12},
+      {type="item", name="processing-unit", amount=1},
     },
     order = "c-2",
     place_result = nil,
@@ -141,10 +141,10 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/melta-pump.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {shared.barrel, 4},
-      {"electric-engine-unit", 8},
-      {"engine-unit", 8},
-      {"processing-unit", 1},
+      {type="item", name=shared.barrel, amount=4},
+      {type="item", name="electric-engine-unit", amount=8},
+      {type="item", name="engine-unit", amount=8},
+      {type="item", name="processing-unit", amount=1},
     },
     order = "c-3",
     place_result = nil,
@@ -154,11 +154,9 @@ local parts = {
 
 local results
 for _, info in pairs(parts) do
-  results = info.results
+  results = info.results or {}
   -- TODO: add use_recylcing startup setting, remove ores if false
-  if results then
-    table.insert(results, 1, {info.name, 1})
-  end
+  table.insert(results, 1, {type="item", name=info.name, amount=1})
 
   data:extend({
     {
@@ -177,7 +175,6 @@ for _, info in pairs(parts) do
       enabled = false,
       energy_required = info.energy_required or 30,
       ingredients = info.ingredients,
-      result = info.name,
       results = results,
       main_product = info.name,
       category = info.category or "advanced-crafting",

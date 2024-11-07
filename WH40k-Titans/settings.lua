@@ -46,7 +46,7 @@ data:extend{
     order = "a-5",
   },
   {
-    name = "wh40k-titans-friendly-fire-%",
+    name = "wh40k-titans-friendly-fire-percent",
     setting_type = "startup",
     type = "int-setting",
     minimum_value = 0,
@@ -55,7 +55,7 @@ data:extend{
     order = "a-6",
   },
   {
-    name = "wh40k-titans-void-shield-melee-absorb-%",
+    name = "wh40k-titans-void-shield-melee-absorb-percent",
     setting_type = "startup",
     type = "int-setting",
     minimum_value = 0,

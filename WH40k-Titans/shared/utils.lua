@@ -8,7 +8,7 @@ function shared.preprocess_recipe(ingredients)
       afci_bridge.preprocess(couple[1])
       couple[1] = couple[1].name
     end
-    result[#result+1] = couple
+    result[#result+1] = {type="item", name=couple[1], amount=couple[2]}
   end
   return result
 end

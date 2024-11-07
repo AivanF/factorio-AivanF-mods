@@ -4,15 +4,24 @@ local misc = require("prototypes.misc")
 
 local minable_titans = false
 
--- local cmu = require("collision-mask-util")
--- local only_water_layer = cmu.get_first_unused_layer()
-local collision_mask_util_extended = require("cmue.collision-mask-util-extended")
-local only_water_layer = collision_mask_util_extended.get_make_named_collision_mask("only-water-layer")
+local only_water_layer_name = shared.titan_prefix.."-only-water-layer"
+data:extend({
+  {
+    type = "collision-layer",
+    name = only_water_layer_name,
+    collision_mask = {layers = {}},
+  },
+})
+
 -- Add new layer to the water, ignoring shallow
 for name, proto in pairs(data.raw["tile"]) do
-  if proto.draw_in_water_layer and not name:find("shallow", 1, true) then
-    log("Titans: only_water_layer for "..proto.name)
-    proto.collision_mask[#proto.collision_mask+1] = only_water_layer
+  if true
+    and proto.fluid
+    -- and (name:find("water", 1, true) or name:find("ocean", 1, true) or name:find("lava", 1, true))
+    and not name:find("shallow", 1, true)
+  then
+    log("Titans: only_water_layer for tile "..proto.name)
+    proto.collision_mask.layers[only_water_layer_name] = true
   end
 end
 
@@ -70,7 +79,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       category = shared.craftcat_titan..class_precise,
       ingredients = shared.preprocess_recipe(titan_type.ingredients),
       -- results = minable_titans and {{name, 1}} or {},
-      results = {{name, 1}},
+      results = {{type="item", name=name, amount=1}},
       energy_required = 60*60*24,
     },
     {
@@ -105,7 +114,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
         { type = "explosion", decrease=main_resist, percent=80 },
         { type = "physical", decrease=main_resist, percent=80 },
       },
-      collision_mask = titan_type.over_water and {} or {only_water_layer},
+      collision_mask = {layers=dict_from_keys_list(titan_type.over_water and {} or {only_water_layer_name}, true)},
       collision_box = {{-4, -4}, {4, 4}},
       selection_box = {{-4, -4}, {4, 4}},
       drawing_box = {{-6, -6}, {6, 6}},
@@ -230,11 +239,12 @@ data:extend({
     name = shared.titan_aux_laser,
     icon = "__base__/graphics/icons/laser-turret.png",
     icon_size = 64, icon_mipmaps = 4,
-    flags = {"placeable-neutral", "placeable-off-grid", "hidden"},
+    flags = {"placeable-neutral", "placeable-off-grid",},
+    hidden = true,
     max_health = 10000,
     resistances = technomagic_resistances,
     selectable_in_game = false,
-    collision_mask = {},
+    collision_mask = {layers={}},
     collision_box = {{-0.7, -0.7 }, {0.7, 0.7}},
     selection_box = {{ -1, -1}, {1, 1}},
     map_color = {0,0,0,0},
@@ -248,6 +258,7 @@ data:extend({
     prepared_animation = { layers = {misc.empty_sprite} },
     folding_animation = { layers = {misc.empty_sprite} },
     base_picture = { layers = {misc.empty_sprite} },
+    graphics_set = {},
     call_for_help_radius = 2,
     attack_parameters = {
       type = "beam",
@@ -256,6 +267,7 @@ data:extend({
       source_direction_count = 64,
       source_offset = {0, -3.423489 / 4},
       damage_modifier = 5,
+      ammo_category = "laser",
       ammo_type = {
         category = "laser",
         energy_consumption = "800kJ",
@@ -277,11 +289,12 @@ data:extend({
     name = shared.titan_aux_laser2,
     icon = "__base__/graphics/icons/laser-turret.png",
     icon_size = 64, icon_mipmaps = 4,
-    flags = {"placeable-neutral", "placeable-off-grid", "hidden"},
+    flags = {"placeable-neutral", "placeable-off-grid"},
+    hidden = true,
     max_health = 10000,
     resistances = technomagic_resistances,
     selectable_in_game = false,
-    collision_mask = {},
+    collision_mask = {layers={}},
     collision_box = {{-0.7, -0.7 }, {0.7, 0.7}},
     selection_box = {{ -1, -1}, {1, 1}},
     map_color = {0,0,0,0},
@@ -295,6 +308,7 @@ data:extend({
     prepared_animation = { layers = {misc.empty_sprite} },
     folding_animation = { layers = {misc.empty_sprite} },
     base_picture = { layers = {misc.empty_sprite} },
+    graphics_set = {},
     call_for_help_radius = 2,
     attack_parameters = {
       type = "beam",
@@ -303,6 +317,7 @@ data:extend({
       source_direction_count = 64,
       source_offset = {0, -3.423489 / 4},
       damage_modifier = 15,
+      ammo_category = "laser",
       ammo_type = {
         category = "laser",
         energy_consumption = "800kJ",
@@ -328,11 +343,11 @@ data:extend({
 -- arty.name = shared.arty
 -- arty.ammo_stack_limit = shared.arty_invsz
 -- arty.flags = {
---   "placeable-neutral", "placeable-off-grid", "hidden",
+--   "placeable-neutral", "placeable-off-grid",
 --   "no-automated-item-removal",
 --   "no-automated-item-insertion",
 -- }
--- arty.collision_mask = {}
+-- arty.collision_mask = {layers={}},
 -- -- arty.manual_range_modifier = 1.5 * arty.manual_range_modifier
 -- -- arty.turret_rotation_speed = 2 * arty.turret_rotation_speed
 -- arty.minable = nil

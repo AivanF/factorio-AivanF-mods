@@ -6,54 +6,54 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local tint = { r = .8, g = .7, b = .7, a = 1}
 
 local ingredients = {  -- 7
-  {"automation-science-pack", 10},
-  {"logistic-science-pack", 10},
-  {"military-science-pack", 10},
-  {"chemical-science-pack", 10},
-  {"utility-science-pack", 10},
-  {"production-science-pack", 10},
-  {"space-science-pack", 10},
+  {type="item", name="automation-science-pack", amount=10},
+  {type="item", name="logistic-science-pack", amount=10},
+  {type="item", name="military-science-pack", amount=10},
+  {type="item", name="chemical-science-pack", amount=10},
+  {type="item", name="utility-science-pack", amount=10},
+  {type="item", name="production-science-pack", amount=10},
+  {type="item", name="space-science-pack", amount=10},
 }
 
 if mods[shared.SE] and mods[shared.K2] then
   ingredients = {  -- 8
-    {"military-science-pack", 10},
-    -- {"space-science-pack", 10},
-    {"utility-science-pack", 10},
-    {"production-science-pack", 10},
+    {type="item", name="military-science-pack", amount=10},
+    -- {type="item", name="space-science-pack", amount=10},
+    {type="item", name="utility-science-pack", amount=10},
+    {type="item", name="production-science-pack", amount=10},
 
-    {"se-deep-space-science-pack-1", 10},
-    {"se-energy-science-pack-4", 10},
-    {"se-material-science-pack-4", 10},
-    {"matter-tech-card", 10 }, -- aka Matter science 1
-    -- {"se-kr-matter-science-pack-2", 10 }, -- aka Matter science 2
-    {"advanced-tech-card", 10 }, -- aka Advanced science 1
-    -- {"singularity-tech-card", 10 }, -- aka Advanced science 2
+    {type="item", name="se-deep-space-science-pack-1", amount=10},
+    {type="item", name="se-energy-science-pack-4", amount=10},
+    {type="item", name="se-material-science-pack-4", amount=10},
+    {type="item", name="matter-tech-card", amount=10}, -- aka Matter science 1
+    -- {type="item", name="se-kr-matter-science-pack-2", amount=10}, -- aka Matter science 2
+    {type="item", name="advanced-tech-card", amount=10}, -- aka Advanced science 1
+    -- {type="item", name="singularity-tech-card", amount=10}, -- aka Advanced science 2
   }
 
 elseif mods[shared.SE] then
   ingredients = {  -- 7
-    -- {"automation-science-pack", 10},
-    -- {"logistic-science-pack", 10},
-    {"military-science-pack", 10},
-    -- {"chemical-science-pack", 10},
-    -- {"se-rocket-science-pack", 10},
-    {"space-science-pack", 10},
-    {"utility-science-pack", 10},
-    {"production-science-pack", 10},
-    {"se-energy-science-pack-4", 10},
-    {"se-material-science-pack-4", 10},
-    {"se-deep-space-science-pack-1", 10},
+    -- {type="item", name="automation-science-pack", amount=10},
+    -- {type="item", name="logistic-science-pack", amount=10},
+    {type="item", name="military-science-pack", amount=10},
+    -- {type="item", name="chemical-science-pack", amount=10},
+    -- {type="item", name="se-rocket-science-pack", amount=10},
+    {type="item", name="space-science-pack", amount=10},
+    {type="item", name="utility-science-pack", amount=10},
+    {type="item", name="production-science-pack", amount=10},
+    {type="item", name="se-energy-science-pack-4", amount=10},
+    {type="item", name="se-material-science-pack-4", amount=10},
+    {type="item", name="se-deep-space-science-pack-1", amount=10},
   }
 
 elseif mods[shared.K2] then
   ingredients = {  -- 6
-    { "production-science-pack", 10 },
-    { "utility-science-pack", 10 },
-    { "space-science-pack", 10 },
-    { "matter-tech-card", 10 },
-    { "advanced-tech-card", 10 },
-    { "singularity-tech-card", 10 },
+    {type="item", name="production-science-pack", amount=10},
+    {type="item", name="utility-science-pack", amount=10},
+    {type="item", name="space-science-pack", amount=10},
+    {type="item", name="matter-tech-card", amount=10},
+    {type="item", name="advanced-tech-card", amount=10},
+    {type="item", name="singularity-tech-card", amount=10},
   }
 end
 
@@ -75,7 +75,7 @@ data:extend({
     name = shared.sp,
     enabled = false,
     ingredients = ingredients,
-    result = shared.sp,
+    results = {{type="item", name=shared.sp, amount=1}},
     energy_required = 100,
   },
 
@@ -288,13 +288,13 @@ data:extend({
     name = shared.lab,
     enabled = false,
     ingredients = {
-      {"lab", 1},
-      {"steel-plate", 100},
-      {"processing-unit", 100},
+      {type="item", name="lab", amount=1},
+      {type="item", name="steel-plate", amount=100},
+      {type="item", name="processing-unit", amount=100},
     },
     allow_productivity = true,
     afci_bridged = true,
     energy_required = 10,
-    result = shared.lab,
+    results = {{type="item", name=shared.lab, amount=1}}
   },
 })

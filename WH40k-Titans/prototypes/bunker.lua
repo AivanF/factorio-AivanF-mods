@@ -18,7 +18,7 @@ lamp.resistances = technomagic_resistances
 lamp.flags = special_flags
 lamp.selectable_in_game = false
 lamp.minable = nil
-lamp.collision_mask = {}
+lamp.collision_mask = {layers={}}
 lamp.energy_source = { type = "void" }
 lamp.next_upgrade = nil
 data:extend({ lamp })
@@ -29,7 +29,7 @@ comb.max_health = 10000
 comb.resistances = technomagic_resistances
 comb.flags = special_flags
 comb.selection_box = {{-1, -1}, {1, 1}}
-comb.collision_mask = {}
+lamp.collision_mask = {layers={}}
 comb.selection_priority = 60
 comb.energy_source = { type = "void" }
 comb.sprites = misc.empty_sprite
@@ -71,34 +71,28 @@ local idle_working_visualisations = {
   }
 }
 
-local circuit_connector_wstoreh = circuit_connector_definitions.create(
+local circuit_connector_wstoreh = circuit_connector_definitions.create_single(
   universal_connector_template,
-  {
-    { variation = 26,
-      main_offset = util.by_pixel(-32, 24),
-      shadow_offset = util.by_pixel(7.5, 7.5),
-      -- show_shadow = true
-    }
+  { variation = 26,
+    main_offset = util.by_pixel(-32, 24),
+    shadow_offset = util.by_pixel(7.5, 7.5),
+    -- show_shadow = true
   }
 )
-local circuit_connector_wstorev = circuit_connector_definitions.create(
+local circuit_connector_wstorev = circuit_connector_definitions.create_single(
   universal_connector_template,
-  {
-    { variation = 26,
-      main_offset = util.by_pixel(16, 48),
-      shadow_offset = util.by_pixel(7.5, 7.5),
-      -- show_shadow = true
-    }
+  { variation = 26,
+    main_offset = util.by_pixel(16, 48),
+    shadow_offset = util.by_pixel(7.5, 7.5),
+    -- show_shadow = true
   }
 )
-local circuit_connector_bstore = circuit_connector_definitions.create(
+local circuit_connector_bstore = circuit_connector_definitions.create_single(
   universal_connector_template,
-  {
-    { variation = 26,
-      main_offset = util.by_pixel(-48, 48),
-      shadow_offset = util.by_pixel(7.5, 7.5),
-      -- show_shadow = true
-    }
+  { variation = 26,
+    main_offset = util.by_pixel(-48, 48),
+    shadow_offset = util.by_pixel(7.5, 7.5),
+    -- show_shadow = true
   }
 )
 
@@ -119,7 +113,7 @@ data:extend({
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
     selection_box = {{-2, -1}, {2, 1}},
     collision_box = {{-2, -1}, {2, 1}},
-    collision_mask = {},
+    collision_mask = {layers={}},
     inventory_size = 400,
     picture = {
       layers = {
@@ -146,7 +140,7 @@ data:extend({
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
     selection_box = {{-1, -2}, {1, 2}},
     collision_box = {{-1, -2}, {1, 2}},
-    collision_mask = {},
+    collision_mask = {layers={}},
     inventory_size = 400,
     picture = {
       layers = {
@@ -172,7 +166,7 @@ data:extend({
   --   resistances = technomagic_resistances,
   --   selection_box = {{-2, -1}, {2, 1}},
   --   collision_box = {{-2, -1}, {2, 1}},
-  --   collision_mask = {},
+  --   collision_mask = {layers={}},
   --   render_layer = "floor",
   --   vehicle_impact_sound = sounds.generic_impact,
   --   open_sound = sounds.electric_network_open,
@@ -200,7 +194,7 @@ data:extend({
   --   dying_explosion = "medium-electric-pole-explosion",
   --   selection_box = {{-1, -2}, {1, 2}},
   --   collision_box = {{-1, -2}, {1, 2}},
-  --   collision_mask = {},
+  --   collision_mask = {layers={}},
   --   render_layer = "floor",
   --   vehicle_impact_sound = sounds.generic_impact,
   --   open_sound = sounds.electric_network_open,
@@ -231,7 +225,7 @@ data:extend({
     close_sound = { filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.43 },
     selection_box = {{-4, -2}, {4, 2}},
     collision_box = {{-4, -2}, {4, 2}},
-    collision_mask = {},
+    collision_mask = {layers={}},
     inventory_size = 500,
     picture = {
       layers = {
@@ -256,7 +250,7 @@ data:extend({
     resistances = technomagic_resistances,
     selection_box = {{-4, -4}, {4, 4}},
     collision_box = {{-4, -4}, {4, 4}},
-    collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
+    collision_mask = {layers=dict_from_keys_list({"floor", "item", "object", "water_tile"}, true)},
     render_layer = "floor",
     vehicle_impact_sound = sounds.generic_impact,
     open_sound = sounds.electric_network_open,
@@ -283,7 +277,7 @@ data:extend({
     icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = shared.subg_build,
     order = "a[assembly-bunker]",
-    place_result = shared.bunker_minable,
+    place_results = {{type="item", name=shared.bunker_minable, amount=1}},
     stack_size = 1,
   },
   {
@@ -291,14 +285,14 @@ data:extend({
     name = shared.bunker_minable,
     enabled = false,
     ingredients = {
-      {"steel-chest", 150},
-      {"assembling-machine-2", 40},
-      {"stack-filter-inserter", 50},
-      {"small-lamp", 12},
-      {"processing-unit", 200},
-      {"concrete", 1000},
+      {type="item", name="steel-chest", amount=150},
+      {type="item", name="assembling-machine-2", amount=40},
+      {type="item", name="bulk-inserter", amount=50},
+      {type="item", name="small-lamp", amount=12},
+      {type="item", name="processing-unit", amount=200},
+      {type="item", name="concrete", amount=1000},
     },
-    result = shared.bunker_minable,
+    results = {{type="item", name=shared.bunker_minable, amount=1}},
     energy_required = 100,
   },
 })
@@ -323,7 +317,7 @@ local base_bunker = {
   resistances = strong_resistances,
   selection_box = {{-11, -11}, {11, 11}},
   collision_box = {{-11, -11}, {11, 11}},
-  collision_mask = {"floor-layer", "item-layer", "object-layer", "water-tile"},
+  collision_mask = {layers=dict_from_keys_list({"floor", "item", "object", "water_tile"}, true)},
   selection_priority = 10,
   vehicle_impact_sound = sounds.generic_impact,
   open_sound = sounds.electric_network_open,
@@ -360,7 +354,6 @@ leftovers_chest.resistances = strong_resistances
 leftovers_chest.next_upgrade = nil
 leftovers_chest.minable = {mining_time = 2}
 leftovers_chest.inventory_size = 600
-leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest.png"
-leftovers_chest.picture.layers[1].hr_version.filename = shared.media_prefix.."graphics/entity/leftovers-chest-hr.png"
+leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest-hr.png"
 
 data:extend({ bunker_minable, bunker_active, leftovers_chest })

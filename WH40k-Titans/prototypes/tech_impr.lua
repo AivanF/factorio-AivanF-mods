@@ -1,5 +1,9 @@
 local shared = require("shared")
 
+local function round_str(value)
+  return math.floor(value)..""
+end
+
 local tech_researches = {}
 
 local exc_speed_levels = {
@@ -36,8 +40,8 @@ for k, price in pairs(exc_speed_levels) do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-excavation-speed",
-          math.floor(100*shared.exc_speed_by_level[k-1]),
-          math.floor(100*shared.exc_speed_by_level[k]),
+          round_str(100*shared.exc_speed_by_level[k-1]),
+          round_str(100*shared.exc_speed_by_level[k]),
         }},
         icons = {
           {
@@ -97,8 +101,8 @@ for k, price in pairs(exc_efficiency_levels) do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-excavation-efficiency",
-          math.floor(100*shared.exc_efficiency_by_level[k-1]),
-          math.floor(100*shared.exc_efficiency_by_level[k]),
+          round_str(100*shared.exc_efficiency_by_level[k-1]),
+          round_str(100*shared.exc_efficiency_by_level[k]),
         }},
         icons = {
           {
@@ -153,8 +157,8 @@ for k, price in pairs(assembly_speed_research_prices) do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-assembly-speed",
-          math.floor(100*shared.assembly_speed_by_level[k-1]),
-          math.floor(100*shared.assembly_speed_by_level[k]),
+          round_str(100*shared.assembly_speed_by_level[k-1]),
+          round_str(100*shared.assembly_speed_by_level[k]),
         }},
         icons = {
           {
@@ -196,8 +200,8 @@ for k = 1, void_shield_cap_research_count do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-void-shield-capacity",
-          math.floor(shared.void_shield_cap_base * (2+k-1) /1000),
-          math.floor(shared.void_shield_cap_base * (2+k+0) /1000),
+          round_str(shared.void_shield_cap_base * (2+k-1) /1000),
+          round_str(shared.void_shield_cap_base * (2+k+0) /1000),
         }},
         icons = {
           {
@@ -278,8 +282,8 @@ for k = 1, shared.attack_range_research_count do
         effect_description = {"", {"technology-description."..shared.attack_range_research}},
         effect_description = {"", {
           "modifier-description.wh40k-titans-attack-cf",
-          math.floor(shared.attack_range_cf_get(k-1)*100),
-          math.floor(shared.attack_range_cf_get(k  )*100),
+          round_str(shared.attack_range_cf_get(k-1)*100),
+          round_str(shared.attack_range_cf_get(k  )*100),
         }},
         icons = {
           {
@@ -326,7 +330,7 @@ for k = 1, ammo_usage_research_count do
       {
         type = "nothing",
         effect_description = {"", {
-          "modifier-description.wh40k-titans-ammo-usage-eff", 5*k,
+          "modifier-description.wh40k-titans-ammo-usage-eff", round_str(5*k),
         }},
         icons = {
           {
@@ -378,7 +382,7 @@ for k, price in pairs(supplier_cap_research_prices) do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-supplier-more-weight",
-          5*(k), 5*(k+1),
+          round_str(5*(k)), round_str(5*(k+1)),
         }},
         icons = {
           {
@@ -428,8 +432,8 @@ for k, price in pairs(supplier_exch_research_prices) do
         type = "nothing",
         effect_description = {"", {
           "modifier-description.wh40k-titans-supplier-faster-exchange",
-          math.floor(shared.supplier_exch_by_level[k-1]),
-          math.floor(shared.supplier_exch_by_level[k]),
+          round_str(shared.supplier_exch_by_level[k-1]),
+          round_str(shared.supplier_exch_by_level[k]),
         }},
         icons = {
           {

@@ -1,7 +1,6 @@
 require("__core__.lualib.util") -- for table.deepcopy
 math2d = require("math2d")
 shared = require("shared")
-collision_mask_util_extended = require("cmue.collision-mask-util-control")
 
 UPS = 60
 
@@ -51,9 +50,9 @@ end
 
 function preprocess_ingredients()
   -- Replaces Bridge item objects with names
-  if not global.active_mods_cache then return end
-  -- log("preprocess_ingredients, active_mods_cache: "..serpent.line(global.active_mods_cache))
-  afci_bridge.active_mods_cache = global.active_mods_cache
+  if not storage.active_mods_cache then return end
+  -- log("preprocess_ingredients, active_mods_cache: "..serpent.line(storage.active_mods_cache))
+  afci_bridge.active_mods_cache = storage.active_mods_cache
   local item
   for _, titan_type in pairs(shared.titan_type_list) do
     for _, stack in pairs(titan_type.ingredients) do
@@ -121,11 +120,11 @@ function point_orientation_shift(ori, length)
   return {length*math.cos(ori), -length*math.sin(ori)}
 end
 
-function die_all(list, global_storage)
+function die_all(list, storage_storage)
   for _, special_entity in pairs(list) do
     if special_entity.valid then
-      if global_storage ~= nil then
-        global_storage[special_entity.unit_number] = nil
+      if storage_storage ~= nil then
+        storage_storage[special_entity.unit_number] = nil
       end
       special_entity.destroy()
     end

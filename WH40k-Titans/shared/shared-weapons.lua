@@ -715,17 +715,17 @@ shared.get_weapon_descr = function (weapon_type)
   if type(weapon_type.speed) == "table" then damage = #weapon_type.speed * damage end
   local stats_descr
   if weapon_type.category == shared.wc_melee then
-    stats_descr = {"item-description.wh40k-titan-weapon-melee", weapon_type.grade, shorten_number(damage)}
+    stats_descr = {"item-description.wh40k-titan-weapon-melee", weapon_type.grade.."", shorten_number(damage)}
   else
     stats_descr = {
       (weapon_type.attack_size == 1) and "item-description.wh40k-titan-weapon-1" or "item-description.wh40k-titan-weapon-n",
       -- Args:
-      weapon_type.grade,
+      weapon_type.grade.."",
       weapon_type.ammo and {"item-name."..weapon_type.ammo} or {"ammo-category-name."..weapon_type.ammo_category}, -- "__ITEM__"..ammo.."__"
-      weapon_type.per_shot,
+      weapon_type.per_shot.."",
       shorten_number(weapon_type.inventory),
       weapon_type.bolt_type and shorten_number(damage) or "terrible", -- TODO: replace/translate it!
-      weapon_type.attack_size,
+      weapon_type.attack_size.."",
     }
   end
   local full_descr = {"?", {"", own_descr, " ", stats_descr}, stats_descr}

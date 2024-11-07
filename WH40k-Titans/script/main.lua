@@ -213,16 +213,16 @@ end
 
 
 local function on_init()
-  global.active_mods_cache = game.active_mods
-  global.ctrl_data = table.deepcopy(blank_ctrl_data)
-  ctrl_data = global.ctrl_data
+  storage.active_mods_cache = script.active_mods
+  storage.ctrl_data = table.deepcopy(blank_ctrl_data)
+  ctrl_data = storage.ctrl_data
   preprocess_ingredients()
   lib_ruins.initial_index()
 end
 
 local function on_load()
-  -- log("WH40k_Titans.on_load: "..serpent.block(global.ctrl_data))
-  ctrl_data = global.ctrl_data
+  -- log("WH40k_Titans.on_load: "..serpent.block(storage.ctrl_data))
+  ctrl_data = storage.ctrl_data
   preprocess_ingredients()
 end
 
@@ -237,11 +237,11 @@ end
 
 local function update_configuration()
   -- game.print("Titans.update_configuration")
-  global.active_mods_cache = game.active_mods
+  storage.active_mods_cache = script.active_mods
   preprocess_ingredients()
 
-  global.ctrl_data = merge(global.ctrl_data or {}, blank_ctrl_data, false)
-  ctrl_data = global.ctrl_data
+  storage.ctrl_data = merge(storage.ctrl_data or {}, blank_ctrl_data, false)
+  ctrl_data = storage.ctrl_data
 
   -- TODO: correct them to work with assemblers, excavators, ruins
   -- clean_drawings()

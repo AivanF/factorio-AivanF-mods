@@ -5,7 +5,7 @@ local Lib = require("script/event_lib")
 lib_exc = Lib.new()
 
 exc_update_rate = UPS
-local global_exc_unit_time = 60
+local storage_exc_unit_time = 60
 local exc_half_size = 4
 local exc_offsets = {
   {exc_half_size, 0}, {-exc_half_size, 0},
@@ -96,7 +96,7 @@ local function get_exc_speed(force)
 end
 
 local function get_exc_unit_time(exc_info)
-  return global_exc_unit_time / get_exc_speed(exc_info.entity.force)
+  return storage_exc_unit_time / get_exc_speed(exc_info.entity.force)
 end
 
 local function calc_expected_time(exc_info)

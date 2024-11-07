@@ -11,18 +11,18 @@ data_util.tech_add_ingredients_with_prerequisites("industrial-furnace", {"space-
 
 	So, let's clean up added science packs!
 ]]--
-local dirty
-for name, technology in pairs(data.raw.technology) do
-	dirty = false
-	for _, ingredient in pairs(technology.unit.ingredients) do
-    if ingredient[1] == shared.sp or ingredient.name == shared.sp then
-      dirty = true
-    end
-  end
-  if dirty then
-		technology.unit.ingredients = {{shared.sp, 1}}
-	end
-end
+-- local dirty
+-- for name, technology in pairs(data.raw.technology) do
+-- 	dirty = false
+-- 	for _, ingredient in pairs(technology.unit.ingredients) do
+--     if ingredient[1] == shared.sp or ingredient.name == shared.sp then
+--       dirty = true
+--     end
+--   end
+--   if dirty then
+-- 		technology.unit.ingredients = {{shared.sp, 1}}
+-- 	end
+-- end
 
 
 local function remove_recipe_effect(effects, name)
@@ -85,13 +85,12 @@ end
 
 -- Supplier can use any fuel you want
 local titan_supplier = data.raw.car[shared.aircraft_supplier]
-titan_supplier.burner.fuel_categories = {"chemical"}
+titan_supplier.energy_source.fuel_categories = {"chemical"}
 if mods[shared.AIND] then
-  table.append(titan_supplier.burner.fuel_categories, "processed-chemical")
+  table.append(titan_supplier.energy_source.fuel_categories, "processed-chemical")
 end
 if mods[shared.K2] then
-  table.append(titan_supplier.burner.fuel_categories, "vehicle-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "nuclear-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "fusion-fuel")
-  table.append(titan_supplier.burner.fuel_categories, "antimatter-fuel")
+	table.extend(titan_supplier.energy_source.fuel_categories, {
+		"vehicle-fuel", "nuclear-fuel", "fusion-fuel", "antimatter-fuel",
+	})
 end

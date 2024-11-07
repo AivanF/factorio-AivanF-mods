@@ -1,6 +1,5 @@
 local lib_ruins = require("script/ruins")
 local lib_tech = require("script/tech")
-local collision_mask_util_extended = require("cmue.collision-mask-util-control")
 
 local shield_fill_time = 30 * 60 * UPS
 local visual_ttl = 2
@@ -20,14 +19,13 @@ wc_color[shared.wc_melee]  = color_ared
 
 
 local function try_remove_small_water(surface, position, radius)
-  local only_water_layer = collision_mask_util_extended.get_named_collision_mask("only-water-layer")
   local total = surface.count_tiles_filtered{position=position, radius=radius}
-  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={only_water_layer}}
+  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={shared.titan_prefix.."-only-water-layer"}}
   local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
   -- game.print("Found water "..water.." and shallow "..shallow.." of total "..total)
   water = water + 0.5*shallow
   if water > 0 and water/total < 0.4 then
-    local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={only_water_layer}}
+    local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={shared.titan_prefix.."-only-water-layer"}}
     local new_tiles = {}
     for _, tl in pairs(tiles) do
       table.insert(new_tiles, {position=tl.position, name="water-shallow"})

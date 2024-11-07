@@ -271,7 +271,7 @@ lib_ttn.wc_control[shared.wc_arty]   = control_arty_gun
 lib_ttn.wc_control[shared.wc_melee]  = control_melee
 
 
-local enemies -- Globals are dangerous, but here the value is set & used inside each tick only
+local enemies -- storages are dangerous, but here the value is set & used inside each tick only
 local attack_ori_shifts = {0, 0.07, -0.07, 0.15, -0.15}
 local ai_attack_radius = 6
 

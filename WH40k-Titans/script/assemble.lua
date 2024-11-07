@@ -934,8 +934,8 @@ end
 
 
 local function process_assemblers()
-  if not global.active_mods_cache then
-    global.active_mods_cache = game.active_mods
+  if not storage.active_mods_cache then
+    storage.active_mods_cache = script.active_mods
     preprocess_ingredients()
   end
 

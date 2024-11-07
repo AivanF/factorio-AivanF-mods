@@ -4,8 +4,8 @@ local Lib = require("script/event_lib")
 lib_ttn = Lib.new()
 
 local titan_explo_bolt = shared.mod_prefix.."bolt-plasma-2"
-local friendly_fire_cf = settings.startup["wh40k-titans-friendly-fire-%"].value / 100
-local vs_melee_absorb_cf = settings.startup["wh40k-titans-void-shield-melee-absorb-%"].value / 100
+local friendly_fire_cf = settings.startup["wh40k-titans-friendly-fire-percent"].value / 100
+local vs_melee_absorb_cf = settings.startup["wh40k-titans-void-shield-melee-absorb-percent"].value / 100
 
 ----- Intro -----
 

@@ -18,7 +18,7 @@ data:extend({
     map_color = {1.0, 0.6, 0.1},
     selection_box = {{-hsz, -hsz}, {hsz, hsz}},
     collision_box = {{-hsz, -hsz}, {hsz, hsz}},
-    collision_mask = {},
+    collision_mask = {layers={}},
     render_layer = "floor",
     picture = misc.empty_sprite,
   }

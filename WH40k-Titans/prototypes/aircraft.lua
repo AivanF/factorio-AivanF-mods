@@ -115,7 +115,7 @@ local function add_recurrent_params(proto)
   proto.dying_explosion = "medium-explosion"
   proto.terrain_friction_modifier = 0
   proto.collision_box = {{-1.1, -1.5}, {1.1, 1.5}}
-  proto.collision_mask = {}
+  proto.collision_mask = {layers={}}
   proto.selection_box = {{-1.1, -1.5}, {1.1, 1.5}}
   proto.selection_priority = 70
   proto.render_layer = "air-object"
@@ -183,7 +183,8 @@ local titan_supplier = {
   -- MOVEMENT
   effectivity = 0.9,
   braking_power = "3.5MW",
-  burner = {
+  energy_source = {
+    type = "burner",
     fuel_categories = {"chemical"},
     fuel_inventory_size = 4,
     smoke = { smokedef(-16, 60, 38), smokedef(16, 60, 38) }
@@ -256,14 +257,14 @@ data:extend({
     enabled = false,
     -- category = "advanced-crafting",
     ingredients = {
-      {shared.servitor,    1},
-      {shared.frame_part,  5},
-      {shared.antigraveng, 1},
-      {shared.motor,       3},
-      -- {shared.rocket_engine, 3},
-      {afci_bridge.get.rocket_engine().name, 5},
+      {type="item", name=shared.servitor, amount=1},
+      {type="item", name=shared.frame_part, amount=5},
+      {type="item", name=shared.antigraveng, amount=1},
+      {type="item", name=shared.motor, amount=3},
+      -- {type="item", name=shared.rocket_engine, amount=3},
+      {type="item", name=afci_bridge.get.rocket_engine().name, amount=5},
     },
-    results = {{shared.aircraft_supplier, 1}},
+    results = {{type="item", name=shared.aircraft_supplier, amount=1}},
     energy_required = 60,
   },
 })
