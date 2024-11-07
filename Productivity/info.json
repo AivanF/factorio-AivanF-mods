@@ -1,11 +1,11 @@
 {
   "name": "Productivity",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "title": "Total Productivity for belts, landfill & everything",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
   "dependencies": [
-    "? space-exploration", "(?) aai-industry", "? Krastorio2", "? boblogistics", "(?) Dectorio"
+    "? space-age", "? space-exploration", "(?) aai-industry", "? Krastorio2", "? boblogistics", "(?) Dectorio"
   ],
   "factorio_version": "2.0",
   "description": "Would you like to be a diligent engineer who uses their resources efficiently? The mod allows to enable productivity modules for everything! By default, it's enabled for: logistic items (belts, inserters, rails, robots, pipes), solar panels, accumulators, generators, heat pipes, satellites, landfill, other floor tiles, personal equipment, ammunition, etc. Optionally for other buildings, vehicles, and even modules! See the startup settings. It's especially helpful in case you use overhaul mods that add lots of tiers of belts and other stuff. Or for mods that place you on limited planets with restricted amounts of ores. In case you meet an incompatible mod, or find a recipe that doesn't receive productivity modules allowed while you believe it should (and vice-versa), let me know on Discussions on Factorio mod portal page or via Discord.\n\nSpeaking of game design: I believe that the belts and everything are intermediate products, details that shape the factory and Factorio experience. What's the final product then?.. Your fun experience! So, if you don't feel it fair and prefer to follow brutal vanilla-spirit approach of spending fixed amounts of resources, just ignore this mod. But if you'd like to be a provident, thoughtful engineer, here is an oppurtunity! ;)"

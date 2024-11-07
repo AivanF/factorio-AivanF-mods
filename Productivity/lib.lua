@@ -30,6 +30,9 @@ local function item_has_field(item_name, field_name)
 end
 
 
+local have_SA = mods["space-age"]
+
+
 local function should_enable_prod(item_name)
   if type(item_name) ~= "string"  then return false end
   if item_name:find("fish", 1, true) then return false end
@@ -76,6 +79,7 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["furnace"][item_name]
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["rocket-silo"][item_name]
     or settings.startup["af-prod-enable-assemblers"].value and data.raw["lab"][item_name]
+    or have_SA and settings.startup["af-prod-enable-assemblers"].value and data.raw["agricultural-tower"][item_name]
     or settings.startup["af-prod-enable-roboports"].value and data.raw["roboport"][item_name]
 
     or settings.startup["af-prod-enable-solar-acc"].value and data.raw["solar-panel"][item_name]
@@ -85,19 +89,29 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["boiler"][item_name]
     or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["generator"][item_name]
     or settings.startup["af-prod-enable-boiler-gen"].value and data.raw["burner-generator"][item_name]
+    or have_SA and settings.startup["af-prod-enable-boiler-gen"].value and data.raw["fusion-reactor"][item_name]
+    or have_SA and settings.startup["af-prod-enable-boiler-gen"].value and data.raw["fusion-generator"][item_name]
 
     or settings.startup["af-prod-enable-turrets"].value and item_name:find("turret", 1, true) and placable
     or settings.startup["af-prod-enable-walls"].value and data.raw["wall"][item_name]
     or settings.startup["af-prod-enable-walls"].value and data.raw["gate"][item_name]
 
+    or settings.startup["af-prod-enable-spaceage"].value and data.raw["cargo-landing-pad"][item_name]
+    or have_SA and settings.startup["af-prod-enable-spaceage"].value and data.raw["cargo-bay"][item_name]
+    or have_SA and settings.startup["af-prod-enable-spaceage"].value and data.raw["space-platform-starter-pack"][item_name]
+    or have_SA and settings.startup["af-prod-enable-spaceage"].value and data.raw["thruster"][item_name]
+    or have_SA and settings.startup["af-prod-enable-spaceage"].value and data.raw["asteroid-collector"][item_name]
+
     ----- Misc
     or settings.startup["af-prod-enable-modules"].value and data.raw["module"][item_name]
     or settings.startup["af-prod-enable-modules"].value and data.raw["beacon"][item_name]
     or settings.startup["af-prod-enable-poles"].value and data.raw["electric-pole"][item_name]
+    or settings.startup["af-prod-enable-poles"].value and have_SA and data.raw["lightning-attractor"][item_name]
     or settings.startup["af-prod-enable-combinators"].value and item_name:find("combinator", 1, true) and placable
+    or settings.startup["af-prod-enable-tiles"].value and data.raw["tile"][item_name]
+    or settings.startup["af-prod-enable-repair"].value and data.raw["repair-tool"][item_name]
     or settings.startup["af-prod-enable-satellites"].value and item_name:find("satellite", 1, true) and launchable
     or settings.startup["af-prod-enable-satellites"].value and item_name:find("-probe", 1, true) and launchable -- SE probes
-    or settings.startup["af-prod-enable-tiles"].value and data.raw["tile"][item_name]
 
     ----- Armor & Ammo
     or settings.startup["af-prod-enable-armor"].value and data.raw["armor"][item_name]

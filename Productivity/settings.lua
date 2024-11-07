@@ -53,7 +53,7 @@ data:extend{
         type = "bool-setting",
         name = "af-prod-enable-vehicles",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "a-8",
     },
     {
@@ -68,21 +68,21 @@ data:extend{
         type = "bool-setting",
         name = "af-prod-enable-miners",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "b-1",
     },
     {
         type = "bool-setting",
         name = "af-prod-enable-assemblers",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "b-2",
     },
     {
         type = "bool-setting",
         name = "af-prod-enable-roboports",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "b-3",
     },
     {
@@ -113,12 +113,19 @@ data:extend{
         default_value = true,
         order = "b-7",
     },
+    {
+        type = "bool-setting",
+        name = "af-prod-enable-spaceage",
+        setting_type = "startup",
+        default_value = true,
+        order = "b-8",
+    },
     -- Misc
     {
         type = "bool-setting",
         name = "af-prod-enable-modules",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "c-1",
     },
     {
@@ -132,22 +139,29 @@ data:extend{
         type = "bool-setting",
         name = "af-prod-enable-combinators",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "c-3",
-    },
-    {
-        type = "bool-setting",
-        name = "af-prod-enable-satellites",
-        setting_type = "startup",
-        default_value = false,
-        order = "c-4",
     },
     {
         type = "bool-setting",
         name = "af-prod-enable-tiles",
         setting_type = "startup",
         default_value = true,
+        order = "c-4",
+    },
+    {
+        type = "bool-setting",
+        name = "af-prod-enable-repair",
+        setting_type = "startup",
+        default_value = true,
         order = "c-5",
+    },
+    {
+        type = "bool-setting",
+        name = "af-prod-enable-satellites",
+        setting_type = "startup",
+        default_value = true,
+        order = "c-6",
     },
     -- Armor & Ammo
     {
@@ -168,7 +182,7 @@ data:extend{
         type = "bool-setting",
         name = "af-prod-enable-guns",
         setting_type = "startup",
-        default_value = false,
+        default_value = true,
         order = "d-3",
     },
     {

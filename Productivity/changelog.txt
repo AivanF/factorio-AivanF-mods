@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.3
+Date: 2024-11-07
+  Bugfixes:
+    - Fix crash with no Space Age on.
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 2024-11-07
+  Features:
+    - Added productivity to Space Age items like asteroid collectros, thruster, etc. Including fusion reactors, heating tower (enabled with the common setting for boilers, reactors and generators), agricultural tower (in the assembling machines settings), lightning collectors (in the electric poles setting).
+    - Added productivity to repair packs.
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
 Date: 2024-10-22
   Bugfixes:
