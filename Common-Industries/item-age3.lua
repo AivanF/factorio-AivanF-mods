@@ -430,7 +430,6 @@ add_item({
         {"y-conductive-coil-1", 8},
         {"y_structure_electric", 4},
       },
-      results = {},
     },
   },
 })
@@ -607,7 +606,6 @@ add_item({
         {"processing-unit", 1},
         {"y_quantrinum_infused", 6}
       },
-      results = {},
     },
   },
 })
@@ -616,8 +614,8 @@ add_item({
 -- Aliases, fully transparent items without new objects nor recipes
 add_item({
   short_name = "best_energy_provider",
-  name = "fusion-reactor-equipment",
-  prereq = "fusion-reactor-equipment",
+  name = "fission-reactor-equipment",
+  prereq = "fission-reactor-equipment",
   modded = {
     {
       mod = bridge.mods.k2,

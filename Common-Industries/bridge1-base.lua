@@ -47,6 +47,8 @@ bridge.cat_org_crafting  = "chemistry"
 
 -- Supported mods
 bridge.mods_list = {
+  { short_name = "sa",    name = "space-age" },
+
   -- SE    https://mods.factorio.com/user/Earendel
   { short_name = "se",    name = "space-exploration" },
   { short_name = "aaind", name = "aai-industry" },
@@ -194,6 +196,10 @@ function bridge.preprocess(obj_info)
     if bridge.have_required_mod(specialised.mod) then
       table.merge(obj_info, specialised)
       bridge.preprocessed[obj_info.short_name] = true
+      --[[
+      IS1: Maybe set replaced not by is_bridge_name, but when original's obj_info.name != specialised.name?
+      Not sure if this is a good strategy.
+      ]]--
       obj_info.updated = bridge.is_bridge_name(obj_info.name) and "adjusted" or "replaced"
       -- log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
       if not specialised.continue then
