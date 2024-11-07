@@ -64,9 +64,9 @@ local function safe_destroy_chest(entity)
       name=base_name.."-chest-corpse", force="neutral",
       position=entity.position,
     }
-    for item_name, have in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
-      new.insert({name=item_name, count=have})
-      entity.remove_item({name=item_name, count=done})
+    for _, stack in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
+      new.insert(stack)
+      entity.remove_item(stack)
     end
   end
   entity.destroy()
@@ -218,7 +218,7 @@ local function process_a_lab(rlab)
         rlab.input.remove_item({name=item_name, count=item_info.need*pcs})
         local pollution_value = item_info.need * (item_info.price or 1) *0.02
         rlab.surface.pollute(rlab.position, pollution_value)
-        game.pollution_statistics.on_flow(grade_info.name, pollution_value)
+        game.get_pollution_statistics(rlab.surface).on_flow(grade_info.name, pollution_value)
         if pcs_limit <= 0 then break end
       end
 

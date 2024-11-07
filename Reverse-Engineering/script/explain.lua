@@ -117,6 +117,7 @@ local function gui_explain(player, item_name)
     local item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
     -- game.print("// item_info: "..serpent.line(item_info))
     local expected, researched = prob_for_force(item_info, player.force)
+    expected = expected * settings.global["af-reverse-lab-prob-mult"].value
     main_frame.status.caption = {
       researched and "af-reverse-lab.see-worth-info" or "af-reverse-lab.see-worth-info-not-researched",
       string.format("%.1f", expected),

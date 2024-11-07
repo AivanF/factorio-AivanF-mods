@@ -83,7 +83,7 @@ local function finalise(item_info)
   end
   item_info.price = result
   item_info.need = 1
-  item_info.done = result > 1
+  item_info.done = result >= 0.5
   -- item_info.need = math.max(1, math.floor(prototypes.item[item_info.item_name].stack_size / 5))
   try_stack(item_info,  5, 10)
   try_stack(item_info, 10, 20)
@@ -295,7 +295,7 @@ function prob_for_force(item_info, force)
   local prob = item_info.prob
   if item_info.tech_name then
     local tech = force.technologies[item_info.tech_name]
-    prob = prob * (tech.researched and 0.5 or 4)
+    prob = prob * (tech.researched and 1 or 10)
     return prob, tech.researched
   else
     return prob, true
