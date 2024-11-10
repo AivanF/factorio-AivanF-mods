@@ -38,6 +38,7 @@ comb.fast_replaceable_group = nil
 comb.circuit_wire_max_distance = 16
 comb.item_slot_count = shared.bunker_comb_size
 comb.minable = nil
+comb.selectable_in_game = false  -- TODO: replace signals with logistic requests
 data:extend({ comb })
 
 local idle_sprite = {
@@ -264,6 +265,9 @@ data:extend({
       shared.craftcat_empty,
       shared.craftcat_titan.."1", shared.craftcat_titan.."2", shared.craftcat_titan.."3",
       shared.craftcat_titan.."4", shared.craftcat_titan.."5",
+      shared.craftcat_weapon.."0", shared.craftcat_weapon.."1",
+      shared.craftcat_weapon.."2", shared.craftcat_weapon.."3",
+      shared.craftcat_weapon.."4", shared.craftcat_weapon.."5",
     },
     energy_source = { type = "void" },
     energy_usage = "1W",
@@ -277,7 +281,7 @@ data:extend({
     icon = icon, icon_size = icon_size, icon_mipmaps = icon_mipmaps,
     subgroup = shared.subg_build,
     order = "a[assembly-bunker]",
-    place_results = {{type="item", name=shared.bunker_minable, amount=1}},
+    place_result = shared.bunker_minable,
     stack_size = 1,
   },
   {
@@ -290,7 +294,7 @@ data:extend({
       {type="item", name="bulk-inserter", amount=50},
       {type="item", name="small-lamp", amount=12},
       {type="item", name="processing-unit", amount=200},
-      {type="item", name="concrete", amount=1000},
+      {type="item", name="refined-concrete", amount=1000},
     },
     results = {{type="item", name=shared.bunker_minable, amount=1}},
     energy_required = 100,

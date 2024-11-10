@@ -31,7 +31,8 @@ for k, price in pairs(exc_speed_levels) do
         icon = "__core__/graphics/icons/technology/constants/constant-movement-speed.png",
         icon_size = 128,
         icon_mipmaps = 3,
-        shift = {100, 100},
+        scale = 0.75,
+        shift = {40, 40},
       }
     },
     upgrade = true,
@@ -92,7 +93,8 @@ for k, price in pairs(exc_efficiency_levels) do
         icon = "__core__/graphics/icons/technology/constants/constant-mining-productivity.png",
         icon_size = 128,
         icon_mipmaps = 3,
-        shift = {100, 100},
+        scale = 0.75,
+        shift = {40, 40},
       }
     },
     upgrade = true,
@@ -322,7 +324,8 @@ for k = 1, ammo_usage_research_count do
         icon = "__core__/graphics/icons/technology/constants/constant-mining-productivity.png",
         icon_size = 128,
         icon_mipmaps = 3,
-        shift = {100, 100},
+        scale = 0.75,
+        shift = {40, 40},
       }
     },
     upgrade = true,

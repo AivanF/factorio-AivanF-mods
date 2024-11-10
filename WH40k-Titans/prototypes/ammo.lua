@@ -1,55 +1,44 @@
 local shared = require("shared")
 local bridge = require("__Common-Industries__.export")
 
-data:extend({
-  -- Big bolt
-  {
-    type = "item",
-    name = shared.big_bolt,
-    icon = shared.media_prefix.."graphics/icons/weapons/Bolt-Big.png",
-    icon_size = 64, icon_mipmaps = 3,
-    subgroup = shared.subg_ammo,
-    order = "a-1-bolt-big",
-    stack_size = 100,
-  },
-  {
-    type = "recipe",
-    name = shared.big_bolt,
-    enabled = false,
-    ingredients = {
-      {type="item", name="explosives", amount=2},
-      {type="item", name="steel-plate", amount=2},
-      {type="item", name="electronic-circuit", amount=1},
-    },
-    energy_required = 10,
-    results = {{type="item", name=shared.big_bolt, amount=1}},
-    category = "advanced-crafting",
-  },
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
 
-  -- Huge bolt
-  {
-    type = "item",
-    name = shared.huge_bolt,
-    icon = shared.media_prefix.."graphics/icons/weapons/Bolt-Huge.png",
-    icon_size = 64, icon_mipmaps = 1,
-    subgroup = shared.subg_ammo,
-    order = "a-2-bolt-huge",
-    stack_size = 50,
-  },
-  {
-    type = "recipe",
-    name = shared.huge_bolt,
-    enabled = false,
-    ingredients = {
-      {type="item", name="explosives", amount=5},
-      {type="item", name="steel-plate", amount=4},
-      {type="item", name="advanced-circuit", amount=1},
-    },
-    energy_required = 30,
-    results = {{type="item", name=shared.huge_bolt, amount=1}},
-    category = "advanced-crafting",
-  },
 
+bridge.add_item({
+  short_name = "big_bolt",
+  name = shared.big_bolt,
+  icon = shared.media_prefix.."graphics/icons/weapons/Bolt-Big.png",
+  icon_size = 64, icon_mipmaps = 3,
+  prereq = nil,
+  subgroup = shared.subg_ammo,
+  order = "a-1-bolt-big",
+  allow_productivity = true,
+  ingredients = {
+    {type="item", name="explosives", amount=2},
+    {type="item", name="steel-plate", amount=2},
+    {type="item", name="electronic-circuit", amount=1},
+  },
+  modded = {
+    {
+      mod = bridge.mods.sa,
+      ingredients = {
+        {type="item", name="explosives", amount=1},
+        {type="item", name="tungsten-plate", amount=1},
+        {type="item", name="electronic-circuit", amount=1},
+        -- {type="item", name="supercapacitor", amount=1},
+      },
+    },
+  },
+  energy_required = 10,
+  stack_size = 100,
+  weight = rocket_lift_weight / 500,
+  category = "advanced-crafting",
+  bridge_force_create = true,
+}).data_getter()
+
+
+-- data:extend({
   -- Quake projectile
   -- {
   --   type = "item",
@@ -73,7 +62,7 @@ data:extend({
   --   },
   --   results = {{type="item", name=shared.quake_proj, amount=1}},
   -- },
-})
+-- })
 
 
 -- Empty Ballistic Missile
@@ -95,9 +84,10 @@ bridge.add_item({
     {type="item", name="rocket-fuel", amount=50},
   },
   stack_size = 5,
+  weight = rocket_lift_weight / 200,
   energy_required = 120,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -118,9 +108,10 @@ bridge.add_item({
     {type="item", name="explosives", amount=10},
   },
   stack_size = 1,
+  weight = rocket_lift_weight / 100,
   energy_required = 120,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -143,9 +134,10 @@ bridge.add_item({
   },
   result_count = 5,
   stack_size = 1,
+  weight = rocket_lift_weight / 100,
   energy_required = 120 * 5 * 2,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -161,13 +153,15 @@ bridge.add_item({
   order = "a-8-warp-missile",
   allow_productivity = false,
   ingredients = {
-    {type="item", name=afci_bridge.get.empty_missile().name, amount=1},
+    {type="item", name=afci_bridge.get.empty_missile().name, amount=5},
     {type="item", name=shared.realityctrl, amount=1},
   },
+  result_count = 5,
   stack_size = 1,
-  energy_required = 120 * 4,
+  weight = rocket_lift_weight / 100,
+  energy_required = 120 * 5 * 4,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -190,10 +184,20 @@ bridge.add_item({
   },
   energy_required = 30,
   stack_size = 100,
+  weight = rocket_lift_weight / 400,
   -- results = {{type="item", name="iron-ore", amount=1}, {type="item", name="copper-ore", amount=1},},
   category = "chemistry",
-  afci_bridged = true,
+  bridge_force_create = true,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      ingredients = {
+        {type="item", name="supercapacitor", amount=1},
+        {type="item", name="steel-plate", amount=2},
+        {type="fluid", name="water", amount=200},
+      },
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.k2,
       prereq = "kr-atmosphere-condensation",
@@ -290,6 +294,14 @@ bridge.add_item({
   },
   modded = {
     {
+      mod = bridge.mods.sa,
+      ingredients = {
+        {type="item", name="supercapacitor", amount=1},
+        {type="item", name="steel-plate", amount=1},
+      },
+      category = "electromagnetics",
+    },
+    {
       mod = bridge.mods.k2,
       ingredients = {
         {type="item", name="lithium-sulfur-battery", amount=2},
@@ -308,8 +320,9 @@ bridge.add_item({
   },
   energy_required = 30,
   stack_size = 100,
+  weight = rocket_lift_weight / 500,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -332,8 +345,9 @@ bridge.add_item({
   },
   energy_required = 30,
   stack_size = 100,
+  weight = rocket_lift_weight / 200,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -355,9 +369,10 @@ bridge.add_item({
     {type="item", name=bridge.get.best_fuel().name, amount=1},
   },
   energy_required = 120,
-  stack_size = 20,
+  stack_size = 50,
+  weight = rocket_lift_weight / 100,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
 }).data_getter()
 
 
@@ -380,8 +395,9 @@ bridge.add_item({
   },
   energy_required = 120,
   stack_size = 1,
+  weight = rocket_lift_weight / 100,
   category = "advanced-crafting",
-  afci_bridged = true,
+  bridge_force_create = true,
   item_data = {
     -- https://wiki.factorio.com/Prototype/SelectionTool#selection_mode
     stackable = false,

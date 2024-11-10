@@ -4,6 +4,7 @@ lib_ruins = Lib.new()
 
 local debug_many = false
 -- debug_many = true
+
 local base_ruin_prob = debug_many and 0.8 or settings.startup["wh40k-titans-ruin-prob"].value
 local sector_size = (debug_many and 2 or 10) * 32
 local free_area = 1.5 * sector_size
@@ -37,6 +38,11 @@ local blank_sector = {
   ruin_ghosts = {},
 }
 
+local planets_with_ruins = {
+  vulcanus = true,
+  fulgora = true,
+}
+
 lib_ruins.ammo_unit = 300 -- devided by weight
 
 --[[
@@ -59,8 +65,10 @@ function lib_ruins.initial_index()
   end
 end
 
+
 -- Tries to find existing world for new surface
 function lib_ruins.opt_new_world(data)
+  game.print("opt_new_world"..serpent.line(data))
   if not data.surface then
     error(serpent.line({type="Missing surface", data=data}))
   end
@@ -86,7 +94,10 @@ function lib_ruins.opt_new_world(data)
     world = merge(data or {}, table.deepcopy(blank_world), false)
     -- TODO: adjust ruin_prob_cf considering world.surface.map_gen_settings.width&height?
     -- Adjust wrecks number considering amount of water
-    world.ruin_prob_cf = world.ruin_prob_cf * (1 + data.surface.map_gen_settings.autoplace_controls.water.size)
+    local apc = data.surface.map_gen_settings.autoplace_controls
+    local water_scale = apc.water and apc.water.size or 0
+    -- TODO: consider lava too?
+    world.ruin_prob_cf = world.ruin_prob_cf * (1 + water_scale)
   end
   ctrl_data.by_surface[world.surface.index] = world
 
@@ -98,6 +109,15 @@ function lib_ruins.opt_new_world(data)
 
   return world
 end
+
+
+local function handle_created_surface(event)
+  local surface = game.surfaces[event.surface_index]
+  if planets_with_ruins[surface.name] then
+    lib_ruins.opt_new_world({surface=surface})
+  end
+end
+
 
 function lib_ruins.materialise_ruin(world, ruin_info)
   if ruin_info.entity then return end
@@ -123,6 +143,7 @@ function lib_ruins.materialise_ruin(world, ruin_info)
   end
 end
 
+
 function lib_ruins.spawn_ruin(surface, ruin_info)
   local world = lib_ruins.opt_new_world({surface=surface, ruin_prob_cf=0})
   local sector = lib_ruins.get_create_sector(world, ruin_info.position)
@@ -131,6 +152,7 @@ function lib_ruins.spawn_ruin(surface, ruin_info)
   world.deaths = (world.deaths or 0) + 1
   lib_ruins.materialise_ruin(world, ruin_info)
 end
+
 
 function lib_ruins.ruin_removed(unit_number)
   ruin_info = ctrl_data.ruins[unit_number]
@@ -142,6 +164,7 @@ function lib_ruins.ruin_removed(unit_number)
   ctrl_data.ruins[unit_number] = nil
 end
 
+
 function lib_ruins.calc_extract_success_prob(force)
   local cf = shared.exc_efficiency_by_level[0]
   if force then
@@ -150,6 +173,7 @@ function lib_ruins.calc_extract_success_prob(force)
   end
   return cf
 end
+
 
 function lib_ruins.ruin_extract(exc_info)
   local ruin_info, ruin_entity = exc_info.ruin_info, exc_info.ruin_entity
@@ -206,6 +230,7 @@ function lib_ruins.ruin_extract(exc_info)
   return nil, 0
 end
 
+
 local function handle_deleted_surface(event)
   local world = ctrl_data.by_surface[event.surface_index]
   if world then
@@ -214,12 +239,14 @@ local function handle_deleted_surface(event)
   end
 end
 
+
 local function count_water(surface, position, radius)
   local total = surface.count_tiles_filtered{position=position, radius=radius}
   local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={shared.titan_prefix.."-only-water-layer"}}
   local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
   return (water + 0.5*shallow) / (total + 0.1)
 end
+
 
 local function fulfill_sector(world, sector, any_position, add_prob)
   local position = math2d.bounding_box.random_point(lib_ruins.get_sector_box(world, any_position))
@@ -330,6 +357,7 @@ lib_ruins:on_event(defines.events.on_surface_created, function (event)
 end)
 --]]
 
+lib_ruins:on_event(defines.events.on_surface_created, handle_created_surface)
 lib_ruins:on_event(defines.events.on_surface_deleted, handle_deleted_surface)
 lib_ruins:on_event(defines.events.on_chunk_generated, handle_created_chunk)
 

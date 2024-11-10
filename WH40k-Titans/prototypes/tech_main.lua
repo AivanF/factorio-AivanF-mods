@@ -114,7 +114,6 @@ local tech_researches = {
     },
     effects = {
       { type = "unlock-recipe", recipe = shared.big_bolt },
-      -- { type = "unlock-recipe", recipe = shared.huge_bolt },
       { type = "unlock-recipe", recipe = shared.laser_ammo },
       { type = "unlock-recipe", recipe = shared.melta_ammo },
       { type = "unlock-recipe", recipe = shared.plasma_ammo },

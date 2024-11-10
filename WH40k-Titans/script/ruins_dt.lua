@@ -78,7 +78,7 @@ local function fill_class_3(detailses, ammo) -- WarLord
 end
 
 local function fill_supplier(detailses, ammo) -- Supplier AirCraft
-  for _, obj in pairs(game.recipe_prototypes[shared.aircraft_supplier].ingredients) do
+  for _, obj in pairs(prototypes.recipe[shared.aircraft_supplier].ingredients) do
     table.insert(detailses, {{obj.name, obj.amount}})
   end
   for name, weight in pairs(shared.ammo_weights) do

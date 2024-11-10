@@ -127,6 +127,7 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       -- tank_driving = true,
       selection_priority = 70,
       is_military_target = true,
+      allow_remote_driving = true,
 
       energy_source = { type = "void" },
       effectivity = 1,

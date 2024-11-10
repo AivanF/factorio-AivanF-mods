@@ -1,6 +1,8 @@
 local sounds = require("__base__.prototypes.entity.sounds")
 local shared = require("shared")
 
+local rocket_lift_weight = 1000000
+
 local entity_icon = {
   icon = shared.media_prefix.."graphics/icons/excavator.png",
   icon_size = 64,
@@ -30,23 +32,14 @@ local integration_patch = {
 
 local excavator_animation = {
   layers = {{
-    filename = shared.media_prefix.."graphics/entity/Excavator-sheet.png",
+    filename = shared.media_prefix.."graphics/entity/Excavator-sheet-HR.png",
     priority = "high",
-    width = 224,
-    height = 224,
+    width = 448,
+    height = 448,
+    scale = 0.5,
     frame_count = 252,
     line_length = 14,
     shift = util.by_pixel(0, 0),
-    hr_version = {
-      filename = shared.media_prefix.."graphics/entity/Excavator-sheet-HR.png",
-      priority = "high",
-      width = 448,
-      height = 448,
-      scale = 0.5,
-      frame_count = 252,
-      line_length = 14,
-      shift = util.by_pixel(0, 0),
-    },
   }},
 }
 
@@ -78,7 +71,9 @@ data:extend({
       fade_out_ticks = 20
     },
     integration_patch = integration_patch,
-    animation = excavator_animation,
+    graphics_set = {
+      animation = excavator_animation,
+    },
     module_specification = {
       module_slots = 0,
     },
@@ -101,8 +96,9 @@ data:extend({
     icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
     subgroup = shared.subg_build,
     order = "c[excavator]",
-    place_results = {{type="item", name=shared.excavator, amount=1}},
+    place_result = shared.excavator,
     stack_size = 1,
+    weight = rocket_lift_weight / 10,
   },
   {
     type = "recipe",
@@ -110,7 +106,7 @@ data:extend({
     enabled = false,
     energy_required = 100,
     ingredients = {
-      {type="item", name="concrete", amount=400},
+      {type="item", name="refined-concrete", amount=400},
       {type="item", name="electric-mining-drill", amount=20},
       {type="item", name="laser-turret", amount=20},
       {type="item", name="fast-inserter", amount=20},

@@ -2,9 +2,12 @@ local shared = require("shared")
 
 -- Adotped from the "Aircraft" mod by MIT license
 
-
 local ICONPATH = shared.media_prefix.."graphics/icons/"
 local ENTITYPATH = shared.media_prefix.."graphics/entity/"
+
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
+
 
 local function addcommonanimlines(anim)
   for _,layer in pairs(anim.layers) do
@@ -181,6 +184,7 @@ local titan_supplier = {
   guns = {},
   equipment_grid = shared.mod_prefix.."aircraft",
   -- MOVEMENT
+  allow_remote_driving = true,
   effectivity = 0.9,
   braking_power = "3.5MW",
   energy_source = {
@@ -245,6 +249,7 @@ data:extend({
     order = "y[aircraft-item-supplier]",
     place_result = shared.aircraft_supplier,
     stack_size = 1,
+    weight = rocket_lift_weight,
   },
   {
     type = "recipe",

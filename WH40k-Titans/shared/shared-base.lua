@@ -142,8 +142,9 @@ shared.track_researches = {
 }
 
 --------- Other Mods
+shared.SA   = "space-age"
 shared.AIND = "aai-industry"
-shared.SE = "space-exploration"
-shared.K2 = "Krastorio2"
+shared.SE   = "space-exploration"
+shared.K2   = "Krastorio2"
 
 return shared

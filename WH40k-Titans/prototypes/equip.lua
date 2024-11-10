@@ -1,9 +1,9 @@
 local shared = require("shared")
 
-data.raw.item[shared.energy_core].placed_as_equipment_result = shared.energy_core
--- data.raw.item[shared.void_shield].placed_as_equipment_result = shared.void_shield
-data.raw.item[shared.antigraveng].placed_as_equipment_result = shared.antigraveng
-data.raw.item[shared.motor].placed_as_equipment_result = shared.motor
+data.raw.item[shared.energy_core].place_as_equipment_result = shared.energy_core
+-- data.raw.item[shared.void_shield].place_as_equipment_result = shared.void_shield
+data.raw.item[shared.antigraveng].place_as_equipment_result = shared.antigraveng
+data.raw.item[shared.motor].place_as_equipment_result = shared.motor
 
 data:extend({
   {

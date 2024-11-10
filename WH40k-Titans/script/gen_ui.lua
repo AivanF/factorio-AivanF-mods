@@ -88,7 +88,10 @@ local function get_driver_name(entity)
   if driver then
     local dr_name, dr_desc
     if driver.object_name == "LuaPlayer" then
-      -- Bodyless / God mode
+      -- God mode / Remote control
+      dr_name = {"", "[color=0.5,0.7,0.8]r: [/color]", driver.name}
+      dr_desc = {"WH40k-Titans-gui.player-driver-remote-desc"}
+
     elseif driver.object_name == "LuaEntity" then
       if driver.type == "character" then
         if driver.player then
@@ -395,7 +398,7 @@ function lib_gen.create_main_window(player)
   pusher.style.horizontally_stretchable = true
   pusher.drag_target = main_frame
   pusher.style.maximal_height = 24
-  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_gui_toggle}, sprite="utility/close_white" }
+  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_gui_toggle}, sprite="utility/close" }
 
   guiobj.pane = main_frame.add{type="tabbed-pane"}
 
@@ -431,7 +434,8 @@ lib_gen:on_event(defines.events.on_gui_click, function(event)
     -- tab_name=tab_ttn, unit_number=row_info.unit_number
     local object_info = indexers[event.element.tags.tab_name]()[event.element.tags.unit_number]
     if object_info and object_info.entity.valid then
-      player.zoom_to_world(object_info.entity.position, 1 / (1 + (object_info.class or 10)/10), object_info.entity)
+      player.centered_on = object_info.entity
+      -- player.zoom_to_world(object_info.entity.position, 1 / (1 + (object_info.class or 10)/10), object_info.entity)
     end
   end
 end)

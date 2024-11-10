@@ -5,8 +5,8 @@ require("shared.shared-weapons")
 
 shared.special_entities = {
   shared.bunker_center,
-  shared.bunker_wrecipeh,
-  shared.bunker_wrecipev,
+  -- shared.bunker_wrecipeh,
+  -- shared.bunker_wrecipev,
   shared.bunker_wstoreh,
   shared.bunker_wstorev,
   shared.bunker_bstore,

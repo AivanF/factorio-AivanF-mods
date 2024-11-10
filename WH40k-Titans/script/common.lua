@@ -4,9 +4,6 @@ shared = require("shared")
 
 UPS = 60
 
-heavy_debugging = false
--- heavy_debugging = true
-
 bucks = {}
 
 function bucks.save(buckets_table, total_number, index, value)
@@ -179,10 +176,17 @@ function position_scatter(source, scatter)
 end
 
 function show_ammo_transfer(entity_from, entity_to, ammo_name, ammo_count, scatter)
-  entity_to.surface.create_entity{
-    name="flying-text", position=position_scatter(entity_to.position, scatter),
-    -- text="[item="..ammo_name.."]",
+  -- __some_player__.create_local_flying_text{
+  --   text={"item-name."..ammo_name},
+  --   position=position_scatter(entity_to.position, scatter),
+  -- }
+  rendering.draw_text{
     text={"item-name."..ammo_name},
+    surface=entity_from.surface,
+    target=position_scatter(entity_to.position, scatter),
+    time_to_live=90,
+    forces=entity_from.force,
+    color={1, 1, 1},
   }
 
   entity_from.surface.create_entity{

@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2024-11-09
+  Changes:
+    - Factorio 2.0 support! I tried to test everything, but bugs are still expected.
+    - Minor balance fixes.
+    - Removed huge bolt ammo which was deprecated a couple versions ago.
+    - Some balance fixes.
+  Features:
+    - In Space Age, Titan Ruins will spawn on some other planets: Vulcanus and Fulgora!
+
+---------------------------------------------------------------------------------------------------
 Version: 0.9.37
 Date: 2024-10-02
   Bugfixes:

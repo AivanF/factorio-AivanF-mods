@@ -46,16 +46,23 @@ function lib_exc.register_excavator(entity)
   ctrl_data.excavator_index[entity.unit_number] = exc_info
   bucks.save(ctrl_data.excavator_buckets, exc_update_rate, entity.unit_number, exc_info)
   if ruin_info then
-    entity.surface.create_entity{
-      name="flying-text", position=entity.position,
+    rendering.draw_text{
       text={"WH40k-Titans-gui.msg-exc-content", bucks.total_count(ruin_info.details), bucks.total_count(ruin_info.ammo)},
+      surface=entity.surface,
+      target=entity.position,
+      time_to_live=90,
+      forces=entity.force,
+    color={1, 1, 1},
     }
     ruin_info.exc_info = exc_info
   else
-    entity.surface.create_entity{
-      name="flying-text", position=entity.position,
-      -- TODO: move into texts!
+    rendering.draw_text{
       text={"WH40k-Titans-gui.msg-exc-placed-empty"},
+      surface=entity.surface,
+      target=entity.position,
+      time_to_live=90,
+      forces=entity.force,
+      color={1, 0, 0},
     }
   end
   entity.set_recipe(shared.excavation_recipe)
@@ -72,10 +79,13 @@ local function put_leftovers(exc_info)
   for _, chest in pairs(exc_info.chests) do
     if chest.can_insert(exc_info.leftovers) then
       chest.insert(exc_info.leftovers)
-      chest.surface.create_entity{
-        name="flying-text", position=chest.position,
-        -- TODO: add icon!
+      rendering.draw_text{
         text={"?", {"item-name."..exc_info.leftovers.name}, {"entity-name."..exc_info.leftovers.name}},
+        surface=exc_info.entity.surface,
+        target=chest.position,
+        time_to_live=90,
+        forces=exc_info.force,
+        color={1, 1, 1},
       }
       exc_info.leftovers = nil
       break
@@ -90,7 +100,7 @@ local function get_exc_speed(force)
     cf = shared.exc_speed_by_level[level]
   end
   if settings.global["wh40k-titans-debug-quick"].value then
-    cf = cf * 5
+    cf = cf * 10
   end
   return cf
 end
@@ -133,9 +143,14 @@ local function process_an_excavator(exc_info)
     if not exc_info.ruin_entity.valid then
       entity.active = false
       exc_info.ruin_entity = nil
-      entity.surface.create_entity{
-        name="flying-text", position=entity.position,
+      rendering.draw_text{
+        -- TODO: translate!
         text="Excavation finished!",
+        surface=entity.surface,
+        target=entity.position,
+        time_to_live=90,
+        forces=entity.force,
+        color={0, 0, 1},
       }
       entity.force.print({"WH40k-Titans-gui.msg-exc-done", {"", entity.position.x}, {"", entity.position.y}})
       return
@@ -160,9 +175,13 @@ local function process_an_excavator(exc_info)
         exc_info.leftovers = {name=item_name, count=count}
         put_leftovers(exc_info)
       else
-        entity.surface.create_entity{
-          name="flying-text", position=entity.position,
+        rendering.draw_text{
           text={"WH40k-Titans-gui.msg-exc-fail"},
+          surface=entity.surface,
+          target=entity.position,
+          time_to_live=90,
+          forces=entity.force,
+          color={1, 0, 0},
         }
       end
       exc_info.progress = 0
@@ -285,7 +304,7 @@ local function gui_create(exc_info, player)
   pusher.style.horizontally_stretchable = true
   pusher.drag_target = main_frame
   pusher.style.maximal_height = 24
-  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
+  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close" }
 
   main_frame.add{ type="label", name="status", caption="" }
   main_frame.add{ type="label", name="expected", caption="" }

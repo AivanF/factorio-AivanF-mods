@@ -35,7 +35,7 @@ end
 local function supplier_death(supplier_info)
   local details = {}
   local ammo = {}
-  for _, obj in pairs(game.recipe_prototypes[shared.aircraft_supplier].ingredients) do
+  for _, obj in pairs(prototypes.recipe[shared.aircraft_supplier].ingredients) do
     table.insert(details, {obj.name, obj.amount})
   end
   for ammo_name, ammo_count in pairs(supplier_info.inventory) do

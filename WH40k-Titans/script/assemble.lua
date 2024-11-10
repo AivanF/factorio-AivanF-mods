@@ -86,7 +86,7 @@ local function draw_assembler_lamp(assembler, wi, lamp_color)
   table.insert(color, 0.25)
   rendering.draw_sprite{
     surface=assembler.surface, sprite=shared.mod_prefix.."light", x_scale=1, y_scale=1,
-    tint=color, time_to_live=building_update_rate+1, render_layer=145, -- 123 or 145
+    tint=color, time_to_live=building_update_rate, render_layer=145, -- 123 or 145
     target={x=assembler.position.x+bunker_lamps[wi][1], y=assembler.position.y+bunker_lamps[wi][2]},
   }
 end
@@ -409,16 +409,17 @@ end
 
 
 local function set_signals_from_ingredients(comb, ingredients, ammo)
-  local ctrl = comb.get_or_create_control_behavior()
-  for pos = 1, shared.bunker_comb_size do
-    if ingredients and pos <= #ingredients then
-      ctrl.set_signal(pos, {signal={type="item", name=ingredients[pos][1]}, count=ingredients[pos][2]})
-    elseif ammo and ammo[1] and pos == #ingredients+1 then
-      ctrl.set_signal(pos, {signal={type="item", name=ammo[1]}, count=ammo[2]})
-    else
-      ctrl.set_signal(pos, nil)
-    end
-  end
+  return;  -- TODO: replace signals with logistic requests
+  -- local ctrl = comb.get_or_create_control_behavior()
+  -- for pos = 1, shared.bunker_comb_size do
+  --   if ingredients and pos <= #ingredients then
+  --     ctrl.set_signal(pos, {signal={type="item", name=ingredients[pos][1]}, count=ingredients[pos][2]})
+  --   elseif ammo and ammo[1] and pos == #ingredients+1 then
+  --     ctrl.set_signal(pos, {signal={type="item", name=ammo[1]}, count=ammo[2]})
+  --   else
+  --     ctrl.set_signal(pos, nil)
+  --   end
+  -- end
 end
 
 
@@ -716,7 +717,7 @@ function state_handler.assembling(assembler)
     assembler.force.print({"WH40k-Titans-gui.msg-titan-created", {"entity-name."..titan_type.entity}})
     local name = titan_type.entity
     -- Try change to AAI Programmable Vehicles
-    if settings.startup["wh40k-titans-aai-vehicle"].value and game.entity_prototypes[name.."-0"] then
+    if settings.startup["wh40k-titans-aai-vehicle"].value and prototypes.entity[name.."-0"] then
       name = name.."-0"
     end
     titan_entity = assembler.surface.create_entity{

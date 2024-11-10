@@ -228,7 +228,7 @@ local function create_assembly_gui(player, assembler)
   pusher.style.horizontally_stretchable = true
   pusher.drag_target = main_frame
   pusher.style.maximal_height = 24
-  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close_white" }
+  flowtitle.add{ type="sprite-button", style="frame_action_button", tags={action=act_main_frame_close}, sprite="utility/close" }
 
   -- if settings.global["wh40k-titans-debug-info"].value then
   --   local tf = main_frame.add{ type="text-box", name="debugging",

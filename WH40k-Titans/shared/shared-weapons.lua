@@ -19,7 +19,6 @@ shared.titan_arm_length = 6.5
 
 --------- Titan weapon ammo aliases
 shared.big_bolt     = shared.mod_prefix.."bolt-big"
-shared.huge_bolt    = shared.mod_prefix.."bolt-huge"  -- DEPRECATED!
 shared.cannon_shell = "explosive-cannon-shell"
 -- shared.quake_proj   = shared.mod_prefix.."quake-projectile"
 shared.flamer_ammo  = "flamethrower-ammo"
@@ -36,7 +35,6 @@ shared.warp_missile_ammo = shared.mod_prefix.."warp-missile"
 
 shared.ammo_weights = {
   [shared.big_bolt] = 1,
-  -- [shared.huge_bolt] = 2,
   [shared.cannon_shell] = 1,
   [shared.laser_ammo] = 1,
   [shared.flamer_ammo] = 1,

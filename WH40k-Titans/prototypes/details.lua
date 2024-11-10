@@ -1,5 +1,8 @@
 local shared = require("shared")
 
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
+
 local parts = {
   {
     name = shared.servitor,
@@ -17,6 +20,7 @@ local parts = {
       {type="item", name="repair-pack", amount=100},
     },
     stack_size = 4,
+    weight = rocket_lift_weight / 20,
     order = "a-1",
     place_result = nil,
   },
@@ -31,6 +35,7 @@ local parts = {
       -- Titans know the meaning of life, the universe, and everything!
     },
     energy_required = 60,
+    weight = rocket_lift_weight / 10,
     order = "a-2",
   },
   {
@@ -45,6 +50,7 @@ local parts = {
       {type="item", name=afci_bridge.get.heavy_material().name, amount=60},
       {type="item", name=afci_bridge.get.sc_cable().name, amount=30},
     },
+    weight = rocket_lift_weight / 20,
     order = "a-3",
   },
   {
@@ -58,6 +64,7 @@ local parts = {
       {type="item", name=afci_bridge.get.dense_cable().name, amount=20},
       {type="item", name="processing-unit", amount=1},
     },
+    weight = rocket_lift_weight / 20,
     order = "a-4",
   },
   {
@@ -70,6 +77,7 @@ local parts = {
       {type="item", name=afci_bridge.get.heavy_material().name, amount=20},
       {type="item", name=afci_bridge.get.dense_cable().name, amount=8},
     },
+    weight = rocket_lift_weight / 10,
     order = "a-5",
     place_result = nil,
   },
@@ -82,6 +90,7 @@ local parts = {
       -- {"energy-shield-mk2-equipment", 1},
       {type="item", name=afci_bridge.get.best_shield().name, amount=1},
     },
+    weight = rocket_lift_weight / 10,
     order = "a-6",
   },
 
@@ -96,6 +105,7 @@ local parts = {
       {type="item", name=afci_bridge.get.light_material().name, amount=10},
       -- {"energy-shield-mk2-equipment", 1},
     },
+    weight = rocket_lift_weight / 20,
     order = "b-1",
   },
   {
@@ -107,6 +117,7 @@ local parts = {
       {type="item", name=afci_bridge.get.heavy_material().name, amount=17},
       -- {type="item", name=afci_bridge.get.light_material().name, amount=19},
     },
+    weight = rocket_lift_weight / 10,
     order = "b-2",
   },
 
@@ -116,9 +127,11 @@ local parts = {
     icon = shared.media_prefix.."graphics/icons/details/barrel.png",
     icon_size = 64, icon_mipmaps = 4,
     ingredients = {
-      {type="item", name=afci_bridge.get.heavy_material().name, amount=180},
+      {type="item", name=afci_bridge.get.advanced_ceramic().name, amount=20},
+      {type="item", name=afci_bridge.get.heavy_material().name, amount=120},
     },
     allow_decomposition = true,
+    weight = rocket_lift_weight / 20,
     order = "c-1",
     place_result = nil,
   },
@@ -133,6 +146,7 @@ local parts = {
       {type="item", name="engine-unit", amount=12},
       {type="item", name="processing-unit", amount=1},
     },
+    weight = rocket_lift_weight / 20,
     order = "c-2",
     place_result = nil,
   },
@@ -146,6 +160,7 @@ local parts = {
       {type="item", name="engine-unit", amount=8},
       {type="item", name="processing-unit", amount=1},
     },
+    weight = rocket_lift_weight / 20,
     order = "c-3",
     place_result = nil,
   },
@@ -168,6 +183,7 @@ for _, info in pairs(parts) do
       order = info.order,
       place_result = info.place_result,
       stack_size = info.stack_size or 1,
+      weight = info.weight,
     },
     {
       type = "recipe",

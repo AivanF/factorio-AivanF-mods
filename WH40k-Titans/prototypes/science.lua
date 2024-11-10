@@ -4,6 +4,7 @@ local hit_effects = require ("__base__.prototypes.entity.hit-effects")
 local sounds = require("__base__.prototypes.entity.sounds")
 
 local tint = { r = .8, g = .7, b = .7, a = 1}
+local rocket_lift_weight = 1000000
 
 local ingredients = {  -- 7
   {type="item", name="automation-science-pack", amount=10},
@@ -15,7 +16,23 @@ local ingredients = {  -- 7
   {type="item", name="space-science-pack", amount=10},
 }
 
-if mods[shared.SE] and mods[shared.K2] then
+if mods[shared.SA] then
+  ingredients = {  -- 8
+    -- {type="item", name="automation-science-pack", amount=10},
+    -- {type="item", name="logistic-science-pack", amount=10},
+    {type="item", name="military-science-pack", amount=10},
+    {type="item", name="chemical-science-pack", amount=10},
+    {type="item", name="utility-science-pack", amount=10},
+    {type="item", name="production-science-pack", amount=10},
+
+    {type="item", name="space-science-pack", amount=10},
+    {type="item", name="metallurgic-science-pack", amount=10},
+    {type="item", name="electromagnetic-science-pack", amount=10},
+    -- {type="item", name="agricultural-science-pack", amount=10},
+    {type="item", name="promethium-science-pack", amount=10},
+  }
+
+elseif mods[shared.SE] and mods[shared.K2] then
   ingredients = {  -- 8
     {type="item", name="military-science-pack", amount=10},
     -- {type="item", name="space-science-pack", amount=10},
@@ -66,6 +83,7 @@ data:extend({
     subgroup = "science-pack",
     order = "z-wh40k",
     stack_size = 200,
+    weight = rocket_lift_weight / 200,
     durability = 1,
     durability_description_key = "description.science-pack-remaining-amount-key",
     durability_description_value = "description.science-pack-remaining-amount-value",
@@ -293,7 +311,6 @@ data:extend({
       {type="item", name="processing-unit", amount=100},
     },
     allow_productivity = true,
-    afci_bridged = true,
     energy_required = 10,
     results = {{type="item", name=shared.lab, amount=1}}
   },
