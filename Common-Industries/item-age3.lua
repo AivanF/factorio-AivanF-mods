@@ -4,6 +4,9 @@ local add_item = bridge.add_item
 local prerequisite = bridge.tech.lategame.name
 local subgroup = bridge.subg_late
 
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
+
 -- TODO: make nano-factory with steel, pipes, fast-inserter, glass.name, electric-engine-unit, laser-turret
 --[[
 mod = bridge.mods.exind,
@@ -33,9 +36,20 @@ add_item({
     {"processing-unit", 1},
   },
   energy_required = 5,
-  stack_size = 100,
-  category = bridge.cat_org_crafting,
+  stack_size = 10,
+  weight = rocket_lift_weight / 100,
+  category = bridge.config.cat_org_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      prereq = "agricultural-science-pack",
+      ingredients = {
+        { "nutrients", 50, },
+        { "bioflux", 50, },
+        { "copper-bacteria", 10, },
+      },
+      category = "organic",
+    },
     {
       mod = bridge.mods.se,
       prereq = "se-space-genetics-laboratory",
@@ -87,6 +101,11 @@ add_item({
   energy_required = 10,
   category = "advanced-crafting",
   modded = {
+    {
+      mod = bridge.mods.sa,
+      name = "thruster",
+      prereq = "space-platform-thruster",
+    },
     -- {
     --   -- This one is too advanced?
     --   mod = bridge.mods.se,
@@ -113,8 +132,13 @@ add_item({
   ingredients = {{"coal", 2}},
   stack_size = 100,
   energy_required = 10,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      name = "carbon-fiber",
+      prereq = "carbon-fiber",
+    },
     {
       mod = bridge.mods.ir3,
       name = "carbon-foil",
@@ -165,6 +189,11 @@ add_item({
   stack_size = 100,
   modded = {
     {
+      mod = bridge.mods.sa,
+      name = "superconductor",
+      prereq = "electromagnetic-plant",
+    },
+    {
       mod = bridge.mods.se,
       name = "se-superconductive-cable",
       prereq = "se-superconductive-cable",
@@ -211,6 +240,11 @@ add_item({
   category = "advanced-crafting",
   stack_size = 100,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      name = "supercapacitor",
+      prereq = "electromagnetic-plant",
+    },
     {
       mod = bridge.mods.se,
       name = "se-holmium-solenoid",
@@ -267,9 +301,18 @@ add_item({
     {bridge.item.carbon_fiber, 10},
   },
   result_count = 10,
+  stack_size = 100,
+  weight = rocket_lift_weight / 1000,
   energy_required = 60,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      ingredients = {
+        {"holmium-plate", 10},
+        {bridge.item.carbon_fiber, 10},
+      },
+    },
     {
       mod = bridge.mods.se,
       name = "se-nanomaterial",
@@ -353,7 +396,7 @@ add_item({
   result_count = 4,
   stack_size = 100,
   energy_required = 10,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   modded = {
     {
       mod = bridge.mods.bzaluminum,
@@ -384,8 +427,13 @@ add_item({
   },
   stack_size = 10,
   energy_required = 8,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      name = "quantum-processor",
+      prereq = "quantum-processor",
+    },
     {
       mod = bridge.mods.se,
       name = "se-quantum-processor",
@@ -447,9 +495,14 @@ add_item({
     {"advanced-circuit", 1},
   },
   energy_required = 10,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   stack_size = 50,
   modded = {
+    -- {
+    --   mod = bridge.mods.sa,
+    --   name = "se-dynamic-emitter",
+    --   prereq = "se-dynamic-emitter",
+    -- },
     {
       mod = bridge.mods.se,
       name = "se-dynamic-emitter",
@@ -513,12 +566,18 @@ add_item({
   ingredients = {
     {bridge.item.advanced_solenoid, 6},
     {bridge.item.nano_mat, 24},
-    {"advanced-circuit", 1},
+    {"processing-unit", 1},
   },
   energy_required = 10,
-  category = bridge.cat_nano_crafting,
+  category = bridge.config.cat_nano_crafting,
   stack_size = 50,
+  weight = rocket_lift_weight / 100,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      -- TODO: update with bridge.config.cat_he_crafting
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.k2,
       name = "energy-control-unit",
@@ -580,8 +639,15 @@ add_item({
     {"processing-unit", 1},
   },
   energy_required = 30,
-  category = bridge.cat_nano_crafting,
+  stack_size = 20,
+  weight = rocket_lift_weight / 50,
+  category = bridge.config.cat_nano_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      -- TODO: update with bridge.config.cat_he_crafting
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.exind,
       prereq = "ei_fusion-drive",
@@ -618,6 +684,16 @@ add_item({
   prereq = "fission-reactor-equipment",
   modded = {
     {
+      mod = bridge.mods.ev_pe,
+      name = "77-fusion-reactor-mk6-equipment",
+      prereq = "77-fusion-reactor-mk6-equipment",
+    },
+    {
+      mod = bridge.mods.sa,
+      name = "fusion-reactor-equipment",
+      prereq = "fusion-reactor-equipment",
+    },
+    {
       mod = bridge.mods.k2,
       -- name = "kr-antimatter-reactor",
       name = "antimatter-reactor-equipment",
@@ -642,6 +718,11 @@ add_item({
   prereq = "kovarex-enrichment-process",
   modded = {
     {
+      mod = bridge.mods.sa,
+      name = "fusion-power-cell",
+      prereq = "fusion-reactor",
+    },
+    {
       mod = bridge.mods.k2,
       -- Or krastorio.recipes.changed_names["charged-antimatter-fuel-cell"] ?!
       name = "charged-antimatter-fuel-cell",
@@ -656,6 +737,11 @@ add_item({
   name = "energy-shield-mk2-equipment",
   prereq = "energy-shield-mk2-equipment",
   modded = {
+    {
+      mod = bridge.mods.ev_pe,
+      name = "77-energy-shield-mk5-equipment",
+      prereq = "77-energy-shield-mk5-equipment",
+    },
     {
       mod = bridge.mods.se,
       name = "energy-shield-mk6-equipment",

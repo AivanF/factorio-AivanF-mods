@@ -2,6 +2,7 @@ local bridge = require("bridge1-base")
 
 bridge.tech = {}
 local function add_tech(tech_info)
+  tech_info.status = bridge.status_draft
   bridge.tech[tech_info.short_name] = tech_info
   bridge.tech[tech_info.name] = tech_info
 end
@@ -72,7 +73,7 @@ add_tech({
     "production-science-pack",
     "utility-science-pack",
   },
-  count = 300,
+  count = 500,
   ingredients = {
     {"automation-science-pack", 1},
     {"logistic-science-pack", 1},
@@ -81,6 +82,27 @@ add_tech({
     {"utility-science-pack", 1},
   },
   modded = {
+    {
+      mod = bridge.mods.sa,
+      prerequisites = {
+        "production-science-pack",
+        "utility-science-pack",
+        "metallurgic-science-pack",
+        "electromagnetic-science-pack",
+        "agricultural-science-pack",
+      },
+      ingredients = {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"production-science-pack", 1},
+        {"utility-science-pack", 1},
+        {"space-science-pack", 1},
+        {"metallurgic-science-pack", 1},
+        {"electromagnetic-science-pack", 1},
+        {"agricultural-science-pack", 1},
+      },
+    },
     {
       mod = bridge.mods.bzcarbon,
       prerequisites = {"nanotubes"},
@@ -124,6 +146,24 @@ add_tech({
     {"space-science-pack", 1},
   },
   modded = {
+    {
+      mod = bridge.mods.sa,
+      prerequisites = {
+        "promethium-science-pack",
+      },
+      ingredients = {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+        {"chemical-science-pack", 1},
+        {"production-science-pack", 1},
+        {"utility-science-pack", 1},
+        {"space-science-pack", 1},
+        {"metallurgic-science-pack", 1},
+        {"electromagnetic-science-pack", 1},
+        {"agricultural-science-pack", 1},
+        {"promethium-science-pack", 1},
+      },
+    },
     -- {
     --   mod = bridge.mods.ir3,
     --   prerequisites = {

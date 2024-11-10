@@ -5,7 +5,7 @@
   "author": "AivanF", 
   "homepage": "https://mods.factorio.com/mod/Common-Industries",
   "dependencies": [
-    "? space-age",
+    "? space-age", "? Better-Power-Armor-Grid",
     "? space-exploration", "? aai-industry", "? Krastorio2", "? 248k",
     "? bobelectronics", "? MDbobelectronics", "? bobtech", "? bobplates", "? bobpower",
     "? angelspetrochem", "? angelssmelting",

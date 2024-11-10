@@ -29,7 +29,11 @@ bridge.media_path = "__Common-Industries__/graphics/"
 bridge.prefix = "afci-"
 bridge.log_prefix = "AFCI: "
 bridge.empty = ""
-bridge.not_updated = "none"
+
+bridge.status_draft    = "draft"
+bridge.status_adjusted = "adjusted"
+bridge.status_replaced = "replaced"
+bridge.status_passed   = "passed"
 
 -- bridge.group_name = "afci-common-industries"
 bridge.group_name = "intermediate-products"
@@ -38,16 +42,20 @@ bridge.subg_mid   = "afci-midgame"
 bridge.subg_late  = "afci-lategame"
 bridge.subg_end   = "afci-endgame"
 
--- TODO: add own recipe categories & related buildings
--- TODO: resolve these for mods too?
-bridge.cat_nano_crafting = "advanced-crafting"
-bridge.cat_he_crafting   = "advanced-crafting"
-bridge.cat_org_crafting  = "chemistry"
+-- TODO: add own recipe categories & related buildings?
+-- TODO: resolve these values for mods too?
+bridge.config = {}
+bridge.config.cat_nano_crafting = "advanced-crafting"  -- nano technologies
+bridge.config.cat_he_crafting   = "advanced-crafting"  -- high energy
+bridge.config.cat_org_crafting  = "chemistry"  -- organic & bio chemistry
 
 
 -- Supported mods
 bridge.mods_list = {
   { short_name = "sa",    name = "space-age" },
+
+  -- Extended Vanilla
+  { short_name = "ev_pe", name = "Better-Power-Armor-Grid" },
 
   -- SE    https://mods.factorio.com/user/Earendel
   { short_name = "se",    name = "space-exploration" },
@@ -159,7 +167,9 @@ function bridge.clean_prerequisites(given)
   return result
 end
 
+-- This can be set by another mod to perform preprocessing even during on_load
 bridge.active_mods_cache = nil
+
 function bridge.have_required_mod(mod_info)  
   -- Treat the argument as a list of mods
   -- for recipes with dependencies and ingredients
@@ -184,34 +194,34 @@ function bridge.have_required_mod(mod_info)
   return false
 end
 
+
+
 -- Updates given object declaration depending on enabled mods
-bridge.preprocessed = {}
 function bridge.preprocess(obj_info)
   -- Already done or nothing to do
-  if bridge.preprocessed[obj_info.short_name] then
+  if obj_info.status == nil then
+    error("Got unregistered obj_info:\n"..serpent.line(obj_info))
+  end
+  if obj_info.status ~= bridge.status_draft then
     return obj_info
   end
   -- Try to adjust
   for _, specialised in ipairs(obj_info.modded or {}) do
     if bridge.have_required_mod(specialised.mod) then
+
       table.merge(obj_info, specialised)
-      bridge.preprocessed[obj_info.short_name] = true
-      --[[
-      IS1: Maybe set replaced not by is_bridge_name, but when original's obj_info.name != specialised.name?
-      Not sure if this is a good strategy.
-      ]]--
-      obj_info.updated = bridge.is_bridge_name(obj_info.name) and "adjusted" or "replaced"
-      -- log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.updated.." "..obj_info.short_name)
+      obj_info.status = bridge.is_bridge_name(obj_info.name) and bridge.status_adjusted or bridge.status_replaced
+
+      -- log(bridge.log_prefix.."fix, "..specialised.mod.short_name.." "..obj_info.status.." "..obj_info.short_name)
       if not specialised.continue then
         return obj_info
       end
     end
   end
-  if obj_info.updated == bridge.not_updated then
+  if obj_info.status == bridge.status_draft then
     -- Found nothing
-    obj_info.updated = "pass"
+    obj_info.status = bridge.status_passed
   end
-  bridge.preprocessed[obj_info.short_name] = true
   return obj_info
 end
 

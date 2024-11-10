@@ -5,6 +5,9 @@ local prerequisite = bridge.tech.endgame.name
 -- local subgroup = bridge.subg_end
 local subgroup = bridge.subg_late
 
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
+
 -- TODO: add high-energy factory with 30 nano_mat, 6 quantum_chip, 12 he_emitter
 
 add_item({
@@ -21,8 +24,14 @@ add_item({
     {bridge.item.nano_mat, 8},
   },
   energy_required = 60,
-  category = bridge.cat_he_crafting,
+  weight = rocket_lift_weight / 20,
+  category = bridge.config.cat_he_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      -- TODO: update with bridge.config.cat_he_crafting
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.se,
       -- name = "se-naquium-tesseract",
@@ -84,8 +93,14 @@ add_item({
     {bridge.item.he_emitter, 3},
   },
   energy_required = 60,
-  category = bridge.cat_he_crafting,
+  weight = rocket_lift_weight / 20,
+  category = bridge.config.cat_he_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      -- TODO: update with bridge.config.cat_he_crafting
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.se,
       prereq = bridge.item.st_operator,
@@ -111,8 +126,13 @@ add_item({
     {bridge.item.quantum_chip, 4},
   },
   energy_required = 60,
-  category = bridge.cat_he_crafting,
+  category = bridge.config.cat_he_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      -- TODO: update with bridge.config.cat_he_crafting
+      category = "electromagnetics",
+    },
     {
       mod = bridge.mods.se,
       name = "se-naquium-processor",

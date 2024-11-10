@@ -5,6 +5,9 @@ local prerequisite = bridge.tech.midgame.name
 -- local subgroup = bridge.subg_mid
 local subgroup = bridge.subg_early
 
+-- local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local rocket_lift_weight = 1000000
+
 add_item({
   short_name = "meat",
   name = bridge.prefix.."meat",
@@ -21,9 +24,20 @@ add_item({
   },
   result_count = 4,
   stack_size = 100,
+  weight = rocket_lift_weight / 200,
   energy_required = 5,
-  category = bridge.cat_org_crafting,
+  category = bridge.config.cat_org_crafting,
   modded = {
+    {
+      mod = bridge.mods.sa,
+      prerequisite = "biochamber",
+      ingredients = {
+        { "nutrients", 50, },
+        { "jelly", 50, },
+        { "iron-bacteria", 10, },
+      },
+      category = "organic",
+    },
     {
       mod = bridge.mods.angelsbio,
       name = "bio-raw-meat",
@@ -286,6 +300,12 @@ add_item({
   category = "smelting",
   modded = {
     {
+      mod = bridge.mods.sa,
+      name = "tungsten-plate",
+      -- prereq = "tungsten-steel",
+      prereq = "metallurgic-science-pack",
+    },
+    {
       mod = bridge.mods.se,
       -- name = "se-iridium-plate",
       -- prereq = "se-processing-iridium",
@@ -382,6 +402,16 @@ add_item({
   prereq = "low-density-structure",
   modded = {
     {
+      mod = bridge.mods.sa,
+      name = "tungsten-carbide",
+      prereq = "tungsten-carbide",
+    },
+    {
+      mod = bridge.mods.se,
+      name = "se-heat-shielding",
+      prereq = "se-heat-shielding",
+    },
+    {
       mod = bridge.mods.bobplates,
       name = "silicon-nitride",
       prereq = "ceramics",
@@ -390,11 +420,6 @@ add_item({
       mod = bridge.mods.py_ht,
       name = "ceramic",
       prereq = "ceramic",
-    },
-    {
-      mod = bridge.mods.se,
-      name = "se-heat-shielding",
-      prereq = "se-heat-shielding",
     },
   },
 })
@@ -413,4 +438,5 @@ add_item({
   },
   energy_required = 5,
   stack_size = 10,
+  weight = rocket_lift_weight / 100,
 })

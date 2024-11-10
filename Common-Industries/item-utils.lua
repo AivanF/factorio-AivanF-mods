@@ -4,7 +4,13 @@ local bridge = require("bridge2-tech")
 bridge.item = {}
 local ordered = 0
 
--- TODO: make recipe_anyway flag to add new recipe even if item and recipe already exist?
+-- TODO: explain prereq & prerequisite diff
+-- TODO: rename prereq => preprereq?
+-- TODO: support multiple prereq?
+
+local function should_materialise(item_info)
+  return bridge.is_bridge_name(item_info.name) or item_info.bridge_force_create
+end
 
 
 local function data_getter_inner(item_info)
@@ -21,10 +27,9 @@ local function data_getter_inner(item_info)
   item_info.done = bridge.empty -- Aka false, just to prevent recursion
 
   -- Materialize required components if needed
-  local ing_info
-  if bridge.is_bridge_name(item_info.name) then
+  if should_materialise(item_info) then
+    local ing_info
     for index, row in pairs(item_info.ingredients) do
-
     -- Array style, and 1st is an item_info
       if row[1] and row[1].is_bridge_item then
         ing_info = row[1]
@@ -56,7 +61,7 @@ local function data_getter_inner(item_info)
   if item_info.prereq and item_info.prereq.is_bridge_item then
     -- Prerequisite can be a string or another item
     -- If so, let's recursively preprocess it and take its prerequisite
-    ing_info = item_info.prereq
+    local ing_info = item_info.prereq
     if bridge.is_bridge_name(ing_info.name) then
       ing_info.data_getter()
     end
@@ -82,12 +87,13 @@ local function data_getter_inner(item_info)
   -- TODO: remove ores/scrap+sludge(SE)/slag(248k) if related startup setting is set
 
   -- Make actual item + recipe if the item was not replaced by some mod
-  -- IS1: Maybe check item_info.updated!=repalced?
-  if bridge.is_bridge_name(item_info.name) or item_info.afci_bridged then
-    if data and data.raw and not data.raw.item[item_info.name] then
+  if should_materialise(item_info) then
+    local item_prototype = item_info.item_prototype or "item"
+    -- if data and data.raw and not data.raw.item[item_info.name] then
+    if not data.raw[item_prototype][item_info.name] then
       log(bridge.log_prefix.."creating item "..item_info.short_name)
       local item_data = {
-          type = item_info.item_prototype or "item",
+          type = item_prototype,
           name = item_info.name,
           icon = item_info.icon,
           icon_size = item_info.icon_size,
@@ -96,6 +102,7 @@ local function data_getter_inner(item_info)
           order = item_info.order,
           place_result = item_info.place_result,
           stack_size = item_info.stack_size or 20,
+          weight = item_info.weight,
           afci_bridged = true,
       }
       local recipe_data = {
@@ -125,6 +132,8 @@ local function data_getter_inner(item_info)
         -- TODO: materialize builder entity; maybe it's better to consider crafting category
       end
     end
+  else
+    log(bridge.log_prefix.."passing creation of item "..item_info.short_name)
   end
 
   item_info.done = true
@@ -133,7 +142,7 @@ local function data_getter_inner(item_info)
 end
 
 
--- Generate items API, so that `bridge.get[short_name]()` returns item_info
+-- Generate items API, so that `bridge.get[short_name]()` returns processed item_info
 function bridge.add_item(item_info)
   ordered = ordered + 1
 
@@ -141,7 +150,7 @@ function bridge.add_item(item_info)
     error("Item "..tostring(item_info.short_name).." already registered!")
   end
   item_info.is_bridge_item = true
-  item_info.updated = bridge.not_updated
+  item_info.status = bridge.status_draft
   item_info.order = item_info.order or "abc-"..ordered
   item_info.prerequisite = item_info.prereq -- original custom prereq
   bridge.item[item_info.short_name] = item_info
@@ -168,6 +177,7 @@ function bridge.add_item(item_info)
   end
 
   local union_getter = function()
+    -- Call proper getter depending on current stage.
     if data then
       return item_info.data_getter()
     elseif game or bridge.active_mods_cache then
