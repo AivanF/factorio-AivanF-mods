@@ -684,9 +684,14 @@ add_item({
   prereq = "fission-reactor-equipment",
   modded = {
     {
-      mod = bridge.mods.ev_pe,
+      mod = {bridge.mods.sa, bridge.mods.ev_pe},
       name = "77-fusion-reactor-mk6-equipment",
       prereq = "77-fusion-reactor-mk6-equipment",
+    },
+    {
+      mod = bridge.mods.ev_pe,
+      name = "77-fission-reactor-mk4-equipment",
+      prereq = "77-fission-reactor-mk4-equipment",
     },
     {
       mod = bridge.mods.sa,
