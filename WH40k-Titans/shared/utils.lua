@@ -186,33 +186,40 @@ function func_maps(func, args_arrays)
 end
 
 
+local number_suffixes = {"k", "M", "B", "T", "Qa", "Qi"}
 function shorten_number(value)
-  if value > 1000000000 then
-    value = value/1000000000
-    if value < 10 and value - math.floor(value) > 0.1 then
-      return string.format("%.1f", value).."B"
+  local sfx = ""
+  for _, key in ipairs(number_suffixes) do
+    if value > 1000 then
+      value = value / 1000
+      sfx = key;
     else
-      return string.format("%.0f", value).."B"
+      break
     end
-
-  elseif value > 1000000 then
-    value = value/1000000
-    if value < 10 and value - math.floor(value) > 0.1 then
-      return string.format("%.1f", value).."M"
-    else
-      return string.format("%.0f", value).."M"
-    end
-
-  elseif value > 1000 then
-    value = value/1000
-    if value < 10 and value - math.floor(value) > 0.1 then
-      return string.format("%.1f", value).."k"
-    else
-      return string.format("%.0f", value).."k"
-    end
-
+  end
+  if value < 10 and value - math.floor(value) > 0.1 then
+    return string.format("%.1f", value)..sfx
   else
-    return string.format("%.0f", value)
+    return string.format("%.0f", value)..sfx
+  end
+end
+
+
+local energy_suffixes = {"k", "M", "G", "T", "P", "E", "Z", "Y"}
+function shorten_energy(value)
+  local sfx = ""
+  for _, key in ipairs(energy_suffixes) do
+    if value > 1000 then
+      value = value / 1000
+      sfx = key;
+    else
+      break
+    end
+  end
+  if value < 10 and value - math.floor(value) > 0.1 then
+    return string.format("%.1f", value)..sfx
+  else
+    return string.format("%.0f", value)..sfx
   end
 end
 

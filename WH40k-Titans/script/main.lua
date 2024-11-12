@@ -92,6 +92,16 @@ local function on_any_remove(event)
 end
 
 
+local function reveng_set_value(item_name, tech_name, price)
+  remote.call("reverse_labs", "add_override_item", item_name, {
+    ingredients = {shared.sp},
+    price = price,
+    prob = price,
+    tech_name = tech_name,
+  })
+end
+
+
 local function reveng_multiply_value(item_name, cf, silent)
     local item_info = remote.call("reverse_labs", "get_item", item_name)
     if item_info == nil then
@@ -101,12 +111,13 @@ local function reveng_multiply_value(item_name, cf, silent)
           item_name=item_name,
         }))
       else
-        return
+        return false
       end
     end
     item_info.price = item_info.price * cf
     item_info.prob = item_info.prob * cf
     remote.call("reverse_labs", "add_override_item", item_name, item_info)
+    return true
 end
 
 
@@ -148,29 +159,27 @@ remote.add_interface(shared.titan_prefix.."main", {
     It's tricky, RevEng assignes values dynamically,
     and it varies a lot for different overhaul mods.
     ]]--
+    local tech_name = shared.mod_prefix.."production"
     -- Body
-    reveng_multiply_value(shared.servitor,    0.2)
-    reveng_multiply_value(shared.brain,       2.0)
-    reveng_multiply_value(shared.energy_core, 0.8)
-    reveng_multiply_value(shared.void_shield, 0.8)
-    reveng_multiply_value(shared.frame_part,  0.3)
-    reveng_multiply_value(shared.motor,       0.3)
+    _ = reveng_multiply_value(shared.servitor,    0.2) or reveng_set_value(shared.servitor, tech_name, 0.1);
+    _ = reveng_multiply_value(shared.brain,       2.0) or reveng_set_value(shared.brain, tech_name, 7);
+    _ = reveng_multiply_value(shared.energy_core, 0.8) or reveng_set_value(shared.energy_core, tech_name, 3);
+    _ = reveng_multiply_value(shared.void_shield, 0.8) or reveng_set_value(shared.void_shield, tech_name, 5);
+    _ = reveng_multiply_value(shared.frame_part,  0.3) or reveng_set_value(shared.frame_part, tech_name, 0.5);
+    _ = reveng_multiply_value(shared.motor,       0.3) or reveng_set_value(shared.motor, tech_name, 0.5);
     -- Common
-    reveng_multiply_value(shared.antigraveng, 1.0)
-    reveng_multiply_value(shared.realityctrl, 2.0)
+    _ = reveng_multiply_value(shared.antigraveng, 1.0) or reveng_set_value(shared.antigraveng, tech_name, 5);
+    _ = reveng_multiply_value(shared.realityctrl, 2.0) or reveng_set_value(shared.realityctrl, tech_name, 10);
     -- Weapons
-    -- reveng_multiply_value(shared.barrel,      0.2)
-    reveng_multiply_value(shared.proj_engine, 0.5)
-    reveng_multiply_value(shared.melta_pump,  0.5)
+    _ = reveng_multiply_value(shared.barrel,      0.2) or reveng_set_value(shared.barrel, tech_name, 0.2);
+    _ = reveng_multiply_value(shared.proj_engine, 0.5) or reveng_set_value(shared.proj_engine, tech_name, 0.25);
+    _ = reveng_multiply_value(shared.melta_pump,  0.5) or reveng_set_value(shared.melta_pump, tech_name, 0.25);
     -- From the Bridge
-    -- reveng_multiply_value(afci_bridge.get.emfc().name, 1)
-    -- reveng_multiply_value(afci_bridge.get.he_emitter().name, 1)
-    reveng_multiply_value(afci_bridge.get.ehe_emitter().name, 2)
-    -- reveng_multiply_value(afci_bridge.get.rocket_engine().name, 1)
+    -- reveng_multiply_value(afci_bridge.get.emfc().name, 1);
+    -- reveng_multiply_value(afci_bridge.get.he_emitter().name, 1);
+    reveng_multiply_value(afci_bridge.get.ehe_emitter().name, 2);
+    -- reveng_multiply_value(afci_bridge.get.rocket_engine().name, 1);
 
-    -- for _, name in ipairs(shared.ammo_list) do
-    --   reveng_multiply_value(name, 0.2, true)
-    -- end
     for name, price in pairs(ammo_prices) do
       remote.call("reverse_labs", "add_override_item", name, {
         ingredients = {shared.sp},
@@ -179,18 +188,6 @@ remote.add_interface(shared.titan_prefix.."main", {
         tech_name = shared.mod_prefix.."ammo",
       })
     end
-
-    local item_info_1 = remote.call("reverse_labs", "get_item", shared.frame_part)
-    local item_info_2 = {
-      ingredients = item_info_1.ingredients,
-      price = item_info_1.price * 0.5,
-      prob = item_info_1.prob * 0.5,
-      tech_name = item_info_1.tech_name,
-    }
-    remote.call("reverse_labs", "add_override_item", shared.barrel, item_info_2)
-    game.print(serpent.line(item_info_1))
-    game.print(serpent.line(item_info_2))
-
     -- game.print("// WH40k RevEng Post")
   end,
 })

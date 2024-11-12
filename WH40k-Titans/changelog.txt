@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2024-11-12
+  Bugfixes:
+    - Fixed Reverse-Engineering worth recalc error that happened with some mods configuration.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2024-11-09
   Changes:
