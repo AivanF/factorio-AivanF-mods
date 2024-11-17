@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.4
+Date: 2024-11-17
+  Features:
+    - Added productivity for rail supports and ramps from the Elevated Rails mod.
+  Locales:
+    - Added Russian language.
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.3
 Date: 2024-11-07
   Bugfixes:

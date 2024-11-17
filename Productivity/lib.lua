@@ -31,6 +31,7 @@ end
 
 
 local have_SA = mods["space-age"]
+local have_ER = mods["elevated-rails"]
 
 
 local function should_enable_prod(item_name)
@@ -56,6 +57,8 @@ local function should_enable_prod(item_name)
     or settings.startup["af-prod-enable-robots"].value and data.raw["construction-robot"][item_name]
 
     or settings.startup["af-prod-enable-rails"].value and data.raw["rail-planner"][item_name]
+    or have_ER and settings.startup["af-prod-enable-rails"].value and data.raw["rail-ramp"][item_name]
+    or have_ER and settings.startup["af-prod-enable-rails"].value and data.raw["rail-support"][item_name]
     or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["train-stop"][item_name]
     or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["rail-signal"][item_name]
     or settings.startup["af-prod-enable-rail-stops-signals"].value and data.raw["rail-chain-signal"][item_name]
