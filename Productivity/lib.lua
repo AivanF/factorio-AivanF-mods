@@ -96,6 +96,7 @@ local function should_enable_prod(item_name)
     or have_SA and settings.startup["af-prod-enable-boiler-gen"].value and data.raw["fusion-generator"][item_name]
 
     or settings.startup["af-prod-enable-turrets"].value and item_name:find("turret", 1, true) and placable
+    or settings.startup["af-prod-enable-radar"].value and data.raw["radar"][item_name]
     or settings.startup["af-prod-enable-walls"].value and data.raw["wall"][item_name]
     or settings.startup["af-prod-enable-walls"].value and data.raw["gate"][item_name]
 

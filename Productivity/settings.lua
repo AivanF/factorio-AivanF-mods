@@ -108,17 +108,24 @@ data:extend{
     },
     {
         type = "bool-setting",
-        name = "af-prod-enable-walls",
+        name = "af-prod-enable-radar",
         setting_type = "startup",
         default_value = true,
         order = "b-7",
     },
     {
         type = "bool-setting",
-        name = "af-prod-enable-spaceage",
+        name = "af-prod-enable-walls",
         setting_type = "startup",
         default_value = true,
         order = "b-8",
+    },
+    {
+        type = "bool-setting",
+        name = "af-prod-enable-spaceage",
+        setting_type = "startup",
+        default_value = true,
+        order = "b-9",
     },
     -- Misc
     {
