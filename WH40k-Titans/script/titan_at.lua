@@ -440,8 +440,14 @@ local function handle_attack_order(event, kind)
   -- https://lua-api.factorio.com/latest/events.html#CustomInputEvent
   local player = game.players[event.player_index]
   -- try_remove_small_water(player.character.surface, event.cursor_position, 8)
-  if not (player.character and player.character.vehicle) then return end
-  local entity = player.character.vehicle
+  -- game.print("Attacking: "..serpent.line({
+  --   character=player.character,
+  --   character_vehicle=player.character and player.character.vehicle,
+  --   physical_vehicle=player.physical_vehicle,
+  --   vehicle=player.vehicle,
+  -- }))
+  local entity = player.vehicle or player.physical_vehicle
+  if not entity then return end
   local titan_info = ctrl_data.titans[entity.unit_number]
   if not titan_info then return end
   local titan_type = shared.titan_types[titan_info.class]

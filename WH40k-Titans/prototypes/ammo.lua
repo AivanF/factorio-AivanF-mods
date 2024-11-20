@@ -399,8 +399,8 @@ bridge.add_item({
   category = "advanced-crafting",
   bridge_force_create = true,
   item_data = {
-    -- https://wiki.factorio.com/Prototype/SelectionTool#selection_mode
-    stackable = false,
+    -- https://lua-api.factorio.com/latest/prototypes/SelectionToolPrototype.html
+    flags = {"not-stackable"},
     select = {
       border_color = {r = 0.9, g = 0.5, b = 0.1},
       mode = {"not-same-force"},

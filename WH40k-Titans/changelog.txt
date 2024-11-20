@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2024-11-20
+  Features:
+    - Titanic wrecks now spawn on other planets: Vulcanus and Fulgora.
+    - Titans now bury small puddles of lava.
+  Bugfixes:
+    - Fixed not working Titan attack shortcuts during remote control.
+    - Fixed Titans not walking over shallow water, which started happening with Factorio 2.0 update.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2024-11-12
   Bugfixes:

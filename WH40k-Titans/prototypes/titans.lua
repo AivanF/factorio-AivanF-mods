@@ -14,6 +14,13 @@ data:extend({
 })
 
 -- Add new layer to the water, ignoring shallow
+-- Seems like they use the same objects, deep copy them firstly
+for name, proto in pairs(data.raw["tile"]) do
+  if name:find("shallow", 1, true) then
+    log("Titans: deepcopy for tile "..proto.name)
+    proto.collision_mask = table.deepcopy(proto.collision_mask)
+  end
+end
 for name, proto in pairs(data.raw["tile"]) do
   if true
     and proto.fluid

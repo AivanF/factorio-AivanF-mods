@@ -32,7 +32,8 @@ shared.titan_aux_laser2 = shared.mod_prefix.."aux-turret-laser-2"
 
 -- Render layers
 --[[
-https://lua-api.factorio.com/latest/Concepts.html#RenderLayer
+https://lua-api.factorio.com/latest/concepts/RenderLayer.html
+TODO: rework depths!
 
 "floor-mechanics" = 122
 "item"          = 123

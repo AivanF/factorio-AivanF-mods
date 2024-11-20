@@ -105,14 +105,14 @@ end
 local function reveng_multiply_value(item_name, cf, silent)
     local item_info = remote.call("reverse_labs", "get_item", item_name)
     if item_info == nil then
-      if not silent and settings.global["wh40k-titans-debug-info"].value then
-        error(serpent.line({
-          error="No item worth",
-          item_name=item_name,
-        }))
-      else
+      -- if not silent and settings.global["wh40k-titans-debug-info"].value then
+      --   error(serpent.line({
+      --     error="No item worth",
+      --     item_name=item_name,
+      --   }))
+      -- else
         return false
-      end
+      -- end
     end
     item_info.price = item_info.price * cf
     item_info.prob = item_info.prob * cf
@@ -245,10 +245,23 @@ local function total_reload()
 end
 
 
+local function cache_tiles()
+  ctrl_data.tile_fuilds = {}
+  for name, proto in pairs(prototypes.tile) do
+    if proto.fluid then
+      ctrl_data.tile_fuilds[proto.fluid.name] = ctrl_data.tile_fuilds[proto.fluid.name] or {}
+      ctrl_data.tile_fuilds[proto.fluid.name][name] = true
+    end
+  end
+  game.print(serpent.block(ctrl_data.tile_fuilds))
+end
+
+
 local function on_init()
   storage.active_mods_cache = script.active_mods
   storage.ctrl_data = table.deepcopy(blank_ctrl_data)
   ctrl_data = storage.ctrl_data
+  cache_tiles()
   preprocess_ingredients()
   lib_ruins.initial_index()
 end
@@ -271,10 +284,11 @@ end
 local function update_configuration()
   -- game.print("Titans.update_configuration")
   storage.active_mods_cache = script.active_mods
-  preprocess_ingredients()
 
   storage.ctrl_data = merge(storage.ctrl_data or {}, blank_ctrl_data, false)
   ctrl_data = storage.ctrl_data
+  preprocess_ingredients()
+  cache_tiles()
 
   -- TODO: correct them to work with assemblers, excavators, ruins
   -- clean_drawings()

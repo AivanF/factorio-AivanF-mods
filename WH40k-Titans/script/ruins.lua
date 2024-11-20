@@ -39,6 +39,7 @@ local blank_sector = {
 }
 
 local planets_with_ruins = {
+  nauvis = true,
   vulcanus = true,
   fulgora = true,
 }
@@ -60,8 +61,10 @@ TODO:
 function lib_ruins.initial_index()
   ctrl_data.by_surface = {}
   ctrl_data.by_zones = {}
-  if game.surfaces["nauvis"] then
-    lib_ruins.opt_new_world({surface = game.surfaces["nauvis"]})
+  for name, _ in ipairs(planets_with_ruins) do
+    if game.surfaces[name] then
+      lib_ruins.opt_new_world({surface = game.surfaces[name]})
+    end
   end
 end
 

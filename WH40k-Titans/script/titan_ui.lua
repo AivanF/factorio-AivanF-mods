@@ -131,11 +131,14 @@ end
 
 lib_ttn:on_event(defines.events.on_player_driving_changed_state, function(event)
   local player = game.players[event.player_index]
-  if not player.character then return end
-  if player.character.vehicle then
-    local titan_info = ctrl_data.titans[player.character.vehicle.unit_number]
-    if not titan_info then return end
-
+  game.print(serpent.block{
+    vehicle=player.vehicle,
+    physical_vehicle=player.physical_vehicle,
+  })
+  local entity = player.vehicle or player.physical_vehicle
+  if not entity then return end
+  local titan_info = ctrl_data.titans[entity.unit_number]
+  if titan_info then
     create_titan_gui(player, titan_info)
   else
     remove_titan_gui_by_player(player)

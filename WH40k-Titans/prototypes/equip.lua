@@ -43,7 +43,7 @@ data:extend({
   },
   {
     type = "equipment-category",
-    name = shared.mod_prefix,
+    name = shared.equip_cat,
   },
 
   {

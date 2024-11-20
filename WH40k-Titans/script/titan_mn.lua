@@ -18,19 +18,36 @@ wc_color[shared.wc_hell]   = color_red
 wc_color[shared.wc_melee]  = color_ared
 
 
+local function replace_fluid_tiles(surface, position, radius, final_tile)
+  local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={shared.titan_prefix.."-only-water-layer"}}
+  local new_tiles = {}
+  for _, tl in pairs(tiles) do
+    table.insert(new_tiles, {position=tl.position, name=final_tile})
+  end
+  surface.set_tiles(new_tiles, true)
+end
+
+
 local function try_remove_small_water(surface, position, radius)
   local total = surface.count_tiles_filtered{position=position, radius=radius}
-  local water = surface.count_tiles_filtered{position=position, radius=radius, collision_mask={shared.titan_prefix.."-only-water-layer"}}
+  local water = surface.count_tiles_filtered{position=position, radius=radius, name=list_from_dict_keys(ctrl_data.tile_fuilds["water"])}
   local shallow = surface.count_tiles_filtered{position=position, radius=radius, name="water-shallow"}
   -- game.print("Found water "..water.." and shallow "..shallow.." of total "..total)
   water = water + 0.5*shallow
   if water > 0 and water/total < 0.4 then
-    local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={shared.titan_prefix.."-only-water-layer"}}
-    local new_tiles = {}
-    for _, tl in pairs(tiles) do
-      table.insert(new_tiles, {position=tl.position, name="water-shallow"})
+    -- local tiles = surface.find_tiles_filtered{position=position, radius=radius*0.75, collision_mask={shared.titan_prefix.."-only-water-layer"}}
+    -- local new_tiles = {}
+    -- for _, tl in pairs(tiles) do
+    --   table.insert(new_tiles, {position=tl.position, name="water-shallow"})
+    -- end
+    -- surface.set_tiles(new_tiles, true)
+    replace_fluid_tiles(surface, position, radius, "water-shallow")
+  end
+  if ctrl_data.tile_fuilds["lava"] then
+    local lava = surface.count_tiles_filtered{position=position, radius=radius, name=list_from_dict_keys(ctrl_data.tile_fuilds["lava"])}
+    if lava > 0 and lava/total < 0.2 then
+      replace_fluid_tiles(surface, position, radius, "landfill")
     end
-    surface.set_tiles(new_tiles, true)
   end
 end
 
@@ -384,7 +401,8 @@ local function process_titans()
     if info.entity.valid then
       rendering.draw_animation{
         animation=info.animation,
-        x_scale=info.sc or 1, y_scale=info.sc or 1, render_layer=shared.rl_foot,
+        x_scale=info.sc or 1, y_scale=info.sc or 1,
+        render_layer=shared.rl_foot,
         time_to_live=visual_ttl,
         surface=info.entity.surface,
         target=info.entity,

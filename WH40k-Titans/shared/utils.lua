@@ -106,6 +106,14 @@ function dict_from_keys_list(keys, value)
   return result
 end
 
+function list_from_dict_keys(dict)
+  local result = {}
+  for name, _ in pairs(dict) do
+    table.insert(result, name)
+  end
+  return result
+end
+
 
 
 -- Long live the Functional programming!
