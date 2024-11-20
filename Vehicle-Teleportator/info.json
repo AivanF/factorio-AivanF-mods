@@ -1,0 +1,10 @@
+{
+  "name": "Vehicle-Teleportator",
+  "version": "1.0.1",
+  "title": "Car Teleportator: Quantum Carburetor",
+  "author": "AivanF", 
+  "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
+  "dependencies": ["? Ricks-Car-Spaceship", "? Common-Industries", "? space-age"],
+  "factorio_version": "2.0",
+  "description": "Equip your vehicle with a Quantum Carburetor, select destination position, put bunch of fuel, then accelerate till 88 mph (141 km/h) - and teleport wherever you want! Even on other planets ;)"
+}
