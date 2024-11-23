@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2024-11-23
+  Features:
+    - WH40k Titans basic integration: Titans consume much more fuel energy, but require lower speed to teleport.
+  Bugfixes:
+    - Fixed missing recipes in tech research effects with Common Industries / Bridge Technologies.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2024-11-21
   Info:

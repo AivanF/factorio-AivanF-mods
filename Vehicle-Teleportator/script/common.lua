@@ -5,7 +5,7 @@ local default_fuel_categories = {
   -- ["processed-chemical"] = true,  -- AAI Industry
   -- ["vehicle-fuel"] = true,  -- Krastorio2
   ["nuclear"] = true,
-  ["fusion"] = true,
+  -- ["fusion"] = true,  -- too expensive without custom remaining_burning_fuel
 }
 
 --[[

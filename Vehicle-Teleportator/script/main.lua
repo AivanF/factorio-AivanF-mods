@@ -17,18 +17,12 @@ local ic_idle = shared.mod_prefix.."gui-btn-idle"
 local ic_active = shared.mod_prefix.."gui-btn-active"
 local ic_error = shared.mod_prefix.."gui-btn-error"
 
--- TODO: add vehicle profile:
--- register by remote API func
--- set min spd, 
-
 local gui_update_rate = 61
 local min_teleport_dst = 100
 local speed_cf = 60*60*60/1000  -- tile/tick => km/h
 local REQUIRED_SPEED = 88 / speed_cf  -- ±0.4074
 -- local REQUIRED_SPEED = 44 / speed_cf
 local OTHER_PLANET_DST = 100 * 1000  -- Karman line
-local WEIGHT_COMPARATOR = 10 * 1000 * 1000
-local MAX_COUNTDOWN = 5
 
 local grid_prefix = shared.mod_prefix.."device-"
 
@@ -38,6 +32,20 @@ local blank_ctrl_data = {
   delayed = {},
 }
 ctrl_data = table.deepcopy(blank_ctrl_data)
+
+
+local base_profile = {
+  required_speed = 88 / speed_cf,  -- ±0.4074
+  weight_comparator = 10 * 1000 * 1000,
+  max_countdown = 5,
+  fuel_energy_cf = 400,
+  grid_energy_cf = 10,
+}
+local titan_profile = merge({
+  required_speed = 44 / speed_cf,
+  fuel_energy_cf = base_profile.fuel_energy_cf * 2.5,
+  grid_energy_cf = base_profile.grid_energy_cf * 1,
+}, base_profile, false)
 
 
 local function on_init()
@@ -99,6 +107,18 @@ local function on_any_remove(event)
 end
 
 
+local function get_profile(car_info)
+  -- TODO: register by remote API func
+  if not car_info then
+    return base_profile
+  end
+  if car_info.entity.name:find("wh40k-titan-", 1, true) then
+    return titan_profile
+  end
+  return base_profile
+end
+
+
 local function validate_vehicle(entity)
   if entity == nil or not entity.valid then return nil end
   if not entity.grid then return nil end
@@ -107,6 +127,7 @@ local function validate_vehicle(entity)
   -- Prevent frequent intense calculations
   if car_info and (game.tick - (car_info.last_update or 0)) < 15 then return car_info end
 
+  local car_profile = get_profile(car_info)
   local content = entity.grid.get_contents()
   local grade = 0
   local power = 0
@@ -153,10 +174,10 @@ local function validate_vehicle(entity)
     car_info.distance = dst
 
     local base_required_energy = dst * 1000 / (1 + (car_info and car_info.efficiency/100 or 0))
-    base_required_energy = base_required_energy * (1 + car_info.weight / WEIGHT_COMPARATOR)
+    base_required_energy = base_required_energy * (1 + car_info.weight / car_profile.weight_comparator)
 
-    car_info.fuel_required = base_required_energy * 400
-    car_info.grid_required = base_required_energy * 10
+    car_info.fuel_required = base_required_energy * car_profile.fuel_energy_cf
+    car_info.grid_required = base_required_energy * car_profile.grid_energy_cf
 
   else
     car_info.driver = nil
@@ -469,10 +490,9 @@ local function update_periodic_car(car_info)
   if not car_info.entity.valid then
     return false
   end
+  local car_profile = get_profile(car_info)
 
-  -- TODO: use req spd from vehicle profile
-
-  if car_info.entity.speed > REQUIRED_SPEED then
+  if car_info.entity.speed > car_profile.required_speed then
     if recently then
       car_info.active_tick = game.tick
       if car_info.countdown > 0 then
@@ -568,7 +588,7 @@ local function update_periodic_car(car_info)
             position=car_info.entity.position, volume_modifier=1
           }
           car_info.active_tick = game.tick
-          car_info.countdown = MAX_COUNTDOWN - 1
+          car_info.countdown = car_profile.max_countdown - 1
           show_quick_msg(car_info.driver, {"VehiTel-gui.msg-tl-start", car_info.countdown+1})
         end
       end

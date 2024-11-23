@@ -1,10 +1,15 @@
 {
   "name": "Vehicle-Teleportator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "title": "Car Teleportator: Quantum Carburetor",
   "author": "AivanF", 
   "homepage": "https://github.com/AivanF/factorio-AivanF-mods",
-  "dependencies": ["? Ricks-Car-Spaceship", "? Common-Industries", "? space-age"],
+  "dependencies": [
+    "? Ricks-Car-Spaceship",
+    "? WH40k-Titans",
+    "? Common-Industries",
+    "? space-age"
+  ],
   "factorio_version": "2.0",
-  "description": "Equip your vehicle with a Quantum Carburetor, select destination position, put bunch of fuel, then accelerate till 88 mph (141 km/h) - and teleport wherever you want! Even on other planets ;)"
+  "description": "Equip your vehicle with a Quantum Carburetor:\n1. Select destination position\n2. Put a bunch of fuel\n3. Accelerate to 88 km/h\n4. Teleport wherever you want! Even on other planets ;)\n\nCarburetors can be equipped into any vehicle: spidertron, tank, car (the mod adds equipment grid to car same as of tank), or added by other mods. However, it was created for my other mods:\n\n- WH40k Titans - powerful battle machines.\n- Ricks Space Cruiser - a fancy flying car.\n\nIs it imba? Well, maybe, but you deserve it! Although, the mod supposed to be not too cheaty: it calculates all the cargo weight and increased energy cost respectively."
 }

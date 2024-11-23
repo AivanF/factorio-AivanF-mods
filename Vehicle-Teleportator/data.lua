@@ -1,7 +1,10 @@
 local shared = require("shared")
+vehitel_data = {}
 
 local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
 -- local rocket_lift_weight = 1000000
+
+local have_SA = mods["space-age"]
 
 local tech1 = "chemistry-science-pack"
 local ingredients1 = {
@@ -38,7 +41,7 @@ if mods["Common-Industries"] then
   tech1 = afci_bridge.get.dense_cable().prerequisite
   ingredients1 = {
     {type="item", name="steel-plate", amount=60},
-    {type="item", name=mods["space-age"] and "processing-unit" or "advanced-circuit", amount=42},
+    {type="item", name=have_SA and "processing-unit" or "advanced-circuit", amount=42},
     {type="item", name="electric-engine-unit", amount=12},
     {type="item", name=afci_bridge.get.dense_cable().name, amount=12},
   }
@@ -61,7 +64,7 @@ if mods["Common-Industries"] then
   }
 
 
-elseif mods["space-age"] then
+elseif have_SA then
   tech1 = "space-science-pack"
   ingredients1 = {
     {type="item", name="steel-plate", amount=60},
@@ -177,7 +180,7 @@ data:extend({
     },
     energy_source = {
       type = "electric",
-      buffer_capacity = "50MJ",
+      buffer_capacity = "100MJ",
       drain = "100kW",
       input_flow_limit = "500kW",
       output_flow_limit = "50kW",
@@ -228,7 +231,7 @@ data:extend({
       buffer_capacity = "500MJ",
       drain = "200kW",
       input_flow_limit = "2MW",
-      output_flow_limit = "100kW",
+      output_flow_limit = "200kW",
       usage_priority = "secondary-input",
     },
     energy_consumption = "2MW",
@@ -237,11 +240,12 @@ data:extend({
   },
 })
 
-table.insert(data.raw.technology[tech1].effects, {type="unlock-recipe", recipe=shared.device1})
-table.insert(data.raw.technology[tech2].effects, {type="unlock-recipe", recipe=shared.device2})
-if enable_device3 then
-  table.insert(data.raw.technology[tech3].effects, {type="unlock-recipe", recipe=shared.device3})
-end
+log(shared.mod_name.." adding recipes to: "..serpent.line{tech1=tech1, tech2=tech2, tech3=tech3})
+vehitel_data.tech1 = tech1
+vehitel_data.tech2 = tech2
+vehitel_data.tech3 = tech3
+vehitel_data.enable_device3 = enable_device3
+-- Technology effects are added in the data-final-fixes
 
 
 data:extend({
