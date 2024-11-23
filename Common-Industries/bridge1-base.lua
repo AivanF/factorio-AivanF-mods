@@ -13,7 +13,7 @@ function table.get_keys(t)
   return keys
 end
 
-local bridge = {
+local bridge = afci_bridge or {
   setup_tech = {},
   get = {},
 }

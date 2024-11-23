@@ -152,7 +152,7 @@ function bridge.add_item(item_info)
   item_info.is_bridge_item = true
   item_info.status = bridge.status_draft
   item_info.order = item_info.order or "abc-"..ordered
-  item_info.prerequisite = item_info.prereq -- original custom prereq
+  item_info.prerequisite = item_info.prerequisite or item_info.prereq
   bridge.item[item_info.short_name] = item_info
 
   item_info.data_getter = function()

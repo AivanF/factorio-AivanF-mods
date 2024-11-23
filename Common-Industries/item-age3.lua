@@ -483,79 +483,6 @@ add_item({
 })
 
 add_item({
-  short_name = "optic_emitter",
-  name = bridge.prefix.."optic-emitter",
-  icon = bridge.media_path.."icons/laser.png",
-  icon_size = 64, icon_mipmaps = 1,
-  prereq = prerequisite,
-  subgroup = subgroup,
-  allow_productivity = true,
-  ingredients = {
-    {bridge.item.optic_cable, 2},
-    {"advanced-circuit", 1},
-  },
-  energy_required = 10,
-  category = bridge.config.cat_nano_crafting,
-  stack_size = 50,
-  modded = {
-    -- {
-    --   mod = bridge.mods.sa,
-    --   name = "se-dynamic-emitter",
-    --   prereq = "se-dynamic-emitter",
-    -- },
-    {
-      mod = bridge.mods.se,
-      name = "se-dynamic-emitter",
-      prereq = "se-dynamic-emitter",
-    },
-    {
-      mod = bridge.mods.k2,
-      ingredients = {
-        {bridge.item.optic_cable, 2},
-        {"quartz", 1},
-        {"advanced-circuit", 1},
-      },
-    },
-    {
-      mod = bridge.mods.ir3,
-      name = "helium-laser",
-      prereq = "laser-2",
-    },
-    {
-      mod = bridge.mods.bzaluminum,
-      name = "ti-sapphire",
-      prereq = "laser",
-    },
-    {
-      mod = bridge.mods._248k,
-      name = "fu_materials_energy_crystal",
-      prereq = "fu_crystal_tech",
-    },
-    {
-      mod = bridge.mods.exind,
-      -- prereq = "ei_electronic-parts",
-      -- prereq = "ei_fusion-drive",
-      -- ingredients = {
-      --   {"ei_electronic-parts", 50},
-      --   {"ei_fusion-drive", 6},
-      -- },
-      name = "ei_high-energy-crystal",
-      prereq = "ei_high-energy-crystal",
-    },
-    {
-      mod = bridge.mods.py_ht,
-      name = "parametric-oscilator",
-      prereq = "parametric-oscilator",
-    },
-    {
-      mod = bridge.mods.om_cry,
-      name = "basic-oscillo-crystallonic",
-      prereq = "omnitech-crystallonics-2",
-    },
-  },
-})
-
-add_item({
   short_name = "emfc",
   name = bridge.prefix.."emfc",
   icon = bridge.media_path.."icons/emfc.png",
@@ -564,17 +491,20 @@ add_item({
   subgroup = subgroup,
   allow_productivity = true,
   ingredients = {
-    {bridge.item.advanced_solenoid, 6},
-    {bridge.item.nano_mat, 24},
+    {bridge.item.advanced_solenoid, 12},
+    -- {bridge.item.nano_mat, 24},
     {"processing-unit", 1},
   },
   energy_required = 10,
-  category = bridge.config.cat_nano_crafting,
+  -- category = bridge.config.cat_nano_crafting,
   stack_size = 50,
   weight = rocket_lift_weight / 100,
   modded = {
     {
       mod = bridge.mods.sa,
+      prereq = bridge.empty,
+      -- prereq = "electromagnetic-plant",
+      prerequisite = "electromagnetic-plant",
       -- TODO: update with bridge.config.cat_he_crafting
       category = "electromagnetics",
     },

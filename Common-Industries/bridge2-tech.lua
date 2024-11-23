@@ -149,7 +149,8 @@ add_tech({
     {
       mod = bridge.mods.sa,
       prerequisites = {
-        "promethium-science-pack",
+        "fusion-reactor",
+        -- "promethium-science-pack",
       },
       ingredients = {
         {"automation-science-pack", 1},
@@ -161,7 +162,8 @@ add_tech({
         {"metallurgic-science-pack", 1},
         {"electromagnetic-science-pack", 1},
         {"agricultural-science-pack", 1},
-        {"promethium-science-pack", 1},
+        {"cryogenic-science-pack", 1},
+        -- {"promethium-science-pack", 1},
       },
     },
     -- {
@@ -226,9 +228,12 @@ for _, tech_info in pairs(bridge.tech) do
     if tech_info.done then
       return tech_info.name
     end
+
+    log(bridge.log_prefix.."creating tech "..tech_info.short_name)
+    tech_info.done = true
     bridge.preprocess(tech_info)
-    if bridge.is_bridge_name(tech_info.name) then
-      log(bridge.log_prefix.."creating tech "..tech_info.short_name)
+
+    if not data.raw["technology"][tech_info.name] then
       data:extend({{
         name = tech_info.name,
         type = "technology",
@@ -249,13 +254,14 @@ for _, tech_info in pairs(bridge.tech) do
           time = 30
         },
       }})
-      tech_info.done = true
-      for _, prereq in pairs(tech_info.prerequisites or {}) do
-        if bridge.is_bridge_name(prereq) then
-          bridge.setup_tech[bridge.tech[prereq].short_name]()
-        end
+    end
+
+    for _, prereq in pairs(tech_info.prerequisites or {}) do
+      if bridge.is_bridge_name(prereq) then
+        bridge.setup_tech[bridge.tech[prereq].short_name]()
       end
     end
+
     return tech_info.name
   end
 end

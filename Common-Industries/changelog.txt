@@ -1,6 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2024-11-11
+  Changes:
+    - Reworked a lot of things under the hood.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2024-11-11
   Bugfixes:
     - Fixed crash when Extended Vanilla Equipment is on and Space Age is off.
 
