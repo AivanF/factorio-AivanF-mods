@@ -121,158 +121,82 @@ data:extend({
     collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
     selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
     damaged_trigger_effect = hit_effects.entity(),
-    on_animation = {
-      layers = {
+    on_animation =
+    {
+      layers =
+      {
         {
           filename = "__base__/graphics/entity/lab/lab.png",
-          width = 98,
-          height = 87,
+          width = 194,
+          height = 174,
           frame_count = 33,
           line_length = 11,
           animation_speed = 1 / 3,
           shift = util.by_pixel(0, 1.5),
+          scale = 0.5,
           tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab.png",
-            width = 194,
-            height = 174,
-            frame_count = 33,
-            line_length = 11,
-            animation_speed = 1 / 3,
-            shift = util.by_pixel(0, 1.5),
-            scale = 0.5,
-            tint = tint,
-          }
         },
         {
           filename = "__base__/graphics/entity/lab/lab-integration.png",
-          width = 122,
-          height = 81,
-          frame_count = 1,
+          width = 242,
+          height = 162,
           line_length = 1,
           repeat_count = 33,
           animation_speed = 1 / 3,
           shift = util.by_pixel(0, 15.5),
-          tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab-integration.png",
-            width = 242,
-            height = 162,
-            frame_count = 1,
-            line_length = 1,
-            repeat_count = 33,
-            animation_speed = 1 / 3,
-            shift = util.by_pixel(0, 15.5),
-            scale = 0.5,
-            tint = tint,
-          }
+          scale = 0.5
         },
         {
           filename = "__base__/graphics/entity/lab/lab-light.png",
           blend_mode = "additive",
           draw_as_light = true,
-          width = 106,
-          height = 100,
+          width = 216,
+          height = 194,
           frame_count = 33,
           line_length = 11,
           animation_speed = 1 / 3,
-          shift = util.by_pixel(-1, 1),
-          tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab-light.png",
-            blend_mode = "additive",
-            draw_as_light = true,
-            width = 216,
-            height = 194,
-            frame_count = 33,
-            line_length = 11,
-            animation_speed = 1 / 3,
-            shift = util.by_pixel(0, 0),
-            scale = 0.5,
-            tint = tint,
-          }
+          shift = util.by_pixel(0, 0),
+          scale = 0.5
         },
         {
           filename = "__base__/graphics/entity/lab/lab-shadow.png",
-          width = 122,
-          height = 68,
-          frame_count = 1,
+          width = 242,
+          height = 136,
           line_length = 1,
           repeat_count = 33,
           animation_speed = 1 / 3,
           shift = util.by_pixel(13, 11),
-          draw_as_shadow = true,
-          tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab-shadow.png",
-            width = 242,
-            height = 136,
-            frame_count = 1,
-            line_length = 1,
-            repeat_count = 33,
-            animation_speed = 1 / 3,
-            shift = util.by_pixel(13, 11),
-            scale = 0.5,
-            draw_as_shadow = true,
-            tint = tint,
-          }
+          scale = 0.5,
+          draw_as_shadow = true
         }
       }
     },
-    off_animation = {
-      layers = {
+    off_animation =
+    {
+      layers =
+      {
         {
           filename = "__base__/graphics/entity/lab/lab.png",
-          width = 98,
-          height = 87,
-          frame_count = 1,
+          width = 194,
+          height = 174,
           shift = util.by_pixel(0, 1.5),
+          scale = 0.5,
           tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab.png",
-            width = 194,
-            height = 174,
-            frame_count = 1,
-            shift = util.by_pixel(0, 1.5),
-            scale = 0.5,
-            tint = tint,
-          }
         },
         {
           filename = "__base__/graphics/entity/lab/lab-integration.png",
-          width = 122,
-          height = 81,
-          frame_count = 1,
+          width = 242,
+          height = 162,
           shift = util.by_pixel(0, 15.5),
-          tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab-integration.png",
-            width = 242,
-            height = 162,
-            frame_count = 1,
-            shift = util.by_pixel(0, 15.5),
-            scale = 0.5,
-            tint = tint,
-          }
+          scale = 0.5
         },
         {
           filename = "__base__/graphics/entity/lab/lab-shadow.png",
-          width = 122,
-          height = 68,
-          frame_count = 1,
+          width = 242,
+          height = 136,
           shift = util.by_pixel(13, 11),
           draw_as_shadow = true,
-          tint = tint,
-          hr_version = {
-            filename = "__base__/graphics/entity/lab/hr-lab-shadow.png",
-            width = 242,
-            height = 136,
-            frame_count = 1,
-            shift = util.by_pixel(13, 11),
-            draw_as_shadow = true,
-            scale = 0.5,
-            tint = tint,
-          }
+          scale = 0.5
         }
       }
     },

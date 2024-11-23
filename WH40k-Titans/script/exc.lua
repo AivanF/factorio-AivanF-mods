@@ -73,6 +73,11 @@ end
 function lib_exc.excavator_removed(unit_number)
   ctrl_data.excavator_index[unit_number] = nil
   bucks.remove(ctrl_data.excavator_buckets, exc_update_rate, unit_number)
+  for _, player in pairs(game.players) do
+    if player.gui.screen[main_frame_name] then
+      player.gui.screen[main_frame_name].destroy()
+    end
+  end
 end
 
 local function put_leftovers(exc_info)

@@ -55,8 +55,11 @@ function lib_gen.setup_gui_btn(player_index)
   local button_flow = mod_gui.get_button_flow(player)
   if button_flow[gui_btn_name] == nil then
     local btn = button_flow.add{
-      type="sprite-button", name=gui_btn_name, sprite=shared.mod_prefix.."gui-btn",
-      style=mod_gui.button_style, tags={action=act_gui_toggle},
+      type="sprite-button",
+      name=gui_btn_name,
+      sprite=shared.mod_prefix.."gui-btn",
+      -- style=mod_gui.button_style,
+      tags={action=act_gui_toggle},
       tooltip = {"WH40k-Titans-gui.open-gen-ui-tooltip"},
     }
   end

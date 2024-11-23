@@ -165,7 +165,7 @@ local tech_researches = {
     },
     prerequisites = {
       shared.mod_prefix.."1-class",
-      afci_bridge.get.rocket_engine().prerequisite,
+      -- afci_bridge.get.rocket_engine().prerequisite,
     },
     unit = {
       count = 75,

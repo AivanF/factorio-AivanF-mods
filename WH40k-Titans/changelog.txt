@@ -1,4 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2024-11-23
+  Features:
+    - Titan Assembly Bunker now allows to choose only appropriate weapons, suitable for specific mounting position, so that you don't need to remember rules details.
+    - Titan Assembly Bunker now shows all the issues together (in a pop-up tooltip), so that you have the full, comprehensive understanding and can solve the problems in any order.
+
+  Changes:
+    - Titan Ruin Extractor now can be placed and removed by robots.
+    - Earlier Aircraft Supplier technology.
+    - Increased Titan ruins Extractor search area (actually, the opposite: inceased invisible size of Titan wrecks).
+    - Removed "WH40k_Titans.reload ..." text upon mods configuration changes if no issues noticed.
+    - Added pretty intro text on configuration update.
+
+  Graphics:
+    - Titans don't look as cars when placed or opened!
+    - Fixed bad Lab picture (looked as a corner since Factorio 2).
+    - Removed low-res pictures, because high-res is the only option in Factorio 2. Hopefully, no other visual issues should be met, but you know, it's hard to fully test such large mod alone.
+
+  Bugfixes:
+    - Fixed Inferno flamethrower shooting from Titan center instead of cannon muzzle, which appeared in Factorio 2 because the devs made stream projectiles start from source entity ignoring start position.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2024-11-21
+  Bugfixes:
+    - Removed debug texts.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2024-11-20
   Features:

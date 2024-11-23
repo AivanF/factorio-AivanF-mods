@@ -41,6 +41,16 @@ comb.minable = nil
 comb.selectable_in_game = false  -- TODO: replace signals with logistic requests
 data:extend({ comb })
 
+local crafting_categories = {shared.craftcat_empty}
+for i = 1, 5 do
+  table.insert(crafting_categories, shared.craftcat_titan..i)
+end
+for i = 0, 5 do
+  table.insert(crafting_categories, shared.craftcat_weapon..i.."a")
+  table.insert(crafting_categories, shared.craftcat_weapon..i.."m")
+  table.insert(crafting_categories, shared.craftcat_weapon..i.."b")
+end
+
 local idle_sprite = {
   filename = shared.media_prefix.."graphics/entity/Bunker.png",
   priority = "extra-high",
@@ -261,14 +271,7 @@ data:extend({
       module_slots = 0,
     },
     crafting_speed = 0.01,
-    crafting_categories = {
-      shared.craftcat_empty,
-      shared.craftcat_titan.."1", shared.craftcat_titan.."2", shared.craftcat_titan.."3",
-      shared.craftcat_titan.."4", shared.craftcat_titan.."5",
-      shared.craftcat_weapon.."0", shared.craftcat_weapon.."1",
-      shared.craftcat_weapon.."2", shared.craftcat_weapon.."3",
-      shared.craftcat_weapon.."4", shared.craftcat_weapon.."5",
-    },
+    crafting_categories = crafting_categories,
     energy_source = { type = "void" },
     energy_usage = "1W",
   },
@@ -358,6 +361,6 @@ leftovers_chest.resistances = strong_resistances
 leftovers_chest.next_upgrade = nil
 leftovers_chest.minable = {mining_time = 2}
 leftovers_chest.inventory_size = 600
-leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest-hr.png"
+leftovers_chest.picture.layers[1].filename = shared.media_prefix.."graphics/entity/leftovers-chest.png"
 
 data:extend({ bunker_minable, bunker_active, leftovers_chest })

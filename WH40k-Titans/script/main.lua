@@ -240,8 +240,13 @@ local function total_reload()
       "SpRm="..special_removed,
       "SpSv="..special_saved,
     }, ", ")
-  game.print(txt)
+  if special_removed > 0 then
+    game.print(txt)
+  end
   log(txt)
+  if titan_count > 0 or bunker_count > 0 then
+    game.print({"WH40k-Titans-gui.ads"})
+  end
 end
 
 
@@ -253,7 +258,6 @@ local function cache_tiles()
       ctrl_data.tile_fuilds[proto.fluid.name][name] = true
     end
   end
-  game.print(serpent.block(ctrl_data.tile_fuilds))
 end
 
 

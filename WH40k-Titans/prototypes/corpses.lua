@@ -1,7 +1,7 @@
 local shared = require("shared")
 local misc = require("prototypes.misc")
 
-local hsz = 4
+local hsz = 5
 
 data:extend({
   {

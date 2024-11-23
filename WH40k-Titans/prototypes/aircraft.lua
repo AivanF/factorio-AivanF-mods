@@ -11,14 +11,12 @@ local rocket_lift_weight = 1000000
 
 local function addcommonanimlines(anim)
   for _,layer in pairs(anim.layers) do
-    layer.width, layer.height = 448, 448
-    layer.scale = 0.5
-    layer.hr_version.width, layer.hr_version.height = 896, 896
-    layer.hr_version.scale = 0.25
-    layer.frame_count, layer.hr_version.frame_count = 1, 1
-    layer.direction_count, layer.hr_version.direction_count = 36, 36
-    layer.line_length, layer.hr_version.line_length = 6, 6
-    layer.max_advance, layer.hr_version.max_advance = 1, 1
+    layer.width, layer.height = 896, 896
+    layer.scale = 0.25
+    layer.frame_count = 1
+    layer.direction_count = 36
+    layer.line_length = 6
+    layer.max_advance = 1
   end
   return anim
 end
@@ -29,20 +27,11 @@ local function aircraftAnimation(nickname)
     {
       filename = ENTITYPATH .. "/" .. nickname .. "-sheet.png",
       shift = util.by_pixel(0, -10),
-      hr_version = {
-        filename = ENTITYPATH .. "/" .. nickname .. "-sheet-HR.png",
-        shift = util.by_pixel(0, -10),
-      }
     },
     -- {
     --   filename = ENTITYPATH .. name .. "/" .. name .. "_spritesheet-shadow.png",
     --   shift = util.by_pixel(54, 35),
     --   draw_as_shadow = true,
-    --   hr_version = {
-    --     filename = ENTITYPATH .. name .. "/hr-" .. name .. "_spritesheet-shadow.png",
-    --     shift = util.by_pixel(54, 35),
-    --     draw_as_shadow = true,
-    --   }
     -- }
   }
   addcommonanimlines(anim)
@@ -56,11 +45,6 @@ local function aircraftLightAnimation(nickname)
       filename = ENTITYPATH .. "/" .. nickname .. "-sheet-light.png",
       shift = util.by_pixel(9, -10),
       draw_as_light = true,
-      hr_version = {
-        filename = ENTITYPATH .. "/" .. nickname .. "-sheet-light-HR.png",
-        shift = util.by_pixel(9, -10),
-        draw_as_light = true,
-      }
     }
   }
   addcommonanimlines(anim)

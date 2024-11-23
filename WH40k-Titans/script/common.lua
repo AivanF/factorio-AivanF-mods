@@ -207,3 +207,17 @@ end
 function niller()
   return nil
 end
+
+function join_objects(array, separator)
+  local first = true
+  local result = {}
+  for _, value in ipairs(array) do
+    if first then
+      first = false
+    else
+      table.insert(result, separator)
+    end
+    table.insert(result, value)
+  end
+  return result
+end

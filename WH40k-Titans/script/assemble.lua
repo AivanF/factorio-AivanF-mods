@@ -179,6 +179,7 @@ end
 local function check_bunker_correct_details(assembler)
   local result = true
   assembler.message = nil
+  local errors = {}
   -- TODO: translate texts!
 
   local titan_type, lamp_color
@@ -186,21 +187,22 @@ local function check_bunker_correct_details(assembler)
     titan_type = shared.titan_types[assembler.class_recipe]
   end
   if not titan_type then
-    set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-class-selected"})
+    -- set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-class-selected"})
+    table.insert(errors, {"WH40k-Titans-gui.assembly-er-no-class-selected"})
     result = false
     lamp_color = color_red
   elseif not titan_type.available then
-    set_message(assembler, {"WH40k-Titans-gui.assembly-er-class-not-available"})
+    table.insert(errors, {"WH40k-Titans-gui.assembly-er-class-not-available"})
     result = false
     lamp_color = color_red
   end
   if not assembler.bstore then
-    set_message(assembler, {"WH40k-Titans-gui.assembly-er-improper-bunker", 1})
+    table.insert(errors, {"WH40k-Titans-gui.assembly-er-improper-bunker", 1})
     result = false
     lamp_color = color_red
   end
   if titan_type and not check_entity_has_ingredients(assembler.bstore, titan_type.ingredients) then
-    set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-body"})
+    table.insert(errors, {"WH40k-Titans-gui.assembly-er-not-enough-body"})
     result = false
     lamp_color = lamp_color or color_gold
   end
@@ -215,32 +217,32 @@ local function check_bunker_correct_details(assembler)
     lamp_color = nil -- disabled
     if titan_type then
       if titan_type.mounts[wi] and not weapon_type then
-        set_message(assembler, {"WH40k-Titans-gui.assembly-er-no-weapon-selected"})
+        table.insert(errors, {"WH40k-Titans-gui.assembly-er-no-weapon-selected", wi})
         weapon_fine = false
         lamp_color = color_red
       end
       if weapon_type and not titan_type.mounts[wi] then
-        set_message(assembler, {"WH40k-Titans-gui.assembly-er-extra-weapon-selected"})
+        table.insert(errors, {"WH40k-Titans-gui.assembly-er-extra-weapon-selected"})
         weapon_fine = false
         lamp_color = color_red
       elseif weapon_type then
         msg = lib_asmb.check_weapon_is_appropriate(titan_type, wi, weapon_type)
         if msg then
-          set_message(assembler, msg)
+          table.insert(errors, msg)
           weapon_fine = false
           lamp_color = color_red
         end
       end
     end
     if not assembler.wstore[wi] then
-      set_message(assembler, {"WH40k-Titans-gui.assembly-er-improper-bunker", 2})
+      table.insert(errors, {"WH40k-Titans-gui.assembly-er-improper-bunker", 2})
       weapon_fine = false
     end
     if weapon_type then
       if weapon_type.available then
         -- Set recipe to assembler.wrecipe[wi] ?
         if not check_entity_has_ingredients(assembler.wstore[wi], weapon_type.ingredients) then
-          set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-enough-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
+          table.insert(errors, {"WH40k-Titans-gui.assembly-er-not-enough-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
           weapon_fine = false
           lamp_color = lamp_color or color_orange
         end
@@ -250,7 +252,7 @@ local function check_bunker_correct_details(assembler)
         --   lamp_color = lamp_color or color_gold
         -- end
       else
-        set_message(assembler, {"WH40k-Titans-gui.assembly-er-not-available-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
+        table.insert(errors, {"WH40k-Titans-gui.assembly-er-not-available-weapon", {"item-name."..shared.mod_prefix..weapon_type.name}})
         weapon_fine = false
         lamp_color = lamp_color or color_gold
       end
@@ -265,6 +267,15 @@ local function check_bunker_correct_details(assembler)
 
   if result then
     set_message(assembler, {"WH40k-Titans-gui.assembly-ready"})
+    assembler.status_tooltip = nil
+  else
+    if #errors == 1 then
+      set_message(assembler, errors[1])
+      assembler.status_tooltip = nil
+    else
+      set_message(assembler, {"WH40k-Titans-gui.assembly-er-many", #errors})
+      assembler.status_tooltip = table.extend({""}, join_objects(errors, "\n"))
+    end
   end
   return result
 end
@@ -387,9 +398,9 @@ local function safe_destroy_chest(entity, shifts)
     local new = entity.surface.create_entity{
       name=shared.leftovers_chest, force="neutral", position=position,
     }
-    for item_name, have in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
-      new.insert({name=item_name, count=have})
-      entity.remove_item({name=item_name, count=done})
+    for _, stack in pairs(entity.get_inventory(defines.inventory.chest).get_contents()) do
+      new.insert(stack)
+      entity.remove_item(stack)
     end
   end
   entity.destroy()

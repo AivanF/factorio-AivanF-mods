@@ -32,7 +32,7 @@ local integration_patch = {
 
 local excavator_animation = {
   layers = {{
-    filename = shared.media_prefix.."graphics/entity/Excavator-sheet-HR.png",
+    filename = shared.media_prefix.."graphics/entity/Excavator-sheet.png",
     priority = "high",
     width = 448,
     height = 448,
@@ -49,6 +49,7 @@ data:extend({
     name = shared.excavator,
 
     icon = entity_icon.icon, icon_size = entity_icon.icon_size, icon_mipmaps = entity_icon.icon_mipmaps,
+    flags = {"placeable-neutral", "placeable-player", "player-creation",},
     -- flags = { "not-rotatable", "not-flammable" },
     max_health = 3000,
     resistances = strong_resistances,

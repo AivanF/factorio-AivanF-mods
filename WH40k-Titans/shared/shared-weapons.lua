@@ -117,6 +117,7 @@ bolt_types.bolt_rocket = {
 bolt_types.bolt_fire = {
   entity = "titanic-fire-stream",
   single_damage = 100+50*5,
+  is_stream = true,
 }
 bolt_types.bolt_laser = {
   entity = shared.mod_prefix.."bolt-laser",

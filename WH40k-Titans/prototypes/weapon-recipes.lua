@@ -1,6 +1,12 @@
 local shared = require("shared")
 
 local function add_weapon_recipe(info)
+  local letter = "b"
+  if info.no_top then
+    letter = "m"
+  elseif info.top_only then
+    letter = "a"
+  end
   data:extend({
     {
       type = "recipe",
@@ -13,7 +19,7 @@ local function add_weapon_recipe(info)
       icon_size = info.icon_size or 64, icon_mipmaps = info.icon_mipmaps or 4,
       ingredients = shared.preprocess_recipe(info.ingredients),
       results = {},
-      category = shared.craftcat_weapon..info.grade,
+      category = shared.craftcat_weapon..info.grade..letter,
       subgroup = shared.subg_weapons..info.grade,
       order = "wh40k-tw-"..info.grade.."-"..string.format("%02.0f", info.order_index).."-"..info.name,
     },

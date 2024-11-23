@@ -54,6 +54,7 @@ function table.extend(ar1, ar2)
   for _, v in pairs(ar2) do
     table.insert(ar1, v)
   end
+  return ar1
 end
 
 function table.append(array, value)
@@ -194,41 +195,55 @@ function func_maps(func, args_arrays)
 end
 
 
-local number_suffixes = {"k", "M", "B", "T", "Qa", "Qi"}
-function shorten_number(value)
-  local sfx = ""
-  for _, key in ipairs(number_suffixes) do
-    if value > 1000 then
+function shorten_by_suffixes(value, suffixes)
+  local sfx = "?"
+  for _, key in ipairs(suffixes) do
+    sfx = key;
+    if value >= 1000 then
       value = value / 1000
-      sfx = key;
     else
       break
     end
   end
   if value < 10 and value - math.floor(value) > 0.1 then
-    return string.format("%.1f", value)..sfx
+    return string.format("%.1f %s", value, sfx)
   else
-    return string.format("%.0f", value)..sfx
+    return string.format("%.0f %s", value, sfx)
   end
 end
 
 
-local energy_suffixes = {"k", "M", "G", "T", "P", "E", "Z", "Y"}
-function shorten_energy(value)
-  local sfx = ""
-  for _, key in ipairs(energy_suffixes) do
-    if value > 1000 then
-      value = value / 1000
-      sfx = key;
-    else
-      break
-    end
-  end
+local number_suffixes = {"", "k", "M", "B", "T", "Qa", "Qi"}
+function shorten_number(value)
+  return shorten_by_suffixes(value, number_suffixes)
+end
+
+
+local distance_suffixes = {"m", "km"}
+function shorten_distance(value)
+  return shorten_by_suffixes(value, distance_suffixes)
+end
+
+
+function distance_to_km(value)
+  value = value / 1000
   if value < 10 and value - math.floor(value) > 0.1 then
-    return string.format("%.1f", value)..sfx
+    return string.format("%.1f km", value)
   else
-    return string.format("%.0f", value)..sfx
+    return string.format("%.0f km", value)
   end
+end
+
+
+local energy_suffixes = {"", "k", "M", "G", "T", "P", "E", "Z", "Y"}
+function shorten_energy(value)
+  return shorten_by_suffixes(value, energy_suffixes)
+end
+
+
+local mass_suffixes = {"g", "kg", "t", "kt"}
+function shorten_mass(value)
+  return shorten_by_suffixes(value, mass_suffixes)
 end
 
 

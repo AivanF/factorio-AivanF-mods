@@ -54,6 +54,8 @@ shared.bunker_comb_size = 20
 shared.craftcat_empty = shared.mod_prefix.."empty"
 shared.craftcat_titan = shared.mod_prefix.."titan-"
 shared.craftcat_weapon = shared.mod_prefix.."weapon-"
+shared.craftcat_nomount = shared.mod_prefix.."nomount"
+shared.craftcat_noknownweapon = shared.mod_prefix.."noknownweapon"
 
 shared.subg_build   = "wh40k-titan-buildings"
 shared.subg_parts   = "wh40k-titan-parts"

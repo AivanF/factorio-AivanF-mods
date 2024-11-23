@@ -152,7 +152,19 @@ for _, titan_type in ipairs(shared.titan_type_list) do
       chunk_exploration_radius = 1 + class_precise,
       -- render_layer = "air-object",
       -- final_render_layer = "air-object",
-      animation = table.deepcopy(data.raw["car"]["car"].animation),
+      animation = titan_type.plane and {
+        layers = {
+          {
+            filename = titan_type.plane,
+            width = titan_type.plane_size, height = titan_type.plane_size,
+            scale = 0.25,
+            frame_count = 1,
+            direction_count = 1,
+            line_length = 1,
+            max_advance = 1,
+          }
+        },
+      } or table.deepcopy(data.raw["car"]["car"].animation),
     },
   })
 end

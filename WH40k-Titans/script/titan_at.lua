@@ -55,8 +55,12 @@ local function bolt_attacker(entity, titan_type, cannon, weapon_type, source, ta
   end
   for _, value in ipairs(speed) do
     entity.surface.create_entity{
-      name=weapon_type.bolt_type.entity, force=entity.force,
-      position=source, source=entity, target=target, speed=value,
+      name=weapon_type.bolt_type.entity,
+      force=entity.force,
+      position=source,
+      source=weapon_type.bolt_type.is_stream and source or entity,
+      target=target,
+      speed=value,
     }
   end
 end
