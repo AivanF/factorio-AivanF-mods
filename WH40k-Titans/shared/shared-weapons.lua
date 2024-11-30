@@ -50,7 +50,7 @@ shared.ammo_weights = {
 shared.ammo_list = {
   shared.big_bolt, shared.flamer_ammo, shared.laser_ammo,
   shared.missile_ammo, shared.plasma_ammo, shared.melta_ammo, shared.hell_ammo,
-  shared.doom_missile_ammo, shared.plasma_missile_ammo, shared.warp_missile_ammo,
+  -- shared.doom_missile_ammo, shared.plasma_missile_ammo, shared.warp_missile_ammo,
 }
 
 --------- Titan weapon scaling

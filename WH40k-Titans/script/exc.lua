@@ -96,6 +96,9 @@ local function put_leftovers(exc_info)
       break
     end
   end
+  if exc_info.leftovers then
+    -- TODO: try put on a belt
+  end
 end
 
 local function get_exc_speed(force)
@@ -137,6 +140,9 @@ local function process_an_excavator(exc_info)
   for _, offset in pairs(exc_offsets) do
     table.extend(exc_info.chests, entity.surface.find_entities_filtered{
       type = "container", position = math2d.position.add(entity.position, offset),
+    })
+    table.extend(exc_info.chests, entity.surface.find_entities_filtered{
+      type = "logistic-container", position = math2d.position.add(entity.position, offset),
     })
   end
 

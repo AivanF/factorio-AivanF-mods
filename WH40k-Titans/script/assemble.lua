@@ -813,7 +813,7 @@ function state_handler.restock(assembler)
   if supplier_info then
     for _, ammo_name in ipairs(shared.ammo_list) do
       if not supplier_info.disabled_ammo[ammo_name] then
-        for k = 1, gun_chests_number do
+        for wi = 1, gun_chests_number do
           have_ammo = assembler.wstore[wi].get_item_count(ammo_name)
           need_ammo = lib_spl.count_free_weight(supplier_info) / shared.ammo_weights[ammo_name]
           got_ammo = math.min(need_ammo, have_ammo)
@@ -832,7 +832,7 @@ end
 local function clear_supplier(assembler, supplier_info)
   local weapon_type, done
   for ammo_name, ammo_count in pairs(supplier_info.inventory) do
-    for k = 1, gun_chests_number do
+    for wi = 1, gun_chests_number do
       weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
       -- Try to find a chest with matching ammo type or just empty recipe set
       if weapon_type == nil or ammo_name == weapon_type.ammo then
@@ -849,7 +849,7 @@ local function clear_supplier(assembler, supplier_info)
       end
     end
 
-    for k = 1, gun_chests_number do
+    for wi = 1, gun_chests_number do
       if ammo_count > 0 then
         done = assembler.wstore[wi].insert({name=ammo_name, count=ammo_count})
         ammo_count = ammo_count - done

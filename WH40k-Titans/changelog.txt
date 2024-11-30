@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2024-11-25
+  Bugfixes:
+    - Fixed error when restocking Aircraft Supplier from Assembly Bunker.
+  Features:
+    - Titan Ruin Extractor now supports outputting into logistic containers too!
+  Changes:
+    - Hide deathstrike missiles from UI and spawning in ruins, as the cannons aren't ready yet.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2024-11-23
   Features:
@@ -18,6 +28,7 @@ Date: 2024-11-23
     - Removed low-res pictures, because high-res is the only option in Factorio 2. Hopefully, no other visual issues should be met, but you know, it's hard to fully test such large mod alone.
 
   Bugfixes:
+    - Fixed error when mined an Assembler with items in it (happened due to Factorio 2 changed item management code).
     - Fixed Inferno flamethrower shooting from Titan center instead of cannon muzzle, which appeared in Factorio 2 because the devs made stream projectiles start from source entity ignoring start position.
 
 ---------------------------------------------------------------------------------------------------
