@@ -4,6 +4,8 @@ vehitel_data = {}
 local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
 -- local rocket_lift_weight = 1000000
 
+local energy_cf = settings.startup["vehitel-energy-stored-cf"].value
+
 local have_SA = mods["space-age"]
 
 local tech1 = "chemistry-science-pack"
@@ -132,7 +134,7 @@ data:extend({
     },
     energy_source = {
       type = "electric",
-      buffer_capacity = "20MJ",
+      buffer_capacity = math.floor(10 * energy_cf).."MJ",
       drain = "40kW",
       input_flow_limit = "200kW",
       output_flow_limit = "20kW",
@@ -180,7 +182,7 @@ data:extend({
     },
     energy_source = {
       type = "electric",
-      buffer_capacity = "100MJ",
+      buffer_capacity = math.floor(100 * energy_cf).."MJ",
       drain = "100kW",
       input_flow_limit = "500kW",
       output_flow_limit = "50kW",
@@ -228,10 +230,10 @@ data:extend({
     },
     energy_source = {
       type = "electric",
-      buffer_capacity = "500MJ",
+      buffer_capacity = math.floor(250 * energy_cf).."MJ",
       drain = "200kW",
       input_flow_limit = "2MW",
-      output_flow_limit = "200kW",
+      output_flow_limit = "500kW",
       usage_priority = "secondary-input",
     },
     energy_consumption = "2MW",

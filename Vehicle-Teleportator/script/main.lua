@@ -22,7 +22,8 @@ local min_teleport_dst = 100
 local speed_cf = 60*60*60/1000  -- tile/tick => km/h
 local REQUIRED_SPEED = 88 / speed_cf  -- ±0.4074
 -- local REQUIRED_SPEED = 44 / speed_cf
-local OTHER_PLANET_DST = 100 * 1000  -- Karman line
+-- local OTHER_PLANET_DST = 100 * 1000  -- Karman line
+local OTHER_PLANET_DST = 55 * 1000
 
 local grid_prefix = shared.mod_prefix.."device-"
 
@@ -38,13 +39,13 @@ local base_profile = {
   required_speed = 88 / speed_cf,  -- ±0.4074
   weight_comparator = 10 * 1000 * 1000,
   max_countdown = 5,
-  fuel_energy_cf = 400,
+  fuel_energy_cf = 200,
   grid_energy_cf = 10,
 }
 local titan_profile = merge({
   required_speed = 44 / speed_cf,
-  fuel_energy_cf = base_profile.fuel_energy_cf * 2.5,
-  grid_energy_cf = base_profile.grid_energy_cf * 1,
+  fuel_energy_cf = base_profile.fuel_energy_cf * 4,
+  grid_energy_cf = base_profile.grid_energy_cf * 0.45,
 }, base_profile, false)
 
 
@@ -84,6 +85,7 @@ end
 
 
 local function show_quick_msg(player, text)
+  if not player then return end
   player.create_local_flying_text{
     text=text,
     create_at_cursor=true,
@@ -176,8 +178,8 @@ local function validate_vehicle(entity)
     local base_required_energy = dst * 1000 / (1 + (car_info and car_info.efficiency/100 or 0))
     base_required_energy = base_required_energy * (1 + car_info.weight / car_profile.weight_comparator)
 
-    car_info.fuel_required = base_required_energy * car_profile.fuel_energy_cf
-    car_info.grid_required = base_required_energy * car_profile.grid_energy_cf
+    car_info.fuel_required = base_required_energy * car_profile.fuel_energy_cf * settings.global["vehitel-fuel-energy-required-cf"].value
+    car_info.grid_required = base_required_energy * car_profile.grid_energy_cf * settings.global["vehitel-grid-energy-required-cf"].value
 
   else
     car_info.driver = nil

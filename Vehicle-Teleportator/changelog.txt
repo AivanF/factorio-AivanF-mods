@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2024-12-01
+  Changes:
+    - Changed rates to make teleportation easier.
+  Bugfixes:
+    - Fixed a rare error of nil player var when started teleportation process but reduced speed.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2024-11-23
   Features:
