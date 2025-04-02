@@ -121,6 +121,16 @@ local function get_profile(car_info)
 end
 
 
+local function grid_content_as_dict(grid)
+  -- Convert new get_contents result format to old one before qualities
+  result = {}
+  for _, detail in ipairs(grid.get_contents()) do
+    result[detail.name] = (result[detail.name] or 0) + detail.count
+  end
+  return result
+end
+
+
 local function validate_vehicle(entity)
   if entity == nil or not entity.valid then return nil end
   if not entity.grid then return nil end
@@ -130,7 +140,7 @@ local function validate_vehicle(entity)
   if car_info and (game.tick - (car_info.last_update or 0)) < 15 then return car_info end
 
   local car_profile = get_profile(car_info)
-  local content = entity.grid.get_contents()
+  local content = grid_content_as_dict(entity.grid)
   local grade = 0
   local power = 0
   local cnt
