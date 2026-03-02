@@ -40,8 +40,8 @@ add_item({
     },
     {
       mod = bridge.mods.angelsbio,
-      name = "bio-raw-meat",
-      prereq = "bio-refugium-butchery-1",
+      name = "angels-bio-raw-meat",
+      prereq = "angels-bio-refugium-butchery-1",
     },
     {
       mod = bridge.mods.py_life,
@@ -145,7 +145,7 @@ add_item({
     {
       mod = bridge.mods.bobelectronics,
       -- prereq = "__TODO__",
-      name = "insulated-cable",
+      name = "bob-insulated-cable",
     },
     {
       mod = bridge.mods.py_raw,
@@ -299,7 +299,7 @@ add_item({
     {
       mod = bridge.mods.bobplates,
       prereq = "steel-processing",
-      name = "steel-bearing",
+      name = "bob-steel-bearing",
     },
     {
       mod = bridge.mods.py_pet,
@@ -391,7 +391,7 @@ add_item({
     },
     {
       mod = bridge.mods.angelssmelting,
-      name = "titanium-plate",
+      name = "angels-plate-titanium",
       prereq = "angels-invar-smelting-1",
     },
     -- {
@@ -485,7 +485,7 @@ add_item({
     },
     {
       mod = bridge.mods.bobplates,
-      name = "silicon-nitride",
+      name = "bob-silicon-nitride",
       prereq = "ceramics",
     },
     {

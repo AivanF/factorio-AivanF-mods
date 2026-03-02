@@ -23,7 +23,7 @@ add_item({
     },
     {
       mod = bridge.mods.angelssmelting,
-      name = "glass",
+      name = "angels-plate-glass",
       prereq = "angels-glass-smelting-1",
     },
     {

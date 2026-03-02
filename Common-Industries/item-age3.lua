@@ -166,8 +166,8 @@ add_item({
     },
     {
       mod = bridge.mods.angelsbio,
-      ingredients = {{"solid-carbon", 2}},
-      prereq = "bio-wood-processing-2",
+      ingredients = {{"angels-solid-carbon", 2}},
+      prereq = "angels-bio-wood-processing-2",
     },
   },
 })
@@ -463,7 +463,7 @@ add_item({
     },
     {
       mod = bridge.mods.bobelectronics,
-      name = "advanced-processing-unit",
+      name = "bob-advanced-processing-unit",
       prereq = "advanced-electronics-3",
     },
     {
@@ -636,7 +636,7 @@ add_item({
     },
     {
       mod = bridge.mods.bobequip,
-      name = "fusion-reactor-equipment-4",
+      name = "bob-fission-reactor-equipment-4",
       prereq = "earnshaw-theorem",
     },
     {
