@@ -242,7 +242,7 @@ bridge.add_item({
       mod = bridge.mods.angelspetrochem,
       prereq = "water-chemistry-2",
       ingredients = {
-        {type="fluid", name="gas-deuterium", amount=200},
+        {type="fluid", name="angels-gas-deuterium", amount=200},
         {type="item", name="steel-plate", amount=4},
         {type="item", name="advanced-circuit", amount=1},
       },
