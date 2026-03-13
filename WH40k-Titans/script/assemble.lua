@@ -792,15 +792,17 @@ function state_handler.restock(assembler)
     for wi, _ in pairs(titan_type.mounts) do
       cannon = titan_info.guns[wi]
       weapon_type = shared.weapons[cannon.name]
-      need_ammo = weapon_type.inventory - cannon.ammo_count
-      have_ammo = assembler.wstore[wi].get_item_count(weapon_type.ammo)
-      got_ammo = math.min(need_ammo, have_ammo)
-      if got_ammo > 0 then
-        done_ws = done_ws + 1
-        done_ammo = done_ammo + got_ammo
-        assembler.wstore[wi].remove_item({name=weapon_type.ammo, count=got_ammo})
-        cannon.ammo_count = cannon.ammo_count + got_ammo
-        show_ammo_transfer(assembler.sentity, titan_info.entity, weapon_type.ammo, got_ammo, 4)
+      if weapon_type.inventory ~= nil then
+        need_ammo = weapon_type.inventory - cannon.ammo_count
+        have_ammo = assembler.wstore[wi].get_item_count(weapon_type.ammo)
+        got_ammo = math.min(need_ammo, have_ammo)
+        if got_ammo > 0 then
+          done_ws = done_ws + 1
+          done_ammo = done_ammo + got_ammo
+          assembler.wstore[wi].remove_item({name=weapon_type.ammo, count=got_ammo})
+          cannon.ammo_count = cannon.ammo_count + got_ammo
+          show_ammo_transfer(assembler.sentity, titan_info.entity, weapon_type.ammo, got_ammo, 4)
+        end
       end
     end
 
