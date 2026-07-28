@@ -86,7 +86,7 @@ functions.build_washing_recipe = function( ore, fluid, fluid_amount )
 		-- build recipe
 		local washing_recipe = {
 			type = "recipe",
-			category = "crafting-with-fluid",
+			categories = {"crafting-with-fluid"},
 			enabled = true,
 			name = washing_recipe_name,
 			localised_name = {
