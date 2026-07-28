@@ -1,0 +1,40 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2026-01-03
+  Features:
+    - Added Factorio 2 support, by AivanF. Also added washing recipes name & fixed icons.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 2021-04-24
+  Features:
+    - Improved compatibility with Space Exploration. Thanks NightOps!
+---------------------------------------------------------------------------------------------------
+Version: 0.0.6
+Date: 2020-12-07
+  Features:
+    - Added mod setting for the mount of fluid used in the washing process.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Date: 2020-11-28
+  Bugfixes:
+    - Reduced required fluid amount.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.4
+Date: 2020-09-30
+  Bugfixes:
+    - Improved compatibility with some mods.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.3
+Date: 2020-09-29
+  Bugfixes:
+    - Fixed productivity modules.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 2020-09-29
+  Features:
+    - Added support for Deadlock's stacking. All Ganuge items are now stackable if you have Deadlock's mod installed.
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2020-09-26
+  Features:
+    - Initial release.

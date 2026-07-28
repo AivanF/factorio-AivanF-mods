@@ -1,0 +1,9 @@
+{
+	"name": "Fluidless_Mining_and_Ore_Washing_AF",
+	"version": "0.1.0",
+	"factorio_version": "2.0",
+	"title": "Fluidless Mining and Ore Washing by AivanF",
+	"author": "AivanF",
+	"dependencies": [],
+	"description": "Ores that would normally require fluid to mine, are now mined normally, but need to be washed with corresponding fluid. Designed for use with Angel's infinite ores, RSO, Bob's and Clown's mods. Patched by AivanF for Factorio 2 support."
+}
