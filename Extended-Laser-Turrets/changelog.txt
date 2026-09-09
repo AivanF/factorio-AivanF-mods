@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 2026-09-09
+  Features:
+    - The damage multiplier setting accepts fractional values now, down to 1.1, so MK2/MK3 can be toned down. Thanks thiazzi and LabsJ!
+  Info:
+    - That setting changed type, so it may have been reset to its default. Check it if you had a custom value.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
 Date: 2026-09-09
   Features:

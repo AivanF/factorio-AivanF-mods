@@ -27,10 +27,12 @@ end
 
 data:extend{
   {
-    type = "int-setting",
+    -- Damage is a double: the tiers square it, so whole numbers only
+    -- jump straight from x2 to x4 to x9, with nothing gentle in between.
+    type = "double-setting",
     name = "af-elt-dmg-cf",
     setting_type = "startup",
-    minimum_value = 2,
+    minimum_value = 1.1,
     default_value = def_damage,
     maximum_value = 50,
     order = "a-1",

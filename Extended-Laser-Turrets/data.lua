@@ -2,6 +2,14 @@ local base_turret = data.raw["electric-turret"]["laser-turret"]
 local fast_replaceable_group = base_turret.fast_replaceable_group or "laser-turret"
 
 
+-- Damage multipliers are fractional now, and get squared for MK3, so 1.1 shows
+-- up as 1.2100000000000002 if concatenated raw. Trim to 2 decimals, then drop
+-- trailing zeros so whole multipliers still read as "x4" and not "x4.00".
+local function fmt(value)
+  return (string.format("%.2f", value):gsub("%.?0+$", ""))
+end
+
+
 local function multEnergy(energy, mul)
   local e, u
   e, u = string.match(energy, "(%d+)(%a+)")
@@ -52,15 +60,15 @@ local function makeLaser(new_name, range_cf, damage_cf, energy_cf, health_cf, he
   local descr
   if health_cf >= 2 then
     if damage_cf > range_cf then
-      descr = {"item-description.laser-turret-mk3-stro", ""..damage_mult, ""..range_mult}
+      descr = {"item-description.laser-turret-mk3-stro", fmt(damage_mult), fmt(range_mult)}
     else
-      descr = {"item-description.laser-turret-mk3-long", ""..math.floor(range_mult), ""..damage_mult}
+      descr = {"item-description.laser-turret-mk3-long", fmt(range_mult), fmt(damage_mult)}
     end
   else
     if damage_cf > range_cf then
-      descr = {"item-description.laser-turret-mk2-stro", ""..damage_mult}
+      descr = {"item-description.laser-turret-mk2-stro", fmt(damage_mult)}
     else
-      descr = {"item-description.laser-turret-mk2-long", ""..range_mult}
+      descr = {"item-description.laser-turret-mk2-long", fmt(range_mult)}
     end
   end
 
