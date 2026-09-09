@@ -1,10 +1,10 @@
 {
   "name": "Extended-Laser-Turrets",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "title": "Extended Laser Turrets",
   "author": "AivanF",
   "homepage": "https://mods.factorio.com/mod/Extended-Laser-Turrets",
-  "factorio_version": "2.0",
+  "factorio_version": "2.1",
   "dependencies": [
     "? space-exploration"
   ],
