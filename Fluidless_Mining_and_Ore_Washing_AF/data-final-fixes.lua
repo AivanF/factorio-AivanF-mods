@@ -94,3 +94,7 @@ for k, v in pairs(data.raw.module) do
 		end
 	end
 end
+
+
+-- Deadlock's Stacking Beltboxes support, once every gangue item exists
+functions.add_deadlock_stacking()

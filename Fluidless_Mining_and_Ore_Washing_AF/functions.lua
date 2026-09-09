@@ -63,12 +63,54 @@ functions.build_gangue = function( ore )
 	
 	data:extend({gangue})
 	
-	if mods["deadlock-beltboxes-loaders"] then
-		-- add stackable
-		deadlock_stacking.create( gangue_name, nil, "deadlock-stacking-2", 32)
+	return gangue_name
+end
+
+
+-- Deadlock's Stacking Beltboxes: make every gangue item stackable.
+-- Its API lives in the `deadlock` global, published by that mod's data.lua, and
+-- is meant to be called from data-final-fixes so every gangue item exists first.
+-- Old versions here called the deprecated `deadlock_stacking.create` straight from
+-- data.lua, which crashed whenever we happened to load before Deadlock's own data.lua.
+functions.add_deadlock_stacking = function()
+	local api = rawget( _G, "deadlock" )
+	local legacy = rawget( _G, "deadlock_stacking" )
+	
+	local add_stack
+	if api and api.add_stack then
+		add_stack = api.add_stack
+	elseif legacy and legacy.create then
+		-- forks that only kept the pre-0.16 interface
+		add_stack = legacy.create
+	else
+		log( "Deadlock stacking | API not found, skipping gangue stacks" )
+		return
 	end
 	
-	return gangue_name
+	-- "deadlock-stacking-2" is the tech Deadlock unlocks tier-2 stacking with;
+	-- passing a tech that does not exist crashes inside their add_stacks_to_tech.
+	local target_tech = data.raw.technology["deadlock-stacking-2"] and "deadlock-stacking-2" or nil
+	
+	-- collect first: add_stack extends data.raw.item, which we are iterating
+	local gangue_names = {}
+	for item_name, _ in pairs( data.raw.item ) do
+		-- ours, and only ours: a gangue item with a matching washing recipe
+		if item_name:find( "%-gangue$" ) and data.raw.recipe[ item_name .. "-washing" ]
+				and not data.raw.item[ "deadlock-stack-" .. item_name ] then
+			table.insert( gangue_names, item_name )
+		end
+	end
+	
+	for _, item_name in ipairs( gangue_names ) do
+		log( "Deadlock stacking | " .. item_name )
+		add_stack( item_name, nil, target_tech, 32 )
+	end
+	
+	-- we run after Deadlock's own data-final-fixes, so redo the deferred pass
+	-- that copies stack size / fuel values onto the items we just added
+	if api and api.deferred_stacked_item_updates then
+		api.deferred_stacked_item_updates()
+	end
 end
 	
 functions.build_washing_recipe = function( ore, fluid, fluid_amount )
