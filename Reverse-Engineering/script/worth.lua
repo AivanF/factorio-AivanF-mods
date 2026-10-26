@@ -45,6 +45,40 @@ local builtin_recipe_categories = {
   ["smelting"] = true,
 }
 
+local function has_builtin_category(recipe)
+  -- Factorio 2.1 replaced `category` with `categories`, and reading a missing key throws
+  local major, minor = string.match(script.active_mods["base"], "^(%d+)%.(%d+)")
+  local categories = (tonumber(major) * 100 + tonumber(minor) >= 201) and recipe.categories or {recipe.category}
+  for _, category in pairs(categories) do
+    if builtin_recipe_categories[category] then return true end
+  end
+  return false
+end
+
+
+-- Trigger technologies (e.g. oil-processing unlocked by mining crude oil) have no science packs,
+-- so borrow them from the most expensive prerequisite
+local function get_effective_research(tech_data, cache)
+  if cache[tech_data.name] then return cache[tech_data.name] end
+  local result = {
+    ingredients = tech_data.research_unit_ingredients,
+    count = (#tech_data.research_unit_ingredients > 0) and tech_data.research_unit_count or 0,
+  }
+  cache[tech_data.name] = result  -- Guards against cycles
+  if #result.ingredients == 0 then
+    for _, prereq_data in pairs(tech_data.prerequisites) do
+      local candidate = get_effective_research(prereq_data, cache)
+      if #candidate.ingredients > #result.ingredients
+        or (#candidate.ingredients == #result.ingredients and candidate.count > result.count)
+      then
+        result = candidate
+      end
+    end
+    cache[tech_data.name] = result
+  end
+  return result
+end
+
 
 local function get_tech_worth(source_tech_values)
   local tech_values = {}
@@ -74,7 +108,7 @@ local function try_stack(item_info, need, min_stack)
 end
 
 
-local function finalise(item_info)
+local function preprocess_item_price(item_info)
   local result = 1
   for _, value in pairs(item_info.prices) do
     value = math.min(8, math.max(0.2, value))
@@ -89,6 +123,18 @@ local function finalise(item_info)
   try_stack(item_info, 10, 20)
   try_stack(item_info, 20, 50)
   try_stack(item_info, 50,100)
+  -- Items priced below 1 get dropped later, so make the rest worth at least 1:
+  -- a done single item is rounded up, a cheap item that fit no tier above needs more pieces
+  if item_info.done then
+    item_info.price = math.max(1, item_info.price)
+  elseif item_info.price > 0 then
+    local need = math.ceil(1 / item_info.price)
+    if need <= item_info.stack_size then
+      item_info.need = need
+      item_info.price = math.max(1, item_info.price * need)
+      item_info.done = true
+    end
+  end
   -- item_info.price = math.floor(item_info.price)
   item_info.prob = item_info.price / 10
 end
@@ -130,6 +176,7 @@ function cache_data()
       "by count", "by stack", "by tech cost", "by ingredients", "Final Price", "Need"}, delimiter),
   }
   local recipes_of = {} -- item_name => recipe
+  local research_cache = {} -- tech_name => {ingredients=, count=}
 
   for tech_name, tech_data in pairs(prototypes.technology) do
     for _, modifier in pairs(storage.add_ignore_techs[tech_name] and {} or ignore_techs[tech_name] and {} or tech_data.effects) do
@@ -150,9 +197,10 @@ function cache_data()
             reverse_items[item_name] = item_opts
             total_price = 0
             ingredients = {}
-            for _, ingr in pairs(tech_data.research_unit_ingredients) do
+            local research = get_effective_research(tech_data, research_cache)
+            for _, ingr in pairs(research.ingredients) do
               table.insert(ingredients, ingr.name)
-              total_price = total_price + ingr.amount * tech_data.research_unit_count
+              total_price = total_price + ingr.amount * research.count
             end
             stack_size = prototypes.item[item_name] and prototypes.item[item_name].stack_size or 100 -- fluids
             prices = {
@@ -179,7 +227,7 @@ function cache_data()
   -- to prevent evaluating them with additional recipes from advanced technologies.
   -- local default_disabling = ""
   for recipe_name, recipe_data in pairs(prototypes.recipe) do
-    if recipe_data.enabled and not recipe_data.hidden and builtin_recipe_categories[recipe_data.category] then
+    if recipe_data.enabled and not recipe_data.hidden and has_builtin_category(recipe_data) then
       -- default_disabling = default_disabling.." / "..recipe_name
       for _, prod in pairs(recipe_data.products) do
         if prod.type == "item" then
@@ -215,8 +263,9 @@ function cache_data()
         ingr_price = ingr_price + 0.1
       end
     end
+
     table.insert(item_info.prices, ingr_price / 2)
-    finalise(item_info)
+    preprocess_item_price(item_info)
 
     table.insert(texts, table.concat(
       chain_arrays({
@@ -225,7 +274,7 @@ function cache_data()
       delimiter))
     item_info.prices = nil
 
-    if storage.add_ignore_items[item_name] or ignore_items[item_name] or item_info.price < 1 then
+    if storage.add_ignore_items[item_name] or ignore_items[item_name] or item_info.price < 1 or #item_info.ingredients == 0 then
       storage.reverse_items[item_name] = nil
     end
   end
@@ -274,6 +323,7 @@ function cache_data()
       end
     end
     item_info.price = (item_info.price + ingr_price) / 2
+
     -- The final value
     item_info.prob = math.max(1, 1 + #item_info.ingredients/2) * item_info.price / 10
   end

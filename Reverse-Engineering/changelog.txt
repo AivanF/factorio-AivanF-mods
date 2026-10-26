@@ -1,4 +1,28 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+Date: 2026-10-26
+  Features:
+    - Factorio 2.1 support.
+  Changes:
+    - Reverse Lab tier 1 now requires Automation research, like the assembling machine.
+  Bugfixes:
+    - Many items were not reverse-engineerable: tier 1 modules, chemical plant, centrifuge, nuclear reactor and more.
+    - Items of non-normal quality are processed correctly instead of being copied endlessly.
+    - Fixed error when right-clicking the item slot of the worth window.
+    - Remote API get_item now returns overridden items too.
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+Date: 2026-10-26
+  Changes:
+    - Reverse Lab tier 1 now requires Automation research, like the assembling machine.
+  Bugfixes:
+    - Many items were not reverse-engineerable: tier 1 modules, chemical plant, centrifuge, nuclear reactor and more.
+    - Items of non-normal quality are processed correctly instead of being copied endlessly.
+    - Fixed error when right-clicking the item slot of the worth window.
+    - Remote API get_item now returns overridden items too.
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
 Date: 2024-11-07
   Bugfixes:

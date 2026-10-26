@@ -47,14 +47,12 @@ local interface = {
   end,
 
   get_item = function(item_name)
-    -- local item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
-    -- game.print("get_item: "..serpent.line(item_name).." => "..serpent.line(storage.reverse_items[item_name]))
-    return storage.reverse_items[item_name]
+    return storage.add_override_items[item_name] or storage.reverse_items[item_name]
   end,
 
   -- Use the above API in your own remote functions:
-  -- `reverse_engineering_pre_calc` to add ignoring
-  -- `reverse_engineering_post_calc` to override items
+  -- `reverse_engineering_pre_calc` to add ignoring before automatic evaluation
+  -- `reverse_engineering_post_calc` to override items after automatic evaluation
 }
 
 

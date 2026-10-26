@@ -89,11 +89,15 @@ local function gui_explain(player, item_name)
   correct_global()
 
   local main_frame = player.gui.screen[main_frame_name]
-  if not main_frame_name then return end
+  if not main_frame then return end
   
   main_frame.packs_line.clear()
-  main_frame.input_line.title.caption = {"?", {"item-name."..item_name}, {"entity-name."..item_name}, ""}
+  main_frame.input_line.title.caption = ""
   main_frame.status.caption = ""
+  main_frame.status.tooltip = ""
+  -- Slot cleared, e.g. by right click
+  if not item_name then return end
+  main_frame.input_line.title.caption = prototypes.item[item_name].localised_name
 
   local status = {"af-reverse-lab.useless"}
   local ok = false
@@ -123,10 +127,11 @@ local function gui_explain(player, item_name)
       string.format("%.1f", expected),
       item_info.need,
     }
+    main_frame.status.tooltip = status
     for _, pack_name in pairs(item_info.ingredients) do
       main_frame.packs_line.add{
         type="sprite-button", sprite=("item/"..pack_name),
-        tooltip={"item-name."..pack_name},
+        tooltip=prototypes.item[pack_name].localised_name,
       }
     end
   end

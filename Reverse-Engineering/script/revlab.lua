@@ -194,17 +194,18 @@ local function process_a_lab(rlab)
   local grade_info = rlabs[rlab.grade]
   local pcs_limit = grade_info.max_pcs
   local power_usage = 0
-  local item_info, pcs, item_name, have
+  local item_info, pcs, item_name, have, quality
 
   for _, stack_info in ipairs(rlab.input.get_inventory(defines.inventory.chest).get_contents()) do
     item_name = stack_info.name
     have = stack_info.count
+    quality = stack_info.quality
     item_info = storage.add_override_items[item_name] or storage.reverse_items[item_name]
 
     if storage.scipacks[item_name] then
       power_usage = power_usage + 1
-      local done = rlab.output_packs.insert({name=item_name, count=have})
-      rlab.input.remove_item({name=item_name, count=done})
+      local done = rlab.output_packs.insert({name=item_name, count=have, quality=quality})
+      rlab.input.remove_item({name=item_name, count=done, quality=quality})
 
     elseif item_info then
       pcs = math.min(math.floor(have / item_info.need), pcs_limit)
@@ -215,7 +216,7 @@ local function process_a_lab(rlab)
         and rlab.output_packs.get_inventory(defines.inventory.chest).count_empty_stacks() >= 1
       then
         handle_input(rlab, item_info, pcs * (grade_info.prod_bonus or 1) * settings.global["af-reverse-lab-prob-mult"].value)
-        rlab.input.remove_item({name=item_name, count=item_info.need*pcs})
+        rlab.input.remove_item({name=item_name, count=item_info.need*pcs, quality=quality})
         local pollution_value = item_info.need * (item_info.price or 1) *0.02
         rlab.surface.pollute(rlab.position, pollution_value)
         game.get_pollution_statistics(rlab.surface).on_flow(grade_info.name, pollution_value)
@@ -224,8 +225,8 @@ local function process_a_lab(rlab)
 
     else
       power_usage = power_usage + 1
-      local done = rlab.output_other.insert({name=item_name, count=have})
-      rlab.input.remove_item({name=item_name, count=done})
+      local done = rlab.output_other.insert({name=item_name, count=have, quality=quality})
+      rlab.input.remove_item({name=item_name, count=done, quality=quality})
     end
   end
 

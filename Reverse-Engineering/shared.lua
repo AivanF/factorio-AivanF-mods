@@ -12,7 +12,7 @@ rlab_list = {
     health = 250,
     max_pcs = 1,
     usage = 100 * KW,
-    prereq = nil,
+    prereq = "automation",
     ingredients = {
       {type="item", name="iron-chest", amount=3},
       {type="item", name="inserter", amount=5},

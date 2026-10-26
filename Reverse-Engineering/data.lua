@@ -128,6 +128,8 @@ chest_corpse.inventory_size = 20
 data:extend({ chest_input, chest_packs, chest_other, chest_corpse })
 
 for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
+  -- Overhaul mods may lack the tech, then the lab is available from start
+  local prereq_tech = info.prereq and data.raw.technology[info.prereq]
   data:extend({
     {
       type = "simple-entity-with-force",
@@ -197,14 +199,15 @@ for _, info in pairs(make_grades and rlab_list or {rlabs[2]}) do
     {
       type = "recipe",
       name = info.name,
-      enabled = not info.prereq,
+      enabled = not prereq_tech,
       ingredients = info.ingredients,
       results = {{type="item", name=info.name, amount=1}},
     },
   })
-  if info.prereq then
+  if prereq_tech then
+    prereq_tech.effects = prereq_tech.effects or {}
     table.insert(
-      data.raw.technology[info.prereq].effects,
+      prereq_tech.effects,
       { type = "unlock-recipe", recipe = info.name }
     )
   end
