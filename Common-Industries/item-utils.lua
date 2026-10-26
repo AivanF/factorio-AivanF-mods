@@ -116,9 +116,15 @@ local function data_getter_inner(item_info)
         -- result = item_info.name,
         results = results,
         main_product = item_info.name,
-        category = item_info.category or "crafting",
         afci_bridged = true,
       }
+      -- Factorio 2.1 replaced recipe `category` with `categories`; one code base serves 2.0 and 2.1
+      local base_major, base_minor = string.match(mods["base"], "^(%d+)%.(%d+)")
+      if tonumber(base_major) * 100 + tonumber(base_minor) >= 201 then
+        recipe_data.categories = {item_info.category or "crafting"}
+      else
+        recipe_data.category = item_info.category or "crafting"
+      end
       if item_info.item_data then
         table.merge(item_data, item_info.item_data)
       end

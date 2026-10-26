@@ -389,25 +389,13 @@ add_item({
   subgroup = subgroup,
   allow_productivity = true,
   ingredients = {
-    {bridge.item.carbon_fiber, 12},
-    {bridge.item.glass, 4},
+    {bridge.item.nano_mat, 12},
     {bridge.item.faraday_cage, 1},
   },
   result_count = 4,
   stack_size = 100,
   energy_required = 10,
   category = bridge.config.cat_nano_crafting,
-  modded = {
-    {
-      mod = bridge.mods.bzaluminum,
-      -- prereq = "laser",
-      ingredients = {
-        {bridge.item.carbon_fiber, 12},
-        {"ti-sapphire", 1},
-        {bridge.item.faraday_cage, 1},
-      },
-    },
-  }
 })
 
 add_item({

@@ -46,7 +46,12 @@ data:extend{
 -- Materialise everything for debug
 if bridge.debug_all or settings.startup["afci-materialise-all"].value then
   log(bridge.log_prefix.."all_items: "..serpent.line(table.get_keys(data.raw.item)))
+  -- Getters add keys to bridge.item, and adding keys during pairs() skips entries at random
+  local snapshot = {}
   for short_name, item_info in pairs(bridge.item) do
+    snapshot[short_name] = item_info
+  end
+  for short_name, item_info in pairs(snapshot) do
     if not item_info.minor then
       log("Doing "..short_name)
       item_info.getter()

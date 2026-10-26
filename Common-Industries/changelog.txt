@@ -1,4 +1,23 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2026-10-26
+  Features:
+    - Factorio 2.1 support: recipes use the new categories field.
+  Changes:
+    - Removed optional dependency on Recipes Reload, not needed since Factorio 2.0.
+    - Adjusted quantum transistor recipe.
+  Bugfixes:
+    - Fixed every Bridge recipe being listed twice in its technology unlocks.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2026-10-26
+  Changes:
+    - Adjusted quantum transistor recipe.
+  Bugfixes:
+    - Fixed every Bridge recipe being listed twice in its technology unlocks.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2026-03-02
   Bugfixes:

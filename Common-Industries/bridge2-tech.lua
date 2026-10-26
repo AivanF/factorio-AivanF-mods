@@ -19,7 +19,9 @@ add_tech({
   name = bridge.early,
   icon = bridge.media_path.."tech/t1-craft.png",
   icon_size = 256, icon_mipmaps = 1,
-  prerequisites = {},
+  prerequisites = {
+    "automation-science-pack",
+  },
   count = 20,
   ingredients = {
     {"automation-science-pack", 1},

@@ -1,6 +1,6 @@
 {
   "name": "Common-Industries",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "title": "Bridge Technologies",
   "author": "AivanF", 
   "homepage": "https://mods.factorio.com/mod/Common-Industries",
@@ -14,9 +14,8 @@
     "? pyhightech", "? pyindustry", "? pypetroleumhandling", "? pyfusionenergy", "? pycoalprocessing", "? pyalternativeenergy",
     "? 5dim_compatibility", "? 5dim_energy", "? 5dim_nuclear", "? 5dim_mining", "? 5dim_storage", "? 5dim_logistic", "? 5dim_automation",
     "? omnimatter_crystal", "? omnimatter_energy", "? omnimatter",
-    "? Yi_Tech_Tree_ExtraVanilla", "? yi_engines", "? Yuoki",
-    "? Recipes-Reload"
+    "? Yi_Tech_Tree_ExtraVanilla", "? yi_engines", "? Yuoki"
   ],
-  "factorio_version": "2.0",
+  "factorio_version": "2.1",
   "description": "Mediator for overhaul mods. When requested by other mods, the Bridge provides ingredients that will get replaced or adjusted if compatible big mods are presented. It's NOT a compatibility of overhaul mods with each other! Instead, it's a utility for developers to integrate their smaller mods with any big modpack. See Home Page for more details."
 }
