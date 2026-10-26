@@ -287,7 +287,9 @@ function lib.find_vehicle(player)
   end
 
   -- Physical control
-  if player.physical_vehicle and player.physical_vehicle.get_driver().player == player then
+  -- Driver can be nil when other mods move characters, e.g. Renai Transportation, AAI Programmable Vehicles
+  local driver = player.physical_vehicle and player.physical_vehicle.get_driver()
+  if driver and (driver == player or driver.object_name == "LuaEntity" and driver.player == player) then
     return player.physical_vehicle
   end
 

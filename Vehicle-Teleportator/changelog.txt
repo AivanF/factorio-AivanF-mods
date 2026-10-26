@@ -1,4 +1,20 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2026-10-26
+  Features:
+    - Factorio 2.1 support: recipes use the new categories field, renamed rocket lift weight constant.
+  Bugfixes:
+    - Fixed crash when another mod moves the driver, e.g. Renai Transportation or AAI Programmable Vehicles. Thanks to MerryMalfunctioning for the fix.
+    - Fixed load error without Space Age and Bridge Technologies: wrong technology name.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2026-10-26
+  Bugfixes:
+    - Fixed crash when another mod moves the driver, e.g. Renai Transportation or AAI Programmable Vehicles. Thanks to MerryMalfunctioning for the fix.
+    - Fixed load error without Space Age and Bridge Technologies: wrong technology name.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2025-04-02
   Changes:

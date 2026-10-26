@@ -1,14 +1,16 @@
 local shared = require("shared")
 vehitel_data = {}
 
-local rocket_lift_weight = data.raw["utility-constants"]["default"].rocket_lift_weight
+local utility_constants = data.raw["utility-constants"]["default"]
+-- Renamed in Factorio 2.1
+local rocket_lift_weight = utility_constants.default_rocket_lift_weight or utility_constants.rocket_lift_weight or 1000000
 -- local rocket_lift_weight = 1000000
 
 local energy_cf = settings.startup["vehitel-energy-stored-cf"].value
 
 local have_SA = mods["space-age"]
 
-local tech1 = "chemistry-science-pack"
+local tech1 = "chemical-science-pack"
 local ingredients1 = {
   {type="item", name="steel-plate", amount=60},
   {type="item", name="advanced-circuit", amount=42},
@@ -115,7 +117,7 @@ data:extend({
     energy_required = 60,
     ingredients = ingredients1,
     results = {{type="item", name=shared.device1, amount=1}},
-    category = "advanced-crafting",
+    categories = {"advanced-crafting"},
   },
   {
     name = shared.device1,
@@ -163,7 +165,7 @@ data:extend({
     energy_required = 60,
     ingredients = ingredients2,
     results = {{type="item", name=shared.device2, amount=1}},
-    category = "advanced-crafting",
+    categories = {"advanced-crafting"},
   },
   {
     name = shared.device2,
@@ -211,7 +213,7 @@ data:extend({
     energy_required = 60,
     ingredients = ingredients3,
     results = {{type="item", name=shared.device3, amount=1}},
-    category = "advanced-crafting",
+    categories = {"advanced-crafting"},
   },
   {
     name = shared.device3,
@@ -334,3 +336,14 @@ data:extend({
     audible_distance_modifier = 2,
   },
 })
+
+
+-- Factorio 2.1 replaced recipe `category` with `categories`, convert back for 2.0 to serve both from one code base
+local base_major, base_minor = string.match(mods["base"], "^(%d+)%.(%d+)")
+if tonumber(base_major) * 100 + tonumber(base_minor) < 201 then
+  for _, name in pairs({shared.device1, shared.device2, shared.device3}) do
+    local recipe = data.raw.recipe[name]
+    recipe.category = recipe.categories[1]
+    recipe.categories = nil
+  end
+end
