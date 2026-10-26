@@ -26,23 +26,24 @@ functions.build_gangue = function( ore )
 			{
 				icon = data.raw.item["stone"].icon,
 				scale = 0.50,
-				icon_size = data.raw.item["stone"].icon_size
+				-- 2.0 items may omit icon_size (defaults to 64), but Deadlock's stacking needs it
+				icon_size = data.raw.item["stone"].icon_size or 64
 			},
 			{
 				icon = gangue.icon,
 				scale = 0.30,
-				icon_size = ore.icon_size
+				icon_size = ore.icon_size or 64
 			},
 		}
 		gangue.icon = nil
-		gangue.icon_size = ore.icon_size
+		gangue.icon_size = ore.icon_size or 64
 	elseif gangue.icons then
 		-- for items with multiple icons already
 		for i,icon in ipairs(gangue.icons) do
 			icon.scale = (icon.scale or 1) * 0.30
 			icon.icon_size = 32--ore.icon_size
 		end
-		table.insert(gangue.icons,1, { icon = data.raw.item["stone"].icon, icon_size = data.raw.item["stone"].icon_size, scale = 0.50 })
+		table.insert(gangue.icons,1, { icon = data.raw.item["stone"].icon, icon_size = data.raw.item["stone"].icon_size or 64, scale = 0.50 })
 		gangue.icon_size = 32--ore.icon_size
 	else
 		error("Iconless item found, this is not normal.")
@@ -128,7 +129,6 @@ functions.build_washing_recipe = function( ore, fluid, fluid_amount )
 		-- build recipe
 		local washing_recipe = {
 			type = "recipe",
-			categories = {"crafting-with-fluid"},
 			enabled = true,
 			name = washing_recipe_name,
 			localised_name = {
@@ -156,6 +156,13 @@ functions.build_washing_recipe = function( ore, fluid, fluid_amount )
 			}
 		}
 		
+		-- Factorio 2.1 replaced recipe `category` with `categories`; one code base serves 2.0 and 2.1
+		local base_major, base_minor = string.match(mods["base"], "^(%d+)%.(%d+)")
+		if tonumber(base_major) * 100 + tonumber(base_minor) >= 201 then
+			washing_recipe.categories = {"crafting-with-fluid"}
+		else
+			washing_recipe.category = "crafting-with-fluid"
+		end
 		data:extend({washing_recipe})
 		
 	else
