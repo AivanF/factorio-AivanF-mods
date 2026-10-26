@@ -217,8 +217,9 @@ local space_cruiser = {
   },
   effectivity = 0.4,
   consumption = "4MW",
-  braking_power = "3MW",
-  friction = 0.003,
+  -- Factorio 2.1 replaced braking_power = "3MW" with energy per tick
+  braking_force = 3000 * 1000 / 60,
+  friction_force = 0.003,
   stop_trigger_speed = 0.2,
   acceleration_per_energy = 0.3,
   breaking_speed = 0.15,
