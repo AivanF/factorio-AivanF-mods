@@ -121,10 +121,10 @@ data:extend({
     {
         enabled = false,
         energy_required = 3,
-        ingredients = {
-            {type="item", name="copper-plate", amount=5},
-            {type="item", name="steel-plate", amount=5},
-        },
+        ingredients = shared.ingredients({
+            {"copper-plate", 5},
+            {"steel-plate", 5},
+        }, true),
         name = shared.magazine1,
         results = {{type="item", name=shared.magazine1, amount=1}},
         type = "recipe"
@@ -134,10 +134,10 @@ data:extend({
     {
         enabled = false,
         energy_required = 15,
-        ingredients = {
-            {type="item", name=shared.magazine1, amount=5},
-            {type="item", name="explosives", amount=1},
-        },
+        ingredients = shared.ingredients({
+            {shared.magazine1, 5},
+            {"explosives", 1},
+        }, true),
         name = shared.magazine2,
         results = {{type="item", name=shared.magazine2, amount=5}},
         type = "recipe"
@@ -157,14 +157,8 @@ data:extend({
     }
 })
 
-table.insert(
-  data.raw.technology["military-2"].effects,
-  { type = "unlock-recipe", recipe = shared.magazine1 }
-)
-table.insert(
-  data.raw.technology["military-3"].effects,
-  { type = "unlock-recipe", recipe = shared.magazine2 }
-)
+shared.unlock("military-2", "military", shared.magazine1)
+shared.unlock("military-3", "military-2", shared.magazine2)
 table.insert(
   data.raw.technology["uranium-ammo"].effects,
   { type = "unlock-recipe", recipe = shared.magazine3 }

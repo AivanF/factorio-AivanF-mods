@@ -86,20 +86,17 @@ data:extend({
     {
         enabled = false,
         energy_required = 15,
-        ingredients = {
-            {type="item", name="wood", amount=10},
-            {type="item", name="iron-gear-wheel", amount=15},
-            {type="item", name="steel-plate", amount=10},
-        },
+        ingredients = shared.ingredients({
+            {"wood", 10},
+            {"iron-gear-wheel", 15},
+            {"steel-plate", 10},
+        }, true),
         name = shared.rifle1,
         results = {{type="item", name=shared.rifle1, amount=1}},
         type = "recipe"
     }
 })
-table.insert(
-  data.raw.technology["military-2"].effects,
-  { type = "unlock-recipe", recipe = shared.rifle1 }
-)
+shared.unlock("military-2", "military", shared.rifle1)
 
 data:extend({
     {
@@ -116,7 +113,4 @@ data:extend({
         type = "recipe"
     }
 })
-table.insert(
-  data.raw.technology["military-4"].effects,
-  { type = "unlock-recipe", recipe = shared.rifle2 }
-)
+shared.unlock("military-4", "military-3", shared.rifle2)

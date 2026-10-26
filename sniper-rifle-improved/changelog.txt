@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+Date: 2026-10-26
+  Features:
+    - Factorio 2.1 support.
+    - Startup setting "Earlier research": carbine at Military 1, other rifles and magazines one Military research earlier, with cheaper early recipes. Suggested by Grayhill.
+
+---------------------------------------------------------------------------------------------------
+Version: 2.0.1
+Date: 2026-10-26
+  Features:
+    - Startup setting "Earlier research": carbine at Military 1, other rifles and magazines one Military research earlier, with cheaper early recipes. Suggested by Grayhill.
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: 2024-10-22
   Features:

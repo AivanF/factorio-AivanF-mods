@@ -1,9 +1,9 @@
 {
     "name": "sniper-rifle-improved",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "title": "Carbine and improved Sniper Rifle",
     "author": "AivanF",
-    "factorio_version": "2.0",
+    "factorio_version": "2.1",
     "dependencies": [
         "base >= 1.1",
         "? bullet-trails >= 0.6.2",

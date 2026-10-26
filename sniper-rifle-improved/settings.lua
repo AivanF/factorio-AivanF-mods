@@ -22,4 +22,11 @@ data:extend{
         default_value = true,
         order = "c"
     },
+    {
+        type = "bool-setting",
+        name = "af-sniper-early-research",
+        setting_type = "startup",
+        default_value = false,
+        order = "d"
+    },
 }
