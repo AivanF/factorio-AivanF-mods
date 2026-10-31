@@ -28,7 +28,7 @@ add_item({
     },
     {
       mod = bridge.mods.bobores,
-      name = "quartz",
+      name = "bob-quartz",
       prereq = bridge.empty,
     },
     {

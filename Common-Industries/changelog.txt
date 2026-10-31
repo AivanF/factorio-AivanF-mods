@@ -1,4 +1,20 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2026-10-31
+  Bugfixes:
+    - Fixed load error with Bob's Ores: quartz is named bob-quartz since Factorio 2.0.
+    - Fixed clean_prerequisites API keeping empty prerequisites.
+    - Fixed load error with items registered by other mods without a prerequisite, e.g. WH40k Titans plasma fuel.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2026-10-31
+  Bugfixes:
+    - Fixed load error with Bob's Ores: quartz is named bob-quartz since Factorio 2.0.
+    - Fixed clean_prerequisites API keeping empty prerequisites.
+    - Fixed load error with items registered by other mods without a prerequisite, e.g. WH40k Titans plasma fuel.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2026-10-26
   Features:

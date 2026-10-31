@@ -157,7 +157,7 @@ function bridge.clean_prerequisites(given)
   local already = {}
   local result = {}
   for _, name in pairs(given) do
-    if given ~= bridge.empty then
+    if name ~= bridge.empty then
       if not already[name] then
         table.insert(result, name)
         already[name] = true

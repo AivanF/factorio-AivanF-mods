@@ -20,11 +20,11 @@ end
 -- Here because f*ing IR3 adds technologies in data-updates, not data as normal devs >(
 
 local function get_pre(name_or_item)
-  if name_or_item.name then
+  if type(name_or_item) == "table" then
     -- It's an item_info
     return get_pre(name_or_item.prereq)
   else
-    -- It's a string
+    -- It's a string, or nil for items registered by other mods without a prereq
     return name_or_item
   end
 end
@@ -65,7 +65,7 @@ for _, item_info in pairs(bridge.item) do
         if not has_unlock(tech, item_info.name) then
           table.insert(tech.effects, { type = "unlock-recipe", recipe = item_info.name })
         end
-        if prerequisite ~= prereq and prereq ~= bridge.empty and not has_prerequisite(tech, prereq) then
+        if prereq and prerequisite ~= prereq and prereq ~= bridge.empty and not has_prerequisite(tech, prereq) then
           tech.prerequisites = tech.prerequisites or {}
           table.insert(tech.prerequisites, prereq)
         end
