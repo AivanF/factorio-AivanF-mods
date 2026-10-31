@@ -83,11 +83,10 @@ local function on_any_remove(event)
     lib_ruins.ruin_removed(unit_number)
   end
 
-  if ctrl_data.assembler_index[unit_number] then
-    if event.name ~= defines.events.script_raised_destroy then
-      lib_asmb.bunker_removed(ctrl_data.assembler_index[unit_number])
-    end
+  local assembler = ctrl_data.assembler_index[unit_number]
+  if assembler then
     ctrl_data.assembler_index[unit_number] = nil
+    lib_asmb.bunker_removed(assembler)
   end
 end
 
@@ -300,6 +299,8 @@ local function update_configuration()
 
   if ctrl_data.by_surface == nil then
     lib_ruins.initial_index()
+  else
+    lib_ruins.index_missing_planets()
   end
 
   for _, player in pairs(game.players) do

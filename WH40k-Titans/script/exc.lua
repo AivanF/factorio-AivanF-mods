@@ -67,7 +67,7 @@ function lib_exc.register_excavator(entity)
   end
   entity.set_recipe(shared.excavation_recipe)
   entity.recipe_locked = true
-  entity.active = false
+  entity.disabled_by_script = true
 end
 
 function lib_exc.excavator_removed(unit_number)
@@ -148,11 +148,11 @@ local function process_an_excavator(exc_info)
 
   if not exc_info.leftovers then
     if not exc_info.ruin_entity then 
-      entity.active = false
+      entity.disabled_by_script = true
       return
     end
     if not exc_info.ruin_entity.valid then
-      entity.active = false
+      entity.disabled_by_script = true
       exc_info.ruin_entity = nil
       rendering.draw_text{
         -- TODO: translate!
@@ -170,7 +170,7 @@ local function process_an_excavator(exc_info)
     local exc_unit_time = get_exc_unit_time(exc_info)
     local satisfaction = entity.energy / entity.electric_buffer_size
     exc_info.progress = exc_info.progress + satisfaction * exc_update_rate/UPS /exc_unit_time
-    entity.active = true
+    entity.disabled_by_script = false
     calc_expected_time(exc_info)
 
     if satisfaction > 0.35 and math.random() < 0.1 then
@@ -198,7 +198,7 @@ local function process_an_excavator(exc_info)
       exc_info.progress = 0
 
       if exc_info.ruin_entity == nil then
-        entity.active = false
+        entity.disabled_by_script = true
       end
     end
 
@@ -206,7 +206,7 @@ local function process_an_excavator(exc_info)
 
   else
     -- There are extracted but not outputted items
-    entity.active = false
+    entity.disabled_by_script = true
     put_leftovers(exc_info)
   end
 

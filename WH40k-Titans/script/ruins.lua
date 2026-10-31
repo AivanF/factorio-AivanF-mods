@@ -61,9 +61,15 @@ TODO:
 function lib_ruins.initial_index()
   ctrl_data.by_surface = {}
   ctrl_data.by_zones = {}
-  for name, _ in ipairs(planets_with_ruins) do
-    if game.surfaces[name] then
-      lib_ruins.opt_new_world({surface = game.surfaces[name]})
+  lib_ruins.index_missing_planets()
+end
+
+-- Also a migration: before 1.0.7, initial_index iterated with ipairs and never indexed Nauvis
+function lib_ruins.index_missing_planets()
+  for name, _ in pairs(planets_with_ruins) do
+    local surface = game.surfaces[name]
+    if surface and not ctrl_data.by_surface[surface.index] then
+      lib_ruins.opt_new_world({surface = surface})
     end
   end
 end
@@ -71,7 +77,6 @@ end
 
 -- Tries to find existing world for new surface
 function lib_ruins.opt_new_world(data)
-  game.print("opt_new_world"..serpent.line(data))
   if not data.surface then
     error(serpent.line({type="Missing surface", data=data}))
   end

@@ -38,7 +38,7 @@ comb.fast_replaceable_group = nil
 comb.circuit_wire_max_distance = 16
 comb.item_slot_count = shared.bunker_comb_size
 comb.minable = nil
-comb.selectable_in_game = false  -- TODO: replace signals with logistic requests
+comb.selectable_in_game = true
 data:extend({ comb })
 
 local crafting_categories = {shared.craftcat_empty}

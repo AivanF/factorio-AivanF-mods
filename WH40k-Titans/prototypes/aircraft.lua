@@ -170,7 +170,7 @@ local titan_supplier = {
   -- MOVEMENT
   allow_remote_driving = true,
   effectivity = 0.9,
-  braking_power = "3.5MW",
+  braking_force = 3500 * 1000 / 60,
   energy_source = {
     type = "burner",
     fuel_categories = {"chemical"},
@@ -178,7 +178,7 @@ local titan_supplier = {
     smoke = { smokedef(-16, 60, 38), smokedef(16, 60, 38) }
   },
   consumption = "4MW",
-  friction = 0.002,
+  friction_force = 0.002,
   stop_trigger_speed = 0.2,
   acceleration_per_energy = 0.3,
   breaking_speed = 0.05,

@@ -134,7 +134,9 @@ function preprocess_entities(list)
       if shared.used_specials then
         shared.used_specials[entity.unit_number] = true
       end
-      entity.active = false -- for crafting machines
+      if entity.type ~= "constant-combinator" then
+        entity.disabled_by_script = true -- for crafting machines
+      end
     end
   end
 end

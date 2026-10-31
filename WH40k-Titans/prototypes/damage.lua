@@ -209,6 +209,9 @@ data:extend({
   collision_box = {{-0.5, -1.5}, {0.5, 1.5}},
   acceleration = 0,
   piercing_damage = 500,
+  -- Fly over own Titan and buildings: otherwise the shell hits the Titan itself and explodes on it.
+  -- The final splash still applies friendly fire.
+  force_condition = "not-same",
   -- action = {
   --   type = "direct",
   --   action_delivery = {
@@ -425,6 +428,9 @@ data:extend({
   collision_box = {{-0.5, -1.5}, {0.5, 1.5}},
   acceleration = 0,
   piercing_damage = 750,
+  -- Fly over own Titan and buildings: otherwise the shell hits the Titan itself and explodes on it.
+  -- The final splash still applies friendly fire.
+  force_condition = "not-same",
   action = {
     type = "direct",
     action_delivery = {

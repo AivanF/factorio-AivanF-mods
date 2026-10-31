@@ -411,26 +411,41 @@ local function init_combinators(assembler)
   assembler.output_combinators = assembler.output_combinators or {}
   for i, pos in ipairs(bunker_signal_outputs) do
     assembler.output_combinators[i] = assembler.output_combinators[i] or assembler.surface.create_entity{
-      name=shared.bunker_comb, force="neutral",
+      name=shared.bunker_comb, force=assembler.force,
       position={x=assembler.position.x+pos[1], y=assembler.position.y+pos[2]},
     }
   end
   preprocess_entities(assembler.output_combinators)
+  -- Combinators created before 1.0.7 are neutral and disabled, players couldn't wire them
+  for _, comb in pairs(assembler.output_combinators) do
+    if comb.valid then
+      comb.force = assembler.force
+      comb.disabled_by_script = false
+    end
+  end
 end
 
 
+local function set_signal(section, pos, name, count)
+  section.set_slot(pos, {value={type="item", name=name, quality="normal", comparator="="}, min=count})
+end
+
+-- Factorio 2.0 replaced constant combinator signals with logistic sections
 local function set_signals_from_ingredients(comb, ingredients, ammo)
-  return;  -- TODO: replace signals with logistic requests
-  -- local ctrl = comb.get_or_create_control_behavior()
-  -- for pos = 1, shared.bunker_comb_size do
-  --   if ingredients and pos <= #ingredients then
-  --     ctrl.set_signal(pos, {signal={type="item", name=ingredients[pos][1]}, count=ingredients[pos][2]})
-  --   elseif ammo and ammo[1] and pos == #ingredients+1 then
-  --     ctrl.set_signal(pos, {signal={type="item", name=ammo[1]}, count=ammo[2]})
-  --   else
-  --     ctrl.set_signal(pos, nil)
-  --   end
-  -- end
+  if not (comb and comb.valid) then return end
+  local ctrl = comb.get_or_create_control_behavior()
+  local section = ctrl.get_section(1) or ctrl.add_section()
+  if not section then return end
+  local count = ingredients and #ingredients or 0
+  for pos = 1, shared.bunker_comb_size do
+    if pos <= count then
+      set_signal(section, pos, ingredients[pos][1], ingredients[pos][2])
+    elseif ammo and ammo[1] and pos == count+1 then
+      set_signal(section, pos, ammo[1], ammo[2])
+    else
+      section.clear_slot(pos)
+    end
+  end
 end
 
 
@@ -450,10 +465,8 @@ end
 
 
 local function clean_all_signals(assembler)
-  for _, obj in pairs(assembler.output_combinators) do
-    for pos = 1, shared.bunker_comb_size do
-      -- TODO: set empty signal!
-    end
+  for _, obj in pairs(assembler.output_combinators or {}) do
+    set_signals_from_ingredients(obj)
   end
 end
 
@@ -791,10 +804,15 @@ function state_handler.restock(assembler)
     local weapon_type, cannon
     for wi, _ in pairs(titan_type.mounts) do
       cannon = titan_info.guns[wi]
-      weapon_type = shared.weapons[cannon.name]
-      need_ammo = weapon_type.inventory - cannon.ammo_count
-      have_ammo = assembler.wstore[wi].get_item_count(weapon_type.ammo)
-      got_ammo = math.min(need_ammo, have_ammo)
+      weapon_type = cannon and shared.weapons[cannon.name]
+      -- Melee weapons have no ammo
+      if weapon_type and weapon_type.ammo and weapon_type.inventory then
+        need_ammo = weapon_type.inventory - cannon.ammo_count
+        have_ammo = assembler.wstore[wi].get_item_count(weapon_type.ammo)
+        got_ammo = math.min(need_ammo, have_ammo)
+      else
+        got_ammo = 0
+      end
       if got_ammo > 0 then
         done_ws = done_ws + 1
         done_ammo = done_ammo + got_ammo
@@ -815,10 +833,10 @@ function state_handler.restock(assembler)
       if not supplier_info.disabled_ammo[ammo_name] then
         for wi = 1, gun_chests_number do
           have_ammo = assembler.wstore[wi].get_item_count(ammo_name)
-          need_ammo = lib_spl.count_free_weight(supplier_info) / shared.ammo_weights[ammo_name]
+          need_ammo = math.floor(lib_spl.count_free_weight(supplier_info) / shared.ammo_weights[ammo_name])
           got_ammo = math.min(need_ammo, have_ammo)
           if got_ammo > 0 then
-            assembler.wstore[wi].remove_item({name=ammo_name, count=need_ammo})
+            assembler.wstore[wi].remove_item({name=ammo_name, count=got_ammo})
             supplier_info.inventory[ammo_name] = (supplier_info.inventory[ammo_name] or 0) + got_ammo
             show_ammo_transfer(assembler.sentity, supplier_info.entity, ammo_name, got_ammo, 1)
           end
@@ -832,6 +850,8 @@ end
 local function clear_supplier(assembler, supplier_info)
   local weapon_type, done
   for ammo_name, ammo_count in pairs(supplier_info.inventory) do
+    -- Older versions could store fractional counts
+    ammo_count = math.floor(ammo_count)
     for wi = 1, gun_chests_number do
       weapon_type = assembler.weapon_recipes[wi] and shared.weapons[assembler.weapon_recipes[wi]]
       -- Try to find a chest with matching ammo type or just empty recipe set

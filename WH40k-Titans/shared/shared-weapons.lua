@@ -132,7 +132,7 @@ shared.bolt_types = bolt_types
 --------- Weapon types
 shared.weapons = {}
 local dst_s, dst_m, dst_l, dst_xl
-dst_s, dst_m, dst_l, dst_xl = 96, 140, 192, 256
+dst_s, dst_m, dst_l, dst_xl = 96, 160, 256, 320
 local wname = nil
 local order_index = 1
 
@@ -348,7 +348,7 @@ add_weapon({
   grade = shared.gun_grade_1v,
   top_only = true,
   category = shared.wc_rocket,
-  min_dst = 16, max_dst = (dst_m+dst_l)/2, max_dst = dst_l, max_orid = 0.03,
+  min_dst = 16, max_dst = dst_l, max_orid = 0.03,
   speed = 1, barrel = 0,
   ammo = shared.missile_ammo,
   per_shot = 1, inventory = 4000,
@@ -449,7 +449,6 @@ add_weapon({
   category = shared.wc_laser,
   min_dst = 14, max_dst = dst_m,
   speed = {4, 6, 8, 10}, barrel = 10,
-  ammo = shared.laser_ammo,
   cd = 1, attack_size = 1, scatter = 1,
   per_shot = 1, inventory = 1000,
   bolt_type = bolt_types.bolt_volcano,

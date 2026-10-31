@@ -1,4 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2026-10-31
+  Features:
+    - Factorio 2.1 support.
+  Changes:
+    - Requires Bridge Technologies 1.1.1.
+    - Titan class 3, 4 and 5 researches now also require Artillery and energy emitter researches.
+  Bugfixes:
+    - Titan wrecks spawn on Nauvis again: since Factorio 2.0 it was never registered for ruins. In existing saves new areas get wrecks; use /titans-spawn-more-corpses for explored ones.
+    - Fixed crash when restocking ammo of a Titan with a melee weapon.
+    - Fixed Aircraft Supplier crash when restocking or clearing ammo.
+    - Fixed bunker leftovers when another mod removes the bunker.
+    - Assembly Bunker combinators output the missing Titan and weapon ingredients again, as described in the guide; they were disabled since Factorio 2.0.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2026-10-31
+  Changes:
+    - Requires Bridge Technologies 1.0.5.
+    - Titan class 3, 4 and 5 researches now also require Artillery and energy emitter researches.
+  Bugfixes:
+    - Titan wrecks spawn on Nauvis again: since Factorio 2.0 it was never registered for ruins. In existing saves new areas get wrecks; use /titans-spawn-more-corpses for explored ones.
+    - Fixed crash when restocking ammo of a Titan with a melee weapon.
+    - Fixed Aircraft Supplier crash when restocking or clearing ammo.
+    - Fixed bunker leftovers when another mod removes the bunker.
+    - Assembly Bunker combinators output the missing Titan and weapon ingredients again, as described in the guide; they were disabled since Factorio 2.0.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.6
 Date: 2026-03-02
   Bugfixes:

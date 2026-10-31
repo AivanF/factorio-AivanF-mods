@@ -81,6 +81,7 @@ local tech_researches = {
     prerequisites = {
       shared.mod_prefix.."2-class",
       shared.mod_prefix.."2-grade",
+      "artillery",
     },
     unit = {
       count = 250,
@@ -102,6 +103,7 @@ local tech_researches = {
     prerequisites = {
       shared.mod_prefix.."3-class",
       shared.mod_prefix.."3-grade",
+      afci_bridge.get.he_emitter().prerequisite,
     },
     unit = {
       count = 500,
@@ -123,6 +125,7 @@ local tech_researches = {
     prerequisites = {
       shared.mod_prefix.."4-class",
       shared.mod_prefix.."4-grade",
+      afci_bridge.get.ehe_emitter().prerequisite,
     },
     unit = {
       count = 1000,
@@ -262,4 +265,12 @@ local tech_researches = {
 }
 
 ------- Outro
+-- The Bridge returns "" when an item needs no research (e.g. given by an overhaul mod from start)
+for _, tech in pairs(tech_researches) do
+  local prerequisites = {}
+  for _, name in pairs(tech.prerequisites or {}) do
+    if name ~= "" then table.insert(prerequisites, name) end
+  end
+  tech.prerequisites = prerequisites
+end
 data:extend(tech_researches)
