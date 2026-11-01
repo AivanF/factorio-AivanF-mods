@@ -23,6 +23,24 @@ https://lua-api.factorio.com/latest/classes/LuaEquipment.html
 -- TODO: optimise algorithm, burn chunks of items at once
 local MIN_FUEL_VALUE = 500000  -- at least 50KJ
 
+-- Factorio 2.1 replaced item `fuel_category` with `fuel_categories`, and reading a missing key throws
+local is_2_1 = nil
+
+local function is_fuel_of_categories(item_name, fuel_categories)
+  local item = prototypes.item[item_name]
+  if is_2_1 == nil then
+    local base_major, base_minor = string.match(script.active_mods["base"], "^(%d+)%.(%d+)")
+    is_2_1 = tonumber(base_major) * 100 + tonumber(base_minor) >= 201
+  end
+  if is_2_1 then
+    for _, category in pairs(item.fuel_categories or {}) do
+      if fuel_categories[category] then return true end
+    end
+    return false
+  end
+  return item.fuel_category and fuel_categories[item.fuel_category] or false
+end
+
 local function value_threshold(value, threshold)
   if value >= threshold then return value end
   return 0
@@ -47,7 +65,7 @@ function calc_vehicle_fuel_energy(entity)
   local trunk = entity.get_inventory(defines.inventory.car_trunk) or entity.get_inventory(defines.inventory.spider_trunk)
   if trunk then
     for _, stack in ipairs(trunk.get_contents()) do
-      if fuel_categories[prototypes.item[stack.name].fuel_category] then
+      if is_fuel_of_categories(stack.name, fuel_categories) then
         total = total + value_threshold(prototypes.item[stack.name].fuel_value, MIN_FUEL_VALUE) * stack.count
       end
     end
@@ -72,7 +90,7 @@ local function try_take_a_fuel_filtered(inv, fuel_categories)
   for _, stack in ipairs(inv.get_contents()) do
     if true
       and prototypes.item[stack.name].fuel_value >= MIN_FUEL_VALUE
-      and fuel_categories[prototypes.item[stack.name].fuel_category]
+      and is_fuel_of_categories(stack.name, fuel_categories)
     then
       inv.remove({name=stack.name, count=1})
       return stack.name
