@@ -202,7 +202,7 @@ add_item({
       mod = bridge.mods.k2,
       prereq = "kr-imersium-processing",
       ingredients = {
-        {"imersium-plate", 2},
+        {"kr-imersium-plate", 2},
         {"copper-cable", 10},
         {"plastic-bar", 2},
       },
@@ -341,8 +341,8 @@ add_item({
       prereq = "kr-imersium-processing",
       ingredients = {
         {"low-density-structure", 10},
-        {"imersium-plate", 10},
-        {"silicon", 10},
+        {"kr-imersium-plate", 10},
+        {"kr-silicon", 10},
       },
     },
     {
@@ -498,7 +498,7 @@ add_item({
     },
     {
       mod = bridge.mods.k2,
-      name = "energy-control-unit",
+      name = "kr-energy-control-unit",
       prereq = "kr-energy-control-unit",
     },
     {
@@ -619,7 +619,7 @@ add_item({
     {
       mod = bridge.mods.k2,
       -- name = "kr-antimatter-reactor",
-      name = "antimatter-reactor-equipment",
+      name = "kr-antimatter-reactor-equipment",
       prereq = "kr-antimatter-reactor",
     },
     {
@@ -648,7 +648,7 @@ add_item({
     {
       mod = bridge.mods.k2,
       -- Or krastorio.recipes.changed_names["charged-antimatter-fuel-cell"] ?!
-      name = "charged-antimatter-fuel-cell",
+      name = "kr-charged-antimatter-fuel-cell",
       prereq = "kr-antimatter-reactor",
     },
     -- TODO: check out other mods!
@@ -672,7 +672,7 @@ add_item({
     },
     {
       mod = bridge.mods.k2,
-      name = "energy-shield-mk4-equipment",
+      name = "kr-energy-shield-mk4-equipment",
       prereq = "kr-energy-shield-mk4-equipment",
     },
     -- TODO: check out other mods!

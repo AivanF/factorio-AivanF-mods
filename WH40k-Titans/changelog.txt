@@ -1,4 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2026-11-01
+  Changes:
+    - Requires Bridge Technologies 1.1.2.
+  Bugfixes:
+    - Fixed load errors with Krastorio 2, which renamed its items and categories with a kr- prefix.
+    - Titan dashboard buttons work when driving remotely. Aircraft Supplier dashboard opens then too.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.8
+Date: 2026-11-01
+  Changes:
+    - Requires Bridge Technologies 1.0.6.
+  Bugfixes:
+    - Fixed load errors with Krastorio 2, which renamed its items and categories with a kr- prefix.
+    - Titan dashboard buttons work when driving remotely. Aircraft Supplier dashboard opens then too.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2026-10-31
   Features:

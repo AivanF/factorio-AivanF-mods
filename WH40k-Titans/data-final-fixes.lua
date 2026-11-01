@@ -70,6 +70,7 @@ end
 local wanted_categories = {
   "aircraft", "aircraft-equipment", "armor-weapons",
   "universal-equipment", "vehicle-motor", "vehicle-robot-interaction-equipment",
+  "kr-vehicle", "kr-vehicle-motor", "kr-vehicle-roboport",
 }
 local aircraft_grid = data.raw["equipment-grid"][shared.mod_prefix.."aircraft"]
 aircraft_grid.equipment_categories = {}
@@ -79,7 +80,8 @@ for _, name in pairs(wanted_categories) do
 	end
 end
 
-if not mods[shared.K2] then
+-- An equipment grid must have at least one category
+if not mods[shared.K2] or #aircraft_grid.equipment_categories == 0 then
 	table.append(aircraft_grid.equipment_categories, "armor")
 end
 
@@ -91,6 +93,6 @@ if mods[shared.AIND] then
 end
 if mods[shared.K2] then
 	table.extend(titan_supplier.energy_source.fuel_categories, {
-		"vehicle-fuel", "nuclear-fuel", "fusion-fuel", "antimatter-fuel",
+		"kr-vehicle-fuel", "nuclear", "kr-fusion-fuel", "kr-antimatter-fuel",
 	})
 end

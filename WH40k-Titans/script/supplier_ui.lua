@@ -153,9 +153,9 @@ end)
 
 lib_spl:on_event(defines.events.on_player_driving_changed_state, function(event)
   local player = game.players[event.player_index]
-  if not player.character then return end
-  if player.character.vehicle then
-    local supplier_info = ctrl_data.supplier_index[player.character.vehicle.unit_number]
+  local vehicle = player.vehicle or player.physical_vehicle
+  if vehicle then
+    local supplier_info = ctrl_data.supplier_index[vehicle.unit_number]
     if not supplier_info then return end
     create_supplier_gui(player, supplier_info)
   else

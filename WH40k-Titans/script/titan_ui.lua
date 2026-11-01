@@ -220,8 +220,10 @@ lib_ttn:on_event(defines.events.on_gui_click, function(event)
   local player = game.get_player(event.player_index)
   local player_settings = ctrl_data.by_player[event.player_index]
   local titan_info = nil
-  if player.character and player.character.vehicle then
-    titan_info = ctrl_data.titans[player.character.vehicle.unit_number]
+  -- player.character.vehicle is nil when driving remotely
+  local vehicle = player.vehicle or player.physical_vehicle
+  if vehicle then
+    titan_info = ctrl_data.titans[vehicle.unit_number]
   end
 
   if event.element.tags.action == action_toggle_ammo_count then

@@ -23,7 +23,7 @@ add_item({
     },
     {
       mod = bridge.mods.k2,
-      name = "sand",
+      name = "kr-sand",
       prereq = "kr-stone-processing",
     },
     {

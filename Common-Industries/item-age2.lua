@@ -51,7 +51,7 @@ add_item({
     },
     {
       mod = bridge.mods.k2,
-      name = "biomass",
+      name = "kr-biomass",
       prereq = bridge.empty,
     },
     {
@@ -223,7 +223,7 @@ add_item({
       mod = bridge.mods.k2,
       ingredients = {
         {bridge.item.optic_cable, 2},
-        {"quartz", 1},
+        {"kr-quartz", 1},
         {"advanced-circuit", 1},
       },
     },
@@ -347,7 +347,7 @@ add_item({
   modded = {
     {
       mod = bridge.mods.k2,
-      ingredients = {{ "steel-plate", 10 }, { "copper-plate", 4 }, { "imersite-powder", 10 }},
+      ingredients = {{ "steel-plate", 10 }, { "copper-plate", 4 }, { "kr-imersite-powder", 10 }},
     },
     {
       mod = bridge.mods.exind,

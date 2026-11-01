@@ -202,7 +202,7 @@ bridge.add_item({
       mod = bridge.mods.k2,
       prereq = "kr-atmosphere-condensation",
       ingredients = {
-        {type="fluid", name="hydrogen", amount=200},
+        {type="fluid", name="kr-hydrogen", amount=200},
         {type="item", name="steel-plate", amount=4},
         {type="item", name="advanced-circuit", amount=1},
       },
@@ -304,7 +304,7 @@ bridge.add_item({
     {
       mod = bridge.mods.k2,
       ingredients = {
-        {type="item", name="lithium-sulfur-battery", amount=2},
+        {type="item", name="kr-lithium-sulfur-battery", amount=2},
         {type="item", name="electronic-circuit", amount=1},
         {type="item", name="steel-plate", amount=1},
       },

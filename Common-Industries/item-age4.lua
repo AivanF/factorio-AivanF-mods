@@ -71,7 +71,7 @@ add_item({
       prereq = "kr-matter-processing",
       -- name = "matter-stabilizer",
       ingredients = {
-        {"matter-stabilizer", 3},
+        {"kr-matter-stabilizer", 3},
         {bridge.item.he_emitter, 3},
         {bridge.item.quantum_chip, 1},
         {bridge.item.nano_mat, 8},

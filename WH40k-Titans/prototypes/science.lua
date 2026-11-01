@@ -42,9 +42,9 @@ elseif mods[shared.SE] and mods[shared.K2] then
     {type="item", name="se-deep-space-science-pack-1", amount=10},
     {type="item", name="se-energy-science-pack-4", amount=10},
     {type="item", name="se-material-science-pack-4", amount=10},
-    {type="item", name="matter-tech-card", amount=10}, -- aka Matter science 1
+    {type="item", name="kr-matter-tech-card", amount=10}, -- aka Matter science 1
     -- {type="item", name="se-kr-matter-science-pack-2", amount=10}, -- aka Matter science 2
-    {type="item", name="advanced-tech-card", amount=10}, -- aka Advanced science 1
+    {type="item", name="kr-advanced-tech-card", amount=10}, -- aka Advanced science 1
     -- {type="item", name="singularity-tech-card", amount=10}, -- aka Advanced science 2
   }
 
@@ -68,9 +68,9 @@ elseif mods[shared.K2] then
     {type="item", name="production-science-pack", amount=10},
     {type="item", name="utility-science-pack", amount=10},
     {type="item", name="space-science-pack", amount=10},
-    {type="item", name="matter-tech-card", amount=10},
-    {type="item", name="advanced-tech-card", amount=10},
-    {type="item", name="singularity-tech-card", amount=10},
+    {type="item", name="kr-matter-tech-card", amount=10},
+    {type="item", name="kr-advanced-tech-card", amount=10},
+    {type="item", name="kr-singularity-tech-card", amount=10},
   }
 end
 

@@ -28,7 +28,7 @@ add_item({
     },
     {
       mod = bridge.mods.k2,
-      name = "glass",
+      name = "kr-glass",
       prereq = "kr-stone-processing",
     },
     {
