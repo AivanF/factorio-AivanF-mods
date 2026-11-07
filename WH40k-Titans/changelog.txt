@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.2
+Date: 2026-11-07
+  Bugfixes:
+    - Aircraft Supplier now carries explosive cannon shells for the Gatling Blaster.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.9
+Date: 2026-11-07
+  Bugfixes:
+    - Aircraft Supplier now carries explosive cannon shells for the Gatling Blaster.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: 2026-11-01
   Changes:
